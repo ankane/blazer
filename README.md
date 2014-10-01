@@ -124,6 +124,7 @@ Blazer.user_name = :first_name
 - advanced permissions
 - favorites
 - support for multiple data sources
+- Ruby config
 
 ## Thanks
 

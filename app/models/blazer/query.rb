@@ -6,7 +6,7 @@ module Blazer
     validates :statement, presence: true
 
     def to_param
-      [id, name.remove("'").parameterize].join("-")
+      [id, name.gsub("'", "").parameterize].join("-")
     end
 
   end

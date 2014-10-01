@@ -132,6 +132,8 @@ Blazer uses a number of awesome, open source projects.
 - [Stupid jQuery Table Sort](https://github.com/joequery/Stupid-Table-Plugin)
 - [Date Range Picker](https://github.com/dangrossman/bootstrap-daterangepicker)
 
+Created by [ankane](https://github.com/ankane) and [righi](https://github.com/righi)
+
 ## Contributing
 
 Everyone is encouraged to help improve this project. Here are a few ways you can help:

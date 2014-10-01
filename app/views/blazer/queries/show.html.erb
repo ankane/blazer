@@ -119,9 +119,6 @@
     <p class="text-muted">Loading...</p>
   </div>
 
-  <% content_for :javascript do %>
-    <%= javascript_include_tag "//www.google.com/jsapi" %>
-  <% end %>
   <script>
     $.post("<%= run_queries_path %>", <%= json_escape({statement: @query.statement, query_id: @query.id}.to_json).html_safe %>, function (data) {
       $("#results").html(data);

@@ -1,0 +1,50 @@
+<% if @error %>
+  <div class="alert alert-danger"><%= @error %></div>
+<% elsif !@success %>
+  <div class="alert alert-info">Can’t run queries with variables yet</div>
+<% else %>
+  <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
+  <% if @rows.any? %>
+    <% header_width = 100 / @rows.first.keys.size.to_f %>
+    <table class="table">
+      <thead>
+        <tr>
+          <% @columns.each do |key, type| %>
+            <th style="width: <%= header_width %>%;" data-sort="<%= type %>">
+              <div style="min-width: <%= @min_width_types.include?(key) ? 180 : 60 %>px;">
+                <%= key %>
+              </div>
+            </th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% @rows.each do |row| %>
+          <tr>
+            <% row.each do |k, v| %>
+              <td>
+                <% if v.is_a?(Time) %>
+                  <% v = v.in_time_zone(Blazer.time_zone) %>
+                <% end %>
+
+                <% unless v.nil? %>
+                  <% if v == "" %>
+                    <div class="text-muted">empty string</div>
+                  <% elsif @linked_columns[k] %>
+                    <%= link_to format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
+                  <% else %>
+                    <%= format_value(k, v) %>
+                  <% end %>
+
+                  <% if v2 = (@boom[k] || {})[v] %>
+                    <div class="text-muted"><%= v2 %></div>
+                  <% end %>
+                <% end %>
+              </td>
+            <% end %>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+<% end %>

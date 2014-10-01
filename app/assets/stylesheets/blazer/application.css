@@ -1,0 +1,66 @@
+/*
+ *= require ./bootstrap
+ *= require ./selectize.default
+ *= require ./github
+ *= require ./daterangepicker-bs3
+ *= require_self
+ */
+
+pre {
+  border: none;
+  border-radius: 0;
+}
+
+body {
+  padding-top: 20px;
+  padding-bottom: 20px;
+}
+
+#results th {
+  cursor: pointer;
+}
+
+#results thead {
+  background-color: #fff;
+}
+
+input.search {
+  border: none;
+  box-shadow: none;
+}
+
+input.search:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.button_to {
+  display: inline-block;
+}
+
+.button_to input:focus {
+  outline: none;
+}
+
+.form-inline .selectize-control, .text-right .selectize-control {
+  display: inline-block;
+  vertical-align: middle;
+  margin-left: 5px;
+  margin-right: 20px;
+  text-align: left;
+}
+
+#editor-container {
+  background-color: #141414;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#editor {
+  display: none;
+  height: 100px;
+}
+
+.ace_print-margin-layer {
+  display: none;
+}

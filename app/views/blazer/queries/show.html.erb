@@ -1,0 +1,138 @@
+<% title @query.name %>
+
+<div style="position: fixed; top: 0; left: 0; right: 0; background-color: whitesmoke; height: 60px; z-index: 1001;">
+  <div class="container">
+    <div class="row" style="padding-top: 13px;">
+      <div class="col-sm-9">
+        <h3 style="margin: 0; line-height: 34px;">
+          <%= @query.name %>
+        </h3>
+      </div>
+      <div class="col-sm-3 text-right">
+        <%= link_to "Home", root_path, class: "btn btn-primary" %>
+        <%= link_to "Edit", edit_query_path(@query), class: "btn btn-default" %>
+
+        <% if !@error and @success %>
+          <%= button_to "Download", run_queries_path(statement: @query.statement, query_id: @query.id, format: "csv"), class: "btn btn-info" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-bottom: 60px;"></div>
+
+<% if @sql_errors.any? %>
+  <div class="alert alert-danger">
+    <ul>
+      <% @sql_errors.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+    </ul>
+  </div>
+<% end %>
+
+<% if @query.description.present? %>
+  <p><%= @query.description %></p>
+<% end %>
+
+<% if @bind_vars.any? %>
+  <form id="bind" method="get" action="<%= url_for(params) %>" class="form-inline" style="margin-bottom: 10px;">
+    <% date_vars = ["start_time", "end_time"] %>
+    <% if (date_vars - @bind_vars).empty? %>
+      <% @bind_vars = @bind_vars - date_vars %>
+    <% else %>
+      <% date_vars = nil %>
+    <% end %>
+
+    <% @bind_vars.each_with_index do |var, i| %>
+      <%= label_tag var, var %>
+      <% if (data = @smart_vars[var]) %>
+        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), style: "margin-right: 20px; width: 200px;" %>
+        <script>
+          $("#<%= var %>").selectize({
+            create: true
+          });
+        </script>
+      <% else %>
+        <%= text_field_tag var, params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !params[var], class: "form-control" %>
+        <% if var.end_with?("_at") %>
+          <script>
+            $("#<%= var %>").datepicker({format: "yyyy-mm-dd", autoclose: true, todayBtn: "linked"})
+          </script>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if date_vars %>
+      <% date_vars.each do |var| %>
+        <%= hidden_field_tag var, params[var] %>
+      <% end %>
+
+      <%= label_tag nil, date_vars.join(" & ") %>
+      <div class="selectize-control single" style="width: 300px;">
+        <div id="reportrange" class="selectize-input" style="display: inline-block;">
+          <span>Select a time range</span>
+        </div>
+      </div>
+
+      <script>
+        $('#reportrange').daterangepicker(
+          {
+            ranges: {
+             'Today': [moment(), moment()],
+             'Last 7 Days': [moment().subtract('days', 6), moment()],
+             'Last 30 Days': [moment().subtract('days', 29), moment()]
+            },
+            startDate: moment().subtract('days', 29),
+            endDate: moment(),
+            opens: "left"
+          },
+          function(start, end) {
+            $("#start_time").val(start.toISOString());
+            $("#end_time").val(end.endOf("day").toISOString());
+            $("#start_time").closest("form").submit();
+          }
+        ).on('apply.daterangepicker', function(ev, picker) {
+          $("#start_time").val(picker.startDate.toISOString());
+          $("#end_time").val(picker.endDate.endOf("day").toISOString());
+          $('#reportrange span').html(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
+        })
+
+        if ($("#start_time").val().length > 0) {
+          var picker = $("#reportrange").data('daterangepicker');
+          picker.setStartDate(moment($("#start_time").val()));
+          picker.setEndDate(moment($("#end_time").val()));
+          $("#reportrange").trigger('apply.daterangepicker', picker)
+        }
+      </script>
+    <% end %>
+
+    <input type="submit" class="btn btn-success" value="Run" style="vertical-align: top;" />
+  </form>
+<% end %>
+
+<pre><code><%= @query.statement %></code></pre>
+
+<% if @success %>
+  <div id="results">
+    <p class="text-muted">Loading...</p>
+  </div>
+
+  <script>
+    $.post("<%= run_queries_path %>", <%= json_escape({statement: @query.statement, query_id: @query.id}.to_json).html_safe %>, function (data) {
+      $("#results").html(data);
+      $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
+    });
+
+    $(".form-inline input, .form-inline select").change( function () {
+      if ($(this).val() != "") {
+        $(this).closest("form").submit();
+      }
+    });
+  </script>
+<% end %>
+
+<script>
+  hljs.initHighlightingOnLoad();
+</script>

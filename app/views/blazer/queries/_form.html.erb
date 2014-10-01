@@ -1,0 +1,84 @@
+<% if @query.errors.any? %>
+  <div class="alert alert-danger"><%= @query.errors.full_messages.first %></div>
+<% end %>
+
+<%= form_for @query, html: {class: "the_form", autocomplete: "off"} do |f| %>
+  <div class="row">
+    <div class="col-xs-8">
+      <div class= "form-group">
+        <%= f.hidden_field :statement %>
+        <div id="editor-container">
+          <div id="editor"><%= @query.statement %></div>
+        </div>
+      </div>
+      <div class="form-group text-right">
+        <div class="pull-left" style="margin-top: 6px;">
+          <%= link_to "Back", :back %>
+          <span class="text-muted" style="margin-left: 20px;"> Use {start_time} and {end_time} for time ranges</span>
+        </div>
+        <%= select_tag :table_names, options_for_select([["Preview table", nil]] + tables.keys), style: "margin-right: 20px; width: 240px;" %>
+        <%= link_to "Run", "#", class: "btn btn-info", id: "run", style: "vertical-align: top;" %>
+      </div>
+    </div>
+    <div class="col-xs-4">
+      <div class="form-group">
+        <%= f.text_field :name, placeholder: "Name", class: "form-control" %>
+      </div>
+      <div class="form-group">
+        <%= f.text_area :description, placeholder: "Optional description", style: "height: 70px;", class: "form-control" %>
+      </div>
+      <div class="text-right">
+        <% if @query.persisted? %>
+          <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+        <% end %>
+        <%= f.submit "Save", class: "btn btn-success" %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div id="results"></div>
+
+<script>
+  var editor = ace.edit("editor");
+  editor.setTheme("ace/theme/twilight");
+  editor.getSession().setMode("ace/mode/sql");
+  editor.setOptions({
+    enableBasicAutocompletion: false,
+    enableSnippets: false,
+    enableLiveAutocompletion: false,
+    highlightActiveLine: false,
+    fontSize: 12
+  });
+  editor.renderer.setShowGutter(false);
+  editor.renderer.setPrintMarginColumn(false);
+  editor.renderer.setPadding(10);
+  editor.getSession().setUseWrapMode(true);
+  $("#editor").show();
+
+  $("#run").click( function (e) {
+    e.preventDefault();
+    $("#results").html('<p class="text-muted">Loading...</p>');
+    $.post("<%= run_queries_path %>", {statement: editor.getValue()}, function (data) {
+      $("#results").html(data);
+    });
+  });
+
+  if ($("#query_statement").val() != "") {
+    $("#run").click();
+  }
+
+  $("#table_names").selectize({
+  }).change( function () {
+    var val = $(this).val();
+    if (val.length > 0) {
+      editor.setValue("SELECT * FROM " + val + " LIMIT 10");
+      $("#run").click();
+    }
+  });
+
+  $("form.the_form").on("submit", function() {
+    $("#query_statement").val(editor.getValue());
+    return true;
+  });
+</script>

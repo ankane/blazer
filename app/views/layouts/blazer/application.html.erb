@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title><%= title ? title : "Blazer" %></title>
+
+    <meta charset="utf-8" />
+
+    <%= stylesheet_link_tag "blazer/application" %>
+    <%= javascript_include_tag "blazer/application" %>
+    <%= csrf_meta_tags %>
+  </head>
+  <body>
+    <div class="container">
+      <%= yield %>
+    </div>
+  </body>
+</html>

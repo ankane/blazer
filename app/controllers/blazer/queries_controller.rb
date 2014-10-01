@@ -16,6 +16,7 @@ module Blazer
 
     def index
       @queries = Blazer::Query.order(:name).includes(:creator)
+      @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(*) >= 3").uniq.count(:user_id)
     end
 
     def new
@@ -57,9 +58,12 @@ module Blazer
       process_vars(@statement)
 
       if @success
+        @query = Query.find_by(id: params[:query_id]) if params[:query_id]
+
         # audit
         if Blazer.audit
           audit = Blazer::Audit.new(statement: @statement)
+          audit.query = @query
           audit.user = current_user if respond_to?(:current_user)
           audit.save!
         end
@@ -81,7 +85,6 @@ module Blazer
           end
         end
 
-        @query = Query.find_by(id: params[:query_id]) if params[:query_id]
         @filename = @query.name.parameterize if @query
 
         @min_width_types = (@rows.first || {}).select{|k, v| v.is_a?(Time) or v.is_a?(String) or smart_columns[k] }.keys

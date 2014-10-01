@@ -21,6 +21,9 @@
             <% if query.created_at > 2.days.ago %>
               <small style="font-weight: bold; color: #5cb85c;">NEW</small>
             <% end %>
+            <% if @trending_queries[query.id] %>
+              <small style="font-weight: bold; color: #f60;">TRENDING</small>
+            <% end %>
           </td>
           <td class="creator text-right text-muted">
             <% if (creator = query.creator) and creator.respond_to?(Blazer.user_name) %>

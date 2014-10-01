@@ -10,6 +10,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
 
     create_table :blazer_audits do |t|
       t.references :user
+      t.references :query
       t.text :statement
       t.timestamp :created_at
     end

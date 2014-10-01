@@ -17,8 +17,6 @@ Works with PostgreSQL and MySQL
 - **Smart Variables** - no need to remember IDs
 - **Charts & Maps** - a picture is worth a thousand words
 
-Documentation coming soon.
-
 ## Installation
 
 Add this line to your application’s Gemfile:
@@ -40,7 +38,7 @@ And mount the dashboard in your `config/routes.rb`:
 mount Blazer::Engine, at: "blazer"
 ```
 
-Then, specify your database:
+For production, specify your database:
 
 ```ruby
 ENV["BLAZER_DATABASE_URL"]
@@ -62,7 +60,7 @@ GRANT USAGE ON SCHEMA public TO blazer;
 COMMIT;
 ```
 
-It’s highly recommended to protect sensitive information with views.  Documentation coming soon.
+It is **highly, highly recommended** to protect sensitive information with views.  Documentation coming soon.
 
 ### MySQL
 
@@ -73,7 +71,7 @@ GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED 
 FLUSH PRIVILEGES;
 ```
 
-It’s highly recommended to protect sensitive information with views.  Documentation coming soon.
+It is **highly, highly recommended** to protect sensitive information with views.  Documentation coming soon.
 
 ## Authentication
 

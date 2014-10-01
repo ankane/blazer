@@ -5,6 +5,14 @@
 <% else %>
   <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
   <% if @rows.any? %>
+    <% values = @rows.first.values %>
+    <% if values.size >= 2 and values.first.is_a?(Time) and values[1..-1].all?{|v| v.is_a?(Numeric) } %>
+      <% time_k = @columns.keys.first %>
+      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k], r[k]] }} } %>
+    <% elsif values.size == 2 and values.first.is_a?(String) and values.last.is_a?(Numeric) %>
+      <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0} %>
+    <% end %>
+
     <% header_width = 100 / @rows.first.keys.size.to_f %>
     <table class="table">
       <thead>

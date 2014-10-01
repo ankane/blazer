@@ -7,6 +7,7 @@
 //= require ./highlight.pack
 //= require ./moment
 //= require ./daterangepicker
+//= require chartkick
 //= require ./ace/ace
 //= require ./ace/ext-language_tools
 //= require ./ace/theme-twilight

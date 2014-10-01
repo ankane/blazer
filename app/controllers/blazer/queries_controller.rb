@@ -15,7 +15,7 @@ module Blazer
     before_action :set_query, only: [:show, :edit, :update, :destroy]
 
     def index
-      @queries = Blazer::Query.order(:name)
+      @queries = Blazer::Query.order(:name).includes(:creator)
     end
 
     def new

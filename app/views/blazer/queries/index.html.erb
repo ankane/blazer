@@ -23,10 +23,10 @@
             <% end %>
           </td>
           <td class="creator text-right text-muted">
-            <% if (creator = query.creator) and creator.respond_to?(:name) %>
-              <% name = creator.name %>
+            <% if (creator = query.creator) and creator.respond_to?(Blazer.user_name) %>
+              <% name = creator.send(Blazer.user_name) %>
               <% if respond_to?(:current_user) and creator == current_user %>
-                you
+                You
                 <div class="hide">me <%= name %></div>
               <% else %>
                 <%= name %>

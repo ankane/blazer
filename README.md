@@ -108,6 +108,12 @@ Turn off audits
 Blazer.audit = false
 ```
 
+Customize user name
+
+```ruby
+Blazer.user_name = :first_name
+```
+
 ## TODO
 
 - better readme

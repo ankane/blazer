@@ -13,7 +13,6 @@ module Blazer
 
     before_action :ensure_database_url
     before_action :set_query, only: [:show, :edit, :update, :destroy]
-    before_action :set_tables, only: [:new, :edit]
 
     def index
       @queries = Blazer::Query.order(:name).includes(:creator)
@@ -136,10 +135,6 @@ module Blazer
       @query = Blazer::Query.find(params[:id].to_s.split("-").first)
     end
 
-    def set_tables
-      @tables = tables
-    end
-
     def query_params
       params.require(:query).permit(:name, :description, :statement)
     end
@@ -218,6 +213,7 @@ module Blazer
       rows, error = run_statement(Blazer::Connection.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema = ?", schema]))
       Hash[ rows.group_by{|r| r["table_name"] }.map{|t, f| [t, f.sort_by{|f| f["ordinal_position"] }.map{|f| f.slice("column_name", "data_type") }] }.sort_by{|t, f| t } ]
     end
+    helper_method :tables
 
   end
 end

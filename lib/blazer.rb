@@ -1,4 +1,5 @@
 require "csv"
+require "chartkick"
 require "blazer/version"
 require "blazer/engine"
 

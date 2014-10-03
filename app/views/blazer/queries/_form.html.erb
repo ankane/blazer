@@ -51,7 +51,7 @@
     fontSize: 12,
     minLines: 10
   });
-  editor.renderer.setShowGutter(false);
+  editor.renderer.setShowGutter(true);
   editor.renderer.setPrintMarginColumn(false);
   editor.renderer.setPadding(10);
   editor.getSession().setUseWrapMode(true);
@@ -64,14 +64,33 @@
     readOnly: false // false if this command should not apply in readOnly mode
   });
 
+  editor.resize();
   $("#editor").show();
   editor.focus();
 
-  $("#run").click( function (e) {
+  var error_line = null;
+
+  $("#run").click(function (e) {
     e.preventDefault();
+
+    if (error_line) {
+      editor.getSession().removeGutterDecoration(error_line - 1, "error");
+      error_line = null;
+    }
+
     $("#results").html('<p class="text-muted">Loading...</p>');
     $.post("<%= run_queries_path %>", {statement: editor.getValue()}, function (data) {
       $("#results").html(data);
+
+      error_line = /LINE (\d+)/g.exec($("#results").find('.alert-danger').text());
+
+      if (error_line) {
+        error_line = parseInt(error_line[1], 10);
+        editor.getSession().addGutterDecoration(error_line - 1, "error");
+        editor.scrollToLine(error_line, true, true, function () {});
+        editor.gotoLine(error_line, 0, true);
+        editor.focus();
+      }
     });
   });
 

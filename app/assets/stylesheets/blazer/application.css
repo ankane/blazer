@@ -64,3 +64,7 @@ input.search:focus {
 .ace_print-margin-layer {
   display: none;
 }
+
+.ace_gutter-cell.error {
+  background-color: red;
+}

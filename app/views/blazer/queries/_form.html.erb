@@ -48,13 +48,24 @@
     enableSnippets: false,
     enableLiveAutocompletion: false,
     highlightActiveLine: false,
-    fontSize: 12
+    fontSize: 12,
+    minLines: 10
   });
   editor.renderer.setShowGutter(false);
   editor.renderer.setPrintMarginColumn(false);
   editor.renderer.setPadding(10);
   editor.getSession().setUseWrapMode(true);
+  editor.commands.addCommand({
+    name: 'run',
+    bindKey: {win: 'Ctrl-Enter',  mac: 'Command-Enter'},
+    exec: function(editor) {
+        $("#run").click();
+    },
+    readOnly: false // false if this command should not apply in readOnly mode
+  });
+
   $("#editor").show();
+  editor.focus();
 
   $("#run").click( function (e) {
     e.preventDefault();

@@ -58,9 +58,13 @@ input.search:focus {
 
 #editor {
   display: none;
-  height: 100px;
+  height: 175px;
 }
 
 .ace_print-margin-layer {
   display: none;
+}
+
+.ace_gutter-cell.error {
+  background-color: red;
 }

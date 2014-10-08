@@ -18,6 +18,7 @@ Works with PostgreSQL and MySQL
 - **Smart Columns** - get the data your want without all the joins
 - **Smart Variables** - no need to remember ids
 - **Charts** - visualize the data
+- **Audits** - all queries are tracked
 
 ## Installation
 

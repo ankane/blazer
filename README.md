@@ -2,7 +2,7 @@
 
 Create and share SQL queries instantly
 
-[View the demo](https://blazerme.herokuapp.com)
+[View the demo](https://blazerme.herokuapp.com) - data from [MovieLens](http://grouplens.org/datasets/movielens/)
 
 Works with PostgreSQL and MySQL
 
@@ -11,11 +11,11 @@ Works with PostgreSQL and MySQL
 ## Features
 
 - **Secure** - works with your authentication system
-- **Variables** - get the same insights for multiple values
+- **Variables** - run the same queries with different values
 - **Linked Columns** - link to other pages in your apps or around the web
 - **Smart Columns** - get the data your want without all the joins
-- **Smart Variables** - no need to remember IDs
-- **Charts & Maps** - a picture is worth a thousand words
+- **Smart Variables** - no need to remember ids
+- **Charts** - visualize the data
 
 ## Installation
 
@@ -122,9 +122,9 @@ Blazer.user_name = :first_name
 - update lock
 - warn when database user has write permissions
 - advanced permissions
+- maps
 - favorites
 - support for multiple data sources
-- Ruby config
 
 ## Thanks
 

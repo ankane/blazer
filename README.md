@@ -4,6 +4,8 @@ Create and share SQL queries instantly
 
 [Play around with the demo](https://blazerme.herokuapp.com) - data from [MovieLens](http://grouplens.org/datasets/movielens/)
 
+![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-d9ba1e4394901e7233ce462c0c8dc8f5.png)
+
 Works with PostgreSQL and MySQL
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com)

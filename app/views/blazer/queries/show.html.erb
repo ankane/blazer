@@ -124,15 +124,23 @@
       $("#results").html(data);
       $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
     });
-
-    $(".form-inline input, .form-inline select").change( function () {
-      if ($(this).val() != "") {
-        $(this).closest("form").submit();
-      }
-    });
   </script>
 <% end %>
 
 <script>
   hljs.initHighlightingOnLoad();
+
+  $(".form-inline input, .form-inline select").change( function () {
+    // see if all value are entered
+    var $form = $(this).closest("form");
+    var completed = true;
+    $form.find("input[name], select").each( function() {
+      if ($(this).val() == "") {
+        completed = false;
+      }
+    });
+    if (completed) {
+      $form.submit();
+    }
+  });
 </script>

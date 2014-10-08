@@ -134,7 +134,7 @@
     // see if all value are entered
     var $form = $(this).closest("form");
     var completed = true;
-    $form.find("input[name], select").each( function() {
+    $form.find("input[name], select").each( function () {
       if ($(this).val() == "") {
         completed = false;
       }

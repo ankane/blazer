@@ -2,7 +2,7 @@
 
 Create and share SQL queries instantly
 
-[View the demo](https://blazerme.herokuapp.com) - data from [MovieLens](http://grouplens.org/datasets/movielens/)
+[Play around with the demo](https://blazerme.herokuapp.com) - data from [MovieLens](http://grouplens.org/datasets/movielens/)
 
 Works with PostgreSQL and MySQL
 

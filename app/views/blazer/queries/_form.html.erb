@@ -22,10 +22,12 @@
     </div>
     <div class="col-xs-4">
       <div class="form-group">
-        <%= f.text_field :name, placeholder: "Name", class: "form-control" %>
+        <%= f.label :name %>
+        <%= f.text_field :name, class: "form-control" %>
       </div>
       <div class="form-group">
-        <%= f.text_area :description, placeholder: "Optional description", style: "height: 70px;", class: "form-control" %>
+        <%= f.label :description %>
+        <%= f.text_area :description, placeholder: "Optional", style: "height: 80px;", class: "form-control" %>
       </div>
       <div class="text-right">
         <% if @query.persisted? %>

@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = Blazer::VERSION
   spec.authors       = ["Andrew Kane"]
   spec.email         = ["andrew@chartkick.com"]
-  spec.summary       = %q{Create and share SQL queries instantly}
-  spec.description   = %q{Create and share SQL queries instantly}
+  spec.summary       = %q{Share data effortlessly with your team}
+  spec.description   = %q{Share data effortlessly with your team}
   spec.homepage      = "https://github.com/ankane/blazer"
   spec.license       = "MIT"
 

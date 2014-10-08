@@ -43,7 +43,7 @@ mount Blazer::Engine, at: "blazer"
 For production, specify your database:
 
 ```ruby
-ENV["BLAZER_DATABASE_URL"]
+ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database_name"
 ```
 
 It is **highly, highly recommended** to use a read only user.  Keep reading to see how to create one.

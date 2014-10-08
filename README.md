@@ -1,6 +1,6 @@
 # Blazer
 
-Create and share SQL queries instantly
+Share data effortlessly with your team
 
 [Play around with the demo](https://blazerme.herokuapp.com) - data from [MovieLens](http://grouplens.org/datasets/movielens/)
 

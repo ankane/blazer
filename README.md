@@ -107,6 +107,12 @@ Change time zone
 Blazer.time_zone = "Pacific Time (US & Canada)"
 ```
 
+Change timeout *PostgreSQL only* [master]
+
+```ruby
+Blazer.timeout = 10 # defaults to 15
+```
+
 Turn off audits
 
 ```ruby

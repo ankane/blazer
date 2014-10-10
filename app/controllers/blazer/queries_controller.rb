@@ -155,6 +155,7 @@ module Blazer
       error = nil
       begin
         Blazer::Connection.transaction do
+          Blazer::Connection.connection.execute("SET statement_timeout = #{Blazer.timeout}") if postgresql?
           result = Blazer::Connection.connection.select_all(statement)
           result.each do |untyped_row|
             row = {}
@@ -208,12 +209,16 @@ module Blazer
     end
 
     def tables
-      default_schema = Blazer::Connection.connection.adapter_name == "PostgreSQL" ? "public" : Blazer::Connection.connection_config[:database]
+      default_schema = postgresql? ? "public" : Blazer::Connection.connection_config[:database]
       schema = Blazer::Connection.connection_config[:schema] || default_schema
       rows, error = run_statement(Blazer::Connection.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema = ?", schema]))
       Hash[ rows.group_by{|r| r["table_name"] }.map{|t, f| [t, f.sort_by{|f| f["ordinal_position"] }.map{|f| f.slice("column_name", "data_type") }] }.sort_by{|t, f| t } ]
     end
     helper_method :tables
+
+    def postgresql?
+      Blazer::Connection.connection.adapter_name == "PostgreSQL"
+    end
 
   end
 end

@@ -155,7 +155,7 @@ module Blazer
       error = nil
       begin
         Blazer::Connection.transaction do
-          Blazer::Connection.connection.execute("SET statement_timeout = #{Blazer.timeout}") if postgresql?
+          Blazer::Connection.connection.execute("SET statement_timeout = #{Blazer.timeout * 1000}") if Blazer.timeout && postgresql?
           result = Blazer::Connection.connection.select_all(statement)
           result.each do |untyped_row|
             row = {}

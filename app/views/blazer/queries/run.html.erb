@@ -1,7 +1,7 @@
 <% if @error %>
   <div class="alert alert-danger"><%= @error %></div>
 <% elsif !@success %>
-  <div class="alert alert-info">Can’t run queries with variables yet</div>
+  <div class="alert alert-info">Can’t preview queries with variables...yet!</div>
 <% else %>
   <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
   <% if @rows.any? %>

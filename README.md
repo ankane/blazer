@@ -2,6 +2,8 @@
 
 Share data effortlessly with your team
 
+Blazer eliminates the need for many admin pages
+
 [Play around with the demo](https://blazerme.herokuapp.com) - data from [MovieLens](http://grouplens.org/datasets/movielens/)
 
 ![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-d9ba1e4394901e7233ce462c0c8dc8f5.png)

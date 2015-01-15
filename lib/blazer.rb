@@ -4,6 +4,7 @@ require "blazer/version"
 require "blazer/engine"
 
 module Blazer
+  DEFAULT_USER_CLASS_NAME = 'User'
   class << self
     attr_accessor :audit
     attr_reader :time_zone

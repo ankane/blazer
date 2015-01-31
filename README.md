@@ -124,7 +124,7 @@ Blazer.audit = false
 Custom user class
 
 ```ruby
-Blazer.user_class = 'MyNamespace::MyClass'
+Blazer.user_class = "Admin"
 ```
 
 Customize user name
@@ -144,6 +144,10 @@ Blazer.user_name = :first_name
 - maps
 - favorites
 - support for multiple data sources
+
+## History
+
+View the [changelog](https://github.com/ankane/blazer/blob/master/CHANGELOG.md)
 
 ## Thanks
 

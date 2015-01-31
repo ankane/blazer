@@ -101,6 +101,31 @@ authenticate :user, lambda{|user| user.admin? } do
 end
 ```
 
+### Custom Authentication
+Overload Blazer::Controller to include custom filters and other necessary functions
+
+```ruby
+# lib/blazer/controller.rb
+module Blazer
+  module Controller
+    extend ActiveSupport::Concern
+
+    included do
+      append_before_action :require_authentication  #forces authentication using custom callback
+      append_before_action :require_admin_role  #forces admin role using custom callback
+    end
+    
+    def log_in_path  #defines log_in_path as blazer is isolated from all paths by design
+      "/"
+    end
+
+    def current_user 
+      current_member
+    end
+  end
+end
+```
+
 ## Customization
 
 Change time zone

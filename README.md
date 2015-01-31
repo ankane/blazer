@@ -121,6 +121,12 @@ Turn off audits
 Blazer.audit = false
 ```
 
+Custom user class
+
+```ruby
+Blazer.user_class = 'MyNamespace::MyClass'
+```
+
 Customize user name
 
 ```ruby

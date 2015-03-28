@@ -133,6 +133,18 @@ Customize user name
 Blazer.user_name = :first_name
 ```
 
+## Charts
+
+Blazer will automatically generate charts based on the types of the columns returned in your query
+
+### Line Chart
+
+If there are at least 2 columns and the first is a timestamp and all other columns are numeric, a line chart will be generated
+
+### Pie Chart
+
+If there are 2 columns and the first column is a string and the second column is a numeric, a pie chart will be generated
+
 ## TODO
 
 - better readme

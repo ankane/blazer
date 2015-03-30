@@ -10,7 +10,7 @@ Blazer eliminates the need for many admin pages
 
 Works with PostgreSQL and MySQL
 
-:tangerine: Battle-tested at [Instacart](https://www.instacart.com)
+:tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
 ## Features
 

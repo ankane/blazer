@@ -6,6 +6,7 @@
 //= require ./selectize
 //= require ./highlight.pack
 //= require ./moment
+//= require ./moment-timezone
 //= require ./daterangepicker
 //= require chartkick
 //= require ./ace/ace

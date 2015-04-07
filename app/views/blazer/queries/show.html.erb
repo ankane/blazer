@@ -77,32 +77,48 @@
       </div>
 
       <script>
+        var timeZone = "<%= Blazer.time_zone.tzinfo.name %>";
+        var format = "YYYY-MM-DD";
+        var now = moment.tz(timeZone);
+
+        function dateStr(daysAgo) {
+          return now.clone().subtract(daysAgo || 0, "days").format(format);
+        }
+
+        function toDate(time) {
+          return moment.tz(time.format(format), timeZone);
+        }
+
+        function setTimeInputs(start, end) {
+          $("#start_time").val(toDate(start).format());
+          $("#end_time").val(toDate(end).endOf("day").format());
+        }
+
         $('#reportrange').daterangepicker(
           {
             ranges: {
-             'Today': [moment(), moment()],
-             'Last 7 Days': [moment().subtract('days', 6), moment()],
-             'Last 30 Days': [moment().subtract('days', 29), moment()]
+             "Today": [dateStr(), dateStr()],
+             "Last 7 Days": [dateStr(6), dateStr()],
+             "Last 30 Days": [dateStr(29), dateStr()]
             },
-            startDate: moment().subtract('days', 29),
-            endDate: moment(),
+            format: format,
+            startDate: dateStr(29),
+            endDate: dateStr(),
             opens: "left"
           },
           function(start, end) {
-            $("#start_time").val(start.toISOString());
-            $("#end_time").val(end.endOf("day").toISOString());
-            $("#start_time").closest("form").submit();
+            setTimeInputs(start, end);
+            submitIfCompleted($("#start_time").closest("form"));
           }
         ).on('apply.daterangepicker', function(ev, picker) {
-          $("#start_time").val(picker.startDate.toISOString());
-          $("#end_time").val(picker.endDate.endOf("day").toISOString());
-          $('#reportrange span').html(picker.startDate.format('MMMM D, YYYY') + ' - ' + picker.endDate.format('MMMM D, YYYY'));
+          setTimeInputs(picker.startDate, picker.endDate);
+          $('#reportrange span').html(toDate(picker.startDate).format('MMMM D, YYYY') + ' - ' + toDate(picker.endDate).format('MMMM D, YYYY'));
         })
 
         if ($("#start_time").val().length > 0) {
           var picker = $("#reportrange").data('daterangepicker');
-          picker.setStartDate(moment($("#start_time").val()));
-          picker.setEndDate(moment($("#end_time").val()));
+          picker.setStartDate(moment.tz($("#start_time").val().substring(0, 10), timeZone));
+          picker.setEndDate(moment.tz($("#end_time").val().substring(0, 10), timeZone));
           $("#reportrange").trigger('apply.daterangepicker', picker)
         }
       </script>
@@ -130,9 +146,7 @@
 <script>
   hljs.initHighlightingOnLoad();
 
-  $(".form-inline input, .form-inline select").change( function () {
-    // see if all value are entered
-    var $form = $(this).closest("form");
+  function submitIfCompleted($form) {
     var completed = true;
     $form.find("input[name], select").each( function () {
       if ($(this).val() == "") {
@@ -142,5 +156,9 @@
     if (completed) {
       $form.submit();
     }
+  }
+
+  $(".form-inline input, .form-inline select").change( function () {
+    submitIfCompleted($(this).closest("form"));
   });
 </script>

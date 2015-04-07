@@ -86,6 +86,9 @@
             },
             startDate: moment().subtract('days', 29),
             endDate: moment(),
+            <% if Blazer.time_zone %>
+            timeZone: "<%= Blazer.time_zone.formatted_offset %>",
+            <% end %>
             opens: "left"
           },
           function(start, end) {

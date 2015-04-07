@@ -90,8 +90,8 @@
         }
 
         function setTimeInputs(start, end) {
-          $("#start_time").val(toDate(start).format());
-          $("#end_time").val(toDate(end).endOf("day").format());
+          $("#start_time").val(toDate(start).utc().format());
+          $("#end_time").val(toDate(end).endOf("day").utc().format());
         }
 
         $('#reportrange').daterangepicker(
@@ -117,8 +117,8 @@
 
         if ($("#start_time").val().length > 0) {
           var picker = $("#reportrange").data('daterangepicker');
-          picker.setStartDate(moment.tz($("#start_time").val().substring(0, 10), timeZone));
-          picker.setEndDate(moment.tz($("#end_time").val().substring(0, 10), timeZone));
+          picker.setStartDate(moment.tz($("#start_time").val(), timeZone));
+          picker.setEndDate(moment.tz($("#end_time").val(), timeZone));
           $("#reportrange").trigger('apply.daterangepicker', picker)
         }
       </script>

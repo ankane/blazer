@@ -1,3 +1,7 @@
+## 0.0.6 [unreleased]
+
+- Fixed time zones for date select
+
 ## 0.0.5
 
 - Added support for Rails 4.2

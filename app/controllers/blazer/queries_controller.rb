@@ -16,7 +16,7 @@ module Blazer
 
     def index
       @queries = Blazer::Query.order(:name).includes(:creator)
-      @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(*) >= 3").uniq.count(:user_id)
+      @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
     end
 
     def new

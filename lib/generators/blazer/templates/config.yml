@@ -6,3 +6,6 @@ smart_columns:
 
 smart_variables:
   # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
+
+dynamic_columns:
+  # user_attributes: "SELECT column_name FROM information_schema.columns WHERE table_name='users'"

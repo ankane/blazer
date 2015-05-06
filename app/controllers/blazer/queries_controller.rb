@@ -41,7 +41,7 @@ module Blazer
       @smart_vars = {}
       @sql_errors = []
       @bind_vars.each do |var|
-        query = smart_variables[var]
+        query = smart_variables[var] || dynamic_columns[var]
         if query
           rows, error = run_statement(query)
           @smart_vars[var] = rows.map{|v| v.values.reverse }
@@ -187,7 +187,14 @@ module Blazer
           if var.end_with?("_at")
             value = Blazer.time_zone.parse(value) rescue nil
           end
-          statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
+
+          subbed_value = if safe_dynamic_column?(var, value)
+            ActiveRecord::Base.connection.quote_column_name(value)
+          else
+            ActiveRecord::Base.connection.quote(value)
+          end
+
+          statement.gsub!("{#{var}}", subbed_value)
         end
       end
     end
@@ -208,13 +215,33 @@ module Blazer
       settings["smart_variables"] || {}
     end
 
+    def dynamic_columns
+      settings["dynamic_columns"] || {}
+    end
+
+    def safe_dynamic_column?(var, value)
+      dynamic_columns.key?(var) && all_columns.include?(value)
+    end
+
     def tables
-      default_schema = postgresql? ? "public" : Blazer::Connection.connection_config[:database]
-      schema = Blazer::Connection.connection_config[:schema] || default_schema
-      rows, error = run_statement(Blazer::Connection.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema = ?", schema]))
+      rows, error = sanitized_query "SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema = ?", schema
       Hash[ rows.group_by{|r| r["table_name"] }.map{|t, f| [t, f.sort_by{|f| f["ordinal_position"] }.map{|f| f.slice("column_name", "data_type") }] }.sort_by{|t, f| t } ]
     end
     helper_method :tables
+
+    def all_columns
+      rows, error = sanitized_query "SELECT column_name FROM information_schema.columns WHERE table_schema = ?", schema
+      rows.flat_map(&:values).uniq.sort
+    end
+
+    def sanitized_query(sql, *query_vars)
+      run_statement Blazer::Connection.send(:sanitize_sql_array, [sql, *query_vars])
+    end
+
+    def schema
+      default_schema = postgresql? ? "public" : Blazer::Connection.connection_config[:database]
+      Blazer::Connection.connection_config[:schema] || default_schema
+    end
 
     def postgresql?
       Blazer::Connection.connection.adapter_name == "PostgreSQL"

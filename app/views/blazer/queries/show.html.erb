@@ -11,6 +11,7 @@
       </div>
       <div class="col-sm-3 text-right">
         <%= link_to "Edit", edit_query_path(@query), class: "btn btn-default" %>
+        <%= link_to "Fork", new_query_path(statement: @query.statement), class: "btn btn-info" %>
 
         <% if !@error and @success %>
           <%= button_to "Download", run_queries_path(statement: @query.statement, query_id: @query.id, format: "csv"), class: "btn btn-primary" %>

@@ -4,8 +4,7 @@ module Blazer
 
     initializer "precompile" do |app|
       # use a proc instead of a string
-      app.config.assets.precompile << Proc.new{|path| path =~ /\Ablazer\/application\.(js|css)\z/ }
+      app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/application\.(js|css)\z/ }
     end
-
   end
 end

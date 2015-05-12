@@ -8,6 +8,5 @@ module Blazer
     def to_param
       [id, name.gsub("'", "").parameterize].join("-")
     end
-
   end
 end

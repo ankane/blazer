@@ -45,7 +45,7 @@ module Blazer
         query = smart_variables[var]
         if query
           rows, error = run_statement(query)
-          @smart_vars[var] = rows.map{|v| v.values.reverse }
+          @smart_vars[var] = rows.map { |v| v.values.reverse }
           @sql_errors << error if error
         end
       end
@@ -88,15 +88,15 @@ module Blazer
 
         @filename = @query.name.parameterize if @query
 
-        @min_width_types = (@rows.first || {}).select{|k, v| v.is_a?(Time) or v.is_a?(String) or smart_columns[k] }.keys
+        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || smart_columns[k] }.keys
 
         @boom = {}
         @columns.keys.each do |key|
           query = smart_columns[key]
           if query
-            values = @rows.map{|r| r[key] }.compact.uniq
+            values = @rows.map { |r| r[key] }.compact.uniq
             rows, error = run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
-            @boom[key] = Hash[ rows.map(&:values) ]
+            @boom[key] = Hash[rows.map(&:values)]
           end
         end
 
@@ -108,7 +108,7 @@ module Blazer
           render layout: false
         end
         format.csv do
-          send_data csv_data(@rows), type: 'text/csv; charset=utf-8; header=present', disposition: "attachment; filename=\"#{@query ? @query.name.parameterize : "query"}.csv\""
+          send_data csv_data(@rows), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query ? @query.name.parameterize : 'query'}.csv\""
         end
       end
     end
@@ -174,12 +174,12 @@ module Blazer
     end
 
     def extract_vars(statement)
-      statement.scan(/\{.*?\}/).map{|v| v[1...-1] }.uniq
+      statement.scan(/\{.*?\}/).map { |v| v[1...-1] }.uniq
     end
 
     def process_vars(statement)
       @bind_vars = extract_vars(statement)
-      @success = @bind_vars.all?{|v| params[v] }
+      @success = @bind_vars.all? { |v| params[v] }
 
       if @success
         @bind_vars.each do |var|
@@ -213,13 +213,12 @@ module Blazer
       default_schema = postgresql? ? "public" : Blazer::Connection.connection_config[:database]
       schema = Blazer::Connection.connection_config[:schema] || default_schema
       rows, error = run_statement(Blazer::Connection.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema = ?", schema]))
-      Hash[ rows.group_by{|r| r["table_name"] }.map{|t, f| [t, f.sort_by{|f| f["ordinal_position"] }.map{|f| f.slice("column_name", "data_type") }] }.sort_by{|t, f| t } ]
+      Hash[rows.group_by { |r| r["table_name"] }.map { |t, f| [t, f.sort_by { |f| f["ordinal_position"] }.map { |f| f.slice("column_name", "data_type") }] }.sort_by { |t, _f| t }]
     end
     helper_method :tables
 
     def postgresql?
       Blazer::Connection.connection.adapter_name == "PostgreSQL"
     end
-
   end
 end

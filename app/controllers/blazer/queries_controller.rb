@@ -15,7 +15,8 @@ module Blazer
     before_action :set_query, only: [:show, :edit, :update, :destroy]
 
     def index
-      @queries = Blazer::Query.order(:name).includes(:creator)
+      @queries = Blazer::Query.order(:name)
+      @queries = @queries.includes(:creator) if Blazer.user_class
       @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
     end
 
@@ -25,7 +26,7 @@ module Blazer
 
     def create
       @query = Blazer::Query.new(query_params)
-      @query.creator = current_user if respond_to?(:current_user)
+      @query.creator = current_user if respond_to?(:current_user) && Blazer.user_class
 
       if @query.save
         redirect_to @query
@@ -64,7 +65,7 @@ module Blazer
         if Blazer.audit
           audit = Blazer::Audit.new(statement: @statement)
           audit.query = @query
-          audit.user = current_user if respond_to?(:current_user)
+          audit.user = current_user if respond_to?(:current_user) && Blazer.user_class
           audit.save!
         end
 

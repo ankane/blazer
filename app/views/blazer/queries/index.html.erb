@@ -26,7 +26,7 @@
             <% end %>
           </td>
           <td class="creator text-right text-muted">
-            <% if (creator = query.creator) and creator.respond_to?(Blazer.user_name) %>
+            <% if query.respond_to?(:creator) && (creator = query.creator) && creator.respond_to?(Blazer.user_name) %>
               <% name = creator.send(Blazer.user_name) %>
               <% if respond_to?(:current_user) and creator == current_user %>
                 You

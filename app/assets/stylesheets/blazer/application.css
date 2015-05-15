@@ -2,6 +2,7 @@
  *= require ./bootstrap
  *= require ./selectize.default
  *= require ./github
+ *= require ./jquery_ui
  *= require ./daterangepicker-bs3
  *= require_self
  */

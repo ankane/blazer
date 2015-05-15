@@ -10,6 +10,7 @@
     <thead>
       <tr>
         <th>Query</th>
+        <th>Description</th>
         <th style="width: 20%; text-align: right;">Mastermind</th>
       </tr>
     </thead>
@@ -25,6 +26,7 @@
               <small style="font-weight: bold; color: #f60;">TRENDING</small>
             <% end %>
           </td>
+          <td><%= query.description %></td>
           <td class="creator text-right text-muted">
             <% if query.respond_to?(:creator) && (creator = query.creator) && creator.respond_to?(Blazer.user_name) %>
               <% name = creator.send(Blazer.user_name) %>

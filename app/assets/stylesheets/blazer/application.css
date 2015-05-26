@@ -58,7 +58,7 @@ input.search:focus {
 
 #editor {
   display: none;
-  height: 160px;
+  height: 400px;
 }
 
 .ace_print-margin-layer {

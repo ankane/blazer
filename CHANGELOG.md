@@ -1,5 +1,7 @@
-## 0.0.6 [unreleased]
+## 0.0.6
 
+- Added fork button
+- Fixed trending
 - Fixed time zones for date select
 
 ## 0.0.5

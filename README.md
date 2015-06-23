@@ -6,7 +6,7 @@ Blazer eliminates the need for many admin pages
 
 [Play around with the demo](https://blazerme.herokuapp.com) - data from [MovieLens](http://grouplens.org/datasets/movielens/)
 
-![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-d9ba1e4394901e7233ce462c0c8dc8f5.png)
+[![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-18d79092e635b4b220f57ff7a1ecea41.png)](https://blazerme.herokuapp.com)
 
 Works with PostgreSQL and MySQL
 

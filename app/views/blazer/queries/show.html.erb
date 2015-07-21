@@ -14,7 +14,7 @@
         <%= link_to "Fork", new_query_path(statement: @query.statement), class: "btn btn-info" %>
 
         <% if !@error and @success %>
-          <%= button_to "Download", run_queries_path(statement: @query.statement, query_id: @query.id, format: "csv"), class: "btn btn-primary" %>
+          <%= button_to "Download", run_queries_path(statement: @statement, query_id: @query.id, format: "csv"), class: "btn btn-primary" %>
         <% end %>
       </div>
     </div>
@@ -129,7 +129,7 @@
   </form>
 <% end %>
 
-<pre><code><%= @query.statement %></code></pre>
+<pre><code><%= @statement %></code></pre>
 
 <% if @success %>
   <div id="results">
@@ -137,7 +137,7 @@
   </div>
 
   <script>
-    $.post("<%= run_queries_path %>", <%= json_escape({statement: @query.statement, query_id: @query.id}.to_json).html_safe %>, function (data) {
+    $.post("<%= run_queries_path %>", <%= json_escape({statement: @statement, query_id: @query.id}.to_json).html_safe %>, function (data) {
       $("#results").html(data);
       $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
     });

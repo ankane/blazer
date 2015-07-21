@@ -36,7 +36,7 @@ module Blazer
     end
 
     def show
-      @statement = @query.statement
+      @statement = @query.statement.dup
       process_vars(@statement)
 
       @smart_vars = {}

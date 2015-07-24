@@ -1,3 +1,9 @@
+## 0.0.7
+
+- Fixed error when no `User` class
+- Fixed forking a query with variables
+- Set time zone after Rails initializes
+
 ## 0.0.6
 
 - Added fork button

@@ -21,10 +21,14 @@ module Blazer
     end
 
     def new
+      redirect_to root_path unless can? :new, Blazer::Query
+
       @query = Blazer::Query.new(statement: params[:statement])
     end
 
     def create
+      redirect_to root_path unless can? :create, Blazer::Query
+
       @query = Blazer::Query.new(query_params)
       @query.creator = current_user if respond_to?(:current_user) && Blazer.user_class
 
@@ -36,6 +40,8 @@ module Blazer
     end
 
     def show
+      redirect_to root_path unless can? :show, Blazer::Query
+
       @statement = @query.statement
       process_vars(@statement)
 
@@ -52,6 +58,7 @@ module Blazer
     end
 
     def edit
+      redirect_to query_path(@query) unless can? :edit, @query
     end
 
     def run
@@ -114,7 +121,7 @@ module Blazer
     end
 
     def update
-      if @query.update(query_params)
+      if cannot?(:update, @query) || @query.update(query_params)
         redirect_to query_path(@query)
       else
         render :edit
@@ -122,8 +129,12 @@ module Blazer
     end
 
     def destroy
-      @query.destroy
-      redirect_to root_url
+      if can? :delete, @query
+        @query.destroy
+        redirect_to root_url
+      else
+        redirect_to query_path(@query)
+      end    
     end
 
     private

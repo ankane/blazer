@@ -1,7 +1,9 @@
 <div id="queries">
   <div id="header" style="margin-bottom: 20px;">
     <div class="pull-right">
-      <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
+      <% if can? :new, Blazer::Query %>
+        <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
+      <% end %>
     </div>
     <input type="text" placeholder="Start typing a query or person" style="width: 300px; display: inline-block;" autofocus=true class="search form-control" />
   </div>

@@ -30,7 +30,7 @@
         <%= f.text_area :description, placeholder: "Optional", style: "height: 80px;", class: "form-control" %>
       </div>
       <div class="text-right">
-        <% if @query.persisted? %>
+        <% if can?(:delete, @query) && @query.persisted? %>
           <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
         <% end %>
         <%= f.submit "Save", class: "btn btn-success" %>

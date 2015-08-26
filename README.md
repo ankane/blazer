@@ -16,9 +16,9 @@ Works with PostgreSQL and MySQL
 
 - **Secure** - works with your authentication system
 - **Variables** - run the same queries with different values
-- **Linked Columns** - link to other pages in your apps or around the web
-- **Smart Columns** - get the data you want without all the joins
-- **Smart Variables** - no need to remember ids
+- **Linked Columns** - link to other pages in your apps or around the web (Check the examples in config/blazer.yml)
+- **Smart Columns** - get the data you want without all the joins (Check the examples in config/blazer.yml)
+- **Smart Variables** - no need to remember ids (Check the examples in config/blazer.yml)
 - **Charts** - visualize the data
 - **Audits** - all queries are tracked
 

@@ -37,6 +37,7 @@ module Blazer
 
     def show
       @statement = @query.statement.dup
+      session[:params] = params.except(:controller, :action, :id, :host)
       process_vars(@statement)
 
       @smart_vars = {}
@@ -115,7 +116,7 @@ module Blazer
 
     def update
       if @query.update(query_params)
-        redirect_to query_path(@query)
+        redirect_to query_path(@query, session_params.merge(only_path: true))
       else
         render :edit
       end
@@ -179,6 +180,7 @@ module Blazer
 
     def process_vars(statement)
       @bind_vars = extract_vars(statement)
+      params = session_params.merge(self.params)
       @success = @bind_vars.all? { |v| params[v] }
 
       if @success
@@ -191,6 +193,10 @@ module Blazer
           statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
         end
       end
+    end
+
+    def session_params
+      session[:params] || {}
     end
 
     def settings

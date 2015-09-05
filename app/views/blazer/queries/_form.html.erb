@@ -2,7 +2,7 @@
   <div class="alert alert-danger"><%= @query.errors.full_messages.first %></div>
 <% end %>
 
-<%= form_for @query, html: {class: "the_form", autocomplete: "off"} do |f| %>
+<%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params) : queries_path(variable_params)), html: {class: "the_form", autocomplete: "off"} do |f| %>
   <div class="row">
     <div class="col-xs-8">
       <div class= "form-group">
@@ -85,6 +85,7 @@
 
   var error_line = null;
   var xhr;
+  var params = <%= raw json_escape(variable_params.to_json) %>;
 
   $("#run").click(function (e) {
     e.preventDefault();
@@ -98,7 +99,7 @@
     if (xhr) {
       xhr.abort();
     }
-    xhr = $.post("<%= run_queries_path %>", {statement: editor.getValue()}, function (data) {
+    xhr = $.post("<%= run_queries_path %>", $.extend({}, params, {statement: editor.getValue()}), function (data) {
       $("#results").html(data);
 
       error_line = /LINE (\d+)/g.exec($("#results").find('.alert-danger').text());

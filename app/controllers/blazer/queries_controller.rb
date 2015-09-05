@@ -29,7 +29,7 @@ module Blazer
       @query.creator = current_user if respond_to?(:current_user) && Blazer.user_class
 
       if @query.save
-        redirect_to @query
+        redirect_to query_path(@query, variable_params)
       else
         render :new
       end
@@ -37,7 +37,6 @@ module Blazer
 
     def show
       @statement = @query.statement.dup
-      session[:blazer_params] = params.except(:controller, :action, :id, :host)
       process_vars(@statement)
 
       @smart_vars = {}
@@ -116,7 +115,7 @@ module Blazer
 
     def update
       if @query.update(query_params)
-        redirect_to query_path(@query, session_params.merge(only_path: true))
+        redirect_to query_path(@query, variable_params)
       else
         render :edit
       end
@@ -180,7 +179,6 @@ module Blazer
 
     def process_vars(statement)
       @bind_vars = extract_vars(statement)
-      params = session_params.merge(self.params)
       @success = @bind_vars.all? { |v| params[v] }
 
       if @success
@@ -195,9 +193,10 @@ module Blazer
       end
     end
 
-    def session_params
-      session[:blazer_params] || {}
+    def variable_params
+      params.except(:controller, :action, :id, :host, :query, :table_names, :authenticity_token, :utf8, :_method, :commit)
     end
+    helper_method :variable_params
 
     def settings
       YAML.load(File.read(Rails.root.join("config", "blazer.yml")))

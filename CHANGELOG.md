@@ -1,3 +1,9 @@
+## 0.0.8 [unreleased]
+
+- Easier to edit queries with variables
+- Dynamically expand editor height as needed
+- No need for spaces in search
+
 ## 0.0.7
 
 - Fixed error when no `User` class

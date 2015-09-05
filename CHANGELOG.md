@@ -1,4 +1,4 @@
-## 0.0.8 [unreleased]
+## 0.0.8
 
 - Easier to edit queries with variables
 - Dynamically expand editor height as needed

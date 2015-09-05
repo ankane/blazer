@@ -37,7 +37,7 @@ module Blazer
 
     def show
       @statement = @query.statement.dup
-      session[:params] = params.except(:controller, :action, :id, :host)
+      session[:blazer_params] = params.except(:controller, :action, :id, :host)
       process_vars(@statement)
 
       @smart_vars = {}
@@ -196,7 +196,7 @@ module Blazer
     end
 
     def session_params
-      session[:params] || {}
+      session[:blazer_params] || {}
     end
 
     def settings

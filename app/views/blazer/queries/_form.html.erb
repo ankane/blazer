@@ -71,6 +71,7 @@
   editor.focus();
 
   var error_line = null;
+  var xhr;
 
   $("#run").click(function (e) {
     e.preventDefault();
@@ -81,7 +82,10 @@
     }
 
     $("#results").html('<p class="text-muted">Loading...</p>');
-    $.post("<%= run_queries_path %>", {statement: editor.getValue()}, function (data) {
+    if (xhr) {
+      xhr.abort();
+    }
+    xhr = $.post("<%= run_queries_path %>", {statement: editor.getValue()}, function (data) {
       $("#results").html(data);
 
       error_line = /LINE (\d+)/g.exec($("#results").find('.alert-danger').text());

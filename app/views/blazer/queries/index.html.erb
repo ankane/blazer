@@ -24,6 +24,7 @@
             <% if @trending_queries[query.id] %>
               <small style="font-weight: bold; color: #f60;">TRENDING</small>
             <% end %>
+            <div class="hide"><%= query.name.gsub(/\s+/, "") %> <%= query.statement %></div>
           </td>
           <td class="creator text-right text-muted">
             <% if query.respond_to?(:creator) && (creator = query.creator) && creator.respond_to?(Blazer.user_name) %>

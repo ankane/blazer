@@ -61,12 +61,25 @@
     name: 'run',
     bindKey: {win: 'Ctrl-Enter',  mac: 'Command-Enter'},
     exec: function(editor) {
-        $("#run").click();
+      $("#run").click();
     },
     readOnly: false // false if this command should not apply in readOnly mode
   });
 
-  editor.resize();
+ // http://stackoverflow.com/questions/11584061/
+ function adjustHeight() {
+    var lines = editor.getSession().getScreenLength();
+    if (lines < 9) {
+      lines = 9;
+    }
+
+    var newHeight = (lines + 1) * 16;
+    $("#editor").height(newHeight.toString() + "px");
+    editor.resize();
+  };
+
+  editor.getSession().on("change", adjustHeight);
+  adjustHeight();
   $("#editor").show();
   editor.focus();
 

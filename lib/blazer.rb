@@ -86,7 +86,7 @@ module Blazer
     end
 
     emails.each do |email, checks|
-      Blazer::CheckMailer.failing_checks(email, checks).deliver_now
+      Blazer::CheckMailer.failing_checks(email, checks).deliver_later
     end
   end
 end

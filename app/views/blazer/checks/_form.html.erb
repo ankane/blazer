@@ -1,0 +1,23 @@
+<p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
+<%= form_for @check do |f| %>
+  <div class="form-group">
+    <%= f.label :blazer_query_id, "Query" %>
+    <%= f.select :blazer_query_id, Blazer::Query.order(:name).map { |q| [q.name, q.id] } %>
+  </div>
+  <div class="form-group">
+    <%= f.label :emails %>
+    <%= f.text_field :emails, placeholder: "Optional, comma separated", class: "form-control" %>
+  </div>
+  <p class="text-muted">Emails are sent when a check starts failing, and when it starts passing again.
+  <p>
+    <% if @check.persisted? %>
+      <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+    <% end %>
+    <%= f.submit "Save", class: "btn btn-success" %>
+  </p>
+<% end %>
+
+<script>
+  $("#check_blazer_query_id").selectize();
+  $("#check_schedule").selectize({"allowEmptyOption": true});
+</script>

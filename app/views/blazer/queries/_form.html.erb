@@ -16,7 +16,7 @@
           <%= link_to "Back", :back %>
           <span class="text-muted" style="margin-left: 20px;"> Use {start_time} and {end_time} for time ranges</span>
         </div>
-        <%= select_tag :table_names, options_for_select([["Preview table", nil]] + tables.keys), style: "margin-right: 20px; width: 240px;" %>
+        <%= select_tag :table_names, options_for_select([["Preview table", nil]] + Blazer.tables.keys), style: "margin-right: 20px; width: 240px;" %>
         <%= link_to "Run", "#", class: "btn btn-info", id: "run", style: "vertical-align: top;" %>
       </div>
     </div>

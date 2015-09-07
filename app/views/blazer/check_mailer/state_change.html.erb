@@ -1,6 +1,6 @@
 <p><%= link_to "View", query_url(@check.blazer_query_id) %></p>
 <% if @error %>
   <p><%= @error %></p>
-<% elsif @rows.any? %>
-  <p><%= pluralize(@rows.size, "row") %></p>
+<% elsif @rows_count > 0 %>
+  <p><%= pluralize(@rows_count, "row") %></p>
 <% end %>

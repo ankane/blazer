@@ -4,11 +4,11 @@ module Blazer
 
     default from: Blazer.from_email if Blazer.from_email
 
-    def state_change(check, state, state_was, rows, error)
+    def state_change(check, state, state_was, rows_count, error)
       @check = check
       @state = state
       @state_was = state_was
-      @rows = rows
+      @rows_count = rows_count
       @error = error
       mail to: check.emails, subject: "Check #{state.titleize}: #{check.blazer_query.name}"
     end

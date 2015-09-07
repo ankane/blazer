@@ -23,6 +23,23 @@ module Blazer
     def show
     end
 
+    def edit
+    end
+
+    def update
+      if @dashboard.update(dashboard_params)
+        redirect_to dashboard_path(@dashboard)
+      else
+        render :edit
+      end
+    end
+
+    def destroy
+      @dashboard.destroy
+      redirect_to dashboards_path
+    end
+
+
     protected
 
     def dashboard_params

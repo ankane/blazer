@@ -11,6 +11,12 @@ module Blazer
       end
     end
 
+    def update
+    end
+
+    def destroy
+    end
+
     protected
 
     def dashboard_query_params

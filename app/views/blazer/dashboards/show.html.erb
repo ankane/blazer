@@ -1,4 +1,22 @@
-<h2><%= @dashboard.name %></h1>
+<% title @dashboard.name %>
+
+<div style="position: fixed; top: 0; left: 0; right: 0; background-color: whitesmoke; height: 60px; z-index: 1001;">
+  <div class="container">
+    <div class="row" style="padding-top: 13px;">
+      <div class="col-sm-9">
+        <%= link_to "Home", root_path, class: "btn btn-primary", style: "vertical-align: top; margin-right: 5px;" %>
+        <h3 style="margin: 0; line-height: 34px; display: inline-block;">
+          <%= @dashboard.name %>
+        </h3>
+      </div>
+      <div class="col-sm-3 text-right">
+        <%= link_to "Edit", edit_dashboard_path(@dashboard), class: "btn btn-info" %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-bottom: 80px;"></div>
 
 <% @dashboard.blazer_dashboard_queries.order(:position).map(&:blazer_query).each_with_index do |query, i| %>
   <div style="margin-top: 40px;">

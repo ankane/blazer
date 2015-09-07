@@ -72,7 +72,14 @@ module Blazer
 
   def self.run_checks
     Blazer::Check.includes(:blazer_query).find_each do |check|
-      rows, error = run_statement(check.blazer_query.statement)
+      rows = nil
+      error = nil
+      tries = 0
+      # try 3 times on timeout errors
+      begin
+        rows, error = run_statement(check.blazer_query.statement)
+        tries += 1
+      end while error && error.include?("canceling statement due to statement timeout") && tries < 3
       check.update_state(rows, error)
     end
   end

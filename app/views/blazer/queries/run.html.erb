@@ -3,59 +3,64 @@
 <% elsif !@success %>
   <div class="alert alert-info">Can’t preview queries with variables...yet!</div>
 <% else %>
-  <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
+  <% unless @only_chart %>
+    <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
+  <% end %>
   <% if @rows.any? %>
     <% values = @rows.first.values %>
+    <% chart_id = SecureRandom.hex %>
     <% if values.size >= 2 && values.first.is_a?(Time) && values[1..-1].all?{|v| v.is_a?(Numeric) } %>
       <% time_k = @columns.keys.first %>
-      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k], r[k]] }} } %>
+      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k], r[k]] }} }, id: chart_id %>
     <% elsif values.size == 3 && values.first.is_a?(Time) && values[1].is_a?(String) && values[2].is_a?(Numeric) %>
       <% keys = @columns.keys %>
-      <%= line_chart @rows.group_by { |v| v[keys[1]] }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] } } } %>
+      <%= line_chart @rows.group_by { |v| v[keys[1]] }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] } } }, id: chart_id %>
     <% elsif values.size == 2 && values.first.is_a?(String) && values.last.is_a?(Numeric) %>
-      <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0} %>
+      <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
     <% end %>
 
-    <% header_width = 100 / @rows.first.keys.size.to_f %>
-    <table class="table">
-      <thead>
-        <tr>
-          <% @columns.each do |key, type| %>
-            <th style="width: <%= header_width %>%;" data-sort="<%= type %>">
-              <div style="min-width: <%= @min_width_types.include?(key) ? 180 : 60 %>px;">
-                <%= key %>
-              </div>
-            </th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <% @rows.each do |row| %>
+    <% unless @only_chart %>
+      <% header_width = 100 / @rows.first.keys.size.to_f %>
+      <table class="table">
+        <thead>
           <tr>
-            <% row.each do |k, v| %>
-              <td>
-                <% if v.is_a?(Time) %>
-                  <% v = v.in_time_zone(Blazer.time_zone) %>
-                <% end %>
-
-                <% unless v.nil? %>
-                  <% if v == "" %>
-                    <div class="text-muted">empty string</div>
-                  <% elsif @linked_columns[k] %>
-                    <%= link_to format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
-                  <% else %>
-                    <%= format_value(k, v) %>
-                  <% end %>
-
-                  <% if v2 = (@boom[k] || {})[v] %>
-                    <div class="text-muted"><%= v2 %></div>
-                  <% end %>
-                <% end %>
-              </td>
+            <% @columns.each do |key, type| %>
+              <th style="width: <%= header_width %>%;" data-sort="<%= type %>">
+                <div style="min-width: <%= @min_width_types.include?(key) ? 180 : 60 %>px;">
+                  <%= key %>
+                </div>
+              </th>
             <% end %>
           </tr>
-        <% end %>
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          <% @rows.each do |row| %>
+            <tr>
+              <% row.each do |k, v| %>
+                <td>
+                  <% if v.is_a?(Time) %>
+                    <% v = v.in_time_zone(Blazer.time_zone) %>
+                  <% end %>
+
+                  <% unless v.nil? %>
+                    <% if v == "" %>
+                      <div class="text-muted">empty string</div>
+                    <% elsif @linked_columns[k] %>
+                      <%= link_to format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
+                    <% else %>
+                      <%= format_value(k, v) %>
+                    <% end %>
+
+                    <% if v2 = (@boom[k] || {})[v] %>
+                      <div class="text-muted"><%= v2 %></div>
+                    <% end %>
+                  <% end %>
+                </td>
+              <% end %>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    <% end %>
   <% end %>
 <% end %>

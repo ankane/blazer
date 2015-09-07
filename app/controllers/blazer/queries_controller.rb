@@ -46,6 +46,7 @@ module Blazer
     def run
       @statement = params[:statement]
       process_vars(@statement)
+      @only_chart = params[:only_chart]
 
       if @success
         @query = Query.find_by(id: params[:query_id]) if params[:query_id]

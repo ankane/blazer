@@ -1,0 +1,31 @@
+<h2><%= @dashboard.name %></h1>
+
+<% @dashboard.blazer_dashboard_queries.order(:position).map(&:blazer_query).each_with_index do |query, i| %>
+  <div style="margin-top: 40px;">
+    <h4 style="text-align: center;"><%= link_to query.name, query_path(query), style: "color: inherit;" %></h4>
+    <div id="chart-<%= i %>" style="height: 300px; text-align: center; line-height: 300px;"></div>
+  </div>
+  <script>
+    $.post("<%= run_queries_path %>", <%= json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>, function (data) {
+      $("#chart-<%= i %>").html(data);
+    });
+  </script>
+<% end %>
+
+<!--
+<h4>Add Query</h2>
+k
+<%= form_for Blazer::DashboardQuery.new do |f| %>
+  <%= f.hidden_field :blazer_dashboard_id, value: @dashboard.id %>
+  <div class="form-group">
+    <%= f.label :blazer_query_id, "Query" %>
+    <div class="hide">
+      <%= f.select :blazer_query_id, Blazer::Query.order(:name).map { |q| [q.name, q.id] }, {include_blank: true} %>
+    </div>
+    <script>
+      $("#dashboard_query_blazer_query_id").selectize().parents(".hide").removeClass("hide");
+    </script>
+  </div>
+  <%= f.submit "Add", class: "btn btn-success" %>
+<% end %>
+-->

@@ -1,0 +1,16 @@
+<% if @dashboard.errors.any? %>
+  <div class="alert alert-danger"><%= @dashboard.errors.full_messages.first %></div>
+<% end %>
+
+<%= form_for @dashboard do |f| %>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control" %>
+  </div>
+  <p>
+    <% if @dashboard.persisted? %>
+      <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+    <% end %>
+    <%= f.submit "Save", class: "btn btn-success" %>
+  </p>
+<% end %>

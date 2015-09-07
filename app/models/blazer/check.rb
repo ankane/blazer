@@ -2,6 +2,8 @@ module Blazer
   class Check < ActiveRecord::Base
     belongs_to :blazer_query, class_name: "Blazer::Query"
 
+    validates :blazer_query_id, presence: true
+
     def update_state(rows, error)
       self.state =
         if error

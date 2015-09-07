@@ -29,21 +29,3 @@
     });
   </script>
 <% end %>
-
-<!--
-<h4>Add Query</h2>
-k
-<%= form_for Blazer::DashboardQuery.new do |f| %>
-  <%= f.hidden_field :blazer_dashboard_id, value: @dashboard.id %>
-  <div class="form-group">
-    <%= f.label :blazer_query_id, "Query" %>
-    <div class="hide">
-      <%= f.select :blazer_query_id, Blazer::Query.order(:name).map { |q| [q.name, q.id] }, {include_blank: true} %>
-    </div>
-    <script>
-      $("#dashboard_query_blazer_query_id").selectize().parents(".hide").removeClass("hide");
-    </script>
-  </div>
-  <%= f.submit "Add", class: "btn btn-success" %>
-<% end %>
--->

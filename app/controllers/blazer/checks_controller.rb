@@ -13,7 +13,6 @@ module Blazer
 
     def create
       @check = Blazer::Check.new(check_params)
-      @check.creator = current_user if respond_to?(:current_user) && Blazer.user_class
 
       if @check.save
         redirect_to run_check_path(@check)

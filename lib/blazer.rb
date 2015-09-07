@@ -80,7 +80,7 @@ module Blazer
   def self.send_failing_checks
     emails = {}
     Blazer::Check.includes(:blazer_query).where(state: %w[failing error]).find_each do |check|
-      check.emails.to_s.split(",").map(&:strip).each do |email|
+      check.split_emails.each do |email|
         (emails[email] ||= []) << check
       end
     end

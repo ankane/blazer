@@ -4,6 +4,10 @@ module Blazer
 
     validates :blazer_query_id, presence: true
 
+    def split_emails
+      emails.to_s.split(",").map(&:strip)
+    end
+
     def update_state(rows, error)
       self.state =
         if error

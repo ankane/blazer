@@ -60,7 +60,7 @@ module Blazer
 
         @rows, @error = Blazer.run_statement(@statement)
 
-        if @query
+        if @query && !@error.to_s.include?("canceling statement due to statement timeout")
           @query.blazer_checks.each do |check|
             check.update_state(@rows, @error)
           end

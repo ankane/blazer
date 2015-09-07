@@ -104,7 +104,7 @@ end
 
 ## Checks [master]
 
-Set up checks to run every 5 minutes.
+Set up checks to run every hour.
 
 ```sh
 rake blazer:run_checks

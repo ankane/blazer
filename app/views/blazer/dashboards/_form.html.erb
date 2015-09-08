@@ -22,7 +22,7 @@ li:hover .glyphicon-remove {
   <div class="form-group <%= "hide" if (@queries || @dashboard.blazer_queries).empty? %>">
     <%= f.label :charts %>
     <ul class="list-group">
-      <% (@queries || @dashboard.blazer_queries).each do |query| %>
+      <% (@queries || @dashboard.blazer_dashboard_queries.order(:position).map(&:blazer_query)).each do |query| %>
         <li class="list-group-item">
           <span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span>
           <%= query.name %>

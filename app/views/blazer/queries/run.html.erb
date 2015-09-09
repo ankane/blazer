@@ -11,10 +11,10 @@
     <% chart_id = SecureRandom.hex %>
     <% if values.size >= 2 && (values.first.is_a?(Time) || values.first.is_a?(Date)) && values[1..-1].all?{|v| v.is_a?(Numeric) } %>
       <% time_k = @columns.keys.first %>
-      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k].to_time, r[k]] }} }, id: chart_id, min: nil %>
+      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k].in_time_zone(Blazer.time_zone), r[k]] }} }, id: chart_id, min: nil %>
     <% elsif values.size == 3 && (values.first.is_a?(Time) || values.first.is_a?(Date)) && values[1].is_a?(String) && values[2].is_a?(Numeric) %>
       <% keys = @columns.keys %>
-      <%= line_chart @rows.group_by { |v| v[keys[1]] }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]].to_time, v2[keys[2]]] } } }, id: chart_id, min: nil %>
+      <%= line_chart @rows.group_by { |v| v[keys[1]] }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]].in_time_zone(Blazer.time_zone), v2[keys[2]]] } } }, id: chart_id, min: nil %>
     <% elsif values.size == 2 && values.first.is_a?(String) && values.last.is_a?(Numeric) %>
       <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
     <% end %>

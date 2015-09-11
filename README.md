@@ -21,7 +21,6 @@ Works with PostgreSQL and MySQL
 - **Smart Variables** - no need to remember ids
 - **Charts** - visualize the data
 - **Audits** - all queries are tracked
-- **Checks & Alerts** - get emailed when bad data appears [master]
 
 ## Installation
 
@@ -68,7 +67,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
 COMMIT;
 ```
 
-It is recommended to protect sensitive information with views.  Documentation coming soon.
+It is **highly, highly recommended** to protect sensitive information with views.  Documentation coming soon.
 
 ### MySQL
 
@@ -79,7 +78,7 @@ GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED 
 FLUSH PRIVILEGES;
 ```
 
-It is recommended to protect sensitive information with views.  Documentation coming soon.
+It is **highly, highly recommended** to protect sensitive information with views.  Documentation coming soon.
 
 ## Authentication
 
@@ -97,29 +96,9 @@ ENV["BLAZER_PASSWORD"] = "secret"
 ### Devise
 
 ```ruby
-authenticate :user, lambda { |user| user.admin? } do
+authenticate :user, lambda{|user| user.admin? } do
   mount Blazer::Engine, at: "blazer"
 end
-```
-
-## Checks [master]
-
-Set up checks to run every hour.
-
-```sh
-rake blazer:run_checks
-```
-
-Be sure to set a host in `config/environments/production.rb` for emails to work.
-
-```ruby
-config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
-```
-
-We also recommend setting up failing checks to be sent once a day.
-
-```sh
-rake blazer:send_failing_checks
 ```
 
 ## Customization
@@ -165,27 +144,6 @@ If there are at least 2 columns and the first is a timestamp and all other colum
 ### Pie Chart
 
 If there are 2 columns and the first column is a string and the second column is a numeric, a pie chart will be generated
-
-## Upgrading
-
-### [master]
-
-Add a migration for checks
-
-```sh
-rails g migration create_blazer_checks
-```
-
-with
-
-```ruby
-create_table :blazer_checks do |t|
-  t.references :blazer_query
-  t.string :state
-  t.text :emails
-  t.timestamps
-end
-```
 
 ## TODO
 

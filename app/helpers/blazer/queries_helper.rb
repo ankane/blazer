@@ -1,5 +1,5 @@
 module Blazer
-  module BaseHelper
+  module QueriesHelper
     def title(title = nil)
       if title
         content_for(:title) { title }

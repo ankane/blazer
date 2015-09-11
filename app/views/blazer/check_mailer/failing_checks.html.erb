@@ -1,6 +1,0 @@
-<ul>
-  <% @checks.each do |check| %>
-    <li><%= link_to check.blazer_query.name, query_url(check.blazer_query_id) %></li>
-  <% end %>
-</ul>
-<p><%= link_to "Manage checks", checks_url %></p>

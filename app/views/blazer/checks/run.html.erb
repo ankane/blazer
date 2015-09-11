@@ -1,9 +1,0 @@
-<p style="text-muted">Running check...</p>
-
-<script>
-  $.post("<%= run_queries_path %>", <%= json_escape({statement: @query.statement, query_id: @query.id}.to_json).html_safe %>, function (data) {
-    setTimeout( function () {
-      window.location.href = "<%= checks_path %>";
-    }, 200);
-  });
-</script>

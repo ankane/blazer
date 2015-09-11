@@ -6,12 +6,12 @@
   <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
   <% if @rows.any? %>
     <% values = @rows.first.values %>
-    <% if values.size >= 2 && (values.first.is_a?(Time) || values.first.is_a?(Date)) && values[1..-1].all?{|v| v.is_a?(Numeric) } %>
+    <% if values.size >= 2 && values.first.is_a?(Time) && values[1..-1].all?{|v| v.is_a?(Numeric) } %>
       <% time_k = @columns.keys.first %>
-      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k].in_time_zone(Blazer.time_zone), r[k]] }} } %>
-    <% elsif values.size == 3 && (values.first.is_a?(Time) || values.first.is_a?(Date)) && values[1].is_a?(String) && values[2].is_a?(Numeric) %>
+      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k], r[k]] }} } %>
+    <% elsif values.size == 3 && values.first.is_a?(Time) && values[1].is_a?(String) && values[2].is_a?(Numeric) %>
       <% keys = @columns.keys %>
-      <%= line_chart @rows.group_by { |v| v[keys[1]] }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]].in_time_zone(Blazer.time_zone), v2[keys[2]]] } } } %>
+      <%= line_chart @rows.group_by { |v| v[keys[1]] }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] } } } %>
     <% elsif values.size == 2 && values.first.is_a?(String) && values.last.is_a?(Numeric) %>
       <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0} %>
     <% end %>

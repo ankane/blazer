@@ -146,6 +146,7 @@ module Blazer
     def extract_vars(statement)
       statement.scan(/\{.*?\}/).map { |v| v[1...-1] }.uniq
     end
+    helper_method :extract_vars
 
     def process_vars(statement)
       @bind_vars = extract_vars(statement)

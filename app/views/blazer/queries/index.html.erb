@@ -18,6 +18,7 @@
         <tr>
           <td class="query">
             <%= link_to query.name, query %>
+            <span style="color: #ccc;"><%= extract_vars(query.statement).join(", ") %></span>
             <% if query.created_at > 2.days.ago %>
               <small style="font-weight: bold; color: #5cb85c;">NEW</small>
             <% end %>

@@ -129,7 +129,7 @@ module Blazer
     private
 
     def ensure_database_url
-      render text: "BLAZER_DATABASE_URL required" if !ENV["BLAZER_DATABASE_URL"] && !Rails.env.development?
+      render text: "BLAZER_DATABASE_URL required" if !Rails.application.secrets[:blazer_database_url] && !Rails.env.development?
     end
 
     def set_query

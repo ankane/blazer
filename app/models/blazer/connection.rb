@@ -1,6 +1,6 @@
 module Blazer
   class Connection < ActiveRecord::Base
-    establish_connection ENV["BLAZER_DATABASE_URL"] if ENV["BLAZER_DATABASE_URL"]
+    establish_connection Rails.application.secrets[:blazer_database_url] if Rails.application.secrets[:blazer_database_url]
     self.abstract_class = true
   end
 end

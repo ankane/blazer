@@ -26,7 +26,7 @@ module Blazer
 
     def create
       @query = Blazer::Query.new(query_params)
-      @query.creator = current_user if respond_to?(:current_user) && Blazer.user_class
+      @query.creator = blazer_user
 
       if @query.save
         redirect_to query_path(@query, variable_params)
@@ -65,7 +65,7 @@ module Blazer
         if Blazer.audit
           audit = Blazer::Audit.new(statement: @statement)
           audit.query = @query
-          audit.user = current_user if respond_to?(:current_user) && Blazer.user_class
+          audit.user = blazer_user
           audit.save!
         end
 
@@ -226,5 +226,11 @@ module Blazer
     def postgresql?
       Blazer::Connection.connection.adapter_name == "PostgreSQL"
     end
+
+    def blazer_user
+      send(Blazer.current_user_name) if Blazer.current_user_name
+    end
+    helper_method :blazer_user
+
   end
 end

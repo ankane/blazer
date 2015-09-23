@@ -30,7 +30,7 @@
           <td class="creator text-right text-muted">
             <% if query.respond_to?(:creator) && (creator = query.creator) && creator.respond_to?(Blazer.user_name) %>
               <% name = creator.send(Blazer.user_name) %>
-              <% if respond_to?(:current_user) and creator == current_user %>
+              <% if creator == blazer_user %>
                 You
                 <div class="hide">me <%= name %></div>
               <% else %>

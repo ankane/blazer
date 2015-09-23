@@ -5,11 +5,8 @@ require "blazer/engine"
 
 module Blazer
   class << self
-    attr_accessor :audit
     attr_reader :time_zone
-    attr_accessor :user_name
-    attr_accessor :user_class
-    attr_accessor :timeout
+    attr_accessor :audit, :user_name, :user_class, :timeout, :current_user_name
   end
   self.audit = true
   self.user_name = :name

@@ -7,7 +7,7 @@ module Blazer
       app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/application\.(js|css)\z/ }
 
       Blazer.time_zone ||= Time.zone
-      Blazer.user_class ||= Devise.mappings.values[0].class_name rescue nil
+      Blazer.user_class ||= User rescue nil
 
       if Blazer.user_class
         Blazer.current_user_name = "current_#{Blazer.user_class.downcase.singularize}"

@@ -1,7 +1,15 @@
 <% if @error %>
-  <div class="alert alert-danger"><%= @error %></div>
+  <% if @only_chart %>
+    <p><%= @error %></p>
+  <% else %>
+    <div class="alert alert-danger"><%= @error %></div>
+  <% end %>
 <% elsif !@success %>
-  <div class="alert alert-info">Can’t preview queries with variables...yet!</div>
+  <% if @only_chart %>
+    <p>Choose variables</p>
+  <% else %>
+    <div class="alert alert-info">Can’t preview queries with variables...yet!</div>
+  <% end %>
 <% else %>
   <% unless @only_chart %>
     <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
@@ -17,6 +25,8 @@
       <%= line_chart @rows.group_by { |v| v[keys[1]] }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]].in_time_zone(Blazer.time_zone), v2[keys[2]]] } } }, id: chart_id, min: nil %>
     <% elsif values.size == 2 && values.first.is_a?(String) && values.last.is_a?(Numeric) %>
       <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
+    <% elsif @only_chart %>
+      <p>No chart</p>
     <% end %>
 
     <% unless @only_chart %>

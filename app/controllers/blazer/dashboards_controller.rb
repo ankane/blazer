@@ -21,6 +21,21 @@ module Blazer
     end
 
     def show
+      @queries = @dashboard.blazer_dashboard_queries.order(:position).preload(:blazer_query).map(&:blazer_query)
+      @queries.each do |query|
+        process_vars(query.statement)
+      end
+
+      @smart_vars = {}
+      @sql_errors = []
+      @bind_vars.each do |var|
+        query = Blazer.smart_variables[var]
+        if query
+          rows, error = Blazer.run_statement(query)
+          @smart_vars[var] = rows.map { |v| v.values.reverse }
+          @sql_errors << error if error
+        end
+      end
     end
 
     def edit

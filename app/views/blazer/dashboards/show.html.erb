@@ -1,5 +1,19 @@
 <% title @dashboard.name %>
 
+<script>
+  function submitIfCompleted($form) {
+    var completed = true;
+    $form.find("input[name], select").each( function () {
+      if ($(this).val() == "") {
+        completed = false;
+      }
+    });
+    if (completed) {
+      $form.submit();
+    }
+  }
+</script>
+
 <div style="position: fixed; top: 0; left: 0; right: 0; background-color: whitesmoke; height: 60px; z-index: 1001;">
   <div class="container">
     <div class="row" style="padding-top: 13px;">
@@ -18,9 +32,105 @@
 
 <div style="margin-bottom: 80px;"></div>
 
-<% @dashboard.blazer_dashboard_queries.order(:position).map(&:blazer_query).each_with_index do |query, i| %>
+<% if @bind_vars.any? %>
+  <form id="bind" method="get" action="<%= url_for(params) %>" class="form-inline" style="margin-bottom: 10px;">
+    <% date_vars = ["start_time", "end_time"] %>
+    <% if (date_vars - @bind_vars).empty? %>
+      <% @bind_vars = @bind_vars - date_vars %>
+    <% else %>
+      <% date_vars = nil %>
+    <% end %>
+
+    <% @bind_vars.each_with_index do |var, i| %>
+      <%= label_tag var, var %>
+      <% if (data = @smart_vars[var]) %>
+        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), style: "margin-right: 20px; width: 200px;" %>
+        <script>
+          $("#<%= var %>").selectize({
+            create: true
+          });
+        </script>
+      <% else %>
+        <%= text_field_tag var, params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !params[var], class: "form-control" %>
+        <% if var.end_with?("_at") %>
+          <script>
+            $("#<%= var %>").datepicker({format: "yyyy-mm-dd", autoclose: true, todayBtn: "linked"})
+          </script>
+        <% end %>
+      <% end %>
+    <% end %>
+
+    <% if date_vars %>
+      <% date_vars.each do |var| %>
+        <%= hidden_field_tag var, params[var] %>
+      <% end %>
+
+      <%= label_tag nil, date_vars.join(" & ") %>
+      <div class="selectize-control single" style="width: 300px;">
+        <div id="reportrange" class="selectize-input" style="display: inline-block;">
+          <span>Select a time range</span>
+        </div>
+      </div>
+
+      <script>
+        var timeZone = "<%= Blazer.time_zone.tzinfo.name %>";
+        var format = "YYYY-MM-DD";
+        var now = moment.tz(timeZone);
+
+        function dateStr(daysAgo) {
+          return now.clone().subtract(daysAgo || 0, "days").format(format);
+        }
+
+        function toDate(time) {
+          return moment.tz(time.format(format), timeZone);
+        }
+
+        function setTimeInputs(start, end) {
+          $("#start_time").val(toDate(start).utc().format());
+          $("#end_time").val(toDate(end).endOf("day").utc().format());
+        }
+
+        $('#reportrange').daterangepicker(
+          {
+            ranges: {
+             "Today": [dateStr(), dateStr()],
+             "Last 7 Days": [dateStr(6), dateStr()],
+             "Last 30 Days": [dateStr(29), dateStr()]
+            },
+            format: format,
+            startDate: dateStr(29),
+            endDate: dateStr(),
+            opens: "left"
+          },
+          function(start, end) {
+            setTimeInputs(start, end);
+            submitIfCompleted($("#start_time").closest("form"));
+          }
+        ).on('apply.daterangepicker', function(ev, picker) {
+          setTimeInputs(picker.startDate, picker.endDate);
+          $('#reportrange span').html(toDate(picker.startDate).format('MMMM D, YYYY') + ' - ' + toDate(picker.endDate).format('MMMM D, YYYY'));
+        })
+
+        if ($("#start_time").val().length > 0) {
+          var picker = $("#reportrange").data('daterangepicker');
+          picker.setStartDate(moment.tz($("#start_time").val(), timeZone));
+          picker.setEndDate(moment.tz($("#end_time").val(), timeZone));
+          $("#reportrange").trigger('apply.daterangepicker', picker)
+        } else {
+          var picker = $("#reportrange").data('daterangepicker');
+          $("#reportrange").trigger('apply.daterangepicker', picker);
+          submitIfCompleted($("#start_time").closest("form"));
+        }
+      </script>
+    <% end %>
+
+    <input type="submit" class="btn btn-success" value="Run" style="vertical-align: top;" />
+  </form>
+<% end %>
+
+<% @queries.each_with_index do |query, i| %>
   <div style="margin-top: 40px;">
-    <h4 style="text-align: center;"><%= link_to query.name, query_path(query), style: "color: inherit;" %></h4>
+    <h4 style="text-align: center;"><%= link_to query.name, query_path(query, variable_params), style: "color: inherit;" %></h4>
     <div id="chart-<%= i %>" style="height: 300px; text-align: center; line-height: 300px;">Loading...</div>
   </div>
   <script>
@@ -29,3 +139,9 @@
     });
   </script>
 <% end %>
+
+<script>
+  $(".form-inline input, .form-inline select").change( function () {
+    submitIfCompleted($(this).closest("form"));
+  });
+</script>

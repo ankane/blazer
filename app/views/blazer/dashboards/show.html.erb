@@ -30,7 +30,7 @@
   </div>
 </div>
 
-<div style="margin-bottom: 80px;"></div>
+<div style="margin-bottom: 60px;"></div>
 
 <% if @bind_vars.any? %>
   <form id="bind" method="get" action="<%= url_for(params) %>" class="form-inline" style="margin-bottom: 10px;">
@@ -123,13 +123,11 @@
         }
       </script>
     <% end %>
-
-    <input type="submit" class="btn btn-success" value="Run" style="vertical-align: top;" />
   </form>
 <% end %>
 
 <% @queries.each_with_index do |query, i| %>
-  <div style="margin-top: 40px;">
+  <div style="padding-top: 10px;">
     <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), style: "color: inherit;" %></h4>
     <div id="chart-<%= i %>" style="height: 300px; text-align: center; line-height: 300px;">Loading...</div>
   </div>

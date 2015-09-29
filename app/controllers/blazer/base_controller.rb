@@ -20,7 +20,7 @@ module Blazer
     end
 
     def process_vars(statement)
-      (@bind_vars ||= []).concat extract_vars(statement)
+      (@bind_vars ||= []).concat(extract_vars(statement)).uniq!
       @success = @bind_vars.all? { |v| params[v] }
 
       if @success

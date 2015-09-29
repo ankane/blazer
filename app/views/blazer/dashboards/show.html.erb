@@ -130,7 +130,7 @@
 
 <% @queries.each_with_index do |query, i| %>
   <div style="margin-top: 40px;">
-    <h4 style="text-align: center;"><%= link_to query.name, query_path(query, variable_params), style: "color: inherit;" %></h4>
+    <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), style: "color: inherit;" %></h4>
     <div id="chart-<%= i %>" style="height: 300px; text-align: center; line-height: 300px;">Loading...</div>
   </div>
   <script>

@@ -2,7 +2,7 @@
   <div class="alert alert-danger"><%= @error %></div>
 <% elsif !@success %>
   <% if @only_chart %>
-    <p>Select variables</p>
+    <p class="text-muted">Select variables</p>
   <% else %>
     <div class="alert alert-info">Can’t preview queries with variables...yet!</div>
   <% end %>

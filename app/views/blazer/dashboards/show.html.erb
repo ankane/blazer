@@ -136,6 +136,7 @@
   <script>
     $.post("<%= run_queries_path %>", <%= json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>, function (data) {
       $("#chart-<%= i %>").html(data);
+      $("#chart-<%= i %> table").stupidtable();
     });
   </script>
 <% end %>

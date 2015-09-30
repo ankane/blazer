@@ -16,11 +16,11 @@ body {
   padding-bottom: 20px;
 }
 
-#results th {
+.results-table th {
   cursor: pointer;
 }
 
-#results thead {
+.results-table thead {
   background-color: #fff;
 }
 
@@ -77,6 +77,9 @@ input.search:focus {
   flex-direction: column;
 }
 
-.chart .alert {
-  display: inline-block;
+.chart > .results-container {
+  height: 300px;
+  border: solid 1px #ddd;
+  overflow: scroll;
+  text-align: left;
 }

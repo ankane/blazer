@@ -25,6 +25,7 @@ module Blazer
       @queries.each do |query|
         process_vars(query.statement)
       end
+      @bind_vars ||= []
 
       @smart_vars = {}
       @sql_errors = []

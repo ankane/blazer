@@ -129,7 +129,9 @@
 <% @queries.each_with_index do |query, i| %>
   <div style="padding-top: 10px;">
     <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), style: "color: inherit;" %></h4>
-    <div id="chart-<%= i %>" style="height: 300px; text-align: center; line-height: 300px;">Loading...</div>
+    <div id="chart-<%= i %>" class="chart">
+      Loading...
+    </div>
   </div>
   <script>
     $.post("<%= run_queries_path %>", <%= json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>, function (data) {

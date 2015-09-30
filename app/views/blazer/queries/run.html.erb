@@ -1,12 +1,8 @@
 <% if @error %>
-  <% if @only_chart %>
-    <p><%= @error %></p>
-  <% else %>
-    <div class="alert alert-danger"><%= @error %></div>
-  <% end %>
+  <div class="alert alert-danger"><%= @error %></div>
 <% elsif !@success %>
   <% if @only_chart %>
-    <p>Choose variables</p>
+    <p>Select variables</p>
   <% else %>
     <div class="alert alert-info">Can’t preview queries with variables...yet!</div>
   <% end %>
@@ -26,7 +22,7 @@
     <% elsif values.size == 2 && values.first.is_a?(String) && values.last.is_a?(Numeric) %>
       <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
     <% elsif @only_chart %>
-      <p>No chart</p>
+      <div class="alert alert-danger">No chart</div>
     <% end %>
 
     <% unless @only_chart %>

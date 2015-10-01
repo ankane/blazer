@@ -126,6 +126,10 @@ rake blazer:send_failing_checks
 
 Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set `BLAZER_DATABASE_URL` to `redshift://user:pass@host:5439/db`.
 
+## Useful Tools
+
+For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).
+
 ## Customization
 
 Change time zone

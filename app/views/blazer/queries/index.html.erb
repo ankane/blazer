@@ -2,6 +2,7 @@
   <div id="header" style="margin-bottom: 20px;">
     <div class="pull-right">
       <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
+      <%= link_to "Checks", checks_path, class: "btn btn-primary" %>
     </div>
     <input type="text" placeholder="Start typing a query or person" style="width: 300px; display: inline-block;" autofocus=true class="search form-control" />
   </div>
@@ -24,6 +25,9 @@
             <% end %>
             <% if @trending_queries[query.id] %>
               <small style="font-weight: bold; color: #f60;">TRENDING</small>
+            <% end %>
+            <% if @checks[query.id] %>
+              <small style="font-weight: bold; color: #f60;">CHECK</small>
             <% end %>
             <div class="hide"><%= query.name.gsub(/\s+/, "") %></div>
           </td>

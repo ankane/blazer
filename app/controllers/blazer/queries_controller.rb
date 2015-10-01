@@ -1,23 +1,12 @@
 module Blazer
-  class QueriesController < ApplicationController
-    # skip all filters
-    skip_filter *_process_action_callbacks.map(&:filter)
-
-    protect_from_forgery with: :exception
-
-    if ENV["BLAZER_PASSWORD"]
-      http_basic_authenticate_with name: ENV["BLAZER_USERNAME"], password: ENV["BLAZER_PASSWORD"]
-    end
-
-    layout "blazer/application"
-
-    before_action :ensure_database_url
+  class QueriesController < BaseController
     before_action :set_query, only: [:show, :edit, :update, :destroy]
 
     def index
       @queries = Blazer::Query.order(:name)
       @queries = @queries.includes(:creator) if Blazer.user_class
       @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
+      @checks = Blazer::Check.group(:blazer_query_id).count
     end
 
     def new
@@ -42,9 +31,9 @@ module Blazer
       @smart_vars = {}
       @sql_errors = []
       @bind_vars.each do |var|
-        query = smart_variables[var]
+        query = Blazer.smart_variables[var]
         if query
-          rows, error = run_statement(query)
+          rows, error = Blazer.run_statement(query)
           @smart_vars[var] = rows.map { |v| v.values.reverse }
           @sql_errors << error if error
         end
@@ -69,7 +58,13 @@ module Blazer
           audit.save!
         end
 
-        @rows, @error = run_statement(@statement)
+        @rows, @error = Blazer.run_statement(@statement)
+
+        if @query && !@error.to_s.include?("canceling statement due to statement timeout")
+          @query.blazer_checks.each do |check|
+            check.update_state(@rows, @error)
+          end
+        end
 
         @columns = {}
         if @rows.any?
@@ -88,19 +83,19 @@ module Blazer
 
         @filename = @query.name.parameterize if @query
 
-        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || smart_columns[k] }.keys
+        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || Blazer.smart_columns[k] }.keys
 
         @boom = {}
         @columns.keys.each do |key|
-          query = smart_columns[key]
+          query = Blazer.smart_columns[key]
           if query
             values = @rows.map { |r| r[key] }.compact.uniq
-            rows, error = run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+            rows, error = Blazer.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
             @boom[key] = Hash[rows.map(&:values)]
           end
         end
 
-        @linked_columns = linked_columns
+        @linked_columns = Blazer.linked_columns
       end
 
       respond_to do |format|
@@ -128,10 +123,6 @@ module Blazer
 
     private
 
-    def ensure_database_url
-      render text: "BLAZER_DATABASE_URL required" if !ENV["BLAZER_DATABASE_URL"] && !Rails.env.development?
-    end
-
     def set_query
       @query = Blazer::Query.find(params[:id].to_s.split("-").first)
     end
@@ -149,28 +140,6 @@ module Blazer
           csv << row.values
         end
       end
-    end
-
-    def run_statement(statement)
-      rows = []
-      error = nil
-      begin
-        Blazer::Connection.transaction do
-          Blazer::Connection.connection.execute("SET statement_timeout = #{Blazer.timeout * 1000}") if Blazer.timeout && postgresql?
-          result = Blazer::Connection.connection.select_all(statement)
-          result.each do |untyped_row|
-            row = {}
-            untyped_row.each do |k, v|
-              row[k] = result.column_types.empty? ? v : result.column_types[k].send(:type_cast, v)
-            end
-            rows << row
-          end
-          raise ActiveRecord::Rollback
-        end
-      rescue ActiveRecord::StatementInvalid => e
-        error = e.message.sub(/.+ERROR: /, "")
-      end
-      [rows, error]
     end
 
     def extract_vars(statement)
@@ -198,33 +167,5 @@ module Blazer
       params.except(:controller, :action, :id, :host, :query, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement)
     end
     helper_method :variable_params
-
-    def settings
-      YAML.load(File.read(Rails.root.join("config", "blazer.yml")))
-    end
-
-    def linked_columns
-      settings["linked_columns"] || {}
-    end
-
-    def smart_columns
-      settings["smart_columns"] || {}
-    end
-
-    def smart_variables
-      settings["smart_variables"] || {}
-    end
-
-    def tables
-      default_schema = postgresql? ? "public" : Blazer::Connection.connection_config[:database]
-      schema = Blazer::Connection.connection_config[:schema] || default_schema
-      rows, error = run_statement(Blazer::Connection.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema = ?", schema]))
-      Hash[rows.group_by { |r| r["table_name"] }.map { |t, f| [t, f.sort_by { |f| f["ordinal_position"] }.map { |f| f.slice("column_name", "data_type") }] }.sort_by { |t, _f| t }]
-    end
-    helper_method :tables
-
-    def postgresql?
-      Blazer::Connection.connection.adapter_name == "PostgreSQL"
-    end
   end
 end

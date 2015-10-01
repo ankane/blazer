@@ -1,0 +1,41 @@
+<% title "Checks" %>
+
+<p style="float: right;"><%= link_to "New Check", new_check_path, class: "btn btn-info" %></p>
+<p>
+  <%= link_to "Home", root_path, class: "btn btn-primary", style: "margin-right: 10px;" %>
+</p>
+
+<% colors = {failing: "red", passing: "#5cb85c", error: "#666"} %>
+<table class="table">
+  <thead>
+    <tr>
+      <th>Query</th>
+      <th style="width: 15%;">State</th>
+      <th style="width: 20%;">Emails</th>
+      <th style="width: 15%;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @checks.each do |check| %>
+      <tr>
+        <td><%= link_to check.blazer_query.name, check.blazer_query %></td>
+        <td>
+          <% if check.state %>
+            <small style="font-weight: bold; color: <%= colors[check.state.to_sym] %>;"><%= check.state.upcase %></small>
+          <% end %>
+        </td>
+        <td>
+          <ul class="list-unstyled" style="margin-bottom: 0;">
+            <% check.split_emails.each do |email| %>
+              <li><%= email %></li>
+            <% end %>
+          </ul>
+        </td>
+        <td style="text-align: right; padding: 1px;">
+          <%= link_to "Edit", edit_check_path(check), class: "btn btn-info" %>
+          <%= link_to "Run Now", run_check_path(check), class: "btn btn-primary" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

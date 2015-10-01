@@ -8,7 +8,7 @@ Blazer eliminates the need for many admin pages
 
 [![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-18d79092e635b4b220f57ff7a1ecea41.png)](https://blazerme.herokuapp.com)
 
-Works with PostgreSQL and MySQL
+Works with PostgreSQL, MySQL, and Redshift
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 

@@ -46,6 +46,7 @@ module Blazer
     def run
       @statement = params[:statement]
       process_vars(@statement)
+      @only_chart = params[:only_chart]
 
       if @success
         @query = Query.find_by(id: params[:query_id]) if params[:query_id]
@@ -141,31 +142,5 @@ module Blazer
         end
       end
     end
-
-    def extract_vars(statement)
-      statement.scan(/\{.*?\}/).map { |v| v[1...-1] }.uniq
-    end
-    helper_method :extract_vars
-
-    def process_vars(statement)
-      @bind_vars = extract_vars(statement)
-      @success = @bind_vars.all? { |v| params[v] }
-
-      if @success
-        @bind_vars.each do |var|
-          value = params[var].presence
-          value = value.to_i if value.to_i.to_s == value
-          if var.end_with?("_at")
-            value = Blazer.time_zone.parse(value) rescue nil
-          end
-          statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
-        end
-      end
-    end
-
-    def variable_params
-      params.except(:controller, :action, :id, :host, :query, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement)
-    end
-    helper_method :variable_params
   end
 end

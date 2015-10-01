@@ -16,11 +16,11 @@ body {
   padding-bottom: 20px;
 }
 
-#results th {
+.results-table th {
   cursor: pointer;
 }
 
-#results thead {
+.results-table thead {
   background-color: #fff;
 }
 
@@ -67,4 +67,19 @@ input.search:focus {
 
 .ace_gutter-cell.error {
   background-color: red;
+}
+
+.chart {
+  height: 300px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.chart > .results-container {
+  height: 300px;
+  border: solid 1px #ddd;
+  overflow: scroll;
+  text-align: left;
 }

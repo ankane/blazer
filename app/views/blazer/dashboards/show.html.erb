@@ -1,4 +1,4 @@
-<% title @query.name %>
+<% title @dashboard.name %>
 
 <script>
   function submitIfCompleted($form) {
@@ -18,38 +18,19 @@
   <div class="container">
     <div class="row" style="padding-top: 13px;">
       <div class="col-sm-9">
-        <%= link_to "Home", root_path, class: "btn btn-primary", style: "vertical-align: top; margin-right: 5px;" %>
+        <%= link_to "Back", dashboards_path, class: "btn btn-primary", style: "vertical-align: top; margin-right: 5px;" %>
         <h3 style="margin: 0; line-height: 34px; display: inline-block;">
-          <%= @query.name %>
+          <%= @dashboard.name %>
         </h3>
       </div>
       <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default" %>
-        <%= link_to "Fork", new_query_path(variable_params.merge(statement: @query.statement)), class: "btn btn-info" %>
-
-        <% if !@error && @success %>
-          <%= button_to "Download", run_queries_path(statement: @statement, query_id: @query.id, format: "csv"), class: "btn btn-primary" %>
-        <% end %>
+        <%= link_to "Edit", edit_dashboard_path(@dashboard), class: "btn btn-info" %>
       </div>
     </div>
   </div>
 </div>
 
 <div style="margin-bottom: 60px;"></div>
-
-<% if @sql_errors.any? %>
-  <div class="alert alert-danger">
-    <ul>
-      <% @sql_errors.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
-
-<% if @query.description.present? %>
-  <p><%= @query.description %></p>
-<% end %>
 
 <% if @bind_vars.any? %>
   <form id="bind" method="get" action="<%= url_for(params) %>" class="form-inline" style="margin-bottom: 10px;">
@@ -145,24 +126,22 @@
   </form>
 <% end %>
 
-<pre><code><%= @statement %></code></pre>
-
-<% if @success %>
-  <div id="results">
-    <p class="text-muted">Loading...</p>
+<% @queries.each_with_index do |query, i| %>
+  <div style="padding-top: 10px;">
+    <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank", style: "color: inherit;" %></h4>
+    <div id="chart-<%= i %>" class="chart">
+      <p class="text-muted">Loading...</p>
+    </div>
   </div>
-
   <script>
-    $.post("<%= run_queries_path %>", <%= json_escape({statement: @statement, query_id: @query.id}.to_json).html_safe %>, function (data) {
-      $("#results").html(data);
-      $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
+    $.post("<%= run_queries_path %>", <%= json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>, function (data) {
+      $("#chart-<%= i %>").html(data);
+      $("#chart-<%= i %> table").stupidtable();
     });
   </script>
 <% end %>
 
 <script>
-  hljs.initHighlightingOnLoad();
-
   $(".form-inline input, .form-inline select").change( function () {
     submitIfCompleted($(this).closest("form"));
   });

@@ -1,6 +1,6 @@
 module Blazer
   class ChecksController < BaseController
-    before_action :set_check, only: [:show, :edit, :update, :destroy, :run]
+    before_action :set_check, only: [:edit, :update, :destroy, :run]
 
     def index
       @checks = Blazer::Check.joins(:blazer_query).includes(:blazer_query).order("state, blazer_queries.name, blazer_checks.id").to_a

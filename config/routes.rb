@@ -5,5 +5,7 @@ Blazer::Engine.routes.draw do
   resources :checks, except: [:show] do
     get :run, on: :member
   end
+  resources :dashboards
+  resources :dashboard_queries, only: [:create, :destroy]
   root to: "queries#index"
 end

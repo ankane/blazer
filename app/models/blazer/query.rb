@@ -9,5 +9,9 @@ module Blazer
     def to_param
       [id, name.gsub("'", "").parameterize].join("-")
     end
+
+    def friendly_name
+      name.gsub(/\[.+\]/, "").strip
+    end
   end
 end

@@ -1,0 +1,86 @@
+<% if @dashboard.errors.any? %>
+  <div class="alert alert-danger"><%= @dashboard.errors.full_messages.first %></div>
+<% end %>
+
+<style>
+.glyphicon-remove {
+  cursor: pointer;
+  color: #d9534f;
+  display: none;
+}
+
+li:hover .glyphicon-remove {
+  display: inline;
+}
+</style>
+
+<%= form_for @dashboard do |f| %>
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control" %>
+  </div>
+  <div class="form-group <%= "hide" if (@queries || @dashboard.blazer_queries).empty? %>">
+    <%= f.label :charts %>
+    <ul class="list-group">
+      <% (@queries || @dashboard.blazer_dashboard_queries.order(:position).map(&:blazer_query)).each do |query| %>
+        <li class="list-group-item">
+          <span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span>
+          <%= query.name %>
+          <%= hidden_field_tag "blazer_query_ids[]", query.id %>
+        </li>
+      <% end %>
+    </ul>
+  </div>
+  <div class="form-group">
+    <%= f.label :blazer_query_id, "Add Chart" %>
+    <div class="hide">
+      <%= select_tag :blazer_query_id, options_for_select(Blazer::Query.order(:name).map { |q| [q.name, q.id] }, {include_blank: true}) %>
+    </div>
+    <script>
+      $("#blazer_query_id").selectize({allowEmptyOption: true}).parents(".hide").removeClass("hide");
+      $("#blazer_query_id").change( function () {
+        var $option = $(this).find("option:selected");
+        if ($option.val() !== "") {
+          // console.log($option.val());
+          // console.log($option.text());
+          var $li = $("<li></li>");
+          $li.addClass("list-group-item");
+          $li.text($option.text());
+          $li.prepend('<span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span><input type="hidden" name="blazer_query_ids[]" id="blazer_query_ids_" value="' + $option.val() + '">');
+          $(".list-group").append($li);
+          $(this).val("");
+          $(".form-group").removeClass("hide");
+        }
+      });
+    </script>
+  </div>
+  <p>
+    <% if @dashboard.persisted? %>
+      <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+    <% end %>
+    <%= f.submit "Save", class: "btn btn-success" %>
+  </p>
+<% end %>
+
+<script>
+  $(".list-group").on("click", ".glyphicon-remove", function () {
+    $(this).parents("li:first").remove();
+  });
+  Sortable.create($(".list-group").get(0));
+
+  // $("form").submit( function () {
+  //   var query_ids = $("li").map( function () {
+  //     return $(this).attr("data-query-id");
+  //   });
+  //   console.log(query_ids.join(","));
+  //   return false;
+  // });
+
+  // var editableList = Sortable.create($(".list-group").get(0), {
+  //   filter: '.js-remove',
+  //   onFilter: function (evt) {
+  //     var el = editableList.closest(evt.item); // get dragged item
+  //     el && el.parentNode.removeChild(el);
+  //   }
+  // });
+</script>

@@ -67,7 +67,7 @@ module Blazer
   end
 
   def self.postgresql?
-    Blazer::Connection.connection.adapter_name == "PostgreSQL"
+    ["PostgreSQL", "Redshift"].include?(Blazer::Connection.connection.adapter_name)
   end
 
   def self.run_checks

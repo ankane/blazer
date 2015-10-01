@@ -122,6 +122,10 @@ We also recommend setting up failing checks to be sent once a day.
 rake blazer:send_failing_checks
 ```
 
+## Redshift
+
+Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set `BLAZER_DATABASE_URL` to `redshift://user:pass@host:5439/db`.
+
 ## Customization
 
 Change time zone

@@ -242,6 +242,10 @@ SELECT gd_week(created_at), gender, AVG(age) FROM users GROUP BY 1, 2
 SELECT gender, COUNT(*) FROM users GROUP BY 1
 ```
 
+## Audits
+
+Each query run creates a `Blazer::Audit`.
+
 ## Upgrading
 
 ### 1.0.0 [unreleased]

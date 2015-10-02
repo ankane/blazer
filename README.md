@@ -164,15 +164,31 @@ Blazer.user_name = :first_name
 
 ## Charts
 
-Blazer will automatically generate charts based on the types of the columns returned in your query
+Blazer will automatically generate charts based on the types of the columns returned in your query.
 
 ### Line Chart
 
-If there are at least 2 columns and the first is a timestamp and all other columns are numeric, a line chart will be generated
+There are two ways to generate line charts.
+
+2+ columns - timestamp, numeric(s)
+
+```sql
+SELECT gd_week(created_at), COUNT(*) FROM users GROUP BY 1
+```
+
+3 columns - timestamp, string, numeric
+
+```sql
+SELECT gd_week(created_at), gender, AVG(age) FROM users GROUP BY 1, 2
+```
 
 ### Pie Chart
 
-If there are 2 columns and the first column is a string and the second column is a numeric, a pie chart will be generated
+2 columns - string, numeric
+
+```sql
+SELECT gender, COUNT(*) FROM users GROUP BY 1
+```
 
 ## Upgrading
 

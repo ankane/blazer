@@ -18,7 +18,7 @@
             <span class="text-muted" style="margin-left: 20px;"> Use {start_time} and {end_time} for time ranges</span>
           <% end %>
         </div>
-        <%= f.select :data_source, Blazer.data_sources.values.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 100px;" %>
+        <%= f.select :data_source, Blazer.data_sources.values.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 140px;" %>
         <div id="tables" style="display: inline-block; width: 260px; margin-right: 10px;"></div>
         <%= link_to "Run", "#", class: "btn btn-info", id: "run", style: "vertical-align: top;" %>
       </div>

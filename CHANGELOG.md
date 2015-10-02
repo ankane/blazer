@@ -1,3 +1,9 @@
+## 1.0.0 [unreleased]
+
+- Added dashboards
+- Added checks
+- Added support for Redshift
+
 ## 0.0.8
 
 - Easier to edit queries with variables

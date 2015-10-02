@@ -182,7 +182,15 @@ SELECT gender, COUNT(*) FROM users GROUP BY 1
 
 Each query run creates a `Blazer::Audit`.
 
-## Checks [master]
+## Dashboards [unreleased]
+
+Combine multiple queries into a dashboard. [demo]
+
+If the query has a chart, the chart is shown. Otherwise, you’ll see a table.
+
+If any queries have variables, they will show up on the dashboard.
+
+## Checks [unreleased]
 
 Set up checks to run every hour.
 

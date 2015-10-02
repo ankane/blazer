@@ -163,7 +163,7 @@ mount Blazer::Engine, at: "blazer"
 For production, specify your database:
 
 ```ruby
-ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database_name"
+ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database"
 ```
 
 Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user.  [See how to create one](#permissions).
@@ -276,7 +276,11 @@ For an easy way to group by day, week, month, and more with correct time zones, 
 
 ## Redshift
 
-Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set `BLAZER_DATABASE_URL` to `redshift://user:pass@host:5439/db`.
+Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set:
+
+```ruby
+ENV["BLAZER_DATABASE_URL"] = "redshift://user:password@hostname:5439/database"
+```
 
 ## Upgrading
 

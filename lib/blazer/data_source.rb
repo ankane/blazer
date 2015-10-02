@@ -10,7 +10,7 @@ module Blazer
           def self.name
             "Blazer::Connection::#{object_id}"
           end
-          establish_connection(settings["url"])
+          establish_connection(settings["url"]) if settings["url"]
         end
     end
 

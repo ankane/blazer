@@ -14,15 +14,12 @@ Works with PostgreSQL, MySQL, and Redshift
 
 ## Features
 
-- **Secure** - works with your authentication system
-- **Variables** - run the same queries with different values
-- **Smart Variables** - no need to remember ids
-- **Linked Columns** - link to other pages in your apps or around the web
-- **Smart Columns** - get the data you want without all the joins
 - **Charts** - visualize the data
-- **Audits** - all queries are tracked
 - **Dashboards** - see queries all in one place
 - **Checks & Alerts** - get emailed when bad data appears [master]
+- **Variables** - run the same queries with different values
+- **Audits** - all queries are tracked
+- **Secure** - works with your authentication system
 
 ## Installation
 
@@ -53,53 +50,9 @@ ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database_na
 
 Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user.  Keep reading to see how to create one.
 
-## Permissions
-
-### PostgreSQL
-
-Create a user with read only permissions:
-
-```sql
-BEGIN;
-CREATE ROLE blazer LOGIN PASSWORD 'secret123';
-GRANT CONNECT ON DATABASE database_name TO blazer;
-GRANT USAGE ON SCHEMA public TO blazer;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
-COMMIT;
-```
-
-### MySQL
-
-Create a user with read only permissions:
-
-```sql
-GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
-FLUSH PRIVILEGES;
-```
-
-## Authentication
-
-Don’t forget to protect the dashboard in production.
-
-### Basic Authentication
-
-Set the following variables in your environment or an initializer.
-
-```ruby
-ENV["BLAZER_USERNAME"] = "andrew"
-ENV["BLAZER_PASSWORD"] = "secret"
-```
-
-### Devise
-
-```ruby
-authenticate :user, lambda { |user| user.admin? } do
-  mount Blazer::Engine, at: "blazer"
-end
-```
-
 ## Variables
+
+[demo]
 
 Create queries with variables
 
@@ -233,6 +186,56 @@ Set up a cron job to run:
 rake blazer:send_failing_checks
 ```
 
+## Permissions
+
+### PostgreSQL
+
+Create a user with read only permissions:
+
+```sql
+BEGIN;
+CREATE ROLE blazer LOGIN PASSWORD 'secret123';
+GRANT CONNECT ON DATABASE database_name TO blazer;
+GRANT USAGE ON SCHEMA public TO blazer;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
+COMMIT;
+```
+
+### MySQL
+
+Create a user with read only permissions:
+
+```sql
+GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
+FLUSH PRIVILEGES;
+```
+
+### Sensitive Data
+
+To protect sensitive info like password hashes and access tokens, use views. Documentation coming soon.
+
+## Authentication
+
+Don’t forget to protect the dashboard in production.
+
+### Basic Authentication
+
+Set the following variables in your environment or an initializer.
+
+```ruby
+ENV["BLAZER_USERNAME"] = "andrew"
+ENV["BLAZER_PASSWORD"] = "secret"
+```
+
+### Devise
+
+```ruby
+authenticate :user, lambda { |user| user.admin? } do
+  mount Blazer::Engine, at: "blazer"
+end
+```
+
 ## Customization
 
 Change time zone
@@ -264,10 +267,6 @@ Customize user name
 ```ruby
 Blazer.user_name = :first_name
 ```
-
-## Security Considerations
-
-Protect senstive information with views.
 
 ## Useful Tools
 

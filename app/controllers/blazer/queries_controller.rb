@@ -51,15 +51,20 @@ module Blazer
       if @success
         @query = Query.find_by(id: params[:query_id]) if params[:query_id]
 
+        data_source = params[:data_source]
+        data_source = @query.data_source if @query && @query.data_source
+
         # audit
         if Blazer.audit
           audit = Blazer::Audit.new(statement: @statement)
           audit.query = @query
+          audit.data_source = data_source
           audit.user = current_user if respond_to?(:current_user) && Blazer.user_class
           audit.save!
         end
 
-        @rows, @error = Blazer.run_statement(@statement)
+        @data_source = Blazer.data_sources[data_source]
+        @rows, @error = @data_source.run_statement(@statement)
 
         if @query && !@error.to_s.include?("canceling statement due to statement timeout")
           @query.blazer_checks.each do |check|
@@ -84,19 +89,19 @@ module Blazer
 
         @filename = @query.name.parameterize if @query
 
-        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || Blazer.smart_columns[k] }.keys
+        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || @data_source.smart_columns[k] }.keys
 
         @boom = {}
         @columns.keys.each do |key|
-          query = Blazer.smart_columns[key]
+          query = @data_source.smart_columns[key]
           if query
             values = @rows.map { |r| r[key] }.compact.uniq
-            rows, error = Blazer.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+            rows, error = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
             @boom[key] = Hash[rows.map(&:values)]
           end
         end
 
-        @linked_columns = Blazer.linked_columns
+        @linked_columns = @data_source.linked_columns
       end
 
       respond_to do |format|
@@ -129,7 +134,7 @@ module Blazer
     end
 
     def query_params
-      params.require(:query).permit(:name, :description, :statement)
+      params.require(:query).permit(:name, :description, :statement, :data_source)
     end
 
     def csv_data(rows)

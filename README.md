@@ -50,7 +50,7 @@ For production, specify your database:
 ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database_name"
 ```
 
-It is **highly, highly recommended** to use a read only user.  Keep reading to see how to create one.
+Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user.  Keep reading to see how to create one.
 
 ## Permissions
 
@@ -68,8 +68,6 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
 COMMIT;
 ```
 
-It is recommended to protect sensitive information with views.  Documentation coming soon.
-
 ### MySQL
 
 Create a user with read only permissions:
@@ -78,8 +76,6 @@ Create a user with read only permissions:
 GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
 FLUSH PRIVILEGES;
 ```
-
-It is recommended to protect sensitive information with views.  Documentation coming soon.
 
 ## Authentication
 
@@ -100,66 +96,6 @@ ENV["BLAZER_PASSWORD"] = "secret"
 authenticate :user, lambda { |user| user.admin? } do
   mount Blazer::Engine, at: "blazer"
 end
-```
-
-## Checks [master]
-
-Set up checks to run every hour.
-
-```sh
-rake blazer:run_checks
-```
-
-Be sure to set a host in `config/environments/production.rb` for emails to work.
-
-```ruby
-config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
-```
-
-We also recommend setting up failing checks to be sent once a day.
-
-```sh
-rake blazer:send_failing_checks
-```
-
-## Redshift
-
-Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set `BLAZER_DATABASE_URL` to `redshift://user:pass@host:5439/db`.
-
-## Useful Tools
-
-For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).
-
-## Customization
-
-Change time zone
-
-```ruby
-Blazer.time_zone = "Pacific Time (US & Canada)"
-```
-
-Change timeout *PostgreSQL only*
-
-```ruby
-Blazer.timeout = 10 # defaults to 15
-```
-
-Turn off audits
-
-```ruby
-Blazer.audit = false
-```
-
-Custom user class
-
-```ruby
-Blazer.user_class = "Admin"
-```
-
-Customize user name
-
-```ruby
-Blazer.user_name = :first_name
 ```
 
 ## Variables
@@ -245,6 +181,70 @@ SELECT gender, COUNT(*) FROM users GROUP BY 1
 ## Audits
 
 Each query run creates a `Blazer::Audit`.
+
+## Checks [master]
+
+Set up checks to run every hour.
+
+```sh
+rake blazer:run_checks
+```
+
+Be sure to set a host in `config/environments/production.rb` for emails to work.
+
+```ruby
+config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
+```
+
+We also recommend setting up failing checks to be sent once a day.
+
+```sh
+rake blazer:send_failing_checks
+```
+
+## Customization
+
+Change time zone
+
+```ruby
+Blazer.time_zone = "Pacific Time (US & Canada)"
+```
+
+Change timeout *PostgreSQL only*
+
+```ruby
+Blazer.timeout = 10 # defaults to 15
+```
+
+Turn off audits
+
+```ruby
+Blazer.audit = false
+```
+
+Custom user class
+
+```ruby
+Blazer.user_class = "Admin"
+```
+
+Customize user name
+
+```ruby
+Blazer.user_name = :first_name
+```
+
+## Security Considerations
+
+Protect senstive information with views.
+
+## Useful Tools
+
+For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).
+
+## Redshift
+
+Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set `BLAZER_DATABASE_URL` to `redshift://user:pass@host:5439/db`.
 
 ## Upgrading
 

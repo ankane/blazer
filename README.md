@@ -23,35 +23,6 @@ See instructions for [upgrading to 1.0](#100)
 - **Audits** - all queries are tracked
 - **Secure** - works with your authentication system
 
-## Installation
-
-Add this line to your application’s Gemfile:
-
-```ruby
-gem 'blazer'
-```
-
-Run:
-
-```sh
-rails g blazer:install
-rake db:migrate
-```
-
-And mount the dashboard in your `config/routes.rb`:
-
-```ruby
-mount Blazer::Engine, at: "blazer"
-```
-
-For production, specify your database:
-
-```ruby
-ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database_name"
-```
-
-Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user.  Keep reading to see how to create one.
-
 ## Variables
 
 [demo]
@@ -166,13 +137,38 @@ Create a query to identify bad rows.
 SELECT * FROM events WHERE started_at > ended_at
 ```
 
-Then create check with optional emails if you want to be notified. Set up checks to run every hour.
+Then create check with optional emails if you want to be notified.
 
-```sh
-rake blazer:run_checks
+## Installation
+
+Add this line to your application’s Gemfile:
+
+```ruby
+gem 'blazer'
 ```
 
-When a check changes state, users are emailed.
+Run:
+
+```sh
+rails g blazer:install
+rake db:migrate
+```
+
+And mount the dashboard in your `config/routes.rb`:
+
+```ruby
+mount Blazer::Engine, at: "blazer"
+```
+
+For production, specify your database:
+
+```ruby
+ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database_name"
+```
+
+Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user.  [See how to create one](#permissions).
+
+#### Checks (optional)
 
 Be sure to set a host in `config/environments/production.rb` for emails to work.
 
@@ -180,9 +176,13 @@ Be sure to set a host in `config/environments/production.rb` for emails to work.
 config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
 ```
 
-You can also set up failing checks to be sent once a day (or whatever you prefer).
+Schedule checks to run every hour (with cron, [Heroku Scheduler](https://addons.heroku.com/scheduler), etc).
 
-Set up a cron job to run:
+```sh
+rake blazer:run_checks
+```
+
+You can also set up failing checks to be sent once a day (or whatever you prefer).
 
 ```sh
 rake blazer:send_failing_checks

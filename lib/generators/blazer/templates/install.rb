@@ -5,6 +5,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
       t.string :name
       t.text :description
       t.text :statement
+      t.string :data_source
       t.timestamps
     end
 
@@ -12,6 +13,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
       t.references :user
       t.references :query
       t.text :statement
+      t.string :data_source
       t.timestamp :created_at
     end
 

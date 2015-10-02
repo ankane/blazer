@@ -12,6 +12,8 @@ Works with PostgreSQL, MySQL, and Redshift
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
+See instructions for [upgrading to 1.0](#100)
+
 ## Features
 
 - **Charts** - visualize the data

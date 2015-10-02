@@ -108,6 +108,8 @@ SELECT COUNT(*) FROM users WHERE gender = {gender}
 
 ### Smart Variables
 
+[demo]
+
 Supposed you have this query
 
 ```sql
@@ -129,6 +131,8 @@ The first column is the value of the variable, and the second column is the labe
 
 ### Linked Columns
 
+[demo]
+
 Link results to other pages in your apps or around the web. Specify a column name and where it should link to. You can use the value of the result with `{value}`.
 
 ```yml
@@ -138,6 +142,8 @@ linked_columns:
 ```
 
 ### Smart Columns
+
+[demo]
 
 ```sql
 SELECT name, city_id FROM users
@@ -158,13 +164,13 @@ Blazer will automatically generate charts based on the types of the columns retu
 
 There are two ways to generate line charts.
 
-2+ columns - timestamp, numeric(s)
+2+ columns - timestamp, numeric(s) [demo]
 
 ```sql
 SELECT gd_week(created_at), COUNT(*) FROM users GROUP BY 1
 ```
 
-3 columns - timestamp, string, numeric
+3 columns - timestamp, string, numeric [demo]
 
 ```sql
 SELECT gd_week(created_at), gender, AVG(age) FROM users GROUP BY 1, 2
@@ -172,7 +178,7 @@ SELECT gd_week(created_at), gender, AVG(age) FROM users GROUP BY 1, 2
 
 ### Pie Chart
 
-2 columns - string, numeric
+2 columns - string, numeric [demo]
 
 ```sql
 SELECT gender, COUNT(*) FROM users GROUP BY 1
@@ -184,7 +190,9 @@ Each query run creates a `Blazer::Audit`.
 
 ## Dashboards [unreleased]
 
-Combine multiple queries into a dashboard. [demo]
+[demo]
+
+Combine multiple queries into a dashboard.
 
 If the query has a chart, the chart is shown. Otherwise, you’ll see a table.
 
@@ -192,11 +200,23 @@ If any queries have variables, they will show up on the dashboard.
 
 ## Checks [unreleased]
 
-Set up checks to run every hour.
+[demo]
+
+Checks give you a centralized place to see the health of your data.
+
+Create a query to identify bad rows.
+
+```sql
+SELECT * FROM events WHERE started_at > ended_at
+```
+
+Then create check with optional emails if you want to be notified. Set up checks to run every hour.
 
 ```sh
 rake blazer:run_checks
 ```
+
+When a check changes state, users are emailed.
 
 Be sure to set a host in `config/environments/production.rb` for emails to work.
 
@@ -204,7 +224,9 @@ Be sure to set a host in `config/environments/production.rb` for emails to work.
 config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
 ```
 
-We also recommend setting up failing checks to be sent once a day.
+You can also set up failing checks to be sent once a day (or whatever you prefer).
+
+Set up a cron job to run:
 
 ```sh
 rake blazer:send_failing_checks

@@ -31,7 +31,7 @@ module Blazer
     end
 
     def timeout
-      settings["timeout"] || Blazer.timeout
+      settings["timeout"]
     end
 
     def run_statement(statement)
@@ -39,7 +39,7 @@ module Blazer
       error = nil
       begin
         connection_model.transaction do
-          connection_model.connection.execute("SET statement_timeout = #{timeout * 1000}") if timeout && postgresql?
+          connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && postgresql?
           result = connection_model.connection.select_all(statement)
           result.each do |untyped_row|
             row = {}

@@ -9,6 +9,7 @@ module Blazer
       Blazer.time_zone ||= Blazer.settings["time_zone"] || Time.zone
       Blazer.audit = Blazer.settings.key?("audit") ? Blazer.settings["audit"] : true
       Blazer.user_name = Blazer.settings["user_name"] if Blazer.settings["user_name"]
+      Blazer.from_email = Blazer.settings["from_email"] if Blazer.settings["from_email"]
 
       Blazer.user_class ||= Blazer.settings["user_class"] || User rescue nil
       Blazer::Query.belongs_to :creator, class_name: Blazer.user_class.to_s if Blazer.user_class

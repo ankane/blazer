@@ -11,12 +11,10 @@ module Blazer
     attr_reader :time_zone
     attr_accessor :user_name
     attr_accessor :user_class
-    attr_accessor :timeout
     attr_accessor :from_email
   end
   self.audit = true
   self.user_name = :name
-  self.timeout = 15
 
   def self.time_zone=(time_zone)
     @time_zone = time_zone.is_a?(ActiveSupport::TimeZone) ? time_zone : ActiveSupport::TimeZone[time_zone.to_s]

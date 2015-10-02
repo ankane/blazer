@@ -1,5 +1,6 @@
 ## 1.0.0
 
+- Added support for multiple data sources
 - Added dashboards
 - Added checks
 - Added support for Redshift

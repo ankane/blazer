@@ -115,7 +115,7 @@ SELECT gender, COUNT(*) FROM users GROUP BY 1
 
 Each query run creates a `Blazer::Audit`.
 
-## Dashboards [unreleased]
+## Dashboards
 
 [demo]
 
@@ -125,7 +125,7 @@ If the query has a chart, the chart is shown. Otherwise, you’ll see a table.
 
 If any queries have variables, they will show up on the dashboard.
 
-## Checks [unreleased]
+## Checks
 
 [demo]
 
@@ -280,7 +280,7 @@ Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-red
 
 ## Upgrading
 
-### 1.0.0 [unreleased]
+### 1.0.0
 
 Add a migration for dashboards and checks
 

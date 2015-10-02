@@ -41,7 +41,7 @@ module Blazer
     helper_method :extract_vars
 
     def variable_params
-      params.except(:controller, :action, :id, :host, :query, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement)
+      params.except(:controller, :action, :id, :host, :query, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source)
     end
     helper_method :variable_params
   end

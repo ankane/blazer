@@ -176,17 +176,29 @@ If there are 2 columns and the first column is a string and the second column is
 
 ## Upgrading
 
-### [master]
+### 1.0.0
 
-Add a migration for checks
+Add a migration for dashboards and checks
 
 ```sh
-rails g migration create_blazer_checks
+rails g migration create_blazer_dashboards
 ```
 
 with
 
 ```ruby
+create_table :blazer_dashboards do |t|
+  t.text :name
+  t.timestamps
+end
+
+create_table :blazer_dashboard_queries do |t|
+  t.references :blazer_dashboard
+  t.references :blazer_query
+  t.integer :position
+  t.timestamps
+end
+
 create_table :blazer_checks do |t|
   t.references :blazer_query
   t.string :state

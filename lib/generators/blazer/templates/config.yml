@@ -1,5 +1,6 @@
 data_sources:
   main:
+    url: <%%= ENV["BLAZER_DATABASE_URL"] %>
     timeout: 15
     linked_columns:
       # user_id: "/admin/users/{value}"

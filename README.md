@@ -162,6 +162,31 @@ Customize user name
 Blazer.user_name = :first_name
 ```
 
+## Variables
+
+Create queries with variables
+
+```sql
+SELECT COUNT(*) FROM users WHERE gender = {gender}
+```
+
+### Smart Variables
+
+Supposed you have this query
+
+```sql
+SELECT COUNT(*) FROM users WHERE city_id = {city_id}
+```
+
+Instead of remembering each city’s id, users can select cities by name.
+
+Add a smart variable with:
+
+```yml
+smart_variables:
+  city_id: "SELECT id, name FROM cities ORDER BY name ASC"
+```
+
 ## Charts
 
 Blazer will automatically generate charts based on the types of the columns returned in your query.

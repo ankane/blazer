@@ -312,15 +312,12 @@ end
 
 ## TODO
 
-- better readme
+- support for multiple data sources
 - better navigation
 - standalone version
 - update lock
 - warn when database user has write permissions
 - advanced permissions
-- maps
-- favorites
-- support for multiple data sources
 
 ## History
 

@@ -127,6 +127,11 @@ module Blazer
       redirect_to root_url
     end
 
+    def tables
+      @data_source = params[:data_source]
+      render layout: false
+    end
+
     private
 
     def set_query

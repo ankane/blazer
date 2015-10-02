@@ -1,8 +1,9 @@
-linked_columns:
-  # user_id: "/admin/users/{value}"
-
-smart_columns:
-  # user_id: "SELECT id, name FROM users WHERE id IN {value}"
-
-smart_variables:
-  # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
+data_sources:
+  main:
+    timeout: 15
+    linked_columns:
+      # user_id: "/admin/users/{value}"
+    smart_columns:
+      # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+    smart_variables:
+      # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"

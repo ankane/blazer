@@ -16,11 +16,12 @@ Works with PostgreSQL, MySQL, and Redshift
 
 - **Secure** - works with your authentication system
 - **Variables** - run the same queries with different values
+- **Smart Variables** - no need to remember ids
 - **Linked Columns** - link to other pages in your apps or around the web
 - **Smart Columns** - get the data you want without all the joins
-- **Smart Variables** - no need to remember ids
 - **Charts** - visualize the data
 - **Audits** - all queries are tracked
+- **Dashboards** - see queries all in one place
 - **Checks & Alerts** - get emailed when bad data appears [master]
 
 ## Installation

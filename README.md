@@ -308,7 +308,7 @@ create_table :blazer_dashboard_queries do |t|
 end
 
 create_table :blazer_checks do |t|
-  t.references :blazer_query
+  t.references :query
   t.string :state
   t.text :emails
   t.timestamps

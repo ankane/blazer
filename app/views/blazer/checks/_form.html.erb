@@ -6,12 +6,12 @@
 
 <%= form_for @check do |f| %>
   <div class="form-group">
-    <%= f.label :blazer_query_id, "Query" %>
+    <%= f.label :query_id, "Query" %>
     <div class="hide">
-      <%= f.select :blazer_query_id, Blazer::Query.order(:name).map { |q| [q.name, q.id] }, {include_blank: true} %>
+      <%= f.select :query_id, Blazer::Query.order(:name).map { |q| [q.name, q.id] }, {include_blank: true} %>
     </div>
     <script>
-      $("#check_blazer_query_id").selectize().parents(".hide").removeClass("hide");
+      $("#check_query_id").selectize().parents(".hide").removeClass("hide");
     </script>
   </div>
   <div class="form-group">

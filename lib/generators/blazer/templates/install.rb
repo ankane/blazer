@@ -5,6 +5,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
       t.string :name
       t.text :description
       t.text :statement
+      t.string :data_source
       t.timestamps
     end
 
@@ -12,6 +13,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
       t.references :user
       t.references :query
       t.text :statement
+      t.string :data_source
       t.timestamp :created_at
     end
 
@@ -21,8 +23,8 @@ class <%= migration_class_name %> < ActiveRecord::Migration
     end
 
     create_table :blazer_dashboard_queries do |t|
-      t.references :blazer_dashboard
-      t.references :blazer_query
+      t.references :dashboard
+      t.references :query
       t.integer :position
       t.timestamps
     end

@@ -6,11 +6,11 @@ module Blazer
       @queries = Blazer::Query.order(:name)
       @queries = @queries.includes(:creator) if Blazer.user_class
       @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
-      @checks = Blazer::Check.group(:blazer_query_id).count
+      @checks = Blazer::Check.group(:query_id).count
     end
 
     def new
-      @query = Blazer::Query.new(statement: params[:statement])
+      @query = Blazer::Query.new(statement: params[:statement], data_source: params[:data_source])
     end
 
     def create
@@ -30,10 +30,11 @@ module Blazer
 
       @smart_vars = {}
       @sql_errors = []
+      data_source = Blazer.data_sources[@query.data_source]
       @bind_vars.each do |var|
-        query = Blazer.smart_variables[var]
+        query = data_source.smart_variables[var]
         if query
-          rows, error = Blazer.run_statement(query)
+          rows, error = data_source.run_statement(query)
           @smart_vars[var] = rows.map { |v| v.values.reverse }
           @sql_errors << error if error
         end
@@ -51,18 +52,23 @@ module Blazer
       if @success
         @query = Query.find_by(id: params[:query_id]) if params[:query_id]
 
+        data_source = params[:data_source]
+        data_source = @query.data_source if @query && @query.data_source
+
         # audit
         if Blazer.audit
           audit = Blazer::Audit.new(statement: @statement)
           audit.query = @query
+          audit.data_source = data_source
           audit.user = current_user if respond_to?(:current_user) && Blazer.user_class
           audit.save!
         end
 
-        @rows, @error = Blazer.run_statement(@statement)
+        @data_source = Blazer.data_sources[data_source]
+        @rows, @error = @data_source.run_statement(@statement)
 
         if @query && !@error.to_s.include?("canceling statement due to statement timeout")
-          @query.blazer_checks.each do |check|
+          @query.checks.each do |check|
             check.update_state(@rows, @error)
           end
         end
@@ -84,19 +90,19 @@ module Blazer
 
         @filename = @query.name.parameterize if @query
 
-        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || Blazer.smart_columns[k] }.keys
+        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || @data_source.smart_columns[k] }.keys
 
         @boom = {}
         @columns.keys.each do |key|
-          query = Blazer.smart_columns[key]
+          query = @data_source.smart_columns[key]
           if query
             values = @rows.map { |r| r[key] }.compact.uniq
-            rows, error = Blazer.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+            rows, error = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
             @boom[key] = Hash[rows.map(&:values)]
           end
         end
 
-        @linked_columns = Blazer.linked_columns
+        @linked_columns = @data_source.linked_columns
       end
 
       respond_to do |format|
@@ -122,6 +128,11 @@ module Blazer
       redirect_to root_url
     end
 
+    def tables
+      @data_source = params[:data_source]
+      render layout: false
+    end
+
     private
 
     def set_query
@@ -129,7 +140,7 @@ module Blazer
     end
 
     def query_params
-      params.require(:query).permit(:name, :description, :statement)
+      params.require(:query).permit(:name, :description, :statement, :data_source)
     end
 
     def csv_data(rows)

@@ -1,8 +1,8 @@
 module Blazer
   class Check < ActiveRecord::Base
-    belongs_to :blazer_query, class_name: "Blazer::Query"
+    belongs_to :query
 
-    validates :blazer_query_id, presence: true
+    validates :query_id, presence: true
 
     def split_emails
       emails.to_s.split(",").map(&:strip)

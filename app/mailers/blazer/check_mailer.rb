@@ -10,7 +10,7 @@ module Blazer
       @state_was = state_was
       @rows_count = rows_count
       @error = error
-      mail to: check.emails, subject: "Check #{state.titleize}: #{check.blazer_query.name}"
+      mail to: check.emails, subject: "Check #{state.titleize}: #{check.query.name}"
     end
 
     def failing_checks(email, checks)

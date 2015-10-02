@@ -3,8 +3,8 @@ module Blazer
     before_action :set_check, only: [:edit, :update, :destroy, :run]
 
     def index
-      @checks = Blazer::Check.joins(:blazer_query).includes(:blazer_query).order("state, blazer_queries.name, blazer_checks.id").to_a
-      @checks.select! { |c| "#{c.blazer_query.name} #{c.emails}".downcase.include?(params[:q]) } if params[:q]
+      @checks = Blazer::Check.joins(:query).includes(:query).order("state, blazer_queries.name, blazer_checks.id").to_a
+      @checks.select! { |c| "#{c.query.name} #{c.emails}".downcase.include?(params[:q]) } if params[:q]
     end
 
     def new
@@ -35,13 +35,13 @@ module Blazer
     end
 
     def run
-      @query = @check.blazer_query
+      @query = @check.query
     end
 
     private
 
     def check_params
-      params.require(:check).permit(:blazer_query_id, :emails)
+      params.require(:check).permit(:query_id, :emails)
     end
 
     def set_check

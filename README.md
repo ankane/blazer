@@ -289,20 +289,23 @@ ENV["BLAZER_DATABASE_URL"] = "redshift://user:password@hostname:5439/database"
 Add a migration for dashboards and checks
 
 ```sh
-rails g migration create_blazer_dashboards
+rails g migration update_blazer_1_0_0
 ```
 
 with
 
 ```ruby
+add_column :blazer_queries, :data_source, :string
+add_column :blazer_audits, :data_source, :string
+
 create_table :blazer_dashboards do |t|
   t.text :name
   t.timestamps
 end
 
 create_table :blazer_dashboard_queries do |t|
-  t.references :blazer_dashboard
-  t.references :blazer_query
+  t.references :dashboard
+  t.references :query
   t.integer :position
   t.timestamps
 end

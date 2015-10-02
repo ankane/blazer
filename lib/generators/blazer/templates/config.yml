@@ -1,10 +1,26 @@
 data_sources:
   main:
     url: <%%= ENV["BLAZER_DATABASE_URL"] %>
+
     timeout: 15
-    linked_columns:
-      # user_id: "/admin/users/{value}"
-    smart_columns:
-      # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+
     smart_variables:
       # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
+
+    linked_columns:
+      # user_id: "/admin/users/{value}"
+
+    smart_columns:
+      # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+
+# create audits
+audit: true
+
+# change the time zone
+# time_zone: "Pacific Time (US & Canada)"
+
+# class name of the user model
+# user_class: User
+
+# method name for the user model
+# user_name: name

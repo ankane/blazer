@@ -18,7 +18,7 @@
   <tbody>
     <% @checks.each do |check| %>
       <tr>
-        <td><%= link_to check.blazer_query.name, check.blazer_query %></td>
+        <td><%= link_to check.query.name, check.query %></td>
         <td>
           <% if check.state %>
             <small style="font-weight: bold; color: <%= colors[check.state.to_sym] %>;"><%= check.state.upcase %></small>

@@ -37,13 +37,13 @@ module Blazer
   end
 
   def self.run_checks
-    Blazer::Check.includes(:blazer_query).find_each do |check|
+    Blazer::Check.includes(:query).find_each do |check|
       rows = nil
       error = nil
       tries = 0
       # try 3 times on timeout errors
       begin
-        rows, error = data_sources[check.blazer_query.data_source].run_statement(check.blazer_query.statement)
+        rows, error = data_sources[check.query.data_source].run_statement(check.query.statement)
         tries += 1
       end while error && error.include?("canceling statement due to statement timeout") && tries < 3
       check.update_state(rows, error)
@@ -52,7 +52,7 @@ module Blazer
 
   def self.send_failing_checks
     emails = {}
-    Blazer::Check.includes(:blazer_query).where(state: %w[failing error]).find_each do |check|
+    Blazer::Check.includes(:query).where(state: %w[failing error]).find_each do |check|
       check.split_emails.each do |email|
         (emails[email] ||= []) << check
       end

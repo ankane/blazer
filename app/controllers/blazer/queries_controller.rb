@@ -6,7 +6,7 @@ module Blazer
       @queries = Blazer::Query.order(:name)
       @queries = @queries.includes(:creator) if Blazer.user_class
       @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
-      @checks = Blazer::Check.group(:blazer_query_id).count
+      @checks = Blazer::Check.group(:query_id).count
     end
 
     def new
@@ -68,7 +68,7 @@ module Blazer
         @rows, @error = @data_source.run_statement(@statement)
 
         if @query && !@error.to_s.include?("canceling statement due to statement timeout")
-          @query.blazer_checks.each do |check|
+          @query.checks.each do |check|
             check.update_state(@rows, @error)
           end
         end

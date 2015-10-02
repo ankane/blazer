@@ -19,26 +19,26 @@ li:hover .glyphicon-remove {
     <%= f.label :name %>
     <%= f.text_field :name, class: "form-control" %>
   </div>
-  <div class="form-group <%= "hide" if (@queries || @dashboard.blazer_queries).empty? %>">
+  <div class="form-group <%= "hide" if (@queries || @dashboard.queries).empty? %>">
     <%= f.label :charts %>
     <ul class="list-group">
-      <% (@queries || @dashboard.blazer_dashboard_queries.order(:position).map(&:blazer_query)).each do |query| %>
+      <% (@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).each do |query| %>
         <li class="list-group-item">
           <span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span>
           <%= query.name %>
-          <%= hidden_field_tag "blazer_query_ids[]", query.id %>
+          <%= hidden_field_tag "query_ids[]", query.id %>
         </li>
       <% end %>
     </ul>
   </div>
   <div class="form-group">
-    <%= f.label :blazer_query_id, "Add Chart" %>
+    <%= f.label :query_id, "Add Chart" %>
     <div class="hide">
-      <%= select_tag :blazer_query_id, options_for_select(Blazer::Query.order(:name).map { |q| [q.name, q.id] }, {include_blank: true}) %>
+      <%= select_tag :query_id, options_for_select(Blazer::Query.order(:name).map { |q| [q.name, q.id] }, {include_blank: true}) %>
     </div>
     <script>
-      $("#blazer_query_id").selectize({allowEmptyOption: true}).parents(".hide").removeClass("hide");
-      $("#blazer_query_id").change( function () {
+      $("#query_id").selectize({allowEmptyOption: true}).parents(".hide").removeClass("hide");
+      $("#query_id").change( function () {
         var $option = $(this).find("option:selected");
         if ($option.val() !== "") {
           // console.log($option.val());
@@ -46,7 +46,7 @@ li:hover .glyphicon-remove {
           var $li = $("<li></li>");
           $li.addClass("list-group-item");
           $li.text($option.text());
-          $li.prepend('<span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span><input type="hidden" name="blazer_query_ids[]" id="blazer_query_ids_" value="' + $option.val() + '">');
+          $li.prepend('<span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span><input type="hidden" name="query_ids[]" id="query_ids_" value="' + $option.val() + '">');
           $(".list-group").append($li);
           $(this).val("");
           $(".form-group").removeClass("hide");

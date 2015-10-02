@@ -21,7 +21,7 @@ module Blazer
     end
 
     def show
-      @queries = @dashboard.blazer_dashboard_queries.order(:position).preload(:blazer_query).map(&:blazer_query)
+      @queries = @dashboard.dashboard_queries.order(:position).preload(:query).map(&:query)
       @queries.each do |query|
         process_vars(query.statement)
       end
@@ -71,19 +71,19 @@ module Blazer
     def update_dashboard(dashboard)
       dashboard.assign_attributes(dashboard_params)
       Blazer::Dashboard.transaction do
-        if params[:blazer_query_ids].is_a?(Array)
-          query_ids = params[:blazer_query_ids].map(&:to_i)
+        if params[:query_ids].is_a?(Array)
+          query_ids = params[:query_ids].map(&:to_i)
           @queries = Blazer::Query.find(query_ids).sort_by { |q| query_ids.index(q.id) }
         end
         if dashboard.save
           if @queries
             @queries.each_with_index do |query, i|
-              dashboard_query = dashboard.blazer_dashboard_queries.where(blazer_query_id: query.id).first_or_initialize
+              dashboard_query = dashboard.dashboard_queries.where(query_id: query.id).first_or_initialize
               dashboard_query.position = i
               dashboard_query.save!
             end
             if dashboard.persisted?
-              dashboard.blazer_dashboard_queries.where.not(blazer_query_id: query_ids).destroy_all
+              dashboard.dashboard_queries.where.not(query_id: query_ids).destroy_all
             end
           end
           true

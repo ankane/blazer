@@ -18,7 +18,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
     end
 
     create_table :blazer_checks do |t|
-      t.references :blazer_query
+      t.references :query
       t.string :state
       t.text :emails
       t.timestamps
@@ -30,8 +30,8 @@ class <%= migration_class_name %> < ActiveRecord::Migration
     end
 
     create_table :blazer_dashboard_queries do |t|
-      t.references :blazer_dashboard
-      t.references :blazer_query
+      t.references :dashboard
+      t.references :query
       t.integer :position
       t.timestamps
     end

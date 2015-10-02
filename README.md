@@ -187,6 +187,33 @@ smart_variables:
   city_id: "SELECT id, name FROM cities ORDER BY name ASC"
 ```
 
+The first column is the value of the variable, and the second column is the label.
+
+## Results
+
+### Linked Columns
+
+Link results to other pages in your apps or around the web. Specify a column name and where it should link to. You can use the value of the result with `{value}`.
+
+```yml
+linked_columns:
+  user_id: "/admin/users/{value}"
+  ip_address: "http://www.infosniper.net/index.php?ip_address={value}"
+```
+
+### Smart Columns
+
+```sql
+SELECT name, city_id FROM users
+```
+
+See which city the user belongs to without a join.
+
+```yml
+smart_columns:
+  city_id: "SELECT id, name FROM cities WHERE id IN {value}"
+```
+
 ## Charts
 
 Blazer will automatically generate charts based on the types of the columns returned in your query.
@@ -217,7 +244,7 @@ SELECT gender, COUNT(*) FROM users GROUP BY 1
 
 ## Upgrading
 
-### 1.0.0
+### 1.0.0 [unreleased]
 
 Add a migration for dashboards and checks
 

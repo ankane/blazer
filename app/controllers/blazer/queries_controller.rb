@@ -30,10 +30,11 @@ module Blazer
 
       @smart_vars = {}
       @sql_errors = []
+      data_source = Blazer.data_sources[@query.data_source]
       @bind_vars.each do |var|
-        query = Blazer.smart_variables[var]
+        query = data_source.smart_variables[var]
         if query
-          rows, error = Blazer.run_statement(query)
+          rows, error = data_source.run_statement(query)
           @smart_vars[var] = rows.map { |v| v.values.reverse }
           @sql_errors << error if error
         end

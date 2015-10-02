@@ -29,12 +29,15 @@ module Blazer
 
       @smart_vars = {}
       @sql_errors = []
+      data_sources = @queries.map { |q| Blazer.data_sources[q.data_source] }.uniq
       @bind_vars.each do |var|
-        query = Blazer.smart_variables[var]
-        if query
-          rows, error = Blazer.run_statement(query)
-          @smart_vars[var] = rows.map { |v| v.values.reverse }
-          @sql_errors << error if error
+        data_sources.each do |data_source|
+          query = data_source.smart_variables[var]
+          if query
+            rows, error = data_source.run_statement(query)
+            (@smart_vars[var] ||= []).concat rows.map { |v| v.values.reverse }
+            @sql_errors << error if error
+          end
         end
       end
     end

@@ -321,7 +321,6 @@ Update `config/blazer.yml` with:
 ```yml
 # see https://github.com/ankane/blazer for more info
 
-# data sources
 data_sources:
   main:
     url: <%= ENV["BLAZER_DATABASE_URL"] %>

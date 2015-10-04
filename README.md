@@ -127,10 +127,18 @@ end
 
 ## Queries
 
+### Variables
+
 Create queries with variables
 
 ```sql
 SELECT * FROM users WHERE gender = {gender}
+```
+
+Use `{start_time}` and `{end_time}` for time ranges.
+
+```sql
+SELECT * FROM users WHERE created_at >= {start_time} AND created_at <= {end_time}
 ```
 
 ### Smart Variables

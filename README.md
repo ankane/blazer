@@ -1,21 +1,18 @@
 # Blazer
 
-Share data effortlessly with your team
+Explore your data. Easily create charts and dashboards, and share the results with your team.
 
-Blazer eliminates the need for many admin pages
-
-[Play around with the demo](https://blazerme.herokuapp.com) - data from [MovieLens](http://grouplens.org/datasets/movielens/)
+[Try it out](https://blazerme.herokuapp.com)
 
 [![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-18d79092e635b4b220f57ff7a1ecea41.png)](https://blazerme.herokuapp.com)
 
-Works with PostgreSQL, MySQL, and Redshift
-
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
-See instructions for [upgrading to 1.0](#100)
+**Blazer 1.0 was recently released!** See the [instructions for upgrading](#100)
 
 ## Features
 
+- Works with PostgreSQL, MySQL, and Redshift
 - **Charts** - visualize the data
 - **Dashboards** - see queries all in one place
 - **Checks & Alerts** - get emailed when bad data appears [master]
@@ -286,10 +283,10 @@ ENV["BLAZER_DATABASE_URL"] = "redshift://user:password@hostname:5439/database"
 
 ### 1.0.0
 
-Add a migration for dashboards and checks
+Create a migration
 
 ```sh
-rails g migration update_blazer_1_0_0
+rails g migration upgrade_blazer_to_1_0_0
 ```
 
 with
@@ -320,12 +317,9 @@ end
 
 ## TODO
 
-- support for multiple data sources
-- better navigation
-- standalone version
-- update lock
-- warn when database user has write permissions
 - advanced permissions
+- standalone version
+- better navigation
 
 ## History
 
@@ -345,6 +339,8 @@ Blazer uses a number of awesome, open source projects.
 - [Date Range Picker](https://github.com/dangrossman/bootstrap-daterangepicker)
 
 Created by [ankane](https://github.com/ankane) and [righi](https://github.com/righi)
+
+Demo data from [MovieLens](http://grouplens.org/datasets/movielens/).
 
 ## Contributing
 

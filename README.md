@@ -1,6 +1,6 @@
 # Blazer
 
-Explore your data. Easily create charts and dashboards, and share with your team.
+Explore your data with SQL. Easily create charts and dashboards, and share them with your team.
 
 [Try it out](https://blazerme.herokuapp.com)
 
@@ -127,7 +127,7 @@ end
 
 ## Queries
 
-[demo]
+[Demo]()
 
 Create queries with variables
 
@@ -240,6 +240,13 @@ SELECT * FROM events WHERE started_at > ended_at
 ```
 
 Then create check with optional emails if you want to be notified.
+
+## Learn SQL
+
+Have team members who want to learn SQL? Here are a few great, free resources.
+
+- [Khan Academy](https://www.khanacademy.org/computing/computer-programming/sql)
+- [Codecademy](https://www.codecademy.com/courses/learn-sql)
 
 ## Useful Tools
 

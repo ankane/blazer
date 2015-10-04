@@ -27,7 +27,7 @@ Explore your data. Easily create charts and dashboards, and share the results wi
 Create queries with variables
 
 ```sql
-SELECT COUNT(*) FROM users WHERE gender = {gender}
+SELECT * FROM users WHERE gender = {gender}
 ```
 
 ### Smart Variables
@@ -37,7 +37,7 @@ SELECT COUNT(*) FROM users WHERE gender = {gender}
 Supposed you have this query
 
 ```sql
-SELECT COUNT(*) FROM users WHERE city_id = {city_id}
+SELECT * FROM users WHERE city_id = {city_id}
 ```
 
 Instead of remembering each city’s id, users can select cities by name.

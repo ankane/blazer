@@ -160,8 +160,6 @@ smart_variables:
 
 The first column is the value of the variable, and the second column is the label.
 
-## Results
-
 ### Linked Columns
 
 Link results to other pages in your apps or around the web. Specify a column name and where it should link to. You can use the value of the result with `{value}`.
@@ -243,6 +241,33 @@ SELECT * FROM events WHERE started_at > ended_at
 
 Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.
 
+## Data Sources
+
+Blazer supports multiple data sources :tada:
+
+Add additional data sources in `config/blazer.yml`:
+
+```yml
+data_sources:
+  main:
+    url: <%= ENV["BLAZER_DATABASE_URL"] %>
+    # timeout, smart_variables, linked_columns, smart_columns
+  catalog:
+    url: <%= ENV["CATALOG_DATABASE_URL"] %>
+    # ...
+  redshift:
+    url: <%= ENV["REDSHIFT_DATABASE_URL"] %>
+    # ...
+```
+
+### Redshift
+
+Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set:
+
+```ruby
+ENV["BLAZER_DATABASE_URL"] = "redshift://user:password@hostname:5439/database"
+```
+
 ## Learn SQL
 
 Have team members who want to learn SQL? Here are a few great, free resources.
@@ -253,14 +278,6 @@ Have team members who want to learn SQL? Here are a few great, free resources.
 ## Useful Tools
 
 For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).
-
-## Redshift
-
-Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set:
-
-```ruby
-ENV["BLAZER_DATABASE_URL"] = "redshift://user:password@hostname:5439/database"
-```
 
 ## Upgrading
 

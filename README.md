@@ -8,7 +8,7 @@ Explore your data. Easily create charts and dashboards, and share the results wi
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
-**Blazer 1.0 was recently released!** See the [instructions for upgrading](#100)
+**Blazer 1.0 was recently released!** See the [instructions for upgrading](#10)
 
 ## Features
 
@@ -281,12 +281,24 @@ ENV["BLAZER_DATABASE_URL"] = "redshift://user:password@hostname:5439/database"
 
 ## Upgrading
 
-### 1.0.0
+### 1.0
+
+Blazer 1.0 brings a number of new features:
+
+- multiple data sources, including Redshift
+- dashboards
+- checks
+
+To upgrade, run
+
+```sh
+bundle update blazer
+```
 
 Create a migration
 
 ```sh
-rails g migration upgrade_blazer_to_1_0_0
+rails g migration upgrade_blazer_to_1_0
 ```
 
 with
@@ -313,6 +325,12 @@ create_table :blazer_checks do |t|
   t.text :emails
   t.timestamps
 end
+```
+
+And run
+
+```sh
+rake db:migrate
 ```
 
 ## TODO

@@ -2,9 +2,9 @@
 
 Explore your data with SQL. Easily create charts and dashboards, and share them with your team.
 
-[Try it out](https://blazerme.herokuapp.com)
+[Try it out](http://blazer.hero2app.com)
 
-[![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-18d79092e635b4b220f57ff7a1ecea41.png)](https://blazerme.herokuapp.com)
+[![Screenshot](http://blazer.hero2app.com/assets/screenshot-473b2307ebaf7377645079cbf2badf73.png)](http://blazer.hero2app.com)
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
@@ -137,7 +137,7 @@ SELECT * FROM users WHERE gender = {gender}
 
 ### Smart Variables
 
-[demo]
+[Demo]()
 
 Supposed you have this query
 
@@ -160,7 +160,7 @@ The first column is the value of the variable, and the second column is the labe
 
 ### Linked Columns
 
-[demo]
+[Demo]()
 
 Link results to other pages in your apps or around the web. Specify a column name and where it should link to. You can use the value of the result with `{value}`.
 
@@ -172,7 +172,7 @@ linked_columns:
 
 ### Smart Columns
 
-[demo]
+[Demo](http://blazer.hero2app.com/queries/2-top-genres)
 
 ```sql
 SELECT name, city_id FROM users
@@ -193,21 +193,27 @@ Blazer will automatically generate charts based on the types of the columns retu
 
 There are two ways to generate line charts.
 
-2+ columns - timestamp, numeric(s) [demo]
+2+ columns - timestamp, numeric(s)
+
+[Demo](http://blazer.hero2app.com/queries/7-new-ratings-by-gender-per-month)
 
 ```sql
-SELECT gd_week(created_at), COUNT(*) FROM users GROUP BY 1
+SELECT date_trunc('week', created_at), COUNT(*) FROM users GROUP BY 1
 ```
 
-3 columns - timestamp, string, numeric [demo]
+3 columns - timestamp, string, numeric
+
+[Demo]()
 
 ```sql
-SELECT gd_week(created_at), gender, AVG(age) FROM users GROUP BY 1, 2
+SELECT date_trunc('week', created_at), gender, AVG(age) FROM users GROUP BY 1, 2
 ```
 
 ### Pie Chart
 
-2 columns - string, numeric [demo]
+2 columns - string, numeric
+
+[Demo]()
 
 ```sql
 SELECT gender, COUNT(*) FROM users GROUP BY 1
@@ -219,7 +225,7 @@ Each query run creates a `Blazer::Audit`.
 
 ## Dashboards
 
-[demo]
+[Demo](http://blazer.hero2app.com/dashboards/1-movielens)
 
 Combine multiple queries into a dashboard.
 
@@ -229,7 +235,7 @@ If any queries have variables, they will show up on the dashboard.
 
 ## Checks
 
-[demo]
+[Demo]()
 
 Checks give you a centralized place to see the health of your data.
 

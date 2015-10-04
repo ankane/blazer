@@ -129,8 +129,8 @@ module Blazer
     end
 
     def tables
-      @data_source = params[:data_source]
-      render layout: false
+      @tables = Blazer.data_sources[params[:data_source]].tables.keys
+      render partial: "tables", layout: false
     end
 
     private

@@ -235,38 +235,6 @@ authenticate :user, lambda { |user| user.admin? } do
 end
 ```
 
-## Customization
-
-Change time zone
-
-```ruby
-Blazer.time_zone = "Pacific Time (US & Canada)"
-```
-
-Change timeout *PostgreSQL only*
-
-```ruby
-Blazer.timeout = 10 # defaults to 15
-```
-
-Turn off audits
-
-```ruby
-Blazer.audit = false
-```
-
-Custom user class
-
-```ruby
-Blazer.user_class = "Admin"
-```
-
-Customize user name
-
-```ruby
-Blazer.user_name = :first_name
-```
-
 ## Useful Tools
 
 For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).

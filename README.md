@@ -1,6 +1,6 @@
 # Blazer
 
-Explore your data. Easily create charts and dashboards, and share the results with your team.
+Explore your data. Easily create charts and dashboards, and share with your team.
 
 [Try it out](https://blazerme.herokuapp.com)
 
@@ -12,15 +12,120 @@ Explore your data. Easily create charts and dashboards, and share the results wi
 
 ## Features
 
-- Works with PostgreSQL, MySQL, and Redshift
-- **Charts** - visualize the data
-- **Dashboards** - see queries all in one place
-- **Checks & Alerts** - get emailed when bad data appears [master]
+- **Multiple data sources** - works with PostgreSQL, MySQL, and Redshift
 - **Variables** - run the same queries with different values
+- **Checks & alerts** - get emailed when bad data appears
 - **Audits** - all queries are tracked
-- **Secure** - works with your authentication system
+- **Security** - works with your authentication system
 
-## Variables
+## Docs
+
+- [Installation](#installation)
+- [Queries](#queries)
+- [Charts](#charts)
+- [Dashboards](#dashboards)
+- [Checks](#checks)
+
+## Installation
+
+Add this line to your application’s Gemfile:
+
+```ruby
+gem 'blazer'
+```
+
+Run:
+
+```sh
+rails g blazer:install
+rake db:migrate
+```
+
+And mount the dashboard in your `config/routes.rb`:
+
+```ruby
+mount Blazer::Engine, at: "blazer"
+```
+
+For production, specify your database:
+
+```ruby
+ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database"
+```
+
+Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user.  [See how to create one](#permissions).
+
+#### Checks (optional)
+
+Be sure to set a host in `config/environments/production.rb` for emails to work.
+
+```ruby
+config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
+```
+
+Schedule checks to run every hour (with cron, [Heroku Scheduler](https://addons.heroku.com/scheduler), etc).
+
+```sh
+rake blazer:run_checks
+```
+
+You can also set up failing checks to be sent once a day (or whatever you prefer).
+
+```sh
+rake blazer:send_failing_checks
+```
+
+## Permissions
+
+### PostgreSQL
+
+Create a user with read only permissions:
+
+```sql
+BEGIN;
+CREATE ROLE blazer LOGIN PASSWORD 'secret123';
+GRANT CONNECT ON DATABASE database_name TO blazer;
+GRANT USAGE ON SCHEMA public TO blazer;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
+COMMIT;
+```
+
+### MySQL
+
+Create a user with read only permissions:
+
+```sql
+GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
+FLUSH PRIVILEGES;
+```
+
+### Sensitive Data
+
+To protect sensitive info like password hashes and access tokens, use views. Documentation coming soon.
+
+## Authentication
+
+Don’t forget to protect the dashboard in production.
+
+### Basic Authentication
+
+Set the following variables in your environment or an initializer.
+
+```ruby
+ENV["BLAZER_USERNAME"] = "andrew"
+ENV["BLAZER_PASSWORD"] = "secret"
+```
+
+### Devise
+
+```ruby
+authenticate :user, lambda { |user| user.admin? } do
+  mount Blazer::Engine, at: "blazer"
+end
+```
+
+## Queries
 
 [demo]
 
@@ -135,105 +240,6 @@ SELECT * FROM events WHERE started_at > ended_at
 ```
 
 Then create check with optional emails if you want to be notified.
-
-## Installation
-
-Add this line to your application’s Gemfile:
-
-```ruby
-gem 'blazer'
-```
-
-Run:
-
-```sh
-rails g blazer:install
-rake db:migrate
-```
-
-And mount the dashboard in your `config/routes.rb`:
-
-```ruby
-mount Blazer::Engine, at: "blazer"
-```
-
-For production, specify your database:
-
-```ruby
-ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database"
-```
-
-Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user.  [See how to create one](#permissions).
-
-#### Checks (optional)
-
-Be sure to set a host in `config/environments/production.rb` for emails to work.
-
-```ruby
-config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
-```
-
-Schedule checks to run every hour (with cron, [Heroku Scheduler](https://addons.heroku.com/scheduler), etc).
-
-```sh
-rake blazer:run_checks
-```
-
-You can also set up failing checks to be sent once a day (or whatever you prefer).
-
-```sh
-rake blazer:send_failing_checks
-```
-
-## Permissions
-
-### PostgreSQL
-
-Create a user with read only permissions:
-
-```sql
-BEGIN;
-CREATE ROLE blazer LOGIN PASSWORD 'secret123';
-GRANT CONNECT ON DATABASE database_name TO blazer;
-GRANT USAGE ON SCHEMA public TO blazer;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
-COMMIT;
-```
-
-### MySQL
-
-Create a user with read only permissions:
-
-```sql
-GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
-FLUSH PRIVILEGES;
-```
-
-### Sensitive Data
-
-To protect sensitive info like password hashes and access tokens, use views. Documentation coming soon.
-
-## Authentication
-
-Don’t forget to protect the dashboard in production.
-
-### Basic Authentication
-
-Set the following variables in your environment or an initializer.
-
-```ruby
-ENV["BLAZER_USERNAME"] = "andrew"
-ENV["BLAZER_PASSWORD"] = "secret"
-```
-
-### Devise
-
-```ruby
-authenticate :user, lambda { |user| user.admin? } do
-  mount Blazer::Engine, at: "blazer"
-end
-```
 
 ## Useful Tools
 

@@ -22,7 +22,7 @@ module Blazer
       if (state_was || state != "passing") && state != state_was && emails.present?
         Blazer::CheckMailer.state_change(self, state, state_was, rows.size, error).deliver_later
       end
-      save!
+      save! if changed?
     end
   end
 end

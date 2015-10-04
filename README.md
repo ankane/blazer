@@ -235,7 +235,7 @@ If any queries have variables, they will show up on the dashboard.
 
 ## Checks
 
-[Demo]()
+[Demo](http://blazer.hero2app.com/checks)
 
 Checks give you a centralized place to see the health of your data.
 

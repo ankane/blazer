@@ -135,7 +135,7 @@ Create queries with variables.
 SELECT * FROM users WHERE gender = {gender}
 ```
 
-Use `{start_time}` and `{end_time}` for time ranges. [Example](http://blazer.hero2app.com/queries/8-ratings-by-time-range?start_time=1997-10-03T04%3A00%3A00%2B00%3A00&end_time=1997-10-05T03%3A59%3A59%2B00%3A00)
+Use `{start_time}` and `{end_time}` for time ranges. [Example](http://blazer.hero2app.com/queries/8-ratings-by-time-range?start_time=1997-10-03T05%3A00%3A00%2B00%3A00&end_time=1997-10-04T04%3A59%3A59%2B00%3A00)
 
 ```sql
 SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}

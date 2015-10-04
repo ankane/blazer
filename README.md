@@ -127,8 +127,6 @@ end
 
 ## Queries
 
-[Demo]()
-
 Create queries with variables
 
 ```sql
@@ -136,8 +134,6 @@ SELECT * FROM users WHERE gender = {gender}
 ```
 
 ### Smart Variables
-
-[Demo]()
 
 Supposed you have this query
 
@@ -160,8 +156,6 @@ The first column is the value of the variable, and the second column is the labe
 
 ### Linked Columns
 
-[Demo]()
-
 Link results to other pages in your apps or around the web. Specify a column name and where it should link to. You can use the value of the result with `{value}`.
 
 ```yml
@@ -171,8 +165,6 @@ linked_columns:
 ```
 
 ### Smart Columns
-
-[Demo](http://blazer.hero2app.com/queries/2-top-genres)
 
 ```sql
 SELECT name, city_id FROM users
@@ -195,39 +187,35 @@ There are two ways to generate line charts.
 
 2+ columns - timestamp, numeric(s)
 
-[Demo](http://blazer.hero2app.com/queries/7-new-ratings-by-gender-per-month)
-
 ```sql
 SELECT date_trunc('week', created_at), COUNT(*) FROM users GROUP BY 1
 ```
 
+[Demo](http://blazer.hero2app.com/queries/1-new-ratings-per-week)
+
 3 columns - timestamp, string, numeric
 
-[Demo]()
-
 ```sql
-SELECT date_trunc('week', created_at), gender, AVG(age) FROM users GROUP BY 1, 2
+SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 ```
+
+[Demo](http://blazer.hero2app.com/queries/7-new-ratings-by-gender-per-month)
 
 ### Pie Chart
 
 2 columns - string, numeric
 
-[Demo]()
-
 ```sql
 SELECT gender, COUNT(*) FROM users GROUP BY 1
 ```
 
-## Audits
-
-Each query run creates a `Blazer::Audit`.
+[Demo](http://blazer.hero2app.com/queries/2-top-genres)
 
 ## Dashboards
 
-[Demo](http://blazer.hero2app.com/dashboards/1-movielens)
-
 Combine multiple queries into a dashboard.
+
+[Demo](http://blazer.hero2app.com/dashboards/1-movielens)
 
 If the query has a chart, the chart is shown. Otherwise, you’ll see a table.
 
@@ -235,9 +223,9 @@ If any queries have variables, they will show up on the dashboard.
 
 ## Checks
 
-[Demo](http://blazer.hero2app.com/checks)
-
 Checks give you a centralized place to see the health of your data.
+
+[Demo](http://blazer.hero2app.com/checks)
 
 Create a query to identify bad rows.
 
@@ -245,7 +233,7 @@ Create a query to identify bad rows.
 SELECT * FROM events WHERE started_at > ended_at
 ```
 
-Then create check with optional emails if you want to be notified.
+Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.
 
 ## Learn SQL
 

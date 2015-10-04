@@ -8,7 +8,7 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
-**Blazer 1.0 was recently released!** See the [instructions for upgrading](#10)
+**Blazer 1.0 was recently released!** See the [instructions for upgrading](#10).
 
 ## Features
 
@@ -129,7 +129,7 @@ end
 
 ### Variables
 
-Create queries with variables
+Create queries with variables.
 
 ```sql
 SELECT * FROM users WHERE gender = {gender}
@@ -143,7 +143,7 @@ SELECT * FROM users WHERE created_at >= {start_time} AND created_at <= {end_time
 
 ### Smart Variables
 
-Supposed you have this query
+Supposed you have the query:
 
 ```sql
 SELECT * FROM users WHERE city_id = {city_id}
@@ -272,7 +272,7 @@ Blazer 1.0 brings a number of new features:
 - dashboards
 - checks
 
-To upgrade, run
+To upgrade, run:
 
 ```sh
 bundle update blazer
@@ -284,7 +284,7 @@ Create a migration
 rails g migration upgrade_blazer_to_1_0
 ```
 
-with
+with:
 
 ```ruby
 add_column :blazer_queries, :data_source, :string
@@ -310,13 +310,13 @@ create_table :blazer_checks do |t|
 end
 ```
 
-And run
+And run:
 
 ```sh
 rake db:migrate
 ```
 
-Update `config/blazer.yml` with
+Update `config/blazer.yml` with:
 
 ```yml
 # see https://github.com/ankane/blazer for more info
@@ -324,7 +324,7 @@ Update `config/blazer.yml` with
 # data sources
 data_sources:
   main:
-    url: <%%= ENV["BLAZER_DATABASE_URL"] %>
+    url: <%= ENV["BLAZER_DATABASE_URL"] %>
 
     timeout: 15
 

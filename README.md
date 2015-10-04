@@ -235,7 +235,7 @@ Checks give you a centralized place to see the health of your data. [Example](ht
 Create a query to identify bad rows.
 
 ```sql
-SELECT * FROM events WHERE started_at > ended_at
+SELECT * FROM ratings WHERE user_id IS NULL /* all ratings should have a user */
 ```
 
 Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.

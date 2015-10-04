@@ -20,6 +20,15 @@
         </div>
         <%= f.select :data_source, Blazer.data_sources.values.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 140px;" %>
         <div id="tables" style="display: inline-block; width: 260px; margin-right: 10px;"></div>
+        <script>
+          function updatePreviewSelect() {
+            $("#tables").load("<%= tables_queries_path %>?" + $.param({data_source: $("#query_data_source").val()}), function () {
+              $("#table_names").selectize({});
+            });
+          }
+          updatePreviewSelect();
+          $("#query_data_source").selectize().change(updatePreviewSelect);
+        </script>
         <%= link_to "Run", "#", class: "btn btn-info", id: "run", style: "vertical-align: top;" %>
       </div>
     </div>
@@ -128,14 +137,6 @@
       $("#run").click();
     }
   });
-
-  function updatePreviewSelect() {
-    $("#tables").load("<%= tables_queries_path %>?" + $.param({data_source: $("#query_data_source").val()}), function () {
-      $("#table_names").selectize({});
-    });
-  }
-  updatePreviewSelect();
-  $("#query_data_source").selectize().change(updatePreviewSelect);
 
   $("form.the_form").on("submit", function() {
     $("#query_statement").val(editor.getValue());

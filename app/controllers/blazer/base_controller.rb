@@ -44,5 +44,10 @@ module Blazer
       params.except(:controller, :action, :id, :host, :query, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source)
     end
     helper_method :variable_params
+
+    def blazer_user
+      send(Blazer.user_method) if Blazer.user_method && respond_to?(Blazer.user_method)
+    end
+    helper_method :blazer_user
   end
 end

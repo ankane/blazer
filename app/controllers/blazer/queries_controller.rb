@@ -15,7 +15,7 @@ module Blazer
 
     def create
       @query = Blazer::Query.new(query_params)
-      @query.creator = current_user if respond_to?(:current_user) && Blazer.user_class
+      @query.creator = blazer_user
 
       if @query.save
         redirect_to query_path(@query, variable_params)
@@ -60,7 +60,7 @@ module Blazer
           audit = Blazer::Audit.new(statement: @statement)
           audit.query = @query
           audit.data_source = data_source
-          audit.user = current_user if respond_to?(:current_user) && Blazer.user_class
+          audit.user = blazer_user
           audit.save!
         end
 

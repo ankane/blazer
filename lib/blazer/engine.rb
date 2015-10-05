@@ -12,6 +12,11 @@ module Blazer
       Blazer.from_email = Blazer.settings["from_email"] if Blazer.settings["from_email"]
 
       Blazer.user_class ||= Blazer.settings["user_class"] || User rescue nil
+      Blazer.user_method = Blazer.settings["user_method"]
+      if Blazer.user_class
+        Blazer.user_method ||= "current_#{Blazer.user_class.to_s.downcase.singularize}"
+      end
+
       Blazer::Query.belongs_to :creator, class_name: Blazer.user_class.to_s if Blazer.user_class
     end
   end

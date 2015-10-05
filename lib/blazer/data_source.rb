@@ -34,13 +34,20 @@ module Blazer
       settings["timeout"]
     end
 
-    def run_statement(statement)
+    def run_statement(statement, options = {})
       rows = []
       error = nil
       begin
         connection_model.transaction do
           connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && postgresql?
-          result = connection_model.connection.select_all(statement)
+          comment = "blazer"
+          if options[:user].respond_to?(:id)
+            comment << ",user_id:#{options[:user].id}"
+          end
+          if options[:query].respond_to?(:id)
+            comment << ",query_id:#{options[:query].id}"
+          end
+          result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
           result.each do |untyped_row|
             row = {}
             untyped_row.each do |k, v|

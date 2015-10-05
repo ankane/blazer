@@ -1,6 +1,7 @@
 ## 1.0.1 [unreleased]
 
 - Added `user_method` option
+- Added comments to queries
 
 ## 1.0.0
 

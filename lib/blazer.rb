@@ -11,6 +11,7 @@ module Blazer
     attr_reader :time_zone
     attr_accessor :user_name
     attr_accessor :user_class
+    attr_accessor :user_method
     attr_accessor :from_email
   end
   self.audit = true

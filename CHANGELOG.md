@@ -1,3 +1,7 @@
+## 1.0.1 [unreleased]
+
+- Added `user_method` option
+
 ## 1.0.0
 
 - Added support for multiple data sources

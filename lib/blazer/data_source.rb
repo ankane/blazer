@@ -45,6 +45,10 @@ module Blazer
       if options[:user].respond_to?(:id)
         comment << ",user_id:#{options[:user].id}"
       end
+      if options[:user].respond_to?(Blazer.user_name)
+        # only include letters, numbers, and spaces to prevent injection
+        comment << ",user_name:#{options[:user].send(Blazer.user_name).to_s.gsub(/[^a-zA-Z0-9 ]/, "")}"
+      end
       if options[:query].respond_to?(:id)
         comment << ",query_id:#{options[:query].id}"
       end

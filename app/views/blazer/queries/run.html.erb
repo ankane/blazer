@@ -22,7 +22,11 @@
     <% elsif values.size == 2 && values.first.is_a?(String) && values.last.is_a?(Numeric) %>
       <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
     <% elsif @only_chart %>
-      <% @no_chart = true %>
+      <% if @rows.size == 1 && @rows.first.size == 1 %>
+        <p style="font-size: 160px;"><%= @rows.first.values.first %></p>
+      <% else %>
+        <% @no_chart = true %>
+      <% end %>
     <% end %>
 
     <% unless @only_chart && !@no_chart %>

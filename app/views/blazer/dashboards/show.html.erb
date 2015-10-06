@@ -134,9 +134,17 @@
     </div>
   </div>
   <script>
-    $.post("<%= run_queries_path %>", <%= json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>, function (data) {
+    var request = $.ajax({
+      url: "<%= run_queries_path %>",
+      method: "POST",
+      data: <%= json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>,
+      dataType: "html"
+    }).done(function(data) {
       $("#chart-<%= i %>").html(data);
       $("#chart-<%= i %> table").stupidtable();
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+      var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
+      $("#chart-<%= i %>").css("color", "red").html(message);
     });
   </script>
 <% end %>

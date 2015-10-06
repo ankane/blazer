@@ -1,57 +1,29 @@
-<div id="queries">
-  <div id="header" style="margin-bottom: 20px;">
-    <div class="pull-right">
-      <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
-      <%= link_to "Dashboards", dashboards_path, class: "btn btn-primary" %>
-      <%= link_to "Checks", checks_path, class: "btn btn-primary" %>
-    </div>
-    <input type="text" placeholder="Start typing a query or person" style="width: 300px; display: inline-block;" autofocus=true class="search form-control" />
-  </div>
-
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Query</th>
-        <th style="width: 20%; text-align: right;">Mastermind</th>
-      </tr>
-    </thead>
-    <tbody class="list">
-      <% @queries.each do |query| %>
-        <tr>
-          <td class="query">
-            <%= link_to query.name, query %>
-            <span style="color: #ccc;"><%= extract_vars(query.statement).join(", ") %></span>
-            <% if query.created_at > 2.days.ago %>
-              <small style="font-weight: bold; color: #5cb85c;">NEW</small>
-            <% end %>
-            <% if @trending_queries[query.id] %>
-              <small style="font-weight: bold; color: #f60;">TRENDING</small>
-            <% end %>
-            <% if @checks[query.id] %>
-              <small style="font-weight: bold; color: #f60;">CHECK</small>
-            <% end %>
-            <div class="hide"><%= query.name.gsub(/\s+/, "") %></div>
-          </td>
-          <td class="creator text-right text-muted">
-            <% if query.respond_to?(:creator) && (creator = query.creator) && creator.respond_to?(Blazer.user_name) %>
-              <% name = creator.send(Blazer.user_name) %>
-              <% if creator == blazer_user %>
-                You
-                <div class="hide">me <%= name %></div>
-              <% else %>
-                <%= name %>
-              <% end %>
-            <% end %>
-          </td>
-        </tr>
+<% @queries.each do |query| %>
+  <tr>
+    <td class="query">
+      <%= link_to query.name, query %>
+      <span style="color: #ccc;"><%= extract_vars(query.statement).join(", ") %></span>
+      <% if query.created_at > 2.days.ago %>
+        <small style="font-weight: bold; color: #5cb85c;">NEW</small>
       <% end %>
-    </tbody>
-  </table>
-</div>
-
-<script>
-  var options = {
-    valueNames: ['query', 'creator']
-  };
-  var userList = new List('queries', options);
-</script>
+      <% if @trending_queries[query.id] %>
+        <small style="font-weight: bold; color: #f60;">TRENDING</small>
+      <% end %>
+      <% if @checks[query.id] %>
+        <small style="font-weight: bold; color: #f60;">CHECK</small>
+      <% end %>
+      <div class="hide"><%= query.name.gsub(/\s+/, "") %></div>
+    </td>
+    <td class="creator text-right text-muted">
+      <% if query.respond_to?(:creator) && (creator = query.creator) && creator.respond_to?(Blazer.user_name) %>
+        <% name = creator.send(Blazer.user_name) %>
+        <% if creator == blazer_user %>
+          You
+          <div class="hide">me <%= name %></div>
+        <% else %>
+          <%= name %>
+        <% end %>
+      <% end %>
+    </td>
+  </tr>
+<% end %>

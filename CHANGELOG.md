@@ -1,7 +1,8 @@
 ## 1.0.1 [unreleased]
 
-- Added `user_method` option
 - Added comments to queries
+- Added `user_method` option
+- Added `use_transaction` option
 
 ## 1.0.0
 

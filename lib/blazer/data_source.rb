@@ -37,8 +37,8 @@ module Blazer
     def run_statement(statement, options = {})
       rows = []
       error = nil
-      begin
-        connection_model.transaction do
+      connection_model.transaction do
+        begin
           connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && postgresql?
           comment = "blazer"
           if options[:user].respond_to?(:id)
@@ -55,10 +55,11 @@ module Blazer
             end
             rows << row
           end
+        rescue ActiveRecord::StatementInvalid => e
+          error = e.message.sub(/.+ERROR: /, "")
+        ensure
           raise ActiveRecord::Rollback
         end
-      rescue ActiveRecord::StatementInvalid => e
-        error = e.message.sub(/.+ERROR: /, "")
       end
       [rows, error]
     end

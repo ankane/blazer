@@ -23,7 +23,7 @@
       <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
-        <p style="font-size: 160px;"><%= @rows.first.values.first %></p>
+        <p style="font-size: 160px;"><%= format_value(@rows.first.keys.first, @rows.first.values.first) %></p>
       <% else %>
         <% @no_chart = true %>
       <% end %>

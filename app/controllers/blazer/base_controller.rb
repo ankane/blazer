@@ -30,6 +30,7 @@ module Blazer
           if var.end_with?("_at")
             value = Blazer.time_zone.parse(value) rescue nil
           end
+          value.gsub!(" ", "+") if ["start_time", "end_time"].include?(var) # fix for Quip bug
           statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
         end
       end

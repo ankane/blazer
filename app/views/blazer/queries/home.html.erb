@@ -16,15 +16,25 @@
       </tr>
     </thead>
     <tbody class="list">
+      <%= render partial: "index" %>
     </tbody>
   </table>
 </div>
 
 <script>
-  $(".list").load("<%= queries_path %>", function () {
-    var options = {
-      valueNames: ['query', 'creator']
-    };
+  var options = {
+    valueNames: ['query', 'creator']
+  };
+
+  function updateList() {
     var userList = new List('queries', options);
-  });
+    userList.search($(".search").val());
+  }
+  updateList();
 </script>
+
+<% if @queries.size == 1000 %>
+  <script>
+    $(".list").load("<%= queries_path %>", updateList);
+  </script>
+<% end %>

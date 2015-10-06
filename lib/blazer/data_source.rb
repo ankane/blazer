@@ -34,19 +34,24 @@ module Blazer
       settings["timeout"]
     end
 
+    def use_transaction?
+      settings.key?("use_transaction") ? settings["use_transaction"] : true
+    end
+
     def run_statement(statement, options = {})
       rows = []
       error = nil
-      connection_model.transaction do
+      comment = "blazer"
+      if options[:user].respond_to?(:id)
+        comment << ",user_id:#{options[:user].id}"
+      end
+      if options[:query].respond_to?(:id)
+        comment << ",query_id:#{options[:query].id}"
+      end
+
+      in_transaction do
         begin
           connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && postgresql?
-          comment = "blazer"
-          if options[:user].respond_to?(:id)
-            comment << ",user_id:#{options[:user].id}"
-          end
-          if options[:query].respond_to?(:id)
-            comment << ",query_id:#{options[:query].id}"
-          end
           result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
           result.each do |untyped_row|
             row = {}
@@ -57,10 +62,9 @@ module Blazer
           end
         rescue ActiveRecord::StatementInvalid => e
           error = e.message.sub(/.+ERROR: /, "")
-        ensure
-          raise ActiveRecord::Rollback
         end
       end
+
       [rows, error]
     end
 
@@ -73,6 +77,22 @@ module Blazer
 
     def postgresql?
       ["PostgreSQL", "Redshift"].include?(connection_model.connection.adapter_name)
+    end
+
+    protected
+
+    def in_transaction
+      if use_transaction?
+        connection_model.transaction do
+          begin
+            yield
+          ensure
+            raise ActiveRecord::Rollback
+          end
+        end
+      else
+        yield
+      end
     end
   end
 end

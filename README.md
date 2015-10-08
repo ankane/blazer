@@ -386,6 +386,9 @@ audit: true
 
 # method name for the user model
 # user_name: name
+
+# email to send checks from
+# from_email: blazer@example.org
 ```
 
 ## TODO

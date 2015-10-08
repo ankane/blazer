@@ -4,7 +4,20 @@ data_sources:
   main:
     url: <%%= ENV["BLAZER_DATABASE_URL"] %>
 
-    # timeout: 15 # applies to PostgreSQL only
+    # statement timeout, in seconds
+    # applies to PostgreSQL only
+    # none by default
+    # timeout: 15
+
+    # time to cache results, in minutes
+    # can greatly improve speed
+    # none by default
+    # cache: 60
+
+    # wrap queries in a transaction for safety
+    # not necessary if you use a read-only user
+    # true by default
+    # use_transaction: false
 
     smart_variables:
       # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
@@ -26,3 +39,6 @@ audit: true
 
 # method name for the user model
 # user_name: name
+
+# email to send checks from
+# from_email: blazer@example.org

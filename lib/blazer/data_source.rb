@@ -48,7 +48,7 @@ module Blazer
       rows = nil
       error = nil
       cached_at = nil
-      if cache
+      if cache && !options[:refresh_cache]
         cache_key = self.cache_key(statement)
         value = Blazer.cache.read(cache_key)
         rows, cached_at = Marshal.load(value) if value

@@ -49,7 +49,7 @@ module Blazer
       error = nil
       cached_at = nil
       if cache
-        cache_key = ["blazer", "v2", id, Digest::MD5.hexdigest(statement)].join("/")
+        cache_key = self.cache_key(statement)
         value = Blazer.cache.read(cache_key)
         rows, cached_at = Marshal.load(value) if value
       end
@@ -89,6 +89,14 @@ module Blazer
       end
 
       [rows, error, cached_at]
+    end
+
+    def clear_cache(statement)
+      Blazer.cache.delete(cache_key(statement))
+    end
+
+    def cache_key(statement)
+      ["blazer", "v2", id, Digest::MD5.hexdigest(statement)].join("/")
     end
 
     def tables

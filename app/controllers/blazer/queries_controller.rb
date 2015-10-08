@@ -1,7 +1,7 @@
 module Blazer
   class QueriesController < BaseController
     before_action :set_queries, only: [:home, :index]
-    before_action :set_query, only: [:show, :edit, :update, :destroy]
+    before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
 
     def home
       @queries = @queries.limit(1000)
@@ -115,6 +115,12 @@ module Blazer
           send_data csv_data(@rows), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query ? @query.name.parameterize : 'query'}.csv\""
         end
       end
+    end
+
+    def refresh
+      data_source = Blazer.data_sources[@query.data_source]
+      data_source.clear_cache(@query.statement)
+      redirect_to query_path(@query, variable_params)
     end
 
     def update

@@ -119,7 +119,9 @@ module Blazer
 
     def refresh
       data_source = Blazer.data_sources[@query.data_source]
-      data_source.clear_cache(@query.statement)
+      @statement = @query.statement.dup
+      process_vars(@statement)
+      data_source.clear_cache(@statement)
       redirect_to query_path(@query, variable_params)
     end
 

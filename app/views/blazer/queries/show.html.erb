@@ -156,7 +156,7 @@
     var request = $.ajax({
       url: "<%= run_queries_path %>",
       method: "POST",
-      data: <%= json_escape({statement: @statement, query_id: @query.id}.to_json).html_safe %>,
+      data: <%= json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>,
       dataType: "html"
     }).done(function(data) {
       $("#results").html(data);

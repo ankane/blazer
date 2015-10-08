@@ -2,9 +2,9 @@
 
 Explore your data with SQL. Easily create charts and dashboards, and share them with your team.
 
-[Try it out](http://blazer.hero2app.com)
+[Try it out](https://blazerme.herokuapp.com)
 
-[![Screenshot](http://blazer.hero2app.com/assets/screenshot-473b2307ebaf7377645079cbf2badf73.png)](http://blazer.hero2app.com)
+[![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-18d79092e635b4b220f57ff7a1ecea41.png)](https://blazerme.herokuapp.com)
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
@@ -135,7 +135,7 @@ Create queries with variables.
 SELECT * FROM users WHERE gender = {gender}
 ```
 
-Use `{start_time}` and `{end_time}` for time ranges. [Example](http://blazer.hero2app.com/queries/8-ratings-by-time-range?start_time=1997-10-03T05%3A00%3A00%2B00%3A00&end_time=1997-10-04T04%3A59%3A59%2B00%3A00)
+Use `{start_time}` and `{end_time}` for time ranges. [Example](https://blazerme.herokuapp.com/queries/8-ratings-by-time-range?start_time=1997-10-03T05%3A00%3A00%2B00%3A00&end_time=1997-10-04T04%3A59%3A59%2B00%3A00)
 
 ```sql
 SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
@@ -143,7 +143,7 @@ SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
 
 ### Smart Variables
 
-[Example](http://blazer.hero2app.com/queries/9-movies-by-genre)
+[Example](https://blazerme.herokuapp.com/queries/9-movies-by-genre)
 
 Suppose you have the query:
 
@@ -164,7 +164,7 @@ The first column is the value of the variable, and the second column is the labe
 
 ### Linked Columns
 
-[Example](http://blazer.hero2app.com/queries/4-highest-rated-movies) - title column
+[Example](https://blazerme.herokuapp.com/queries/4-highest-rated-movies) - title column
 
 Link results to other pages in your apps or around the web. Specify a column name and where it should link to. You can use the value of the result with `{value}`.
 
@@ -176,7 +176,7 @@ linked_columns:
 
 ### Smart Columns
 
-[Example](http://blazer.hero2app.com/queries/11-users) - occupation_id column
+[Example](https://blazerme.herokuapp.com/queries/11-users) - occupation_id column
 
 Suppose you have the query:
 
@@ -199,13 +199,13 @@ Blazer will automatically generate charts based on the types of the columns retu
 
 There are two ways to generate line charts.
 
-2+ columns - timestamp, numeric(s) - [Example](http://blazer.hero2app.com/queries/1-new-ratings-per-week)
+2+ columns - timestamp, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/1-new-ratings-per-week)
 
 ```sql
 SELECT date_trunc('week', created_at), COUNT(*) FROM users GROUP BY 1
 ```
 
-3 columns - timestamp, string, numeric - [Example](http://blazer.hero2app.com/queries/7-new-ratings-by-gender-per-month)
+3 columns - timestamp, string, numeric - [Example](https://blazerme.herokuapp.com/queries/7-new-ratings-by-gender-per-month)
 
 
 ```sql
@@ -214,7 +214,7 @@ SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 
 ### Pie Chart
 
-2 columns - string, numeric - [Example](http://blazer.hero2app.com/queries/2-top-genres)
+2 columns - string, numeric - [Example](https://blazerme.herokuapp.com/queries/2-top-genres)
 
 ```sql
 SELECT gender, COUNT(*) FROM users GROUP BY 1
@@ -222,7 +222,7 @@ SELECT gender, COUNT(*) FROM users GROUP BY 1
 
 ## Dashboards
 
-Create a dashboard with multiple queries. [Example](http://blazer.hero2app.com/dashboards/1-movielens)
+Create a dashboard with multiple queries. [Example](https://blazerme.herokuapp.com/dashboards/1-movielens)
 
 If the query has a chart, the chart is shown. Otherwise, you’ll see a table.
 
@@ -230,7 +230,7 @@ If any queries have variables, they will show up on the dashboard.
 
 ## Checks
 
-Checks give you a centralized place to see the health of your data. [Example](http://blazer.hero2app.com/checks)
+Checks give you a centralized place to see the health of your data. [Example](https://blazerme.herokuapp.com/checks)
 
 Create a query to identify bad rows.
 

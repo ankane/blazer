@@ -191,6 +191,16 @@ smart_columns:
   city_id: "SELECT id, name FROM cities WHERE id IN {value}"
 ```
 
+### Caching
+
+Blazer can automatically cache results to improve speed.
+
+```yml
+cache: 60 # minutes
+```
+
+Of course, you can force a refresh at any time.
+
 ## Charts
 
 Blazer will automatically generate charts based on the types of the columns returned in your query.
@@ -341,7 +351,20 @@ data_sources:
   main:
     url: <%= ENV["BLAZER_DATABASE_URL"] %>
 
-    # timeout: 15 # applies to PostgreSQL only
+    # statement timeout, in seconds
+    # applies to PostgreSQL only
+    # none by default
+    # timeout: 15
+
+    # time to cache results, in minutes
+    # can greatly improve speed
+    # none by default
+    # cache: 60
+
+    # wrap queries in a transaction for safety
+    # not necessary if you use a read-only user
+    # true by default
+    # use_transaction: false
 
     smart_variables:
       # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"

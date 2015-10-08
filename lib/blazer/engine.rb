@@ -18,6 +18,8 @@ module Blazer
       end
 
       Blazer::Query.belongs_to :creator, class_name: Blazer.user_class.to_s if Blazer.user_class
+
+      Blazer.cache ||= Rails.cache
     end
   end
 end

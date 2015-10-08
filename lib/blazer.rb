@@ -13,6 +13,7 @@ module Blazer
     attr_accessor :user_class
     attr_accessor :user_method
     attr_accessor :from_email
+    attr_accessor :cache
   end
   self.audit = true
   self.user_name = :name
@@ -44,7 +45,7 @@ module Blazer
       tries = 0
       # try 3 times on timeout errors
       begin
-        rows, error = data_sources[check.query.data_source].run_statement(check.query.statement)
+        rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement)
         tries += 1
       end while error && error.include?("canceling statement due to statement timeout") && tries < 3
       check.update_state(rows, error)

@@ -36,7 +36,7 @@ module Blazer
       @bind_vars.each do |var|
         query = data_source.smart_variables[var]
         if query
-          rows, error = data_source.run_statement(query)
+          rows, error, cached_at = data_source.run_statement(query)
           @smart_vars[var] = rows.map { |v| v.values.reverse }
           @sql_errors << error if error
         end
@@ -67,7 +67,7 @@ module Blazer
         end
 
         @data_source = Blazer.data_sources[data_source]
-        @rows, @error = @data_source.run_statement(@statement, user: blazer_user, query: @query)
+        @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query)
 
         if @query && !@error.to_s.include?("canceling statement due to statement timeout")
           @query.checks.each do |check|
@@ -99,7 +99,7 @@ module Blazer
           query = @data_source.smart_columns[key]
           if query
             values = @rows.map { |r| r[key] }.compact.uniq
-            rows, error = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+            rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
             @boom[key] = Hash[rows.map(&:values)]
           end
         end

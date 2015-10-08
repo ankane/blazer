@@ -8,6 +8,9 @@
   <% end %>
 <% else %>
   <% unless @only_chart %>
+    <% if @cached_at %>
+      <p class="text-muted" style="float: right;">Cached <%= time_ago_in_words(@cached_at) %> ago</p>
+    <% end %>
     <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
   <% end %>
   <% if @rows.any? %>

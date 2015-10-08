@@ -67,7 +67,7 @@ module Blazer
         end
 
         @data_source = Blazer.data_sources[data_source]
-        @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query)
+        @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
 
         if @query && !@error.to_s.include?("canceling statement due to statement timeout")
           @query.checks.each do |check|

@@ -8,9 +8,14 @@
   <% end %>
 <% else %>
   <% unless @only_chart %>
-    <% if @cached_at %>
+    <% if @cached_at || @data_source.cache %>
       <p class="text-muted" style="float: right;">
-        Cached <%= time_ago_in_words(@cached_at, include_seconds: true) %> ago
+        <% if @cached_at %>
+          Cached <%= time_ago_in_words(@cached_at, include_seconds: true) %> ago
+        <% elsif !params[:data_source] %>
+          Cached just now
+        <% end %>
+
         <% if @query && !params[:data_source] %>
           <%= link_to "Refresh", refresh_query_path(@query, variable_params), method: :post %>
         <% end %>

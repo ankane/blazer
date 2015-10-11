@@ -99,10 +99,13 @@ module Blazer
       ["blazer", "v2", id, Digest::MD5.hexdigest(statement)].join("/")
     end
 
-    def tables
+    def schemas
       default_schema = postgresql? ? "public" : connection_model.connection_config[:database]
-      schema = connection_model.connection_config[:schema] || default_schema
-      rows, error, cached_at = run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema = ?", schema]))
+      settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
+    end
+
+    def tables
+      rows, error, cached_at = run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema IN (?)", schemas]))
       Hash[rows.group_by { |r| r["table_name"] }.map { |t, f| [t, f.sort_by { |f| f["ordinal_position"] }.map { |f| f.slice("column_name", "data_type") }] }.sort_by { |t, _f| t }]
     end
 

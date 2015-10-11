@@ -23,7 +23,14 @@ module Blazer
   end
 
   def self.settings
-    @settings ||= YAML.load(ERB.new(File.read(Rails.root.join("config", "blazer.yml"))).result)
+    @settings ||= begin
+      path = Rails.root.join("config", "blazer.yml").to_s
+      if File.exist?(path)
+        YAML.load(ERB.new(File.read(path)).result)
+      else
+        {}
+      end
+    end
   end
 
   def self.data_sources

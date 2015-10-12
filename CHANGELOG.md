@@ -1,3 +1,8 @@
+## 1.0.2
+
+- Fixed error when installing
+- Added `schemas` option
+
 ## 1.0.1
 
 - Added comments to queries

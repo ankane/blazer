@@ -1,5 +1,7 @@
 module Blazer
   module BaseHelper
+    include JsonEscape
+
     def title(title = nil)
       if title
         content_for(:title) { title }

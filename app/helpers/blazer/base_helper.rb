@@ -1,6 +1,6 @@
 module Blazer
   module BaseHelper
-    include JsonEscape
+    include BlazerJsonEscape
 
     def title(title = nil)
       if title

@@ -137,7 +137,7 @@
     var request = $.ajax({
       url: "<%= run_queries_path %>",
       method: "POST",
-      data: <%= json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>,
+      data: <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>,
       dataType: "html"
     }).done(function(data) {
       $("#chart-<%= i %>").html(data);

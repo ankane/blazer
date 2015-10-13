@@ -418,11 +418,13 @@ Created by [ankane](https://github.com/ankane) and [righi](https://github.com/ri
 
 Demo data from [MovieLens](http://grouplens.org/datasets/movielens/).
 
-## Contributing
+## Want to Make Blazer Better?
 
-Everyone is encouraged to help improve this project. Here are a few ways you can help:
+That’s awesome! Here are a few ways you can help:
 
 - [Report bugs](https://github.com/ankane/blazer/issues)
 - Fix bugs and [submit pull requests](https://github.com/ankane/blazer/pulls)
 - Write, clarify, or fix documentation
 - Suggest or add new features
+
+Check out the [dev app](https://github.com/ankane/blazer-dev) to get started.

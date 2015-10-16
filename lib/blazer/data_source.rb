@@ -71,7 +71,7 @@ module Blazer
 
         in_transaction do
           begin
-            connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && postgresql?
+            connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && (postgresql? || redshift?)
             result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
             result.each do |untyped_row|
               row = {}
@@ -100,7 +100,7 @@ module Blazer
     end
 
     def schemas
-      default_schema = postgresql? ? "public" : connection_model.connection_config[:database]
+      default_schema = (postgresql? || redshift?) ? "public" : connection_model.connection_config[:database]
       settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
     end
 
@@ -110,7 +110,25 @@ module Blazer
     end
 
     def postgresql?
-      ["PostgreSQL", "Redshift"].include?(connection_model.connection.adapter_name)
+      connection_model.connection.adapter_name == "PostgreSQL"
+    end
+
+    def redshift?
+      connection_model.connection.adapter_name == "Redshift"
+    end
+
+    def groupdate_hack(statement)
+      if redshift? && Blazer.settings["groupdate_hack"]
+        original_statement = statement.dup
+        %w[day week month].each do |period|
+          statement.gsub!(/g#{period}\(([^,\)]+), ?([^\)]+)\)/, "TRUNC(DATE_TRUNC('#{period}', CONVERT_TIMEZONE(\\2, \\1)))")
+          statement.gsub!(/g#{period}\(([^\)]*_at[^\)]*)\)/, "TRUNC(DATE_TRUNC('#{period}', CONVERT_TIMEZONE('America/Los_Angeles', \\1)))")
+          statement.gsub!(/g#{period}\(([^\)]+)\)/, "TRUNC(DATE_TRUNC('#{period}', \\1))")
+        end
+        if statement != original_statement
+          statement << "\n/* modified for Redshift */"
+        end
+      end
     end
 
     protected

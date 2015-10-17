@@ -34,6 +34,35 @@
       <%= line_chart @rows.group_by { |v| v[keys[1]] }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] } } }, id: chart_id, min: nil %>
     <% elsif values.size == 2 && values.first.is_a?(String) && values.last.is_a?(Numeric) %>
       <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
+    <% elsif blazer_maps? && @markers.any? %>
+      <div id="map" style="height: 300px;"></div>
+      <script>
+        L.mapbox.accessToken = '<%= ENV["MAPBOX_ACCESS_TOKEN"] %>';
+        var map = L.mapbox.map('map', 'ankane.ioo8nki0');
+        var markers = <%= json_escape(@markers.to_json).html_safe %>;
+        var featureLayer = L.mapbox.featureLayer().addTo(map);
+        var geojson = [];
+        for (var i = 0; i < markers.length; i++) {
+          var marker = markers[i];
+          geojson.push({
+            type: 'Feature',
+            geometry: {
+              type: 'Point',
+              coordinates: [
+                marker.longitude,
+                marker.latitude
+              ]
+            },
+            properties: {
+              description: marker.title,
+              'marker-color': '#f86767',
+              'marker-symbol': 'star'
+            }
+          });
+        }
+        featureLayer.setGeoJSON(geojson);
+        map.fitBounds(featureLayer.getBounds());
+      </script>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
         <p style="font-size: 160px;"><%= format_value(@rows.first.keys.first, @rows.first.values.first) %></p>

@@ -230,6 +230,16 @@ SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 SELECT gender, COUNT(*) FROM users GROUP BY 1
 ```
 
+### Maps [master]
+
+Columns named `latitude` and `longitude` or `lat` and `lon`.
+
+```sql
+SELECT name, latitude, longtitude FROM cities
+```
+
+To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `ENV["MAPBOX_ACCESS_TOKEN"]`.
+
 ## Dashboards
 
 Create a dashboard with multiple queries. [Example](https://blazerme.herokuapp.com/dashboards/1-movielens)

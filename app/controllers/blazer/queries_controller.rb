@@ -105,6 +105,22 @@ module Blazer
         end
 
         @linked_columns = @data_source.linked_columns
+
+        @markers = []
+        [["latitude", "longitude"], ["lat", "lon"]].each do |keys|
+          if (keys - (@rows.first || {}).keys).empty?
+            @markers =
+              @rows.select do |r|
+                r[keys.first] && r[keys.last]
+              end.map do |r|
+                {
+                  title: r.except(*keys).map{ |k, v| "<strong>#{k}:</strong> #{v}" }.join("<br />").truncate(140),
+                  latitude: r[keys.first],
+                  longitude: r[keys.last]
+                }
+              end
+          end
+        end
       end
 
       respond_to do |format|

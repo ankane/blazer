@@ -16,3 +16,10 @@
 //= require ./ace/snippets/text
 //= require ./ace/snippets/sql
 //= require ./Sortable
+//= require ./bootstrap
+
+$( function () {
+  $('.dropdown-toggle').mouseenter( function () {
+    $(this).parent().addClass('open');
+  });
+});

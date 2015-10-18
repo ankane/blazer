@@ -42,7 +42,7 @@ module Blazer
         end
       end
 
-      data_source.groupdate_hack(@statement)
+      Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
     end
 
     def edit
@@ -59,7 +59,7 @@ module Blazer
         data_source = params[:data_source]
         data_source = @query.data_source if @query && @query.data_source
         @data_source = Blazer.data_sources[data_source]
-        @data_source.groupdate_hack(@statement)
+        Blazer.transform_statement.call(@data_source, @statement) if Blazer.transform_statement
 
         # audit
         if Blazer.audit

@@ -14,6 +14,7 @@ module Blazer
     attr_accessor :user_method
     attr_accessor :from_email
     attr_accessor :cache
+    attr_accessor :transform_statement
   end
   self.audit = true
   self.user_name = :name

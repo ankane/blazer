@@ -117,20 +117,6 @@ module Blazer
       connection_model.connection.adapter_name == "Redshift"
     end
 
-    def groupdate_hack(statement)
-      if redshift? && Blazer.settings["groupdate_hack"]
-        original_statement = statement.dup
-        %w[day week month].each do |period|
-          statement.gsub!(/g#{period}\(([^,\)]+), ?([^\)]+)\)/, "TRUNC(DATE_TRUNC('#{period}', CONVERT_TIMEZONE(\\2, \\1)))")
-          statement.gsub!(/g#{period}\(([^\)]*_at[^\)]*)\)/, "TRUNC(DATE_TRUNC('#{period}', CONVERT_TIMEZONE('America/Los_Angeles', \\1)))")
-          statement.gsub!(/g#{period}\(([^\)]+)\)/, "TRUNC(DATE_TRUNC('#{period}', \\1))")
-        end
-        if statement != original_statement
-          statement << "\n/* modified for Redshift */"
-        end
-      end
-    end
-
     protected
 
     def in_transaction

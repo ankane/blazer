@@ -35,7 +35,7 @@
     <% elsif values.size == 2 && values.first.is_a?(String) && values.last.is_a?(Numeric) %>
       <%= pie_chart @rows.map(&:values), library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
     <% elsif blazer_maps? && @markers.any? %>
-      <div id="map" style="height: 300px;"></div>
+      <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
       <script>
         L.mapbox.accessToken = '<%= ENV["MAPBOX_ACCESS_TOKEN"] %>';
         var map = L.mapbox.map('map', 'ankane.ioo8nki0');

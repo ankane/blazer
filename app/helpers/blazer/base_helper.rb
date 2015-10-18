@@ -15,5 +15,9 @@ module Blazer
         value
       end
     end
+
+    def blazer_maps?
+      ENV["MAPBOX_ACCESS_TOKEN"].present?
+    end
   end
 end

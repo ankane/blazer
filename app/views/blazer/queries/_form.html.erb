@@ -97,7 +97,7 @@
 
   var error_line = null;
   var xhr;
-  var params = <%= raw json_escape(variable_params.to_json) %>;
+  var params = <%= raw blazer_json_escape(variable_params.to_json) %>;
 
   $("#run").click(function (e) {
     e.preventDefault();

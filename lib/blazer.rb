@@ -4,7 +4,6 @@ require "blazer/version"
 require "blazer/data_source"
 require "blazer/engine"
 require "blazer/tasks"
-require "rails_extensions/blazer_json_escape"
 
 module Blazer
   class << self

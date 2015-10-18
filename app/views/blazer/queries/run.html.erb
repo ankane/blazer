@@ -65,7 +65,7 @@
       </script>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
-        <p style="font-size: 160px;"><%= format_value(@rows.first.keys.first, @rows.first.values.first) %></p>
+        <p style="font-size: 160px;"><%= blazer_format_value(@rows.first.keys.first, @rows.first.values.first) %></p>
       <% else %>
         <% @no_chart = true %>
       <% end %>
@@ -99,9 +99,9 @@
                       <% if v == "" %>
                         <div class="text-muted">empty string</div>
                       <% elsif @linked_columns[k] %>
-                        <%= link_to format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
+                        <%= link_to blazer_format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
                       <% else %>
-                        <%= format_value(k, v) %>
+                        <%= blazer_format_value(k, v) %>
                       <% end %>
 
                       <% if v2 = (@boom[k] || {})[v] %>

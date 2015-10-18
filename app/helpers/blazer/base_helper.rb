@@ -1,6 +1,6 @@
 module Blazer
   module BaseHelper
-    def title(title = nil)
+    def blazer_title(title = nil)
       if title
         content_for(:title) { title }
       else
@@ -8,7 +8,7 @@ module Blazer
       end
     end
 
-    def format_value(key, value)
+    def blazer_format_value(key, value)
       if value.is_a?(Integer) && !key.to_s.end_with?("id")
         number_with_delimiter(value)
       else

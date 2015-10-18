@@ -1,3 +1,8 @@
+## 1.0.3 [unreleased]
+
+- Added maps
+- Added support for Rails 4.0
+
 ## 1.0.2
 
 - Fixed error when installing

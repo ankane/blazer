@@ -1,4 +1,4 @@
-## 1.0.3 [unreleased]
+## 1.0.3
 
 - Added maps
 - Added support for Rails 4.0

@@ -230,7 +230,7 @@ SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 SELECT gender, COUNT(*) FROM users GROUP BY 1
 ```
 
-### Maps [master]
+### Maps
 
 Columns named `latitude` and `longitude` or `lat` and `lon`.
 

@@ -43,7 +43,11 @@
 </script>
 
 <% if @queries.size == 1000 %>
+  <p id="loading" class="text-muted">Loading...</p>
   <script>
-    $(".list").load("<%= queries_path %>", updateList);
+    $(".list").load("<%= queries_path %>", function () {
+      updateList();
+      $("#loading").remove();
+    });
   </script>
 <% end %>

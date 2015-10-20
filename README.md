@@ -234,7 +234,7 @@ SELECT gender, COUNT(*) FROM users GROUP BY 1
 
 ### Maps
 
-Columns named `latitude` and `longitude` or `lat` and `lon`.
+Columns named `latitude` and `longitude` or `lat` and `lon` - [Example](https://blazerme.herokuapp.com/queries/11-airports-in-pacific-time-zone)
 
 ```sql
 SELECT name, latitude, longtitude FROM cities

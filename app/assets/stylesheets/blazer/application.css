@@ -83,3 +83,7 @@ input.search:focus {
   overflow: scroll;
   text-align: left;
 }
+
+.dashboard a {
+  font-weight: bold;
+}

@@ -169,6 +169,7 @@ module Blazer
       @queries = @queries.includes(:creator) if Blazer.user_class
       @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
       @checks = Blazer::Check.group(:query_id).count
+      @dashboards = Blazer::Dashboard.order(:name)
     end
 
     def set_query

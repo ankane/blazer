@@ -1,13 +1,13 @@
 module Blazer
   class QueriesController < BaseController
-    before_action :set_queries, only: [:home, :index]
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
 
     def home
-      @queries = @queries.limit(1000)
+      set_queries(1000)
     end
 
     def index
+      set_queries
       render partial: "index", layout: false
     end
 
@@ -168,9 +168,20 @@ module Blazer
 
     private
 
-    def set_queries
+    def set_queries(limit = nil)
+      @my_queries =
+        if blazer_user
+          recent_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("query_id IS NOT NULL").order("created_at desc").limit(100).pluck(:query_id).uniq.first(20)
+          queries = Blazer::Query.where(id: recent_query_ids).index_by(&:id)
+          recent_query_ids.map { |query_id| queries[query_id] }.compact
+        else
+          []
+        end
+
       @queries = Blazer::Query.order(:name)
+      @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
       @queries = @queries.includes(:creator) if Blazer.user_class
+      @queries = @queries.limit(limit) if limit
       @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
       @checks = Blazer::Check.group(:query_id).count
       @dashboards = Blazer::Dashboard.order(:name)

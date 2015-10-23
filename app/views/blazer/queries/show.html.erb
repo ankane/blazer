@@ -25,7 +25,7 @@
       </div>
       <div class="col-sm-3 text-right">
         <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default" %>
-        <%= link_to "Fork", new_query_path(variable_params.merge(statement: @query.statement, data_source: @query.data_source)), class: "btn btn-info" %>
+        <%= link_to "Fork", new_query_path(variable_params.merge(statement: @query.statement, data_source: @query.data_source, name: "Fork of #{@query.name}")), class: "btn btn-info" %>
 
         <% if !@error && @success %>
           <%= button_to "Download", run_queries_path(statement: @statement, query_id: @query.id, format: "csv"), class: "btn btn-primary" %>

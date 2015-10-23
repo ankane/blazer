@@ -12,7 +12,11 @@ module Blazer
     end
 
     def new
-      @query = Blazer::Query.new(statement: params[:statement], data_source: params[:data_source])
+      @query = Blazer::Query.new(
+        statement: params[:statement],
+        data_source: params[:data_source],
+        name: params[:name]
+      )
     end
 
     def create

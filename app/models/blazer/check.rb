@@ -13,9 +13,9 @@ module Blazer
         if error
           "error"
         elsif rows.any?
-          "failing"
+          invert ? "passing" : "failing"
         else
-          "passing"
+          invert ? "failing" : "passing"
         end
 
       # do not notify on creation, except when not passing

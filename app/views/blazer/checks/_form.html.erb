@@ -20,7 +20,6 @@
     <%= f.select :invert, [['Fail if ANY results returned (default)', false], ['Fail if NO results returned (invert)', true]], {}, {id: 'select-invert'} %>
     <script>
       $("#select-invert").selectize({
-        create: true,
         sortField: 'text'
       });
     </script>

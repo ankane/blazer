@@ -21,7 +21,7 @@ module Blazer
 
     def create
       @query = Blazer::Query.new(query_params)
-      @query.creator = blazer_user
+      @query.creator = blazer_user if @query.respond_to?(:creator)
 
       if @query.save
         redirect_to query_path(@query, variable_params)

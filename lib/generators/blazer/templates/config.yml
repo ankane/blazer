@@ -1,8 +1,44 @@
-linked_columns:
-  # user_id: "/admin/users/{value}"
+# see https://github.com/ankane/blazer for more info
 
-smart_columns:
-  # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+data_sources:
+  main:
+    url: <%%= ENV["BLAZER_DATABASE_URL"] %>
 
-smart_variables:
-  # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
+    # statement timeout, in seconds
+    # applies to PostgreSQL only
+    # none by default
+    # timeout: 15
+
+    # time to cache results, in minutes
+    # can greatly improve speed
+    # none by default
+    # cache: 60
+
+    # wrap queries in a transaction for safety
+    # not necessary if you use a read-only user
+    # true by default
+    # use_transaction: false
+
+    smart_variables:
+      # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
+
+    linked_columns:
+      # user_id: "/admin/users/{value}"
+
+    smart_columns:
+      # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+
+# create audits
+audit: true
+
+# change the time zone
+# time_zone: "Pacific Time (US & Canada)"
+
+# class name of the user model
+# user_class: User
+
+# method name for the user model
+# user_name: name
+
+# email to send checks from
+# from_email: blazer@example.org

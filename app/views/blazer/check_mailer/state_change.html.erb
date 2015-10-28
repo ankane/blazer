@@ -1,0 +1,6 @@
+<p><%= link_to "View", query_url(@check.query_id) %></p>
+<% if @error %>
+  <p><%= @error %></p>
+<% elsif @rows_count > 0 %>
+  <p><%= pluralize(@rows_count, "row") %></p>
+<% end %>

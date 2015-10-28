@@ -2,7 +2,7 @@
   <div class="alert alert-danger"><%= @query.errors.full_messages.first %></div>
 <% end %>
 
-<%= form_for @query, html: {class: "the_form", autocomplete: "off"} do |f| %>
+<%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params) : queries_path(variable_params)), html: {class: "the_form", autocomplete: "off"} do |f| %>
   <div class="row">
     <div class="col-xs-8">
       <div class= "form-group">
@@ -14,9 +14,21 @@
       <div class="form-group text-right">
         <div class="pull-left" style="margin-top: 6px;">
           <%= link_to "Back", :back %>
-          <span class="text-muted" style="margin-left: 20px;"> Use {start_time} and {end_time} for time ranges</span>
+          <% if Blazer.data_sources.size == 1 %>
+            <span class="text-muted" style="margin-left: 20px;"> Use {start_time} and {end_time} for time ranges</span>
+          <% end %>
         </div>
-        <%= select_tag :table_names, options_for_select([["Preview table", nil]] + tables.keys), style: "margin-right: 20px; width: 240px;" %>
+        <%= f.select :data_source, Blazer.data_sources.values.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 140px;" %>
+        <div id="tables" style="display: inline-block; width: 260px; margin-right: 10px;" class="hide">
+          <%= render partial: "tables" %>
+        </div>
+        <script>
+          function updatePreviewSelect() {
+            $("#tables").load("<%= tables_queries_path %>?" + $.param({data_source: $("#query_data_source").val()}));
+          }
+          updatePreviewSelect();
+          $("#query_data_source").selectize().change(updatePreviewSelect);
+        </script>
         <%= link_to "Run", "#", class: "btn btn-info", id: "run", style: "vertical-align: top;" %>
       </div>
     </div>
@@ -33,7 +45,7 @@
         <% if can?(:delete, @query) && @query.persisted? %>
           <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
         <% end %>
-        <%= f.submit "Save", class: "btn btn-success" %>
+        <%= f.submit @query.persisted? ? "Update" : "Create", class: "btn btn-success" %>
       </div>
     </div>
   </div>
@@ -61,16 +73,31 @@
     name: 'run',
     bindKey: {win: 'Ctrl-Enter',  mac: 'Command-Enter'},
     exec: function(editor) {
-        $("#run").click();
+      $("#run").click();
     },
     readOnly: false // false if this command should not apply in readOnly mode
   });
 
-  editor.resize();
+ // http://stackoverflow.com/questions/11584061/
+ function adjustHeight() {
+    var lines = editor.getSession().getScreenLength();
+    if (lines < 9) {
+      lines = 9;
+    }
+
+    var newHeight = (lines + 1) * 16;
+    $("#editor").height(newHeight.toString() + "px");
+    editor.resize();
+  };
+
+  editor.getSession().on("change", adjustHeight);
+  adjustHeight();
   $("#editor").show();
   editor.focus();
 
   var error_line = null;
+  var xhr;
+  var params = <%= raw blazer_json_escape(variable_params.to_json) %>;
 
   $("#run").click(function (e) {
     e.preventDefault();
@@ -81,7 +108,10 @@
     }
 
     $("#results").html('<p class="text-muted">Loading...</p>');
-    $.post("<%= run_queries_path %>", {statement: editor.getValue()}, function (data) {
+    if (xhr) {
+      xhr.abort();
+    }
+    xhr = $.post("<%= run_queries_path %>", $.extend({}, params, {statement: editor.getValue().replace(/\n/g, "\r\n"), data_source: $("#query_data_source").val()}), function (data) {
       $("#results").html(data);
 
       error_line = /LINE (\d+)/g.exec($("#results").find('.alert-danger').text());
@@ -100,8 +130,7 @@
     $("#run").click();
   }
 
-  $("#table_names").selectize({
-  }).change( function () {
+  $(document).on("change", "#table_names", function () {
     var val = $(this).val();
     if (val.length > 0) {
       editor.setValue("SELECT * FROM " + val + " LIMIT 10");

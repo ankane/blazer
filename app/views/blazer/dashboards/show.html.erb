@@ -1,4 +1,4 @@
-<% blazer_title @query.name %>
+<% blazer_title @dashboard.name %>
 
 <script>
   function submitIfCompleted($form) {
@@ -15,45 +15,22 @@
 </script>
 
 <div style="position: fixed; top: 0; left: 0; right: 0; background-color: whitesmoke; height: 60px; z-index: 1001;">
-  <div class="container-fluid">
+  <div class="container">
     <div class="row" style="padding-top: 13px;">
       <div class="col-sm-9">
         <%= render partial: "blazer/nav" %>
         <h3 style="margin: 0; line-height: 34px; display: inline-block;">
-          <%= @query.name %>
+          <%= @dashboard.name %>
         </h3>
       </div>
       <div class="col-sm-3 text-right">
-        <% if can? :edit, @query %>
-          <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default" %>
-        <% end %>
-        <% if can? :create, Blazer::Query %>
-          <%= link_to "Fork", new_query_path(variable_params.merge(statement: @query.statement, data_source: @query.data_source, name: "Fork of #{@query.name}")), class: "btn btn-info" %>
-        <% end %>
-
-        <% if !@error && @success %>
-          <%= button_to "Download", run_queries_path(statement: @statement, query_id: @query.id, format: "csv"), class: "btn btn-primary" %>
-        <% end %>
+        <%= link_to "Edit", edit_dashboard_path(@dashboard), class: "btn btn-info" %>
       </div>
     </div>
   </div>
 </div>
 
 <div style="margin-bottom: 60px;"></div>
-
-<% if @sql_errors.any? %>
-  <div class="alert alert-danger">
-    <ul>
-      <% @sql_errors.each do |message| %>
-        <li><%= message %></li>
-      <% end %>
-    </ul>
-  </div>
-<% end %>
-
-<% if @query.description.present? %>
-  <p><%= @query.description %></p>
-<% end %>
 
 <% if @bind_vars.any? %>
   <form id="bind" method="get" action="<%= url_for(params) %>" class="form-inline" style="margin-bottom: 10px;">
@@ -146,37 +123,33 @@
         }
       </script>
     <% end %>
-
-    <input type="submit" class="btn btn-success" value="Run" style="vertical-align: top;" />
   </form>
 <% end %>
 
-<pre><code><%= @statement %></code></pre>
-
-<% if @success %>
-  <div id="results">
-    <p class="text-muted">Loading...</p>
+<% @queries.each_with_index do |query, i| %>
+  <div style="padding-top: 10px;">
+    <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank", style: "color: inherit;" %></h4>
+    <div id="chart-<%= i %>" class="chart">
+      <p class="text-muted">Loading...</p>
+    </div>
   </div>
-
   <script>
     var request = $.ajax({
       url: "<%= run_queries_path %>",
       method: "POST",
-      data: <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>,
+      data: <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>,
       dataType: "html"
     }).done(function(data) {
-      $("#results").html(data);
-      $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
+      $("#chart-<%= i %>").html(data);
+      $("#chart-<%= i %> table").stupidtable();
     }).fail(function(jqXHR, textStatus, errorThrown) {
       var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
-      $("#results").css("color", "red").html(message);
+      $("#chart-<%= i %>").css("color", "red").html(message);
     });
   </script>
 <% end %>
 
 <script>
-  hljs.initHighlightingOnLoad();
-
   $(".form-inline input, .form-inline select").change( function () {
     submitIfCompleted($(this).closest("form"));
   });

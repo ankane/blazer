@@ -1,39 +1,34 @@
 module Blazer
-  class QueriesController < ApplicationController
-    # skip all filters
-    skip_filter *_process_action_callbacks.map(&:filter)
+  class QueriesController < BaseController
+    before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
 
-    protect_from_forgery with: :exception
-
-    if ENV["BLAZER_PASSWORD"]
-      http_basic_authenticate_with name: ENV["BLAZER_USERNAME"], password: ENV["BLAZER_PASSWORD"]
+    def home
+      set_queries(1000)
     end
 
-    layout "blazer/application"
-
-    before_action :ensure_database_url
-    before_action :set_query, only: [:show, :edit, :update, :destroy]
-
     def index
-      @queries = Blazer::Query.order(:name)
-      @queries = @queries.includes(:creator) if Blazer.user_class
-      @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
+      set_queries
+      render partial: "index", layout: false
     end
 
     def new
       redirect_to root_path unless can? :new, Blazer::Query
 
-      @query = Blazer::Query.new(statement: params[:statement])
+      @query = Blazer::Query.new(
+        statement: params[:statement],
+        data_source: params[:data_source],
+        name: params[:name]
+      )
     end
 
     def create
       redirect_to root_path unless can? :create, Blazer::Query
 
       @query = Blazer::Query.new(query_params)
-      @query.creator = current_user if respond_to?(:current_user) && Blazer.user_class
+      @query.creator = blazer_user if @query.respond_to?(:creator)
 
       if @query.save
-        redirect_to @query
+        redirect_to query_path(@query, variable_params)
       else
         render :new
       end
@@ -42,19 +37,22 @@ module Blazer
     def show
       redirect_to root_path unless can? :show, Blazer::Query
 
-      @statement = @query.statement
+      @statement = @query.statement.dup
       process_vars(@statement)
 
       @smart_vars = {}
       @sql_errors = []
+      data_source = Blazer.data_sources[@query.data_source]
       @bind_vars.each do |var|
-        query = smart_variables[var]
+        query = data_source.smart_variables[var]
         if query
-          rows, error = run_statement(query)
+          rows, error, cached_at = data_source.run_statement(query)
           @smart_vars[var] = rows.map { |v| v.values.reverse }
           @sql_errors << error if error
         end
       end
+
+      Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
     end
 
     def edit
@@ -64,19 +62,32 @@ module Blazer
     def run
       @statement = params[:statement]
       process_vars(@statement)
+      @only_chart = params[:only_chart]
 
       if @success
         @query = Query.find_by(id: params[:query_id]) if params[:query_id]
+
+        data_source = params[:data_source]
+        data_source = @query.data_source if @query && @query.data_source
+        @data_source = Blazer.data_sources[data_source]
+        Blazer.transform_statement.call(@data_source, @statement) if Blazer.transform_statement
 
         # audit
         if Blazer.audit
           audit = Blazer::Audit.new(statement: @statement)
           audit.query = @query
-          audit.user = current_user if respond_to?(:current_user) && Blazer.user_class
+          audit.data_source = data_source
+          audit.user = blazer_user
           audit.save!
         end
 
-        @rows, @error = run_statement(@statement)
+        @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
+
+        if @query && !@error.to_s.include?("canceling statement due to statement timeout")
+          @query.checks.each do |check|
+            check.update_state(@rows, @error)
+          end
+        end
 
         @columns = {}
         if @rows.any?
@@ -95,19 +106,35 @@ module Blazer
 
         @filename = @query.name.parameterize if @query
 
-        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || smart_columns[k] }.keys
+        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || @data_source.smart_columns[k] }.keys
 
         @boom = {}
         @columns.keys.each do |key|
-          query = smart_columns[key]
+          query = @data_source.smart_columns[key]
           if query
             values = @rows.map { |r| r[key] }.compact.uniq
-            rows, error = run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+            rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
             @boom[key] = Hash[rows.map(&:values)]
           end
         end
 
-        @linked_columns = linked_columns
+        @linked_columns = @data_source.linked_columns
+
+        @markers = []
+        [["latitude", "longitude"], ["lat", "lon"]].each do |keys|
+          if (keys - (@rows.first || {}).keys).empty?
+            @markers =
+              @rows.select do |r|
+                r[keys.first] && r[keys.last]
+              end.map do |r|
+                {
+                  title: r.except(*keys).map{ |k, v| "<strong>#{k}:</strong> #{v}" }.join("<br />").truncate(140),
+                  latitude: r[keys.first],
+                  longitude: r[keys.last]
+                }
+              end
+          end
+        end
       end
 
       respond_to do |format|
@@ -120,9 +147,17 @@ module Blazer
       end
     end
 
+    def refresh
+      data_source = Blazer.data_sources[@query.data_source]
+      @statement = @query.statement.dup
+      process_vars(@statement)
+      data_source.clear_cache(@statement)
+      redirect_to query_path(@query, variable_params)
+    end
+
     def update
       if cannot?(:update, @query) || @query.update(query_params)
-        redirect_to query_path(@query)
+        redirect_to query_path(@query, variable_params)
       else
         render :edit
       end
@@ -137,10 +172,30 @@ module Blazer
       end    
     end
 
+    def tables
+      @tables = Blazer.data_sources[params[:data_source]].tables.keys
+      render partial: "tables", layout: false
+    end
+
     private
 
-    def ensure_database_url
-      render text: "BLAZER_DATABASE_URL required" if !Rails.application.secrets[:blazer_database_url] && !Rails.env.development?
+    def set_queries(limit = nil)
+      @my_queries =
+        if blazer_user
+          recent_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("query_id IS NOT NULL").order("created_at desc").limit(100).pluck(:query_id).uniq.first(20)
+          queries = Blazer::Query.where(id: recent_query_ids).index_by(&:id)
+          recent_query_ids.map { |query_id| queries[query_id] }.compact
+        else
+          []
+        end
+
+      @queries = Blazer::Query.order(:name)
+      @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
+      @queries = @queries.includes(:creator) if Blazer.user_class
+      @queries = @queries.limit(limit) if limit
+      @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
+      @checks = Blazer::Check.group(:query_id).count
+      @dashboards = Blazer::Dashboard.order(:name)
     end
 
     def set_query
@@ -148,7 +203,7 @@ module Blazer
     end
 
     def query_params
-      params.require(:query).permit(:name, :description, :statement)
+      params.require(:query).permit(:name, :description, :statement, :data_source)
     end
 
     def csv_data(rows)
@@ -160,76 +215,6 @@ module Blazer
           csv << row.values
         end
       end
-    end
-
-    def run_statement(statement)
-      rows = []
-      error = nil
-      begin
-        Blazer::Connection.transaction do
-          Blazer::Connection.connection.execute("SET statement_timeout = #{Blazer.timeout * 1000}") if Blazer.timeout && postgresql?
-          result = Blazer::Connection.connection.select_all(statement)
-          result.each do |untyped_row|
-            row = {}
-            untyped_row.each do |k, v|
-              row[k] = result.column_types.empty? ? v : result.column_types[k].send(:type_cast, v)
-            end
-            rows << row
-          end
-          raise ActiveRecord::Rollback
-        end
-      rescue ActiveRecord::StatementInvalid => e
-        error = e.message.sub(/.+ERROR: /, "")
-      end
-      [rows, error]
-    end
-
-    def extract_vars(statement)
-      statement.scan(/\{.*?\}/).map { |v| v[1...-1] }.uniq
-    end
-
-    def process_vars(statement)
-      @bind_vars = extract_vars(statement)
-      @success = @bind_vars.all? { |v| params[v] }
-
-      if @success
-        @bind_vars.each do |var|
-          value = params[var].presence
-          value = value.to_i if value.to_i.to_s == value
-          if var.end_with?("_at")
-            value = Blazer.time_zone.parse(value) rescue nil
-          end
-          statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
-        end
-      end
-    end
-
-    def settings
-      YAML.load(File.read(Rails.root.join("config", "blazer.yml")))
-    end
-
-    def linked_columns
-      settings["linked_columns"] || {}
-    end
-
-    def smart_columns
-      settings["smart_columns"] || {}
-    end
-
-    def smart_variables
-      settings["smart_variables"] || {}
-    end
-
-    def tables
-      default_schema = postgresql? ? "public" : Blazer::Connection.connection_config[:database]
-      schema = Blazer::Connection.connection_config[:schema] || default_schema
-      rows, error = run_statement(Blazer::Connection.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema = ?", schema]))
-      Hash[rows.group_by { |r| r["table_name"] }.map { |t, f| [t, f.sort_by { |f| f["ordinal_position"] }.map { |f| f.slice("column_name", "data_type") }] }.sort_by { |t, _f| t }]
-    end
-    helper_method :tables
-
-    def postgresql?
-      Blazer::Connection.connection.adapter_name == "PostgreSQL"
     end
   end
 end

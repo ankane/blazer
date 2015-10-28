@@ -1,0 +1,5 @@
+<%= select_tag :table_names, options_for_select([["Preview table", nil]] + (@tables || [])), style: "width: 240px;" %>
+
+<script>
+  $("#table_names").selectize({}).parent().removeClass("hide");
+</script>

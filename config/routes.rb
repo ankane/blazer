@@ -1,6 +1,12 @@
 Blazer::Engine.routes.draw do
-  resources :queries, except: [:index] do
+  resources :queries do
     post :run, on: :collection # err on the side of caution
+    post :refresh, on: :member
+    get :tables, on: :collection
   end
-  root to: "queries#index"
+  resources :checks, except: [:show] do
+    get :run, on: :member
+  end
+  resources :dashboards
+  root to: "queries#home"
 end

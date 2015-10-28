@@ -1,12 +1,16 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= title ? title : "Blazer" %></title>
+    <title><%= blazer_title ? blazer_title : "Blazer" %></title>
 
     <meta charset="utf-8" />
 
     <%= stylesheet_link_tag "blazer/application" %>
     <%= javascript_include_tag "//www.google.com/jsapi", "blazer/application" %>
+    <% if blazer_maps? %>
+      <%= stylesheet_link_tag "https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.css" %>
+      <%= javascript_include_tag "https://api.mapbox.com/mapbox.js/v2.2.2/mapbox.js" %>
+    <% end %>
     <%= csrf_meta_tags %>
   </head>
   <body>

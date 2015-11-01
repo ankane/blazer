@@ -144,6 +144,7 @@ module Blazer
       data_source = Blazer.data_sources[@query.data_source]
       @statement = @query.statement.dup
       process_vars(@statement)
+      Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
       data_source.clear_cache(@statement)
       redirect_to query_path(@query, variable_params)
     end

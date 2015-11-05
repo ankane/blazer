@@ -1,3 +1,9 @@
+## 1.0.4
+
+- Added recently viewed queries and dashboards to home page
+- Fixed refresh when transform statement is used
+- Fixed error when no user model
+
 ## 1.0.3
 
 - Added maps

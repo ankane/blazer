@@ -47,7 +47,7 @@ module Blazer
 
     def update
       if update_dashboard(@dashboard)
-        redirect_to dashboard_path(@dashboard)
+        redirect_to dashboard_path(@dashboard, variable_params)
       else
         render :edit
       end

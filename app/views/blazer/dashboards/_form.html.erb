@@ -18,7 +18,7 @@ li:hover .glyphicon-remove {
 }
 </style>
 
-<%= form_for @dashboard do |f| %>
+<%= form_for @dashboard, url: (@dashboard.persisted? ? dashboard_path(@dashboard, variable_params) : dashboards_path(variable_params)) do |f| %>
   <div class="form-group">
     <%= f.label :name %>
     <%= f.text_field :name, class: "form-control" %>

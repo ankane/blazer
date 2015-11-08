@@ -71,8 +71,10 @@ module Blazer
         when 5, 6
           [2, 3]
         else
-          [3, 3]
+          [2, 4]
         end
+
+      @refresh = (params[:refresh] || 30.minutes).to_i
     end
 
     protected

@@ -1,13 +1,12 @@
-<script>
-  console.log(screen.width)
-  console.log(screen.height)
-</script>
-
 <style>
   .container {
     width: 100%;
   }
 </style>
+
+<script>
+  var refreshRate = <%= @refresh %> * 1000;
+</script>
 
 <% i = 0 %>
 <% @rows.times do %>
@@ -23,18 +22,23 @@
             </div>
           </div>
           <script>
-            var request = $.ajax({
-              url: "<%= run_queries_path %>",
-              method: "POST",
-              data: <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>,
-              dataType: "html"
-            }).done(function(data) {
-              $("#chart-<%= i %>").html(data);
-              $("#chart-<%= i %> table").stupidtable();
-            }).fail(function(jqXHR, textStatus, errorThrown) {
-              var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
-              $("#chart-<%= i %>").css("color", "red").html(message);
-            });
+            function loadChart<%= i %>() {
+              var request = $.ajax({
+                url: "<%= run_queries_path %>",
+                method: "POST",
+                data: <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>,
+                dataType: "html"
+              }).done(function(data) {
+                $("#chart-<%= i %>").html(data);
+                $("#chart-<%= i %> table").stupidtable();
+                setTimeout(loadChart<%= i %>, refreshRate);
+              }).fail(function(jqXHR, textStatus, errorThrown) {
+                var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
+                $("#chart-<%= i %>").css("color", "red").html(message);
+                setTimeout(loadChart<%= i %>, refreshRate);
+              });
+            }
+            loadChart<%= i %>();
           </script>
         <% end %>
         <% i += 1 %>

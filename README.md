@@ -178,7 +178,7 @@ linked_columns:
 
 ### Smart Columns
 
-[Example](https://blazerme.herokuapp.com/queries/11-users) - occupation_id column
+[Example](https://blazerme.herokuapp.com/queries/3-users-by-occupation) - occupation_id column
 
 Suppose you have the query:
 

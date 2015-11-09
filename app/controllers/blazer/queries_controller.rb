@@ -107,7 +107,7 @@ module Blazer
           if query
             values = @rows.map { |r| r[key] }.compact.uniq
             rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
-            @boom[key] = Hash[rows.map(&:values)]
+            @boom[key] = Hash[rows.map(&:values).map { |k, v| [k.to_s, v] }]
           end
         end
 

@@ -145,21 +145,21 @@ SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
 
 ### Smart Variables
 
-[Example](https://blazerme.herokuapp.com/queries/9-movies-by-genre)
+[Example](https://blazerme.herokuapp.com/queries/3-users-by-occupation)
 
 Suppose you have the query:
 
 ```sql
-SELECT * FROM users WHERE city_id = {city_id}
+SELECT * FROM users WHERE occupation_id = {occupation_id}
 ```
 
-Instead of remembering each city’s id, users can select cities by name.
+Instead of remembering each occupation’s id, users can select occupations by name.
 
 Add a smart variable with:
 
 ```yml
 smart_variables:
-  city_id: "SELECT id, name FROM cities ORDER BY name ASC"
+  occupation_id: "SELECT id, name FROM occupations ORDER BY name ASC"
 ```
 
 The first column is the value of the variable, and the second column is the label.

@@ -202,7 +202,7 @@ module Blazer
           csv << rows.first.keys
         end
         rows.each do |row|
-          csv << row.values
+          csv << row.values.map { |v| v.is_a?(Time) ? v.in_time_zone(Blazer.time_zone) : v }
         end
       end
     end

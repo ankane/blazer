@@ -63,6 +63,7 @@
       <% keys = @columns.keys %>
       <%= line_chart @rows.group_by { |r| k = keys[1]; v = r[k]; (@boom[k] || {})[v.to_s] || v }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] } } }, id: chart_id, min: nil %>
     <% elsif values.size == 2 && column_types == ["string", "numeric"] %>
+      <%= select_tag :chart_types, options_for_select([['Pie chart', 'pie_chart'], ['Column chart', 'column_chart']], @chart_type) %>
       <% if @chart_type == 'column_chart' %>
         <%= column_chart @rows.map { |r| r.map { |k, v| (@boom[k] || {})[v.to_s] || v } }, library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
       <% else %>

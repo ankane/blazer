@@ -66,6 +66,10 @@
       <%= select_tag :chart_type, options_for_select([['Pie chart', 'pie_chart'], ['Column chart', 'column_chart']], @chart_type), style: 'width: 160px' %>
       <script>
         $("#chart_type").selectize({});
+        $(document).on("change", "#chart_type", function () {
+            var val = $(this).val();
+            window.location.search = $.query.set("chart_type", val).toString();
+        });
       </script>
       <% if @chart_type == 'column_chart' %>
         <%= column_chart @rows.map { |r| r.map { |k, v| (@boom[k] || {})[v.to_s] || v } }, library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>

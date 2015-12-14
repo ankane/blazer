@@ -138,11 +138,6 @@
     }
   });
 
-  $(document).on("change", "#chart_type", function () {
-    params.chart_type = $(this).val();
-    $("#run").click();
-  });
-
   $("form.the_form").on("submit", function() {
     $("#query_statement").val(editor.getValue());
     return true;

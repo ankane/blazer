@@ -56,6 +56,7 @@ module Blazer
       @statement = params[:statement]
       process_vars(@statement)
       @only_chart = params[:only_chart]
+      @chart_type = params[:chart_type] || 'pie_chart'
 
       if @success
         @query = Query.find_by(id: params[:query_id]) if params[:query_id]

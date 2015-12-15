@@ -65,7 +65,7 @@ Be sure to set a host in `config/environments/production.rb` for emails to work.
 config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
 ```
 
-Schedule checks to run every hour (with cron, [Heroku Scheduler](https://addons.heroku.com/scheduler), etc).
+Schedule checks to run every hour (with cron, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc).
 
 ```sh
 rake blazer:run_checks
@@ -294,7 +294,7 @@ ENV["BLAZER_DATABASE_URL"] = "redshift://user:password@hostname:5439/database"
 Have team members who want to learn SQL? Here are a few great, free resources.
 
 - [Khan Academy](https://www.khanacademy.org/computing/computer-programming/sql)
-- [Codecademy](https://www.codecademy.com/courses/learn-sql)
+- [Codecademy](https://www.codecademy.com/learn/learn-sql)
 
 ## Useful Tools
 

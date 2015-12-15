@@ -150,6 +150,10 @@ module Blazer
     end
 
     def update
+      if params[:commit] == "Fork"
+        @query = Blazer::Query.new
+        @query.creator = blazer_user if @query.respond_to?(:creator)
+      end
       if @query.update(query_params)
         redirect_to query_path(@query, variable_params)
       else

@@ -73,7 +73,7 @@
         <%= text_field_tag var, params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !params[var], class: "form-control" %>
         <% if var.end_with?("_at") %>
           <script>
-            $("#<%= var %>").datepicker({format: "yyyy-mm-dd", autoclose: true, todayBtn: "linked"})
+            $("#<%= var %>").daterangepicker({singleDatePicker: true, locale: {format: "YYYY-MM-DD"}});
           </script>
         <% end %>
       <% end %>
@@ -116,10 +116,12 @@
              "Last 7 Days": [dateStr(6), dateStr()],
              "Last 30 Days": [dateStr(29), dateStr()]
             },
-            format: format,
+            locale: {
+              format: format
+            },
             startDate: dateStr(29),
             endDate: dateStr(),
-            opens: "left"
+            opens: "right"
           },
           function(start, end) {
             setTimeInputs(start, end);

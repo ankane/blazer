@@ -1,4 +1,5 @@
 require "csv"
+require "yaml"
 require "chartkick"
 require "blazer/version"
 require "blazer/data_source"

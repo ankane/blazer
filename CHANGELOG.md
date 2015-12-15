@@ -1,3 +1,8 @@
+## 1.0.5 [unreleased]
+
+- Added fork button to edit query page
+- Added a notice when editing a query that is part of a dashboard
+
 ## 1.0.4
 
 - Added recently viewed queries and dashboards to home page

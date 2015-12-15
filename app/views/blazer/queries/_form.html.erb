@@ -44,9 +44,13 @@
       <div class="text-right">
         <% if @query.persisted? %>
           <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+          <%= f.submit "Fork", class: "btn btn-info" %>
         <% end %>
         <%= f.submit @query.persisted? ? "Update" : "Create", class: "btn btn-success" %>
       </div>
+      <% if @query.persisted? && (dashboards_count = @query.dashboards.count) > 0 %>
+        <div class="alert alert-info" style="margin-top: 10px; padding: 8px 12px;">Part of <%= pluralize(dashboards_count, "dashboard") %>. Be careful when editing.</div>
+      <% end %>
     </div>
   </div>
 <% end %>

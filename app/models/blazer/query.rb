@@ -3,6 +3,7 @@ module Blazer
     belongs_to :creator, class_name: Blazer.user_class.to_s if Blazer.user_class
     has_many :checks, dependent: :destroy
     has_many :dashboard_queries, dependent: :destroy
+    has_many :dashboards, through: :dashboard_queries
     has_many :audits
 
     validates :name, presence: true

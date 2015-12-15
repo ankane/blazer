@@ -1,5 +1,7 @@
 ## 1.0.5 [unreleased]
 
+- Replaced pie charts with column charts
+- Fixed error with datepicker
 - Added fork button to edit query page
 - Added a notice when editing a query that is part of a dashboard
 

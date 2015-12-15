@@ -62,8 +62,9 @@
     <% elsif values.size == 3 && column_types == ["time", "string", "numeric"] %>
       <% keys = @columns.keys %>
       <%= line_chart @rows.group_by { |r| k = keys[1]; v = r[k]; (@boom[k] || {})[v.to_s] || v }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] } } }, id: chart_id, min: nil %>
-    <% elsif values.size == 2 && column_types == ["string", "numeric"] %>
-      <%= pie_chart @rows.map { |r| r.map { |k, v| (@boom[k] || {})[v.to_s] || v } }, library: {sliceVisibilityThreshold: 1 / 40.0}, id: chart_id %>
+    <% elsif values.size >= 2 && column_types == ["string"] + (values.size - 1).times.map { "numeric" } %>
+      <% keys = @columns.keys %>
+      <%= column_chart (values.size - 1).times.map { |i| name = @columns.keys[i + 1]; {name: name, data: @rows.first(20).map { |r| [r[keys[0]], r[keys[i + 1]]] } } }, id: chart_id %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
         <p style="font-size: 160px;"><%= blazer_format_value(@rows.first.keys.first, @rows.first.values.first) %></p>

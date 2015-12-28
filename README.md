@@ -224,9 +224,9 @@ SELECT date_trunc('week', created_at), COUNT(*) FROM users GROUP BY 1
 SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 ```
 
-### Pie Chart
+### Column Chart
 
-2 columns - string, numeric - [Example](https://blazerme.herokuapp.com/queries/2-top-genres)
+2+ columns - string, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/2-top-genres)
 
 ```sql
 SELECT gender, COUNT(*) FROM users GROUP BY 1

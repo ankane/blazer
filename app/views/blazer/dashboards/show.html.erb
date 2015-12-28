@@ -32,6 +32,13 @@
 
 <div style="margin-bottom: 60px;"></div>
 
+<% if @data_sources.any? { |ds| ds.cache } %>
+  <p class="text-muted" style="float: right;">
+    Some queries are cached
+    <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post %>
+  </p>
+<% end %>
+
 <% if @bind_vars.any? %>
   <form id="bind" method="get" action="<%= url_for(params) %>" class="form-inline" style="margin-bottom: 10px;">
     <% date_vars = ["start_time", "end_time"] %>

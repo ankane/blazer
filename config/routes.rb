@@ -7,6 +7,8 @@ Blazer::Engine.routes.draw do
   resources :checks, except: [:show] do
     get :run, on: :member
   end
-  resources :dashboards
+  resources :dashboards do
+    post :refresh, on: :member
+  end
   root to: "queries#home"
 end

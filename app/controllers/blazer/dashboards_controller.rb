@@ -1,6 +1,6 @@
 module Blazer
   class DashboardsController < BaseController
-    before_action :set_dashboard, only: [:show, :edit, :update, :destroy]
+    before_action :set_dashboard, only: [:show, :edit, :update, :destroy, :refresh]
 
     def index
       @dashboards = Blazer::Dashboard.order(:name)
@@ -29,9 +29,9 @@ module Blazer
 
       @smart_vars = {}
       @sql_errors = []
-      data_sources = @queries.map { |q| Blazer.data_sources[q.data_source] }.uniq
+      @data_sources = @queries.map { |q| Blazer.data_sources[q.data_source] }.uniq
       @bind_vars.each do |var|
-        data_sources.each do |data_source|
+        @data_sources.each do |data_source|
           query = data_source.smart_variables[var]
           if query
             rows, error, cached_at = data_source.run_statement(query)
@@ -56,6 +56,17 @@ module Blazer
     def destroy
       @dashboard.destroy
       redirect_to dashboards_path
+    end
+
+    def refresh
+      @dashboard.queries.each do |query|
+        data_source = Blazer.data_sources[query.data_source]
+        statement = query.statement.dup
+        process_vars(statement)
+        Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
+        data_source.clear_cache(statement)
+      end
+      redirect_to dashboard_path(@dashboard, variable_params)
     end
 
     protected

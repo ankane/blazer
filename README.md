@@ -65,7 +65,7 @@ Be sure to set a host in `config/environments/production.rb` for emails to work.
 config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
 ```
 
-Schedule checks to run every hour (with cron, [Heroku Scheduler](https://addons.heroku.com/scheduler), etc).
+Schedule checks to run every hour (with cron, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc).
 
 ```sh
 rake blazer:run_checks
@@ -224,9 +224,9 @@ SELECT date_trunc('week', created_at), COUNT(*) FROM users GROUP BY 1
 SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 ```
 
-### Pie Chart
+### Column Chart
 
-2 columns - string, numeric - [Example](https://blazerme.herokuapp.com/queries/2-top-genres)
+2+ columns - string, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/2-top-genres)
 
 ```sql
 SELECT gender, COUNT(*) FROM users GROUP BY 1
@@ -237,7 +237,7 @@ SELECT gender, COUNT(*) FROM users GROUP BY 1
 Columns named `latitude` and `longitude` or `lat` and `lon` - [Example](https://blazerme.herokuapp.com/queries/11-airports-in-pacific-time-zone)
 
 ```sql
-SELECT name, latitude, longtitude FROM cities
+SELECT name, latitude, longitude FROM cities
 ```
 
 To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `ENV["MAPBOX_ACCESS_TOKEN"]`.
@@ -294,7 +294,7 @@ ENV["BLAZER_DATABASE_URL"] = "redshift://user:password@hostname:5439/database"
 Have team members who want to learn SQL? Here are a few great, free resources.
 
 - [Khan Academy](https://www.khanacademy.org/computing/computer-programming/sql)
-- [Codecademy](https://www.codecademy.com/courses/learn-sql)
+- [Codecademy](https://www.codecademy.com/learn/learn-sql)
 
 ## Useful Tools
 

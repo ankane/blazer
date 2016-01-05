@@ -1,4 +1,7 @@
-<p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results (unless inverted).</p>
+<p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
+<% if @check.respond_to?(:invert) %>
+  <p class="text-muted">An inverted check is designed to notice missing data. It fails if there are NO results. Select "Fail if NO results are returned" below to invert the check.</p>
+<% end %>
 
 <% if @check.errors.any? %>
   <div class="alert alert-danger"><%= @check.errors.full_messages.first %></div>
@@ -15,6 +18,7 @@
     </script>
   </div>
 
+<% if @check.respond_to?(:invert) %>
   <div class="form-group">
     <%= f.label "Failure criterion?" %>
     <%= f.select :invert, [['Fail if ANY results returned (default)', false], ['Fail if NO results returned (invert)', true]], {}, {id: 'select-invert'} %>
@@ -24,6 +28,7 @@
       });
     </script>
   </div>
+<% end %>
 
   <div class="form-group">
     <%= f.label :emails %>

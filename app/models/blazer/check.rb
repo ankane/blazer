@@ -9,6 +9,7 @@ module Blazer
     end
 
     def update_state(rows, error)
+      invert = self.respond_to?(:invert) && self.invert
       self.state =
         if error
           "error"

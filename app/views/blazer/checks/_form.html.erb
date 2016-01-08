@@ -1,6 +1,5 @@
-<p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
-<% if @check.respond_to?(:invert) %>
-  <p class="text-muted">An inverted check is designed to notice missing data. It fails if there are NO results. Select "Fail if NO results are returned" below to invert the check.</p>
+<% unless @check.respond_to?(:invert) %>
+  <p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
 <% end %>
 
 <% if @check.errors.any? %>
@@ -20,12 +19,12 @@
 
 <% if @check.respond_to?(:invert) %>
   <div class="form-group">
-    <%= f.label "Failure criterion?" %>
-    <%= f.select :invert, [['Fail if ANY results returned (default)', false], ['Fail if NO results returned (invert)', true]], {}, {id: 'select-invert'} %>
+    <%= f.label "Fails if" %>
+    <div class="hide">
+      <%= f.select :invert, [["Any results (bad data)", false], ["No results (missing data)", true]], {}, {id: "select-invert"} %>
+    </div>
     <script>
-      $("#select-invert").selectize({
-        sortField: 'text'
-      });
+      $("#select-invert").selectize({}).parent().removeClass("hide");
     </script>
   </div>
 <% end %>

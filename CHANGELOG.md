@@ -1,3 +1,7 @@
+## 1.1.1 [unreleased]
+
+- Added invert option for checks
+
 ## 1.1.0
 
 - Replaced pie charts with column charts

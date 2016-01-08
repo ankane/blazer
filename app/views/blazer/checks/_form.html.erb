@@ -1,4 +1,6 @@
-<p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
+<% unless @check.respond_to?(:invert) %>
+  <p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
+<% end %>
 
 <% if @check.errors.any? %>
   <div class="alert alert-danger"><%= @check.errors.full_messages.first %></div>
@@ -14,6 +16,19 @@
       $("#check_query_id").selectize().parents(".hide").removeClass("hide");
     </script>
   </div>
+
+<% if @check.respond_to?(:invert) %>
+  <div class="form-group">
+    <%= f.label "Fails if" %>
+    <div class="hide">
+      <%= f.select :invert, [["Any results (bad data)", false], ["No results (missing data)", true]], {}, {id: "select-invert"} %>
+    </div>
+    <script>
+      $("#select-invert").selectize({}).parent().removeClass("hide");
+    </script>
+  </div>
+<% end %>
+
   <div class="form-group">
     <%= f.label :emails %>
     <%= f.text_field :emails, placeholder: "Optional, comma separated", class: "form-control" %>

@@ -65,6 +65,12 @@ module Blazer
         @data_source = Blazer.data_sources[data_source]
         Blazer.transform_statement.call(@data_source, @statement) if Blazer.transform_statement
 
+        match_data = @statement.match(/limit (\d+)/)
+        @rows_to_display = 20
+        unless match_data.nil?
+          @rows_to_display = match_data[1].to_i
+        end
+
         # audit
         if Blazer.audit
           audit = Blazer::Audit.new(statement: @statement)

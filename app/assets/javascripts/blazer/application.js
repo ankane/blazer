@@ -22,10 +22,12 @@ $( function () {
   $('.dropdown-toggle').mouseenter( function () {
     $(this).parent().addClass('open');
   });
+});
 
-  // Prevent backspace from navigating backwards.
-  // Adapted from Biff MaGriff: http://stackoverflow.com/a/7895814/1196499
-  $("body.disable-backspace-nav").closest(document).keydown(function (e) {
+// Prevent backspace from navigating backwards.
+// Adapted from Biff MaGriff: http://stackoverflow.com/a/7895814/1196499
+function preventBackspaceNav() {
+  $(document).keydown(function (e) {
     var preventKeyPress;
     if (e.keyCode == 8) {
       var d = e.srcElement || e.target;
@@ -52,4 +54,4 @@ $( function () {
       e.preventDefault();
     }
   });
-});
+}

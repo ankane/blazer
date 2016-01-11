@@ -1,3 +1,5 @@
+<% content_for :body_class, "disable-backspace-nav" %>
+
 <% if @query.errors.any? %>
   <div class="alert alert-danger"><%= @query.errors.full_messages.first %></div>
 <% end %>

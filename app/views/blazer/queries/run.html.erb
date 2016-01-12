@@ -57,17 +57,15 @@
         map.fitBounds(featureLayer.getBounds());
       </script>
     <% elsif values.size >= 2 && column_types == ["time"] + (values.size - 1).times.map { "numeric" } %>
-      <% time_k = @columns.keys.first %>
-      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k], r[k]] }} }, id: chart_id, min: nil %>
+      <% time_k = @columns.first[:name] %>
+      <%= line_chart @columns[1..-1].map{|column| {name: column[:name], data: @rows.map{|r| [r[time_k], r[column[:name]]] }} }, id: chart_id, min: nil %>
     <% elsif values.size == 3 && column_types == ["time", "string", "numeric"] %>
-      <% keys = @columns.keys %>
-      <%= line_chart @rows.group_by { |r| k = keys[1]; v = r[k]; (@boom[k] || {})[v.to_s] || v }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] } } }, id: chart_id, min: nil %>
+      <%= line_chart @rows.group_by { |r| k = 1; v = r[k]; (@boom[k] || {})[v.to_s] || v }.map { |name, v| {name: name, data: v.map { |v2| [v2[0], v2[2]] } } }, id: chart_id, min: nil %>
     <% elsif values.size >= 2 && column_types == ["string"] + (values.size - 1).times.map { "numeric" } %>
-      <% keys = @columns.keys %>
-      <%= column_chart (values.size - 1).times.map { |i| name = @columns.keys[i + 1]; {name: name, data: @rows.first(20).map { |r| [(@boom[keys[0]] || {})[r[keys[0]].to_s] || r[keys[0]], r[keys[i + 1]]] } } }, id: chart_id %>
+      <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1][:name]; {name: name, data: @rows.first(20).map { |r| [(@boom[0] || {})[r[0].to_s] || r[0], r[i + 1]] } } }, id: chart_id %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
-        <p style="font-size: 160px;"><%= blazer_format_value(@rows.first.keys.first, @rows.first.values.first) %></p>
+        <p style="font-size: 160px;"><%= blazer_format_value(@columns.first[:name], @rows.first.values.first) %></p>
       <% else %>
         <% @no_chart = true %>
       <% end %>
@@ -79,10 +77,10 @@
         <table class="table results-table" style="margin-bottom: 0;">
           <thead>
             <tr>
-              <% @columns.each do |key, type| %>
-                <th style="width: <%= header_width %>%;" data-sort="<%= type %>">
-                  <div style="min-width: <%= @min_width_types.include?(key) ? 180 : 60 %>px;">
-                    <%= key %>
+              <% @columns.each do |column| %>
+                <th style="width: <%= header_width %>%;" data-sort="<%= column[:type] %>">
+                  <div style="min-width: <%= @min_width_types.include?(column[:orig_name]) ? 180 : 60 %>px;">
+                    <%= column[:name] %>
                   </div>
                 </th>
               <% end %>
@@ -91,7 +89,8 @@
           <tbody>
             <% @rows.each do |row| %>
               <tr>
-                <% row.each do |k, v| %>
+                <% @columns.each do |column| %>
+                  <% v = row[column[:name]] %>
                   <td>
                     <% if v.is_a?(Time) %>
                       <% v = v.in_time_zone(Blazer.time_zone) %>
@@ -100,13 +99,13 @@
                     <% unless v.nil? %>
                       <% if v == "" %>
                         <div class="text-muted">empty string</div>
-                      <% elsif @linked_columns[k] %>
-                        <%= link_to blazer_format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
+                      <% elsif @linked_columns[column[:orig_name]] %>
+                        <%= link_to blazer_format_value(column[:orig_name], v), @linked_columns[column[:orig_name]].gsub("{value}", u(v.to_s)), target: "_blank" %>
                       <% else %>
-                        <%= blazer_format_value(k, v) %>
+                        <%= blazer_format_value(column[:orig_name], v) %>
                       <% end %>
 
-                      <% if v2 = (@boom[k] || {})[v.to_s] %>
+                      <% if v2 = (@boom[column[:name]] || {})[v.to_s] %>
                         <div class="text-muted"><%= v2 %></div>
                       <% end %>
                     <% end %>

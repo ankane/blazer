@@ -54,7 +54,7 @@ module Blazer
       tries = 0
       # try 3 times on timeout errors
       begin
-        rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement, refresh_cache: true)
+        columns, rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement, refresh_cache: true)
         tries += 1
       end while error && error.include?("canceling statement due to statement timeout") && tries < 3
       check.update_state(rows, error)

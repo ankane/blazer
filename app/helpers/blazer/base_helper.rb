@@ -17,9 +17,9 @@ module Blazer
     end
 
     def blazer_column_types(columns, rows, boom)
-      columns.map do |k, _|
-        v = (rows.find { |r| r[k] } || {})[k]
-        if boom[k]
+      columns.map do |column|
+        v = (rows.find { |r| r[column[:name]] } || {})[column[:name]]
+        if boom[column[:name]]
           "string"
         elsif v.is_a?(Numeric)
           "numeric"

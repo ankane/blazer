@@ -60,9 +60,9 @@
       <% time_k = @columns.first[:name] %>
       <%= line_chart @columns[1..-1].map{|column| {name: column[:name], data: @rows.map{|r| [r[time_k], r[column[:name]]] }} }, id: chart_id, min: nil %>
     <% elsif values.size == 3 && column_types == ["time", "string", "numeric"] %>
-      <%= line_chart @rows.group_by { |r| k = 1; v = r[k]; (@boom[k] || {})[v.to_s] || v }.map { |name, v| {name: name, data: v.map { |v2| [v2[0], v2[2]] } } }, id: chart_id, min: nil %>
+      <%= line_chart @rows.group_by { |r| k = @columns[1][:name]; v = r[k]; (@boom[k] || {})[v.to_s] || v }.map { |name, v| {name: name, data: v.map { |v2| [v2[@columns[0][:name]], v2[@columns[2][:name]]] } } }, id: chart_id, min: nil %>
     <% elsif values.size >= 2 && column_types == ["string"] + (values.size - 1).times.map { "numeric" } %>
-      <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1][:name]; {name: name, data: @rows.first(20).map { |r| [(@boom[0] || {})[r[0].to_s] || r[0], r[i + 1]] } } }, id: chart_id %>
+      <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1][:name]; {name: name, data: @rows.first(20).map { |r| [(@boom[@columns[0][:name]] || {})[r[@columns[0][:name]].to_s] || r[@columns[0][:name]], r[@columns[i + 1][:name]]] } } }, id: chart_id %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
         <p style="font-size: 160px;"><%= blazer_format_value(@columns.first[:name], @rows.first.values.first) %></p>

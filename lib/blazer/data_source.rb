@@ -51,10 +51,10 @@ module Blazer
       cache_key = self.cache_key(statement) if cache
       if cache && !options[:refresh_cache]
         value = Blazer.cache.read(cache_key)
-        rows, cached_at = Marshal.load(value) if value
+        columns, rows, cached_at = Marshal.load(value) if value
       end
 
-      unless rows
+      unless rows && columns
         rows = []
         columns = []
 
@@ -107,7 +107,7 @@ module Blazer
           end
         end
 
-        Blazer.cache.write(cache_key, Marshal.dump([rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
+        Blazer.cache.write(cache_key, Marshal.dump([columns, rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
       end
 
       [columns, rows, error, cached_at]
@@ -118,7 +118,7 @@ module Blazer
     end
 
     def cache_key(statement)
-      ["blazer", "v2", id, Digest::MD5.hexdigest(statement)].join("/")
+      ["blazer", "v3", id, Digest::MD5.hexdigest(statement)].join("/")
     end
 
     def schemas

@@ -40,7 +40,7 @@ module Blazer
       @bind_vars.each do |var|
         query = data_source.smart_variables[var]
         if query
-          rows, error, cached_at = data_source.run_statement(query)
+          columns, rows, error, cached_at = data_source.run_statement(query)
           @smart_vars[var] = rows.map { |v| v.values.reverse }
           @sql_errors << error if error
         end
@@ -74,7 +74,7 @@ module Blazer
           audit.save!
         end
 
-        @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
+        @columns, @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
 
         if @query && !@error.to_s.include?("canceling statement due to statement timeout")
           @query.checks.each do |check|
@@ -82,10 +82,10 @@ module Blazer
           end
         end
 
-        @columns = {}
         if @rows.any?
-          @rows.first.each do |key, value|
-            @columns[key] =
+          @columns.each do |column|
+            value = @rows.first[column[:name]]
+            column[:type] =
               case value
               when Integer
                 "int"
@@ -102,12 +102,12 @@ module Blazer
         @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || @data_source.smart_columns[k] }.keys
 
         @boom = {}
-        @columns.keys.each do |key|
-          query = @data_source.smart_columns[key]
+        @columns.each do |column|
+          query = @data_source.smart_columns[column[:orig_name]]
           if query
-            values = @rows.map { |r| r[key] }.compact.uniq
-            rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
-            @boom[key] = Hash[rows.map(&:values).map { |k, v| [k.to_s, v] }]
+            values = @rows.map { |r| r[column[:name]] }.compact.uniq
+            columns, rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+            @boom[column[:name]] = Hash[rows.map(&:values).map { |k, v| [k.to_s, v] }]
           end
         end
 

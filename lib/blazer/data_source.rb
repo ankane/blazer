@@ -51,11 +51,12 @@ module Blazer
       cache_key = self.cache_key(statement) if cache
       if cache && !options[:refresh_cache]
         value = Blazer.cache.read(cache_key)
-        rows, cached_at = Marshal.load(value) if value
+        columns, rows, cached_at = Marshal.load(value) if value
       end
 
-      unless rows
+      unless rows && columns
         rows = []
+        columns = []
 
         comment = "blazer"
         if options[:user].respond_to?(:id)
@@ -73,10 +74,31 @@ module Blazer
           begin
             connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && (postgresql? || redshift?)
             result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
-            result.each do |untyped_row|
+            column_hash = {}
+            dupe_columns = []
+            result.columns.each_with_index do |column, col_number|
+              orig_name = column
+              uniq_col_idx = 1
+              while column_hash[column].present?
+                uniq_col_idx += 1
+                column = "#{orig_name}_#{uniq_col_idx}"
+                dupe_columns << orig_name
+              end
+              column_hash[column] = {name: column, orig_name: orig_name, col_number: col_number}
+            end
+
+            # Append a "_1" to the first of every duplicate set
+            dupe_columns.uniq.each do |column|
+              column_hash["#{column}_1"] = column_hash.delete(column).merge({name: "#{column}_1"})
+            end
+
+            columns = column_hash.values.sort_by { |column| column[:col_number] }
+
+            result.rows.each do |untyped_row|
               row = {}
-              untyped_row.each do |k, v|
-                row[k] = result.column_types.empty? ? v : result.column_types[k].send(:type_cast, v)
+              columns.each do |column|
+                value = untyped_row[column[:col_number]]
+                row[column[:name]] = result.column_types.empty? ? value : result.column_types[column[:orig_name]].send(:type_cast, value)
               end
               rows << row
             end
@@ -85,10 +107,10 @@ module Blazer
           end
         end
 
-        Blazer.cache.write(cache_key, Marshal.dump([rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
+        Blazer.cache.write(cache_key, Marshal.dump([columns, rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
       end
 
-      [rows, error, cached_at]
+      [columns, rows, error, cached_at]
     end
 
     def clear_cache(statement)
@@ -96,7 +118,7 @@ module Blazer
     end
 
     def cache_key(statement)
-      ["blazer", "v2", id, Digest::MD5.hexdigest(statement)].join("/")
+      ["blazer", "v3", id, Digest::MD5.hexdigest(statement)].join("/")
     end
 
     def schemas
@@ -105,7 +127,7 @@ module Blazer
     end
 
     def tables
-      rows, error, cached_at = run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema IN (?)", schemas]))
+      columns, rows, error, cached_at = run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema IN (?)", schemas]))
       Hash[rows.group_by { |r| r["table_name"] }.map { |t, f| [t, f.sort_by { |f| f["ordinal_position"] }.map { |f| f.slice("column_name", "data_type") }] }.sort_by { |t, _f| t }]
     end
 

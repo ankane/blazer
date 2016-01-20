@@ -1,6 +1,7 @@
 ## 1.1.1 [unreleased]
 
 - Added invert option for checks
+- Added targets
 
 ## 1.1.0
 

@@ -27,6 +27,10 @@
     <% values = @rows.first.values %>
     <% chart_id = SecureRandom.hex %>
     <% column_types = blazer_column_types(@columns, @rows, @boom) %>
+    <% chart_options = {id: chart_id, min: nil} %>
+    <% if (target_index = @columns.keys.map(&:downcase).index("target")) %>
+      <% chart_options[:library] = {series: {(target_index - 1) => {pointSize: 0, lineWidth: 3, color: "#109618"}}} %>
+    <% end %>
     <% if blazer_maps? && @markers.any? %>
       <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
       <script>
@@ -58,10 +62,10 @@
       </script>
     <% elsif values.size >= 2 && column_types == ["time"] + (values.size - 1).times.map { "numeric" } %>
       <% time_k = @columns.keys.first %>
-      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k], r[k]] }} }, id: chart_id, min: nil %>
+      <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k], r[k]] }} }, chart_options %>
     <% elsif values.size == 3 && column_types == ["time", "string", "numeric"] %>
       <% keys = @columns.keys %>
-      <%= line_chart @rows.group_by { |r| k = keys[1]; v = r[k]; (@boom[k] || {})[v.to_s] || v }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] } } }, id: chart_id, min: nil %>
+      <%= line_chart @rows.group_by { |r| k = keys[1]; v = r[k]; (@boom[k] || {})[v.to_s] || v }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] } } }, chart_options %>
     <% elsif values.size >= 2 && column_types == ["string"] + (values.size - 1).times.map { "numeric" } %>
       <% keys = @columns.keys %>
       <%= column_chart (values.size - 1).times.map { |i| name = @columns.keys[i + 1]; {name: name, data: @rows.first(20).map { |r| [(@boom[keys[0]] || {})[r[keys[0]].to_s] || r[keys[0]], r[keys[i + 1]]] } } }, id: chart_id %>

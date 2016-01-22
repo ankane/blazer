@@ -25,6 +25,8 @@ module Blazer
           "numeric"
         elsif v.is_a?(Time) || v.is_a?(Date)
           "time"
+        elsif v.nil?
+          nil
         else
           "string"
         end

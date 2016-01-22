@@ -60,7 +60,7 @@
         featureLayer.setGeoJSON(geojson);
         map.fitBounds(featureLayer.getBounds());
       </script>
-    <% elsif values.size >= 2 && column_types == ["time"] + (values.size - 1).times.map { "numeric" } %>
+    <% elsif values.size >= 2 && column_types.compact == ["time"] + (column_types.compact.size - 1).times.map { "numeric" } %>
       <% time_k = @columns.keys.first %>
       <%= line_chart @columns.keys[1..-1].map{|k| {name: k, data: @rows.map{|r| [r[time_k], r[k]] }} }, chart_options %>
     <% elsif values.size == 3 && column_types == ["time", "string", "numeric"] %>

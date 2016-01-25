@@ -14,7 +14,7 @@ module Blazer
       if value.is_a?(Integer) && !key.to_s.end_with?("id")
         number_with_delimiter(value)
       else
-        ActionController::Base.helpers.auto_link(value, link: :urls, html: { target: '_blank' })
+        ActionController::Base.helpers.auto_link(value.to_s, link: :urls, html: { target: '_blank' })
       end
     end
 

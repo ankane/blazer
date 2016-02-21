@@ -11,6 +11,7 @@ module Blazer
       Blazer.audit = Blazer.settings.key?("audit") ? Blazer.settings["audit"] : true
       Blazer.user_name = Blazer.settings["user_name"] if Blazer.settings["user_name"]
       Blazer.from_email = Blazer.settings["from_email"] if Blazer.settings["from_email"]
+      Blazer.auth_filter = Blazer.settings["auth_filter"] if Blazer.settings["auth_filter"]
 
       Blazer.user_class ||= Blazer.settings.key?("user_class") ? Blazer.settings["user_class"] : (User rescue nil)
       Blazer.user_method = Blazer.settings["user_method"]

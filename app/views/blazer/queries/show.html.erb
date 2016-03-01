@@ -28,7 +28,7 @@
         <%= link_to "Fork", new_query_path(variable_params.merge(statement: @query.statement, data_source: @query.data_source, name: "Fork of #{@query.name}")), class: "btn btn-info" %>
 
         <% if !@error && @success %>
-          <%= button_to "Download", run_queries_path(statement: @statement, query_id: @query.id, format: "csv"), class: "btn btn-primary" %>
+          <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv"), params: {statement: @statement}, class: "btn btn-primary" %>
         <% end %>
       </div>
     </div>

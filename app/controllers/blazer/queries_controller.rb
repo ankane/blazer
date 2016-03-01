@@ -17,6 +17,9 @@ module Blazer
         data_source: params[:data_source],
         name: params[:name]
       )
+      if params[:fork_query_id]
+        @query.statement ||= Blazer::Query.find(params[:fork_query_id]).try(:statement)
+      end
     end
 
     def create

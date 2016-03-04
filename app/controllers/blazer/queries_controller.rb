@@ -60,7 +60,24 @@ module Blazer
       process_vars(@statement)
       @only_chart = params[:only_chart]
 
-      if @success
+      if params[:run_id]
+        @run_id = params[:run_id]
+        @timestamp = params[:timestamp].to_i
+        @data_source = Blazer.data_sources[params[:data_source]]
+        Blazer.transform_statement.call(@data_source, @statement) if Blazer.transform_statement
+
+        @rows, @error, @cached_at = @data_source.run_results(@run_id)
+        if @rows
+          complete_run
+        elsif Time.now > Time.at(@timestamp + (@data_source.timeout || 60).to_i)
+          # timed out
+          @error = "Timed out"
+          complete_run
+        else
+          # try it again
+          render :run_async, layout: false
+        end
+      elsif @success
         @query = Query.find_by(id: params[:query_id]) if params[:query_id]
 
         data_source = params[:data_source]
@@ -77,68 +94,22 @@ module Blazer
           audit.save!
         end
 
-        @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
-
-        if @query && !@error.to_s.include?("canceling statement due to statement timeout")
-          @query.checks.each do |check|
-            check.update_state(@rows, @error)
+        @run_id = Blazer.async && !@data_source.cache ? SecureRandom.uuid : nil
+        @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id)
+        unless @rows
+          10.times do
+            sleep(0.1)
+            # todo wait in memory?
+            @rows, @error, @cached_at = @data_source.run_results(@run_id)
+            break if @rows
           end
         end
 
-        @columns = {}
-        if @rows.any?
-          @rows.first.each do |key, value|
-            @columns[key] =
-              case value
-              when Integer
-                "int"
-              when Float
-                "float"
-              else
-                "string-ins"
-              end
-          end
-        end
-
-        @filename = @query.name.parameterize if @query
-
-        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || @data_source.smart_columns[k] }.keys
-
-        @boom = {}
-        @columns.keys.each do |key|
-          query = @data_source.smart_columns[key]
-          if query
-            values = @rows.map { |r| r[key] }.compact.uniq
-            rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
-            @boom[key] = Hash[rows.map(&:values).map { |k, v| [k.to_s, v] }]
-          end
-        end
-
-        @linked_columns = @data_source.linked_columns
-
-        @markers = []
-        [["latitude", "longitude"], ["lat", "lon"]].each do |keys|
-          if (keys - (@rows.first || {}).keys).empty?
-            @markers =
-              @rows.select do |r|
-                r[keys.first] && r[keys.last]
-              end.map do |r|
-                {
-                  title: r.except(*keys).map{ |k, v| "<strong>#{k}:</strong> #{v}" }.join("<br />").truncate(140),
-                  latitude: r[keys.first],
-                  longitude: r[keys.last]
-                }
-              end
-          end
-        end
-      end
-
-      respond_to do |format|
-        format.html do
-          render layout: false
-        end
-        format.csv do
-          send_data csv_data(@rows), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query ? @query.name.parameterize : 'query'}.csv\""
+        if @rows
+          complete_run
+        else
+          @timestamp = Time.now.to_i
+          render :run_async, layout: false
         end
       end
     end
@@ -210,6 +181,72 @@ module Blazer
         end
         rows.each do |row|
           csv << row.values.map { |v| v.is_a?(Time) ? v.in_time_zone(Blazer.time_zone) : v }
+        end
+      end
+    end
+
+    def complete_run
+      @query ||= Blazer::Query.find(params[:query_id]) if params[:query_id].present?
+
+      if @query && !@error.to_s.include?("canceling statement due to statement timeout")
+        @query.checks.each do |check|
+          check.update_state(@rows, @error)
+        end
+      end
+
+      @columns = {}
+      if @rows.any?
+        @rows.first.each do |key, value|
+          @columns[key] =
+            case value
+            when Integer
+              "int"
+            when Float
+              "float"
+            else
+              "string-ins"
+            end
+        end
+      end
+
+      @filename = @query.name.parameterize if @query
+
+      @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || @data_source.smart_columns[k] }.keys
+
+      @boom = {}
+      @columns.keys.each do |key|
+        query = @data_source.smart_columns[key]
+        if query
+          values = @rows.map { |r| r[key] }.compact.uniq
+          rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+          @boom[key] = Hash[rows.map(&:values).map { |k, v| [k.to_s, v] }]
+        end
+      end
+
+      @linked_columns = @data_source.linked_columns
+
+      @markers = []
+      [["latitude", "longitude"], ["lat", "lon"]].each do |keys|
+        if (keys - (@rows.first || {}).keys).empty?
+          @markers =
+            @rows.select do |r|
+              r[keys.first] && r[keys.last]
+            end.map do |r|
+              {
+                title: r.except(*keys).map{ |k, v| "<strong>#{k}:</strong> #{v}" }.join("<br />").truncate(140),
+                latitude: r[keys.first],
+                longitude: r[keys.last]
+              }
+            end
+        end
+      end
+
+      respond_to do |format|
+        format.html do
+          render layout: false
+        end
+        format.csv do
+          send_data csv_data(@rows), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query ? @query.name.parameterize : 'query'}.csv\""
         end
       end
     end

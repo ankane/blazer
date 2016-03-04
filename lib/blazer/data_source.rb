@@ -44,19 +44,26 @@ module Blazer
       settings.key?("use_transaction") ? settings["use_transaction"] : true
     end
 
+    def read_cache(cache_key)
+      value = Blazer.cache.read(cache_key)
+      Marshal.load(value) if value
+    end
+
+    def run_results(run_id)
+      read_cache(run_cache_key(run_id))
+    end
+
     def run_statement(statement, options = {})
       rows = nil
       error = nil
       cached_at = nil
-      cache_key = self.cache_key(statement) if cache
+      run_id = options[:run_id]
+      cache_key = statement_cache_key(statement)
       if cache && !options[:refresh_cache]
-        value = Blazer.cache.read(cache_key)
-        rows, cached_at = Marshal.load(value) if value
+        rows, error, cached_at = read_cache(cache_key)
       end
 
       unless rows
-        rows = []
-
         comment = "blazer"
         if options[:user].respond_to?(:id)
           comment << ",user_id:#{options[:user].id}"
@@ -69,23 +76,11 @@ module Blazer
           comment << ",query_id:#{options[:query].id}"
         end
 
-        in_transaction do
-          begin
-            connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && (postgresql? || redshift?)
-            result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
-            result.each do |untyped_row|
-              row = {}
-              untyped_row.each do |k, v|
-                row[k] = result.column_types.empty? ? v : result.column_types[k].send(:type_cast, v)
-              end
-              rows << row
-            end
-          rescue ActiveRecord::StatementInvalid => e
-            error = e.message.sub(/.+ERROR: /, "")
-          end
+        if run_id
+          Blazer::RunStatementJob.perform_async(self, statement, comment, run_id)
+        else
+          rows, error = run_statement_helper(statement, comment)
         end
-
-        Blazer.cache.write(cache_key, Marshal.dump([rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
       end
 
       [rows, error, cached_at]
@@ -95,8 +90,16 @@ module Blazer
       Blazer.cache.delete(cache_key(statement))
     end
 
-    def cache_key(statement)
-      ["blazer", "v2", id, Digest::MD5.hexdigest(statement)].join("/")
+    def cache_key(key)
+      (["blazer", "v4"] + key).join("/")
+    end
+
+    def statement_cache_key(statement)
+      cache_key(["statement", id, Digest::MD5.hexdigest(statement)])
+    end
+
+    def run_cache_key(run_id)
+      cache_key(["run", run_id])
     end
 
     def schemas
@@ -131,6 +134,35 @@ module Blazer
       else
         yield
       end
+    end
+
+    def run_statement_helper(statement, comment, run_id = nil)
+      rows = []
+      error = nil
+
+      in_transaction do
+        begin
+          connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && (postgresql? || redshift?)
+          result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
+          result.each do |untyped_row|
+            row = {}
+            untyped_row.each do |k, v|
+              row[k] = result.column_types.empty? ? v : result.column_types[k].send(:type_cast, v)
+            end
+            rows << row
+          end
+        rescue ActiveRecord::StatementInvalid => e
+          error = e.message.sub(/.+ERROR: /, "")
+        end
+      end
+
+      if run_id || (cache && !error)
+        cache_key = run_id ? run_cache_key(run_id) : statement_cache_key(statement)
+        cached_at = run_id ? nil : Time.now
+        Blazer.cache.write(cache_key, Marshal.dump([rows, error, cached_at]), expires_in: (cache || 2).to_f * 60)
+      end
+
+      [rows, error]
     end
   end
 end

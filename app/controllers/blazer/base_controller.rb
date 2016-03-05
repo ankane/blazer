@@ -9,8 +9,8 @@ module Blazer
       http_basic_authenticate_with name: ENV["BLAZER_USERNAME"], password: ENV["BLAZER_PASSWORD"]
     end
 
-    if Blazer.before_filter
-      before_action Blazer.before_filter
+    if Blazer.before_action
+      before_action Blazer.before_action
     end
 
     layout "blazer/application"

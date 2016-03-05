@@ -127,6 +127,14 @@ authenticate :user, lambda { |user| user.admin? } do
 end
 ```
 
+### Other [master]
+
+Specify a `before_action` method to run in `blazer.yml`.
+
+```yml
+before_action: require_admin
+```
+
 ## Queries
 
 ### Variables

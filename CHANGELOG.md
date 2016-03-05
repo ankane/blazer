@@ -1,7 +1,11 @@
 ## 1.1.1 [unreleased]
 
+- Added `before_action` option
 - Added invert option for checks
 - Added targets
+- Friendlier error message for timeouts
+- Fixed request URI too large
+- Prevent accidental backspace nav on query page
 
 ## 1.1.0
 

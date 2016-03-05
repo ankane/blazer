@@ -13,7 +13,7 @@ module Blazer
     attr_accessor :user_name
     attr_accessor :user_class
     attr_accessor :user_method
-    attr_accessor :auth_filter
+    attr_accessor :before_filter
     attr_accessor :from_email
     attr_accessor :cache
     attr_accessor :transform_statement

@@ -68,6 +68,7 @@ module Blazer
 
         @rows, @error, @cached_at = @data_source.run_results(@run_id)
         if @rows
+          @data_source.delete_results(@run_id)
           complete_run
         elsif Time.now > Time.at(@timestamp + (@data_source.timeout || 60).to_i)
           # timed out
@@ -101,7 +102,10 @@ module Blazer
             sleep(0.1)
             # todo wait in memory?
             @rows, @error, @cached_at = @data_source.run_results(@run_id)
-            break if @rows
+            if @rows
+              @data_source.delete_results(@run_id)
+              break
+            end
           end
         end
 

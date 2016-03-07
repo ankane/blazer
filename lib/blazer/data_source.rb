@@ -53,6 +53,10 @@ module Blazer
       read_cache(run_cache_key(run_id))
     end
 
+    def delete_results(run_id)
+      Blazer.cache.delete(run_cache_key(run_id))
+    end
+
     def run_statement(statement, options = {})
       rows = nil
       error = nil

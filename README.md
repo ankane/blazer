@@ -127,7 +127,7 @@ authenticate :user, lambda { |user| user.admin? } do
 end
 ```
 
-### Other [master]
+### Other
 
 Specify a `before_action` method to run in `blazer.yml`.
 

@@ -1,4 +1,4 @@
-## 1.1.1 [unreleased]
+## 1.1.1
 
 - Added `before_action` option
 - Added invert option for checks

@@ -91,7 +91,7 @@ module Blazer
     end
 
     def clear_cache(statement)
-      Blazer.cache.delete(cache_key(statement))
+      Blazer.cache.delete(statement_cache_key(statement))
     end
 
     def cache_key(key)

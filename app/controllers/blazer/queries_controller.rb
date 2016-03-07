@@ -188,7 +188,7 @@ module Blazer
     def complete_run
       @query ||= Blazer::Query.find(params[:query_id]) if params[:query_id].present?
 
-      if @query && !@error.to_s.include?("canceling statement due to statement timeout")
+      if @query && @error != Blazer::TIMEOUT_MESSAGE
         @query.checks.each do |check|
           check.update_state(@rows, @error)
         end

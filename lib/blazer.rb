@@ -13,6 +13,7 @@ module Blazer
     attr_accessor :user_name
     attr_accessor :user_class
     attr_accessor :user_method
+    attr_accessor :before_action
     attr_accessor :from_email
     attr_accessor :cache
     attr_accessor :transform_statement
@@ -20,6 +21,8 @@ module Blazer
   end
   self.audit = true
   self.user_name = :name
+
+  TIMEOUT_MESSAGE = "Query timed out :("
 
   def self.time_zone=(time_zone)
     @time_zone = time_zone.is_a?(ActiveSupport::TimeZone) ? time_zone : ActiveSupport::TimeZone[time_zone.to_s]

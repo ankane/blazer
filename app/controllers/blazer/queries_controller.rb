@@ -115,6 +115,8 @@ module Blazer
           @timestamp = Time.now.to_i
           render :run_async, layout: false
         end
+      else
+        render layout: false
       end
     end
 

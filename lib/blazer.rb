@@ -17,9 +17,11 @@ module Blazer
     attr_accessor :from_email
     attr_accessor :cache
     attr_accessor :transform_statement
+    attr_accessor :convert_time_zone
   end
   self.audit = true
   self.user_name = :name
+  self.convert_time_zone = -> (k, v) { v.in_time_zone(Blazer.time_zone) }
 
   TIMEOUT_MESSAGE = "Query timed out :("
 

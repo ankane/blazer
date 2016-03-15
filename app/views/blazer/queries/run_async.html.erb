@@ -14,6 +14,7 @@
         $("#chart-" + chartIndex).stupidtable();
       } else {
         $("#results").html(data);
+        // TODO skip fixedOffset for run
         $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
       }
     }).fail(function(jqXHR, textStatus, errorThrown) {

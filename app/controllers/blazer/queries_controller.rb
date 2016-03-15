@@ -182,9 +182,9 @@ module Blazer
     def set_queries(limit = nil)
       @my_queries =
         if blazer_user
-          recent_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("query_id IS NOT NULL").order("created_at desc").limit(100).pluck(:query_id).uniq.first(20)
-          queries = Blazer::Query.where("name <> ''").where(id: recent_query_ids).index_by(&:id)
-          recent_query_ids.map { |query_id| queries[query_id] }.compact
+          favorite_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 7.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").limit(50).count.keys
+          queries = Blazer::Query.where("name <> ''").where(id: favorite_query_ids).index_by(&:id)
+          favorite_query_ids.map { |query_id| queries[query_id] }.compact
         else
           []
         end

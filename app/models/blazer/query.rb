@@ -6,15 +6,18 @@ module Blazer
     has_many :dashboards, through: :dashboard_queries
     has_many :audits
 
-    validates :name, presence: true
     validates :statement, presence: true
 
     def to_param
-      [id, name.gsub("'", "").parameterize].join("-")
+      [id, name].compact.join("-").gsub("'", "").parameterize
     end
 
     def friendly_name
-      name.gsub(/\[.+\]/, "").strip
+      name.to_s.gsub(/\[.+\]/, "").strip
+    end
+
+    def editable?(user)
+      (name.present? && name.first != "*") || user == creator
     end
   end
 end

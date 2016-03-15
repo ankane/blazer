@@ -157,7 +157,10 @@ module Blazer
         @query = Blazer::Query.new
         @query.creator = blazer_user if @query.respond_to?(:creator)
       end
-      if @query.update(query_params)
+      unless @query.editable?(blazer_user)
+        @query.errors.add(:base, "Sorry, permission denied")
+      end
+      if @query.errors.empty? && @query.update(query_params)
         redirect_to query_path(@query, variable_params)
       else
         render :edit
@@ -165,7 +168,7 @@ module Blazer
     end
 
     def destroy
-      @query.destroy
+      @query.destroy if @query.editable?(blazer_user)
       redirect_to root_url
     end
 
@@ -180,13 +183,13 @@ module Blazer
       @my_queries =
         if blazer_user
           recent_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("query_id IS NOT NULL").order("created_at desc").limit(100).pluck(:query_id).uniq.first(20)
-          queries = Blazer::Query.where(id: recent_query_ids).index_by(&:id)
+          queries = Blazer::Query.where("name <> ''").where(id: recent_query_ids).index_by(&:id)
           recent_query_ids.map { |query_id| queries[query_id] }.compact
         else
           []
         end
 
-      @queries = Blazer::Query.order(:name)
+      @queries = Blazer::Query.where("name <> ''").order(:name)
       @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
       @queries = @queries.includes(:creator) if Blazer.user_class
       @queries = @queries.limit(limit) if limit

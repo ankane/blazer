@@ -98,7 +98,7 @@
                 <% row.each do |k, v| %>
                   <td>
                     <% if v.is_a?(Time) %>
-                      <% v = v.in_time_zone(Blazer.time_zone) %>
+                      <% v = blazer_time_value(k, v) %>
                     <% end %>
 
                     <% unless v.nil? %>

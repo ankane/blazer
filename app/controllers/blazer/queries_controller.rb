@@ -212,9 +212,15 @@ module Blazer
           csv << rows.first.keys
         end
         rows.each do |row|
-          csv << row.values.map { |v| v.is_a?(Time) ? v.in_time_zone(Blazer.time_zone) : v }
+          csv << row.map { |k, v| v.is_a?(Time) ? blazer_time_value(k, v) : v }
         end
       end
     end
+
+    def blazer_time_value(k, v)
+      # yuck, instance var
+      @data_source.local_time_suffix.any? { |s| k.ends_with?(s) } ? v.to_s.sub(" UTC", "") : v.in_time_zone(Blazer.time_zone)
+    end
+    helper_method :blazer_time_value
   end
 end

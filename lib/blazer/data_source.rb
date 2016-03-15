@@ -40,6 +40,10 @@ module Blazer
       settings["cache"]
     end
 
+    def local_time_suffix
+      @local_time_suffix ||= Array(settings["local_time_suffix"])
+    end
+
     def use_transaction?
       settings.key?("use_transaction") ? settings["use_transaction"] : true
     end

@@ -182,14 +182,16 @@ module Blazer
     def set_queries(limit = nil)
       @my_queries =
         if blazer_user
-          favorite_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 7.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").limit(50).count.keys
-          queries = Blazer::Query.where("name <> ''").where(id: favorite_query_ids).index_by(&:id)
+          favorite_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys
+          queries = Blazer::Query.named.where(id: favorite_query_ids)
+          queries = queries.includes(:creator) if Blazer.user_class
+          queries = queries.index_by(&:id)
           favorite_query_ids.map { |query_id| queries[query_id] }.compact
         else
           []
         end
 
-      @queries = Blazer::Query.where("name <> ''").order(:name)
+      @queries = Blazer::Query.named.order(:name)
       @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
       @queries = @queries.includes(:creator) if Blazer.user_class
       @queries = @queries.limit(limit) if limit

@@ -1,4 +1,4 @@
-<% (@my_queries + @dashboards + @queries).each do |query| %>
+<% (@dashboards + @my_queries + @queries).each do |query| %>
   <% is_query = query.is_a?(Blazer::Query) %>
   <tr>
     <td class="query <%= "dashboard" unless is_query %>">

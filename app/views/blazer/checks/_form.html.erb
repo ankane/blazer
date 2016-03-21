@@ -10,7 +10,7 @@
   <div class="form-group">
     <%= f.label :query_id, "Query" %>
     <div class="hide">
-      <%= f.select :query_id, Blazer::Query.order(:name).map { |q| [q.name, q.id] }, {include_blank: true} %>
+      <%= f.select :query_id, Blazer::Query.named.order(:name).map { |q| [q.name, q.id] }, {include_blank: true} %>
     </div>
     <script>
       $("#check_query_id").selectize().parents(".hide").removeClass("hide");

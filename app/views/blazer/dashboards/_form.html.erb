@@ -38,7 +38,7 @@ li:hover .glyphicon-remove {
   <div class="form-group">
     <%= f.label :query_id, "Add Chart" %>
     <div class="hide">
-      <%= select_tag :query_id, options_for_select(Blazer::Query.order(:name).map { |q| [q.name, q.id] }), {include_blank: true, placeholder: "Select chart"} %>
+      <%= select_tag :query_id, options_for_select(Blazer::Query.named.order(:name).map { |q| [q.name, q.id] }), {include_blank: true, placeholder: "Select chart"} %>
     </div>
     <script>
       $("#query_id").selectize().parents(".hide").removeClass("hide");

@@ -23,8 +23,11 @@ module Blazer
       render text: "BLAZER_DATABASE_URL required" if !ENV["BLAZER_DATABASE_URL"] && !Rails.env.development?
     end
 
-    def process_vars(statement)
+    def process_vars(statement, data_source)
       (@bind_vars ||= []).concat(extract_vars(statement)).uniq!
+      @bind_vars.each do |var|
+        params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
+      end
       @success = @bind_vars.all? { |v| params[v] }
 
       if @success

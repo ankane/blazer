@@ -1,3 +1,7 @@
+## 1.1.2 [unreleased]
+
+- Added variable defaults
+
 ## 1.1.1
 
 - Added `before_action` option

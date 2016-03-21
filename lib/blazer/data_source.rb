@@ -32,6 +32,10 @@ module Blazer
       settings["smart_variables"] || {}
     end
 
+    def variable_defaults
+      settings["variable_defaults"] || {}
+    end
+
     def timeout
       settings["timeout"]
     end

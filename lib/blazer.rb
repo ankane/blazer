@@ -56,10 +56,16 @@ module Blazer
       error = nil
       tries = 0
       # try 3 times on timeout errors
-      begin
-        rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement, refresh_cache: true)
-        tries += 1
-      end while error && error.include?("canceling statement due to statement timeout") && tries < 3
+      while tries < 3
+        columns, rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement, refresh_cache: true)
+        if error == Blazer::TIMEOUT_MESSAGE
+          Rails.logger.info "[blazer timeout] #{check.query.name}"
+          tries += 1
+          sleep(10)
+        else
+          break
+        end
+      end
       check.update_state(rows, error)
     end
   end

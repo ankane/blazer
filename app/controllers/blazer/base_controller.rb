@@ -45,7 +45,8 @@ module Blazer
 
     def extract_vars(statement)
       # strip commented out lines
-      statement.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{.*?\}/).map { |v| v[1...-1] }.uniq
+      # and regex {1} or {1,2}
+      statement.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{.*?\}/).map { |v| v[1...-1] }.reject { |v| /\A\d+(\,\d+)?\z/.match(v) }.uniq
     end
     helper_method :extract_vars
 

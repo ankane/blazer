@@ -1,6 +1,11 @@
-## 1.1.2 [unreleased]
+## 1.2.0
 
+- Added non-editable queries
 - Added variable defaults
+- Added `local_time_suffix` setting
+- Better timeout message
+- Hide variables from commented out lines
+- Fixed regex as variable names
 
 ## 1.1.1
 

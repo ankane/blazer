@@ -1,3 +1,7 @@
+## 1.2.1
+
+- Fixed checks
+
 ## 1.2.0
 
 - Added non-editable queries

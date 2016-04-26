@@ -57,9 +57,9 @@ module Blazer
       tries = 0
       # try 3 times on timeout errors
       while tries < 3
-        columns, rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement, refresh_cache: true)
+        rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement, refresh_cache: true)
         if error == Blazer::TIMEOUT_MESSAGE
-          Rails.logger.info "[blazer timeout] #{check.query.name}"
+          Rails.logger.info "[blazer timeout] query=#{check.query.name}"
           tries += 1
           sleep(10)
         else
@@ -67,6 +67,8 @@ module Blazer
         end
       end
       check.update_state(rows, error)
+      # TODO use proper logfmt
+      Rails.logger.info "[blazer check] query=#{check.query.name} state=#{check.state} rows=#{rows.try(:size)} error=#{error}"
     end
   end
 

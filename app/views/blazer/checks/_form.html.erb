@@ -17,17 +17,29 @@
     </script>
   </div>
 
-<% if @check.respond_to?(:invert) %>
-  <div class="form-group">
-    <%= f.label "Fails if" %>
-    <div class="hide">
-      <%= f.select :invert, [["Any results (bad data)", false], ["No results (missing data)", true]], {}, {id: "select-invert"} %>
+  <% if @check.respond_to?(:invert) %>
+    <div class="form-group">
+      <%= f.label :invert, "Fails if" %>
+      <div class="hide">
+        <%= f.select :invert, [["Any results (bad data)", false], ["No results (missing data)", true]] %>
+      </div>
+      <script>
+        $("#check_invert").selectize({}).parent().removeClass("hide");
+      </script>
     </div>
-    <script>
-      $("#select-invert").selectize({}).parent().removeClass("hide");
-    </script>
-  </div>
-<% end %>
+  <% end %>
+
+  <% if @check.respond_to?(:schedule) %>
+    <div class="form-group">
+      <%= f.label :schedule, "Run every" %>
+      <div class="hide">
+        <%= f.select :schedule, ["1 day", "1 hour", "5 minutes"].map { |v| [v, v] } %>
+      </div>
+      <script>
+        $("#check_schedule").selectize({}).parent().removeClass("hide");
+      </script>
+    </div>
+  <% end %>
 
   <div class="form-group">
     <%= f.label :emails %>

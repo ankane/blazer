@@ -19,6 +19,8 @@ module Blazer
           invert ? "failing" : "passing"
         end
 
+      self.last_run_at = Time.now if self.respond_to?(:last_run_at=)
+
       # do not notify on creation, except when not passing
       if (state_was || state != "passing") && state != state_was && emails.present?
         Blazer::CheckMailer.state_change(self, state, state_was, rows.size, error).deliver_later

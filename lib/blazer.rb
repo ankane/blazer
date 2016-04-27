@@ -50,8 +50,10 @@ module Blazer
     end
   end
 
-  def self.run_checks
-    Blazer::Check.includes(:query).find_each do |check|
+  def self.run_checks(schedule: nil)
+    checks = Blazer::Check.includes(:query)
+    checks = checks.where(schedule: schedule) if schedule
+    checks.find_each do |check|
       rows = nil
       error = nil
       tries = 0

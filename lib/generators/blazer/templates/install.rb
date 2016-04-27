@@ -32,7 +32,10 @@ class <%= migration_class_name %> < ActiveRecord::Migration
     create_table :blazer_checks do |t|
       t.references :query
       t.string :state
+      t.string :schedule
       t.text :emails
+      t.boolean :invert
+      t.timestamp :last_run_at
       t.timestamps
     end
   end

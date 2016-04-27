@@ -41,7 +41,7 @@ module Blazer
     private
 
     def check_params
-      params.require(:check).permit(:query_id, :emails, :invert)
+      params.require(:check).permit(:query_id, :emails, :invert, :schedule)
     end
 
     def set_check

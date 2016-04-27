@@ -1,3 +1,7 @@
+## 1.3.0 [unreleased]
+
+- Added schedule for checks
+
 ## 1.2.1
 
 - Fixed checks

@@ -8,7 +8,8 @@
   <thead>
     <tr>
       <th>Query</th>
-      <th style="width: 15%;">State</th>
+      <th style="width: 10%;">State</th>
+      <th style="width: 10%;">Run</th>
       <th style="width: 20%;">Emails</th>
       <th style="width: 15%;"></th>
     </tr>
@@ -22,6 +23,7 @@
             <small style="font-weight: bold; color: <%= colors[check.state.to_sym] %>;"><%= check.state.upcase %></small>
           <% end %>
         </td>
+        <td><%= check.schedule if check.respond_to?(:schedule) %></td>
         <td>
           <ul class="list-unstyled" style="margin-bottom: 0;">
             <% check.split_emails.each do |email| %>

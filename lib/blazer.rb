@@ -4,7 +4,6 @@ require "chartkick"
 require "blazer/version"
 require "blazer/data_source"
 require "blazer/engine"
-require "blazer/tasks"
 
 module Blazer
   class << self

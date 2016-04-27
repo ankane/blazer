@@ -1,5 +1,3 @@
-require "rake"
-
 namespace :blazer do
   desc "run checks"
   task :run_checks, [:schedule] => :environment do |t, args|

@@ -1,6 +1,7 @@
 ## 1.3.0 [unreleased]
 
 - Added schedule for checks
+- Better output for explain
 
 ## 1.2.1
 

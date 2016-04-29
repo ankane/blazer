@@ -80,46 +80,50 @@
     <% unless @only_chart && !@no_chart %>
       <% header_width = 100 / @rows.first.keys.size.to_f %>
       <div class="results-container">
-        <table class="table results-table" style="margin-bottom: 0;">
-          <thead>
-            <tr>
-              <% @columns.each do |key, type| %>
-                <th style="width: <%= header_width %>%;" data-sort="<%= type %>">
-                  <div style="min-width: <%= @min_width_types.include?(key) ? 180 : 60 %>px;">
-                    <%= key %>
-                  </div>
-                </th>
-              <% end %>
-            </tr>
-          </thead>
-          <tbody>
-            <% @rows.each do |row| %>
+        <% if @columns.keys == ["QUERY PLAN"] %>
+          <pre><code><%= @rows.map { |r| r["QUERY PLAN"] }.join("\n") %></code></pre>
+        <% else %>
+          <table class="table results-table" style="margin-bottom: 0;">
+            <thead>
               <tr>
-                <% row.each do |k, v| %>
-                  <td>
-                    <% if v.is_a?(Time) %>
-                      <% v = blazer_time_value(k, v) %>
-                    <% end %>
-
-                    <% unless v.nil? %>
-                      <% if v == "" %>
-                        <div class="text-muted">empty string</div>
-                      <% elsif @linked_columns[k] %>
-                        <%= link_to blazer_format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
-                      <% else %>
-                        <%= blazer_format_value(k, v) %>
-                      <% end %>
-
-                      <% if v2 = (@boom[k] || {})[v.to_s] %>
-                        <div class="text-muted"><%= v2 %></div>
-                      <% end %>
-                    <% end %>
-                  </td>
+                <% @columns.each do |key, type| %>
+                  <th style="width: <%= header_width %>%;" data-sort="<%= type %>">
+                    <div style="min-width: <%= @min_width_types.include?(key) ? 180 : 60 %>px;">
+                      <%= key %>
+                    </div>
+                  </th>
                 <% end %>
               </tr>
-            <% end %>
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              <% @rows.each do |row| %>
+                <tr>
+                  <% row.each do |k, v| %>
+                    <td>
+                      <% if v.is_a?(Time) %>
+                        <% v = blazer_time_value(k, v) %>
+                      <% end %>
+
+                      <% unless v.nil? %>
+                        <% if v == "" %>
+                          <div class="text-muted">empty string</div>
+                        <% elsif @linked_columns[k] %>
+                          <%= link_to blazer_format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
+                        <% else %>
+                          <%= blazer_format_value(k, v) %>
+                        <% end %>
+
+                        <% if v2 = (@boom[k] || {})[v.to_s] %>
+                          <div class="text-muted"><%= v2 %></div>
+                        <% end %>
+                      <% end %>
+                    </td>
+                  <% end %>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        <% end %>
       </div>
     <% end %>
   <% elsif @only_chart %>

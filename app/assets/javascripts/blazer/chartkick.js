@@ -950,23 +950,47 @@
             datasets.push(merge(dataset, s.library || {}));
           }
 
-          if (detectType) {
-            if (year) {
-              options.scales.xAxes[0].time.unit = "year";
-              options.scales.xAxes[0].time.tooltipFormat = "ll";
-            } else if (month) {
-              options.scales.xAxes[0].time.unit = "month";
-              options.scales.xAxes[0].time.tooltipFormat = "ll";
-            } else if (week) {
-              options.scales.xAxes[0].time.unit = "week";
-              options.scales.xAxes[0].time.tooltipFormat = "ll";
-            } else if (day) {
-              options.scales.xAxes[0].time.unit = "day";
+          if (detectType && labels.length > 0) {
+            var minTime = labels[0].getTime();
+            var maxTime = labels[0].getTime();
+            for (i = 1; i < labels.length; i++) {
+              value = labels[i].getTime();
+              if (value < minTime) {
+                minTime = value;
+              }
+              if (value > maxTime) {
+                maxTime = value;
+              }
+            }
+
+            var timeDiff = (maxTime - minTime) / 1000.0;
+
+            if (!options.scales.xAxes[0].time.unit) {
+              var step;
+              if (timeDiff > 86400 * 365 * 10) {
+                options.scales.xAxes[0].time.unit = "year";
+                step = 86400 * 365;
+              } else if (timeDiff > 86400 * 30 * 10) {
+                options.scales.xAxes[0].time.unit = "month";
+                step = 86400 * 30;
+              } else if (timeDiff > 86400 * 10) {
+                options.scales.xAxes[0].time.unit = "day";
+                step = 86400;
+              }
+
+              if (step && timeDiff > 0) {
+                var unitStepSize = Math.ceil(timeDiff / step / (chart.element.offsetWidth / 40.0));
+                if (week) {
+                  unitStepSize = Math.round(unitStepSize / 7) * 7;
+                }
+                options.scales.xAxes[0].time.unitStepSize = unitStepSize;
+              }
+            }
+
+            if (!options.scales.xAxes[0].time.tooltipFormat && day) {
               options.scales.xAxes[0].time.tooltipFormat = "ll";
             }
           }
-
-          options.scales.xAxes[0].time.unitStepSize = Math.ceil(labels.length / (chart.element.offsetWidth / 40.0));
 
           var data = {
             labels: labels,

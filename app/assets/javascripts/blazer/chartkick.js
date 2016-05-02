@@ -963,25 +963,25 @@
               }
             }
 
-            var timeDiff = (maxTime - minTime) / 1000.0;
+            var timeDiff = (maxTime - minTime) / (86400 * 1000.0);
 
             if (!options.scales.xAxes[0].time.unit) {
               var step;
-              if (timeDiff > 86400 * 365 * 10) {
+              if (year || timeDiff > 365 * 10) {
                 options.scales.xAxes[0].time.unit = "year";
-                step = 86400 * 365;
-              } else if (timeDiff > 86400 * 30 * 10) {
+                step = 365;
+              } else if (month || timeDiff > 30 * 10) {
                 options.scales.xAxes[0].time.unit = "month";
-                step = 86400 * 30;
-              } else if (timeDiff > 86400 * 10) {
+                step = 30;
+              } else if (day || timeDiff > 10) {
                 options.scales.xAxes[0].time.unit = "day";
-                step = 86400;
+                step = 1;
               }
 
               if (step && timeDiff > 0) {
-                var unitStepSize = Math.ceil(timeDiff / step / (chart.element.offsetWidth / 40.0));
+                var unitStepSize = Math.ceil(timeDiff / step / (chart.element.offsetWidth / 100.0));
                 if (week) {
-                  unitStepSize = Math.round(unitStepSize / 7) * 7;
+                  unitStepSize = Math.round(unitStepSize / 7.0) * 7;
                 }
                 options.scales.xAxes[0].time.unitStepSize = unitStepSize;
               }

@@ -16,9 +16,11 @@ module Blazer
     attr_accessor :from_email
     attr_accessor :cache
     attr_accessor :transform_statement
+    attr_accessor :check_schedules
   end
   self.audit = true
   self.user_name = :name
+  self.check_schedules = ["1 day", "1 hour", "5 minutes"]
 
   TIMEOUT_MESSAGE = "Query timed out :("
 

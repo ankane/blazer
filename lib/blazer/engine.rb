@@ -19,6 +19,8 @@ module Blazer
         Blazer.user_method ||= "current_#{Blazer.user_class.to_s.downcase.singularize}"
       end
 
+      Blazer.check_schedules = Blazer.settings["check_schedules"] if Blazer.settings.key?("check_schedules")
+
       Blazer::Query.belongs_to :creator, class_name: Blazer.user_class.to_s if Blazer.user_class
 
       Blazer.cache ||= Rails.cache

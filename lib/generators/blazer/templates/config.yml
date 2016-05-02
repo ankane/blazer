@@ -45,3 +45,8 @@ audit: true
 
 # email to send checks from
 # from_email: blazer@example.org
+
+check_schedules:
+  - "5 minutes"
+  - "1 hour"
+  - "1 day"

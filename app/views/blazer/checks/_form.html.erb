@@ -29,11 +29,11 @@
     </div>
   <% end %>
 
-  <% if @check.respond_to?(:schedule) %>
+  <% if @check.respond_to?(:schedule) && Blazer.check_schedules %>
     <div class="form-group">
       <%= f.label :schedule, "Run every" %>
       <div class="hide">
-        <%= f.select :schedule, ["1 day", "1 hour", "5 minutes"].map { |v| [v, v] } %>
+        <%= f.select :schedule, Blazer.check_schedules.map { |v| [v, v] } %>
       </div>
       <script>
         $("#check_schedule").selectize({}).parent().removeClass("hide");

@@ -149,7 +149,7 @@
   </form>
 <% end %>
 
-<pre><code><%= @statement %></code></pre>
+<pre style="max-height: 236px; overflow: hidden;" onclick="this.style.maxHeight = 'none';"><code><%= @statement %></code></pre>
 
 <% if @success %>
   <div id="results">

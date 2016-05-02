@@ -1,6 +1,7 @@
 ## 1.3.0 [unreleased]
 
 - Added schedule for checks
+- Switched to Chart.js for charts
 - Better output for explain
 
 ## 1.2.1

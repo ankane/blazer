@@ -8,6 +8,7 @@
 //= require ./moment
 //= require ./moment-timezone
 //= require ./daterangepicker
+//= require ./Chart.js
 //= require ./chartkick
 //= require ./ace/ace
 //= require ./ace/ext-language_tools

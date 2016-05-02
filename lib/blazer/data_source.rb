@@ -79,7 +79,14 @@ module Blazer
 
         in_transaction do
           begin
-            connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && (postgresql? || redshift?)
+            if timeout
+              if postgresql? || redshift?
+                connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}")
+              elsif mysql?
+                connection_model.connection.execute("SET max_execution_time = #{timeout.to_i * 1000}")
+              end
+            end
+
             result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
             result.each do |untyped_row|
               row = {}
@@ -119,14 +126,22 @@ module Blazer
     end
 
     def postgresql?
-      connection_model.connection.adapter_name == "PostgreSQL"
+      ["PostgreSQL", "PostGIS"].include?(adapter_name)
     end
 
     def redshift?
-      connection_model.connection.adapter_name == "Redshift"
+      ["Redshift"].include?(adapter_name)
+    end
+
+    def mysql?
+      ["MySQL", "Mysql2", "Mysql2Spatial"].include?(adapter_name)
     end
 
     protected
+
+    def adapter_name
+      connection_model.connection.adapter_name
+    end
 
     def in_transaction
       if use_transaction?

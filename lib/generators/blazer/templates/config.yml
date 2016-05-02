@@ -5,7 +5,6 @@ data_sources:
     url: <%%= ENV["BLAZER_DATABASE_URL"] %>
 
     # statement timeout, in seconds
-    # applies to PostgreSQL only
     # none by default
     # timeout: 15
 

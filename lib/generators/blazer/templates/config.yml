@@ -47,6 +47,6 @@ audit: true
 # from_email: blazer@example.org
 
 check_schedules:
-  - "5 minutes"
-  - "1 hour"
   - "1 day"
+  - "1 hour"
+  - "5 minutes"

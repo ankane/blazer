@@ -25,30 +25,55 @@
       </tr>
     </thead>
     <tbody class="list">
-      <%= render partial: "index" %>
+      <tr id="search-item">
+        <td>
+          <span class="name"></span>
+          <span class="vars"></span>
+          <span class="hide"></span>
+        </td>
+        <td class="creator"></td>
+      </tr>
     </tbody>
   </table>
 </div>
 
 <script>
   var options = {
-    valueNames: ['query', 'creator'],
-    page: 200
+    valueNames: ["name", "vars", "hide", "creator"],
+    item: "search-item",
+    page: 200,
+    indexAsync: true
   };
+  var dashboardValues = <%= blazer_json_escape(@dashboards.to_json).html_safe %>;
+  var queryValues = <%= blazer_json_escape(@queries.to_json).html_safe %>;
+  var queryList = new List("queries", options, dashboardValues);
+  queryList.add(queryValues);
 
-  function updateList() {
-    var userList = new List('queries', options);
-    userList.search($(".search").val());
+  var queryIds = {};
+  for (var i = 0; i < queryValues.length; i++) {
+    queryIds[queryValues[i].id] = true;
   }
-  updateList();
 </script>
 
-<% if @queries.size == 1000 %>
+<% if @queries.size >= 200 %>
   <p id="loading" class="text-muted">Loading...</p>
   <script>
-    $(".list").load("<%= queries_path %>", function () {
-      updateList();
+    $.getJSON("<%= queries_path %>", function (data) {
+      var i, j, newValues, val, size = 500;
       $("#loading").remove();
+      for (i = 0; i < data.length / size; i++) {
+        newValues = [];
+        for (j = 0; j < size; j++) {
+          val = data[i * size + j];
+          if (!val) {
+            break;
+          }
+          if (!queryIds[val.id]) {
+            newValues.push(val);
+          }
+        }
+        queryList.add(newValues);
+      }
     });
   </script>
 <% end %>

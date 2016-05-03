@@ -87,3 +87,16 @@ input.search:focus {
 .dashboard a {
   font-weight: bold;
 }
+
+#search-item {
+  display: none;
+}
+
+.creator {
+  text-align: right;
+  color: #999;
+}
+
+.vars {
+  color: #ccc;
+}

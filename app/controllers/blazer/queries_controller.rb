@@ -4,11 +4,20 @@ module Blazer
 
     def home
       set_queries(1000)
+      @dashboards =
+        Blazer::Dashboard.order(:name).map do |d|
+          {
+            name: "<strong>#{view_context.link_to(d.name, d)}</strong>",
+            creator: nil,
+            hide: d.name.gsub(/\s+/, ""),
+            vars: nil
+          }
+        end
     end
 
     def index
       set_queries
-      render partial: "index", layout: false
+      render json: @queries
     end
 
     def new
@@ -180,7 +189,7 @@ module Blazer
 
     def set_queries(limit = nil)
       @my_queries =
-        if blazer_user
+        if limit && blazer_user
           favorite_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys
           queries = Blazer::Query.named.where(id: favorite_query_ids)
           queries = queries.includes(:creator) if Blazer.user_class
@@ -194,9 +203,17 @@ module Blazer
       @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
       @queries = @queries.includes(:creator) if Blazer.user_class
       @queries = @queries.limit(limit) if limit
-      @trending_queries = Blazer::Audit.group(:query_id).where("created_at > ?", 2.days.ago).having("COUNT(DISTINCT user_id) >= 3").uniq.count(:user_id)
-      @checks = Blazer::Check.group(:query_id).count
-      @dashboards = Blazer::Dashboard.order(:name)
+
+      @queries =
+        @queries.map do |q|
+          {
+            id: q.id,
+            name: view_context.link_to(q.name, q),
+            creator: q.respond_to?(:creator) && q.creator == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
+            hide: q.name.gsub(/\s+/, ""),
+            vars: extract_vars(q.statement).join(", ")
+          }
+        end
     end
 
     def set_query

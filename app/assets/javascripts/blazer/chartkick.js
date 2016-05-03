@@ -243,6 +243,10 @@
     return a[0].getTime() - b[0].getTime();
   }
 
+  function sortByNumber(a, b) {
+    return a - b;
+  }
+
   function loadAdapters() {
     if (!HighchartsAdapter && "Highcharts" in window) {
       var HighchartsAdapter = new function () {
@@ -889,6 +893,8 @@
 
           var series = chart.data;
 
+          var sortedLabels = [];
+
           var i, j, s, d, key, rows = [];
           for (i = 0; i < series.length; i++) {
             s = series[i];
@@ -900,7 +906,14 @@
                 rows[key] = new Array(series.length);
               }
               rows[key][i] = toFloat(d[1]);
+              if (sortedLabels.indexOf(key) === -1) {
+                sortedLabels.push(key);
+              }
             }
+          }
+
+          if (detectType) {
+            sortedLabels.sort(sortByNumber);
           }
 
           var rows2 = [];
@@ -910,25 +923,25 @@
 
           var day = true;
           var value;
-          for (i in rows) {
-            if (rows.hasOwnProperty(i)) {
-              if (detectType) {
-                value = new Date(toFloat(i));
-                // TODO make this efficient
-                day = day && isDay(value);
-                if (!dayOfWeek) {
-                  dayOfWeek = value.getDay();
-                }
-                week = week && isWeek(value, dayOfWeek);
-                month = month && isMonth(value);
-                year = year && isYear(value);
-              } else {
-                value = i;
+          var k;
+          for (k = 0; k < sortedLabels.length; k++) {
+            i = sortedLabels[k];
+            if (detectType) {
+              value = new Date(toFloat(i));
+              // TODO make this efficient
+              day = day && isDay(value);
+              if (!dayOfWeek) {
+                dayOfWeek = value.getDay();
               }
-              labels.push(value);
-              for (var j = 0; j < series.length; j++) {
-                rows2[j].push(rows[i][j])
-              }
+              week = week && isWeek(value, dayOfWeek);
+              month = month && isMonth(value);
+              year = year && isYear(value);
+            } else {
+              value = i;
+            }
+            labels.push(value);
+            for (var j = 0; j < series.length; j++) {
+              rows2[j].push(rows[i][j])
             }
           }
 
@@ -981,7 +994,7 @@
               if (step && timeDiff > 0) {
                 var unitStepSize = Math.ceil(timeDiff / step / (chart.element.offsetWidth / 100.0));
                 if (week) {
-                  unitStepSize = Math.round(unitStepSize / 7.0) * 7;
+                  unitStepSize = Math.ceil(unitStepSize / 7.0) * 7;
                 }
                 options.scales.xAxes[0].time.unitStepSize = unitStepSize;
               }

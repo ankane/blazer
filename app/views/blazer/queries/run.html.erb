@@ -30,7 +30,7 @@
     <% chart_options = {id: chart_id, min: nil} %>
     <% series_library = {} %>
     <% @columns.keys.select { |k| k.downcase == "target" }.each do |key| %>
-      <% series_library[key] = {pointStyle: "line", hitRadius: 10, borderColor: "#109618", pointBackgroundColor: "#109618", backgroundColor: "#109618"} %>
+      <% series_library[key] = {pointStyle: "line", hitRadius: 5, borderColor: "#109618", pointBackgroundColor: "#109618", backgroundColor: "#109618"} %>
     <% end %>
     <% if blazer_maps? && @markers.any? %>
       <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>

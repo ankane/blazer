@@ -25,6 +25,11 @@ module Blazer
   self.check_schedules = ["1 day", "1 hour", "5 minutes"]
 
   TIMEOUT_MESSAGE = "Query timed out :("
+  TIMEOUT_ERRORS = [
+    "canceling statement due to statement timeout", # postgres
+    "cancelled on user's request", # redshift
+    "system requested abort" # redshift
+  ]
 
   def self.time_zone=(time_zone)
     @time_zone = time_zone.is_a?(ActiveSupport::TimeZone) ? time_zone : ActiveSupport::TimeZone[time_zone.to_s]

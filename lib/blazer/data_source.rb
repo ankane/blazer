@@ -99,7 +99,7 @@ module Blazer
             end
           rescue ActiveRecord::StatementInvalid => e
             error = e.message.sub(/.+ERROR: /, "")
-            error = Blazer::TIMEOUT_MESSAGE if error.include?("canceling statement due to statement timeout") || error.include?("cancelled on user's request") || error.include?("system requested abort")
+            error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
           end
         end
 

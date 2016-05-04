@@ -13,6 +13,9 @@ module Blazer
 
     def create
       @check = Blazer::Check.new(check_params)
+      # use creator_id instead of creator
+      # since we setup association without checking if column exists
+      @check.creator = blazer_user if @check.respond_to?(:creator_id=)
 
       if @check.save
         redirect_to run_check_path(@check)

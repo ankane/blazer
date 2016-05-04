@@ -8,7 +8,7 @@ module Blazer
         Blazer::Dashboard.order(:name).map do |d|
           {
             name: "<strong>#{view_context.link_to(d.name, d)}</strong>",
-            creator: nil,
+            creator: d.respond_to?(:creator) && d.creator == blazer_user ? "You" : d.try(:creator).try(Blazer.user_name),
             hide: d.name.gsub(/\s+/, ""),
             vars: nil
           }

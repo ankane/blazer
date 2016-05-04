@@ -4,6 +4,7 @@
 - Switched to Chart.js for charts
 - Better output for explain
 - Support for MySQL timeouts
+- Raise error when timeout not supported
 
 ## 1.2.1
 

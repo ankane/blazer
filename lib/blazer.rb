@@ -64,21 +64,30 @@ module Blazer
     checks.find_each do |check|
       rows = nil
       error = nil
-      tries = 0
-      # try 3 times on timeout errors
-      while tries < 3
-        rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement, refresh_cache: true)
-        if error == Blazer::TIMEOUT_MESSAGE
-          Rails.logger.info "[blazer timeout] query=#{check.query.name}"
-          tries += 1
-          sleep(10)
-        else
-          break
+      tries = 1
+
+      ActiveSupport::Notifications.instrument("run_check.blazer", check_id: check.id, query_id: check.query.id, state_was: check.state) do |instrument|
+        # try 3 times on timeout errors
+        while tries <= 3
+          rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement, refresh_cache: true)
+          if error == Blazer::TIMEOUT_MESSAGE
+            Rails.logger.info "[blazer timeout] query=#{check.query.name}"
+            tries += 1
+            sleep(10)
+          else
+            break
+          end
         end
+        check.update_state(rows, error)
+        # TODO use proper logfmt
+        Rails.logger.info "[blazer check] query=#{check.query.name} state=#{check.state} rows=#{rows.try(:size)} error=#{error}"
+
+        instrument[:state] = check.state
+        instrument[:rows] = rows.try(:size)
+        instrument[:error] = error
+        instrument[:tries] = tries
       end
-      check.update_state(rows, error)
-      # TODO use proper logfmt
-      Rails.logger.info "[blazer check] query=#{check.query.name} state=#{check.state} rows=#{rows.try(:size)} error=#{error}"
+
     end
   end
 

@@ -1,4 +1,4 @@
-## 1.3.0 [unreleased]
+## 1.3.0
 
 - Added schedule for checks
 - Switched to Chart.js for charts

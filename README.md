@@ -320,7 +320,7 @@ For an easy way to group by day, week, month, and more with correct time zones, 
 
 ## Upgrading
 
-### 1.3 [unreleased]
+### 1.3
 
 To take advantage of the latest features, create a migration
 

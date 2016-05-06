@@ -5,6 +5,7 @@
 - Better output for explain
 - Support for MySQL timeouts
 - Raise error when timeout not supported
+- Added creator to dashboards and checks
 
 ## 1.2.1
 

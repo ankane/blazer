@@ -310,6 +310,24 @@ For an easy way to group by day, week, month, and more with correct time zones, 
 
 ## Upgrading
 
+### 1.3 [unreleased]
+
+To take advantage of the latest features, create a migration
+
+```sh
+rails g migration upgrade_blazer_to_1_3
+```
+
+with:
+
+```ruby
+add_column :blazer_dashboards, :creator_id, :integer
+add_column :blazer_checks, :creator_id, :integer
+add_column :blazer_checks, :invert, :boolean
+add_column :blazer_checks, :schedule, :string
+add_column :blazer_checks, :last_run_at, :timestamp
+```
+
 ### 1.0
 
 Blazer 1.0 brings a number of new features:

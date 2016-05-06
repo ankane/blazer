@@ -22,7 +22,7 @@ module Blazer
   end
   self.audit = true
   self.user_name = :name
-  self.check_schedules = ["1 day", "1 hour", "5 minutes"]
+  self.check_schedules = ["5 minutes", "1 hour", "1 day"]
 
   TIMEOUT_MESSAGE = "Query timed out :("
   TIMEOUT_ERRORS = [

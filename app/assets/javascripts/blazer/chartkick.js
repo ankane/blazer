@@ -2,7 +2,7 @@
  * Chartkick.js
  * Create beautiful JavaScript charts with minimal code
  * https://github.com/ankane/chartkick.js
- * v1.5.0
+ * v1.5.1
  * MIT License
  */
 
@@ -1052,11 +1052,11 @@
           drawChart(chart, "pie", data, options);
         }
 
-        this.renderColumnChart = function (chart) {
+        this.renderColumnChart = function (chart, chartType) {
           var options = jsOptions(chart.data, chart.options);
           var data = createDataTable(chart, options, "column");
           setLabelSize(chart, data, options);
-          drawChart(chart, "bar", data, options);
+          drawChart(chart, (chartType === "bar" ? "horizontalBar" : "bar"), data, options);
         }
 
         var self = this;
@@ -1064,6 +1064,10 @@
         this.renderAreaChart = function (chart) {
           self.renderLineChart(chart, "area");
         };
+
+        this.renderBarChart = function (chart) {
+          self.renderColumnChart(chart, "bar")
+        }
       }
 
       adapters.push(ChartjsAdapter);

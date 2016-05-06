@@ -8,7 +8,7 @@ module Blazer
         Blazer::Dashboard.order(:name).map do |d|
           {
             name: "<strong>#{view_context.link_to(d.name, d)}</strong>",
-            creator: d.respond_to?(:creator) && d.creator == blazer_user ? "You" : d.try(:creator).try(Blazer.user_name),
+            creator: blazer_user && d.try(:creator) == blazer_user ? "You" : d.try(:creator).try(Blazer.user_name),
             hide: d.name.gsub(/\s+/, ""),
             vars: nil
           }
@@ -209,7 +209,7 @@ module Blazer
           {
             id: q.id,
             name: view_context.link_to(q.name, q),
-            creator: q.respond_to?(:creator) && q.creator == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
+            creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
             hide: q.name.gsub(/\s+/, ""),
             vars: extract_vars(q.statement).join(", ")
           }

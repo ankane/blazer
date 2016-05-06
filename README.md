@@ -65,10 +65,20 @@ Be sure to set a host in `config/environments/production.rb` for emails to work.
 config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
 ```
 
-Schedule checks to run every hour (with cron, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc).
+Schedule checks to run (with cron, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc). The default options are every 1 day, 1 hour, or 5 minutes, which you can customize. For each of these options, set up a task to run.
 
 ```sh
-rake blazer:run_checks
+rake blazer:run_checks SCHEDULE="1 day"
+rake blazer:run_checks SCHEDULE="1 hour"
+rake blazer:run_checks SCHEDULE="5 minutes"
+```
+
+Here’s what it looks like with cron.
+
+```
+0   0 * * * * user rake blazer:run_checks SCHEDULE="1 day"
+0   * * * * * user rake blazer:run_checks SCHEDULE="1 hour"
+*/5 * * * * * user rake blazer:run_checks SCHEDULE="5 minutes"
 ```
 
 You can also set up failing checks to be sent once a day (or whatever you prefer).

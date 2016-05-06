@@ -76,9 +76,9 @@ rake blazer:run_checks SCHEDULE="1 day"
 Here’s what it looks like with cron.
 
 ```
-*/5 * * * * * user rake blazer:run_checks SCHEDULE="5 minutes"
-0   * * * * * user rake blazer:run_checks SCHEDULE="1 hour"
-0   0 * * * * user rake blazer:run_checks SCHEDULE="1 day"
+*/5 * * * * * rake blazer:run_checks SCHEDULE="5 minutes"
+0   * * * * * rake blazer:run_checks SCHEDULE="1 hour"
+0   0 * * * * rake blazer:run_checks SCHEDULE="1 day"
 ```
 
 You can also set up failing checks to be sent once a day (or whatever you prefer).

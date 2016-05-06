@@ -1,3 +1,7 @@
+## 1.3.1
+
+- Fixed migration error
+
 ## 1.3.0
 
 - Added schedule for checks

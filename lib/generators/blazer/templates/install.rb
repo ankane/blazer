@@ -18,7 +18,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
     end
 
     create_table :blazer_dashboards do |t|
-      t.refrences :creator
+      t.references :creator
       t.text :name
       t.timestamps
     end

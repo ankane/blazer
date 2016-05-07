@@ -1,6 +1,6 @@
 module Blazer
   class Query < ActiveRecord::Base
-    belongs_to :creator, class_name: Blazer.user_class.to_s if Blazer.user_class
+    belongs_to :creator, class_name: Blazer.user_class.to_s, required: false if Blazer.user_class
     has_many :checks, dependent: :destroy
     has_many :dashboard_queries, dependent: :destroy
     has_many :dashboards, through: :dashboard_queries

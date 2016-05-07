@@ -33,7 +33,13 @@ module Blazer
       if @success
         @bind_vars.each do |var|
           value = params[var].presence
-          value = value.to_i if value.to_i.to_s == value
+          if value
+            if value =~ /\A\d+\z/
+              value = value.to_i
+            elsif value =~ /\A\d+\.\d+\z/
+              value = value.to_f
+            end
+          end
           if var.end_with?("_at")
             value = Blazer.time_zone.parse(value) rescue nil
           end

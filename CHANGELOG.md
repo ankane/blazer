@@ -1,3 +1,7 @@
+## 1.3.2 [unreleased]
+
+- Attempt to reconnect for checks
+
 ## 1.3.1
 
 - Fixed migration error

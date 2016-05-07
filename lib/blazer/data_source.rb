@@ -139,6 +139,10 @@ module Blazer
       ["MySQL", "Mysql2", "Mysql2Spatial"].include?(adapter_name)
     end
 
+    def reconnect
+      connection_model.establish_connection(settings["url"])
+    end
+
     protected
 
     def adapter_name

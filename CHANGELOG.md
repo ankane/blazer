@@ -1,4 +1,4 @@
-## 1.3.2 [unreleased]
+## 1.3.2
 
 - Added support for Rails 5
 - Attempt to reconnect for checks

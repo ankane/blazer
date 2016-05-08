@@ -1,4 +1,4 @@
-## 1.3.3 [unreleased]
+## 1.3.3
 
 - Fixed error with Rails 4.1 and below
 

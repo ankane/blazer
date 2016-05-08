@@ -1,3 +1,7 @@
+## 1.3.3 [unreleased]
+
+- Fixed error with Rails 4.1 and below
+
 ## 1.3.2
 
 - Added support for Rails 5

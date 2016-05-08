@@ -22,9 +22,10 @@ module Blazer
       Blazer.check_schedules = Blazer.settings["check_schedules"] if Blazer.settings.key?("check_schedules")
 
       if Blazer.user_class
-        Blazer::Query.belongs_to :creator, class_name: Blazer.user_class.to_s
-        Blazer::Dashboard.belongs_to :creator, class_name: Blazer.user_class.to_s
-        Blazer::Check.belongs_to :creator, class_name: Blazer.user_class.to_s
+        options = Blazer::BELONGS_TO_OPTIONAL.merge(class_name: Blazer.user_class.to_s)
+        Blazer::Query.belongs_to :creator, options
+        Blazer::Dashboard.belongs_to :creator, options
+        Blazer::Check.belongs_to :creator, options
       end
 
       Blazer.cache ||= Rails.cache

@@ -1,4 +1,4 @@
-## 1.3.4 [unreleased]
+## 1.3.4
 
 - Fixed issue with missing queries
 

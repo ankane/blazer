@@ -1,3 +1,7 @@
+## 1.3.4 [unreleased]
+
+- Fixed issue with missing queries
+
 ## 1.3.3
 
 - Fixed error with Rails 4.1 and below

@@ -205,7 +205,7 @@ module Blazer
       @queries = @queries.limit(limit) if limit
 
       @queries =
-        @queries.map do |q|
+        (@my_queries + @queries).map do |q|
           {
             id: q.id,
             name: view_context.link_to(q.name, q),

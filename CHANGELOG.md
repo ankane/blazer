@@ -1,4 +1,4 @@
-## 1.3.5 [unreleased]
+## 1.3.5
 
 - Fixed error with checks
 

@@ -8,8 +8,6 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
-**Blazer 1.0 was recently released!** See the [instructions for upgrading](#10).
-
 :envelope: [Subscribe to releases](https://libraries.io/rubygems/blazer)
 
 ## Features

@@ -76,7 +76,7 @@ module Blazer
             Rails.logger.info "[blazer timeout] query=#{check.query.name}"
             tries += 1
             sleep(10)
-          elsif error.start_with?("PG::ConnectionBad")
+          elsif error.to_s.start_with?("PG::ConnectionBad")
             data_sources[check.query.data_source].reconnect
             Rails.logger.info "[blazer reconnect] query=#{check.query.name}"
             tries += 1

@@ -1,3 +1,7 @@
+## 1.3.5 [unreleased]
+
+- Fixed error with checks
+
 ## 1.3.4
 
 - Fixed issue with missing queries

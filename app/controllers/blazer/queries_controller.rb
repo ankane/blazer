@@ -75,6 +75,11 @@ module Blazer
         data_source = @query.data_source if @query && @query.data_source
         @data_source = Blazer.data_sources[data_source]
         Blazer.transform_statement.call(@data_source, @statement) if Blazer.transform_statement
+        limit_count = @statement.match(/limit (\d+)/)
+        @rows_to_display = 20
+        unless limit_count.nil?
+          @rows_to_display = limit_count[1].to_i
+        end
 
         # audit
         if Blazer.audit

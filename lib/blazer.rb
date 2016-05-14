@@ -6,7 +6,8 @@ require "blazer/data_source"
 require "blazer/engine"
 
 module Blazer
-  class TimeoutNotSupported < StandardError; end
+  class Error < StandardError; end
+  class TimeoutNotSupported < Error; end
 
   class << self
     attr_accessor :audit

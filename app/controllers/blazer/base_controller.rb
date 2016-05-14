@@ -15,13 +15,7 @@ module Blazer
 
     layout "blazer/application"
 
-    before_action :ensure_database_url
-
     private
-
-    def ensure_database_url
-      render text: "BLAZER_DATABASE_URL required" if !ENV["BLAZER_DATABASE_URL"] && !Rails.env.development?
-    end
 
     def process_vars(statement, data_source)
       (@bind_vars ||= []).concat(extract_vars(statement)).uniq!

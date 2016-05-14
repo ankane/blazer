@@ -7,6 +7,11 @@ module Blazer
     def initialize(id, settings)
       @id = id
       @settings = settings
+
+      unless settings["url"] || Rails.env.development?
+        raise Blazer::Error, "Empty url"
+      end
+
       @connection_model =
         Class.new(Blazer::Connection) do
           def self.name

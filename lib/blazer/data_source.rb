@@ -113,7 +113,7 @@ module Blazer
 
     def tables
       columns, rows, error, cached_at = run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema IN (?)", schemas]))
-      rows.map(&:first)
+      rows.map(&:first).uniq
     end
 
     def postgresql?

@@ -94,7 +94,7 @@ module Blazer
           audit.error = @error if audit.respond_to?(:error=)
           audit.timed_out = @error == Blazer::TIMEOUT_MESSAGE if audit.respond_to?(:timed_out=)
           audit.cached = @cached_at.present? if audit.respond_to?(:cached=)
-          if !@error && !@cached_at && duration >= 10
+          if !@cached_at && duration >= 10
             audit.cost = @data_source.cost(@statement) if audit.respond_to?(:cost=)
           end
           audit.save! if audit.changed?

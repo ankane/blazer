@@ -69,9 +69,6 @@ module Blazer
       end
 
       unless rows
-        columns = []
-        rows = []
-
         comment = "blazer"
         if options[:user].respond_to?(:id)
           comment << ",user_id:#{options[:user].id}"
@@ -83,32 +80,7 @@ module Blazer
         if options[:query].respond_to?(:id)
           comment << ",query_id:#{options[:query].id}"
         end
-
-        in_transaction do
-          begin
-            if timeout
-              if postgresql? || redshift?
-                connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}")
-              elsif mysql?
-                connection_model.connection.execute("SET max_execution_time = #{timeout.to_i * 1000}")
-              else
-                raise Blazer::TimeoutNotSupported, "Timeout not supported for #{adapter_name} adapter"
-              end
-            end
-
-            result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
-            columns = result.columns
-            cast_method = Rails::VERSION::MAJOR < 5 ? :type_cast : :cast_value
-            result.rows.each do |untyped_row|
-              rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| result.column_types[c].send(cast_method, untyped_row[i]) })
-            end
-          rescue ActiveRecord::StatementInvalid => e
-            error = e.message.sub(/.+ERROR: /, "")
-            error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
-          end
-        end
-
-        Blazer.cache.write(cache_key, Marshal.dump([columns, rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
+        columns, rows, error = run_statement_helper(statement, comment)
       end
 
       [columns, rows, error, cached_at]
@@ -149,6 +121,40 @@ module Blazer
     end
 
     protected
+
+    def run_statement_helper(statement, comment)
+      columns = []
+      rows = []
+      error = nil
+
+      in_transaction do
+        begin
+          if timeout
+            if postgresql? || redshift?
+              connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}")
+            elsif mysql?
+              connection_model.connection.execute("SET max_execution_time = #{timeout.to_i * 1000}")
+            else
+              raise Blazer::TimeoutNotSupported, "Timeout not supported for #{adapter_name} adapter"
+            end
+          end
+
+          result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
+          columns = result.columns
+          cast_method = Rails::VERSION::MAJOR < 5 ? :type_cast : :cast_value
+          result.rows.each do |untyped_row|
+            rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| result.column_types[c].send(cast_method, untyped_row[i]) })
+          end
+        rescue ActiveRecord::StatementInvalid => e
+          error = e.message.sub(/.+ERROR: /, "")
+          error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
+        end
+      end
+
+      Blazer.cache.write(cache_key, Marshal.dump([columns, rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
+
+      [columns, rows, error]
+    end
 
     def adapter_name
       connection_model.connection.adapter_name

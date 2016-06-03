@@ -89,7 +89,7 @@ module Blazer
         @columns, @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
         duration = Time.now - start_time
 
-        if audit
+        if Blazer.audit
           audit.duration = duration if audit.respond_to?(:duration=)
           audit.error = @error if audit.respond_to?(:error=)
           audit.timed_out = @error == Blazer::TIMEOUT_MESSAGE if audit.respond_to?(:timed_out=)

@@ -18,7 +18,7 @@ module Blazer
 
     def blazer_column_types(columns, rows, boom)
       columns.each_with_index.map do |k, i|
-        v = rows.find { |r| r[i] }[i]
+        v = (rows.find { |r| r[i] } || {})[i]
         if boom[k]
           "string"
         elsif v.is_a?(Numeric)

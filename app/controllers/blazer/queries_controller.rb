@@ -85,7 +85,20 @@ module Blazer
           audit.save!
         end
 
+        start_time = Time.now
         @columns, @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
+        duration = Time.now - start_time
+
+        if audit
+          audit.duration = duration if audit.respond_to?(:duration=)
+          audit.error = @error if audit.respond_to?(:error=)
+          audit.timed_out = @error == Blazer::TIMEOUT_MESSAGE if audit.respond_to?(:timed_out=)
+          audit.cached = @cached_at.present? if audit.respond_to?(:cached=)
+          if !@error # && duration >= 10
+            audit.cost = @data_source.cost(@statement) if audit.respond_to?(:cost=)
+          end
+          audit.save! if audit.changed?
+        end
 
         if @query && @error != Blazer::TIMEOUT_MESSAGE
           @query.checks.each do |check|

@@ -57,6 +57,18 @@ module Blazer
       settings.key?("use_transaction") ? settings["use_transaction"] : true
     end
 
+    def cost(statement)
+      if postgresql? || redshift?
+        begin
+          result = connection_model.connection.select_all("EXPLAIN #{statement}")
+          match = /cost=\d+\.\d+..(\d+\.\d+) /.match(result.rows.first.first)
+          match[1] if match
+        rescue ActiveRecord::StatementInvalid
+          # do nothing
+        end
+      end
+    end
+
     def run_statement(statement, options = {})
       columns = nil
       rows = nil
@@ -151,7 +163,7 @@ module Blazer
         end
       end
 
-      Blazer.cache.write(cache_key, Marshal.dump([columns, rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
+      Blazer.cache.write(cache_key(statement), Marshal.dump([columns, rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
 
       [columns, rows, error]
     end

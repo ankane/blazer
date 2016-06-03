@@ -24,13 +24,13 @@
     <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
   <% end %>
   <% if @rows.any? %>
-    <% values = @rows.first.values %>
+    <% values = @rows.first %>
     <% chart_id = SecureRandom.hex %>
     <% column_types = blazer_column_types(@columns, @rows, @boom) %>
     <% chart_options = {id: chart_id, min: nil} %>
     <% series_library = {} %>
-    <% @columns.keys.select { |k| k.downcase == "target" }.each do |key| %>
-      <% series_library[key] = {pointStyle: "line", hitRadius: 5, borderColor: "#109618", pointBackgroundColor: "#109618", backgroundColor: "#109618"} %>
+    <% @columns.select { |k| k.downcase == "target" }.each_with_index do |key, i| %>
+      <% series_library[i] = {pointStyle: "line", hitRadius: 5, borderColor: "#109618", pointBackgroundColor: "#109618", backgroundColor: "#109618"} %>
     <% end %>
     <% if blazer_maps? && @markers.any? %>
       <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
@@ -62,32 +62,30 @@
         map.fitBounds(featureLayer.getBounds());
       </script>
     <% elsif values.size >= 2 && column_types.compact == ["time"] + (column_types.compact.size - 1).times.map { "numeric" } %>
-      <% time_k = @columns.keys.first %>
-      <%= line_chart @columns.keys[1..-1].map{ |k| {name: k, data: @rows.map{|r| [r[time_k], r[k]] }, library: series_library[k]} }, chart_options %>
+      <%= line_chart @columns[1..-1].each_with_index.map{ |k, i| {name: k, data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} }, chart_options %>
     <% elsif values.size == 3 && column_types == ["time", "string", "numeric"] %>
-      <% keys = @columns.keys %>
-      <%= line_chart @rows.group_by { |r| k = keys[1]; v = r[k]; (@boom[k] || {})[v.to_s] || v }.map { |name, v| {name: name, data: v.map { |v2| [v2[keys[0]], v2[keys[2]]] }, library: series_library[name]} }, chart_options %>
+      <%= line_chart @rows.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} }, chart_options %>
     <% elsif values.size >= 2 && column_types == ["string"] + (values.size - 1).times.map { "numeric" } %>
-      <% keys = @columns.keys %>
-      <%= column_chart (values.size - 1).times.map { |i| name = @columns.keys[i + 1]; {name: name, data: @rows.first(20).map { |r| [(@boom[keys[0]] || {})[r[keys[0]].to_s] || r[keys[0]], r[keys[i + 1]]] } } }, id: chart_id %>
+      <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1]; {name: name, data: @rows.first(20).map { |r| [(@boom[@columns[0]] || {})[r[0].to_s] || r[0], r[i + 1]] } } }, id: chart_id %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
-        <p style="font-size: 160px;"><%= blazer_format_value(@rows.first.keys.first, @rows.first.values.first) %></p>
+        <p style="font-size: 160px;"><%= blazer_format_value(@columns.first, @rows.first.first) %></p>
       <% else %>
         <% @no_chart = true %>
       <% end %>
     <% end %>
 
     <% unless @only_chart && !@no_chart %>
-      <% header_width = 100 / @rows.first.keys.size.to_f %>
+      <% header_width = 100 / @columns.size.to_f %>
       <div class="results-container">
-        <% if @columns.keys == ["QUERY PLAN"] %>
-          <pre><code><%= @rows.map { |r| r["QUERY PLAN"] }.join("\n") %></code></pre>
+        <% if @columns == ["QUERY PLAN"] %>
+          <pre><code><%= @rows.map { |r| r[0] }.join("\n") %></code></pre>
         <% else %>
           <table class="table results-table" style="margin-bottom: 0;">
             <thead>
               <tr>
-                <% @columns.each do |key, type| %>
+                <% @columns.each_with_index do |key, i| %>
+                  <% type = @column_types[i] %>
                   <th style="width: <%= header_width %>%;" data-sort="<%= type %>">
                     <div style="min-width: <%= @min_width_types.include?(key) ? 180 : 60 %>px;">
                       <%= key %>
@@ -99,7 +97,8 @@
             <tbody>
               <% @rows.each do |row| %>
                 <tr>
-                  <% row.each do |k, v| %>
+                  <% row.each_with_index do |v, i| %>
+                    <% k = @columns[i] %>
                     <td>
                       <% if v.is_a?(Time) %>
                         <% v = blazer_time_value(k, v) %>

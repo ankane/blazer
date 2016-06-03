@@ -58,16 +58,18 @@ module Blazer
     end
 
     def run_statement(statement, options = {})
+      columns = nil
       rows = nil
       error = nil
       cached_at = nil
       cache_key = self.cache_key(statement) if cache
       if cache && !options[:refresh_cache]
         value = Blazer.cache.read(cache_key)
-        rows, cached_at = Marshal.load(value) if value
+        columns, rows, cached_at = Marshal.load(value) if value
       end
 
       unless rows
+        columns = []
         rows = []
 
         comment = "blazer"
@@ -95,13 +97,10 @@ module Blazer
             end
 
             result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
+            columns = result.columns
             cast_method = Rails::VERSION::MAJOR < 5 ? :type_cast : :cast_value
-            result.each do |untyped_row|
-              row = {}
-              untyped_row.each do |k, v|
-                row[k] = result.column_types.empty? ? v : result.column_types[k].send(cast_method, v)
-              end
-              rows << row
+            result.rows.each do |untyped_row|
+              rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| result.column_types[c].send(cast_method, untyped_row[i]) })
             end
           rescue ActiveRecord::StatementInvalid => e
             error = e.message.sub(/.+ERROR: /, "")
@@ -109,10 +108,10 @@ module Blazer
           end
         end
 
-        Blazer.cache.write(cache_key, Marshal.dump([rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
+        Blazer.cache.write(cache_key, Marshal.dump([columns, rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
       end
 
-      [rows, error, cached_at]
+      [columns, rows, error, cached_at]
     end
 
     def clear_cache(statement)
@@ -120,7 +119,7 @@ module Blazer
     end
 
     def cache_key(statement)
-      ["blazer", "v2", id, Digest::MD5.hexdigest(statement)].join("/")
+      ["blazer", "v3", id, Digest::MD5.hexdigest(statement)].join("/")
     end
 
     def schemas
@@ -129,8 +128,8 @@ module Blazer
     end
 
     def tables
-      rows, error, cached_at = run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema IN (?)", schemas]))
-      Hash[rows.group_by { |r| r["table_name"] }.map { |t, f| [t, f.sort_by { |f| f["ordinal_position"] }.map { |f| f.slice("column_name", "data_type") }] }.sort_by { |t, _f| t }]
+      columns, rows, error, cached_at = run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema IN (?)", schemas]))
+      rows.map(&:first)
     end
 
     def postgresql?

@@ -51,8 +51,8 @@ module Blazer
       @bind_vars.each do |var|
         query = data_source.smart_variables[var]
         if query
-          rows, error, cached_at = data_source.run_statement(query)
-          @smart_vars[var] = rows.map { |v| v.values.reverse }
+          columns, rows, error, cached_at = data_source.run_statement(query)
+          @smart_vars[var] = rows.map { |v| v.reverse }
           @sql_errors << error if error
         end
       end
@@ -85,7 +85,7 @@ module Blazer
           audit.save!
         end
 
-        @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
+        @columns, @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
 
         if @query && @error != Blazer::TIMEOUT_MESSAGE
           @query.checks.each do |check|
@@ -93,11 +93,12 @@ module Blazer
           end
         end
 
-        @columns = {}
+        @first_row = @rows.first || []
+        @column_types = []
         if @rows.any?
-          @rows.first.each do |key, value|
-            @columns[key] =
-              case value
+          @columns.each_with_index do |column, i|
+            @column_types << (
+              case @first_row[i]
               when Integer
                 "int"
               when Float
@@ -105,20 +106,20 @@ module Blazer
               else
                 "string-ins"
               end
+            )
           end
         end
 
         @filename = @query.name.parameterize if @query
-
-        @min_width_types = (@rows.first || {}).select { |k, v| v.is_a?(Time) || v.is_a?(String) || @data_source.smart_columns[k] }.keys
+        @min_width_types = @columns.each_with_index.select { |c, i| @first_row[i].is_a?(Time) || @first_row[i].is_a?(String) || @data_source.smart_columns[c] }
 
         @boom = {}
-        @columns.keys.each do |key|
+        @columns.each_with_index do |key, i|
           query = @data_source.smart_columns[key]
           if query
-            values = @rows.map { |r| r[key] }.compact.uniq
-            rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
-            @boom[key] = Hash[rows.map(&:values).map { |k, v| [k.to_s, v] }]
+            values = @rows.map { |r| r[i] }.compact.uniq
+            columns, rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+            @boom[key] = Hash[rows.map { |k, v| [k.to_s, v] }]
           end
         end
 
@@ -126,15 +127,17 @@ module Blazer
 
         @markers = []
         [["latitude", "longitude"], ["lat", "lon"]].each do |keys|
-          if (keys - (@rows.first || {}).keys).empty?
+          lat_index = @columns.index(keys.first)
+          lon_index = @columns.index(keys.last)
+          if lat_index && lon_index
             @markers =
               @rows.select do |r|
-                r[keys.first] && r[keys.last]
+                r[lat_index] && r[lon_index]
               end.map do |r|
                 {
-                  title: r.except(*keys).map{ |k, v| "<strong>#{k}:</strong> #{v}" }.join("<br />").truncate(140),
-                  latitude: r[keys.first],
-                  longitude: r[keys.last]
+                  title: r.each_with_index.map{ |v, i| i == lat_index || i == lon_index ? nil : "<strong>#{@columns[i]}:</strong> #{v}" }.compact.join("<br />").truncate(140),
+                  latitude: r[lat_index],
+                  longitude: r[lon_index]
                 }
               end
           end
@@ -146,7 +149,7 @@ module Blazer
           render layout: false
         end
         format.csv do
-          send_data csv_data(@rows), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
+          send_data csv_data(@columns, @rows), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
         end
       end
     end
@@ -181,7 +184,7 @@ module Blazer
     end
 
     def tables
-      @tables = Blazer.data_sources[params[:data_source]].tables.keys
+      @tables = Blazer.data_sources[params[:data_source]].tables
       render partial: "tables", layout: false
     end
 
@@ -224,13 +227,11 @@ module Blazer
       params.require(:query).permit(:name, :description, :statement, :data_source)
     end
 
-    def csv_data(rows)
+    def csv_data(columns, rows)
       CSV.generate do |csv|
-        if rows.any?
-          csv << rows.first.keys
-        end
+        csv << columns
         rows.each do |row|
-          csv << row.map { |k, v| v.is_a?(Time) ? blazer_time_value(k, v) : v }
+          csv << row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(columns[i], v) : v }
         end
       end
     end

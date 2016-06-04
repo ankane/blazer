@@ -1,6 +1,8 @@
-## 1.3.6
+## 1.4.0 [unreleased]
 
+- Added `slow` cache mode
 - Fixed `BLAZER_DATABASE_URL required` error
+- Fixed issue with duplicate column names
 
 ## 1.3.5
 

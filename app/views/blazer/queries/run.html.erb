@@ -8,12 +8,15 @@
   <% end %>
 <% else %>
   <% unless @only_chart %>
-    <% if @cached_at || @data_source.cache %>
+    <% if @cached_at || @just_cached %>
       <p class="text-muted" style="float: right;">
         <% if @cached_at %>
           Cached <%= time_ago_in_words(@cached_at, include_seconds: true) %> ago
         <% elsif !params[:data_source] %>
           Cached just now
+          <% if @data_source.cache_mode == "slow" %>
+            (over <%= "%g" % @data_source.cache_slow_threshold %>s)
+          <% end %>
         <% end %>
 
         <% if @query && !params[:data_source] %>

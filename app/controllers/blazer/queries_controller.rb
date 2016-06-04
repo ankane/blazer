@@ -86,7 +86,7 @@ module Blazer
         end
 
         start_time = Time.now
-        @columns, @rows, @error, @cached_at = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
+        @columns, @rows, @error, @cached_at, @just_cached = @data_source.run_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check], with_just_cached: true)
         duration = Time.now - start_time
 
         if Blazer.audit

@@ -46,7 +46,28 @@ module Blazer
     end
 
     def cache
-      settings["cache"]
+      @cache ||= begin
+        if settings["cache"].is_a?(Hash)
+          settings["cache"]
+        else
+          {
+            "mode" => "all",
+            "expires_in" => settings["cache"]
+          }
+        end
+      end
+    end
+
+    def cache_mode
+      cache["mode"]
+    end
+
+    def cache_expires_in
+      (cache["expires_in"] || 60).to_f
+    end
+
+    def cache_slow_threshold
+      (cache["slow_threshold"] || 15).to_f
     end
 
     def local_time_suffix
@@ -74,6 +95,7 @@ module Blazer
       rows = nil
       error = nil
       cached_at = nil
+      just_cached = false
       cache_key = self.cache_key(statement) if cache
       if cache && !options[:refresh_cache]
         value = Blazer.cache.read(cache_key)
@@ -92,10 +114,12 @@ module Blazer
         if options[:query].respond_to?(:id)
           comment << ",query_id:#{options[:query].id}"
         end
-        columns, rows, error = run_statement_helper(statement, comment)
+        columns, rows, error, just_cached = run_statement_helper(statement, comment)
       end
 
-      [columns, rows, error, cached_at]
+      output = [columns, rows, error, cached_at]
+      output << just_cached if options[:with_just_cached]
+      output
     end
 
     def clear_cache(statement)
@@ -138,6 +162,7 @@ module Blazer
       columns = []
       rows = []
       error = nil
+      start_time = Time.now
 
       in_transaction do
         begin
@@ -163,9 +188,14 @@ module Blazer
         end
       end
 
-      Blazer.cache.write(cache_key(statement), Marshal.dump([columns, rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
+      duration = Time.now - start_time
+      just_cached = false
+      if !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
+        Blazer.cache.write(cache_key(statement), Marshal.dump([columns, rows, Time.now]), expires_in: cache_expires_in.to_f * 60)
+        just_cached = true
+      end
 
-      [columns, rows, error]
+      [columns, rows, error, just_cached]
     end
 
     def adapter_name

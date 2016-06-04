@@ -1,13 +1,12 @@
 module Blazer
   class QueriesChannel < ApplicationCable::Channel
     def subscribed
-      @topic = params[:topic]
-      stream_from "blazer:queries:#{@topic}"
+      @topic = "blazer:queries:#{@topic}"
+      stream_from @topic
     end
 
     def run(data)
-      p data
-      ActionCable.server.broadcast "blazer:queries:#{@topic}", data: "it works!"
+      Blazer::RunQueryJob.perform_later(@topic, data)
     end
   end
 end

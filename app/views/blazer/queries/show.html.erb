@@ -174,7 +174,7 @@
       cable = ActionCable.createConsumer();
 
       // fix for ignoring namespaces https://github.com/rails/rails/pull/25240
-      var sub = cable.subscriptions.create({channel: "QueriesChannel", topic: "test123"}, {
+      var sub = cable.subscriptions.create({channel: "Blazer::QueriesChannel", topic: "test123"}, {
         connected: function () {
           sub.run(data);
         },

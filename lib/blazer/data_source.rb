@@ -54,6 +54,10 @@ module Blazer
             "mode" => "all",
             "expires_in" => settings["cache"]
           }
+        else
+          {
+            "mode" => "off"
+          }
         end
       end
     end

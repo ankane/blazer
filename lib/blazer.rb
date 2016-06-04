@@ -72,7 +72,10 @@ module Blazer
       ActiveSupport::Notifications.instrument("run_check.blazer", check_id: check.id, query_id: check.query.id, state_was: check.state) do |instrument|
         # try 3 times on timeout errors
         while tries <= 3
-          columns, rows, error, cached_at = data_sources[check.query.data_source].run_statement(check.query.statement, refresh_cache: true)
+          data_source = data_sources[check.query.data_source]
+          statement = check.query.statement
+          Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
+          columns, rows, error, cached_at = data_source.run_statement(statement, refresh_cache: true)
           if error == Blazer::TIMEOUT_MESSAGE
             Rails.logger.info "[blazer timeout] query=#{check.query.name}"
             tries += 1

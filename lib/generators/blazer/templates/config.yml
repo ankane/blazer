@@ -14,7 +14,7 @@ data_sources:
     # cache:
     #   mode: slow # or all
     #   expires_in: 60 # min
-    #   slow_threshold: 15 # sec
+    #   slow_threshold: 15 # sec, only used in slow mode
 
     # wrap queries in a transaction for safety
     # not necessary if you use a read-only user

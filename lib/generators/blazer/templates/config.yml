@@ -8,10 +8,13 @@ data_sources:
     # none by default
     # timeout: 15
 
-    # time to cache results, in minutes
+    # caching settings
     # can greatly improve speed
-    # none by default
-    # cache: 60
+    # off by default
+    # cache:
+    #   mode: slow # or all
+    #   expires_in: 60 # min
+    #   slow_threshold: 15 # sec
 
     # wrap queries in a transaction for safety
     # not necessary if you use a read-only user

@@ -49,7 +49,7 @@ module Blazer
       @cache ||= begin
         if settings["cache"].is_a?(Hash)
           settings["cache"]
-        else
+        elsif settings["cache"]
           {
             "mode" => "all",
             "expires_in" => settings["cache"]

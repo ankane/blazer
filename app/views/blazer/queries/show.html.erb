@@ -157,23 +157,38 @@
   </div>
 
   <script>
+    function showRun(data) {
+      $("#results").html(data);
+      $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
+    }
+
+    function showError(data) {
+      $("#results").css("color", "red").html(message);
+    }
+
+    var data = <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>;
+
+    // make request
     var request = $.ajax({
       url: "<%= run_queries_path %>",
       method: "POST",
-      data: <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>,
+      data: data,
       dataType: "html"
     }).done(function(data) {
-      $("#results").html(data);
-      $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
+      showRun(data);
     }).fail(function(jqXHR, textStatus, errorThrown) {
       var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
-      $("#results").css("color", "red").html(message);
+      showError(message);
     });
   </script>
 <% end %>
 
 <script>
-  hljs.initHighlightingOnLoad();
+  // do not highlight really long queries
+  // this can lead to performance issues
+  if ($("code").text().length < 10000) {
+    hljs.initHighlightingOnLoad();
+  }
 
   $(".form-inline input, .form-inline select").change( function () {
     submitIfCompleted($(this).closest("form"));

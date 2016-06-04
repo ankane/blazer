@@ -29,7 +29,9 @@ module Blazer
   TIMEOUT_ERRORS = [
     "canceling statement due to statement timeout", # postgres
     "cancelled on user's request", # redshift
-    "system requested abort" # redshift
+    "canceled on user's request", # redshift
+    "system requested abort", # redshift
+    "maximum statement execution time exceeded" # mysql
   ]
   BELONGS_TO_OPTIONAL = {}
   BELONGS_TO_OPTIONAL[:optional] = true if Rails::VERSION::MAJOR >= 5

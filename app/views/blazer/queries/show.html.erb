@@ -167,20 +167,47 @@
     }
 
     var data = <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>;
-
-    // make request
-    var request = $.ajax({
-      url: "<%= run_queries_path %>",
-      method: "POST",
-      data: data,
-      dataType: "html"
-    }).done(function(data) {
-      showRun(data);
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-      var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
-      showError(message);
-    });
   </script>
+
+  <% if Blazer.async %>
+    <script>
+      cable = ActionCable.createConsumer();
+
+      // fix for ignoring namespaces https://github.com/rails/rails/pull/25240
+      var sub = cable.subscriptions.create({channel: "QueriesChannel", topic: "test123"}, {
+        connected: function () {
+          sub.run(data);
+        },
+        received: function (data) {
+          // console.log(data);
+          if (data.error) {
+            showError(data.error);
+          } else {
+            showRun(data.data);
+          }
+          cable.disconnect();
+        },
+        run: function(data) {
+          this.perform("run", data);
+        }
+      });
+    </script>
+  <% else %>
+    <script>
+      // make request
+      var request = $.ajax({
+        url: "<%= run_queries_path %>",
+        method: "POST",
+        data: data,
+        dataType: "html"
+      }).done(function(data) {
+        showRun(data);
+      }).fail(function(jqXHR, textStatus, errorThrown) {
+        var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
+        showError(message);
+      });
+    </script>
+  <% end %>
 <% end %>
 
 <script>

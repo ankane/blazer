@@ -27,6 +27,4 @@ function runQuery(data, success, failure) {
       this.perform("run", data);
     }
   });
-
-  sub.run(data);
 }

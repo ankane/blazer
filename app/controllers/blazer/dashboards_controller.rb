@@ -14,7 +14,7 @@ module Blazer
       @dashboard = Blazer::Dashboard.new
       # use creator_id instead of creator
       # since we setup association without checking if column exists
-      @dashboard.creator = blazer_user if @dashboard.respond_to?(:creator_id=)
+      @dashboard.creator = blazer_user if @dashboard.respond_to?(:creator_id=) && blazer_user
 
       if update_dashboard(@dashboard)
         redirect_to dashboard_path(@dashboard)

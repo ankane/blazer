@@ -10,8 +10,7 @@ function runQuery(data, success, failure) {
   var cable = ActionCable.createConsumer();
   runCount++;
 
-  // fix for ignoring namespaces https://github.com/rails/rails/pull/25240
-  var sub = cable.subscriptions.create({channel: "Blazer::QueriesChannel", topic: window.randomTopic + ":run" + runCount}, {
+  var sub = cable.subscriptions.create({channel: "Blazer::QueriesChannel", run: runCount}, {
     connected: function () {
       sub.run(data);
     },

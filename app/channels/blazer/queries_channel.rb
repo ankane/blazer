@@ -1,7 +1,7 @@
 module Blazer
   class QueriesChannel < ApplicationCable::Channel
     def subscribed
-      @topic = "blazer:queries:#{params[:topic]}"
+      @topic = "blazer:queries:#{SecureRandom.uuid}"
       stream_from @topic
     end
 

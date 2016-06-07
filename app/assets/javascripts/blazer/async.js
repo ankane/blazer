@@ -4,14 +4,14 @@
 //= require ./core
 //= require action_cable
 
-var i = 0;
+var runCount = 0;
 
 function runQuery(data, success, failure) {
   var cable = ActionCable.createConsumer();
-  i++;
+  runCount++;
 
   // fix for ignoring namespaces https://github.com/rails/rails/pull/25240
-  var sub = cable.subscriptions.create({channel: "Blazer::QueriesChannel", topic: window.randomTopic + ":run" + i}, {
+  var sub = cable.subscriptions.create({channel: "Blazer::QueriesChannel", topic: window.randomTopic + ":run" + runCount}, {
     connected: function () {
       sub.run(data);
     },

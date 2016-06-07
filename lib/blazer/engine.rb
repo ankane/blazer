@@ -3,6 +3,8 @@ module Blazer
     isolate_namespace Blazer
 
     initializer "blazer" do |app|
+      Blazer.async = Blazer.settings["async"] || false
+
       # use a proc instead of a string
       app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/application\.css\z/ }
       if Blazer.async
@@ -34,8 +36,6 @@ module Blazer
       end
 
       Blazer.cache ||= Rails.cache
-
-      Blazer.async = Blazer.settings["async"] || false
     end
   end
 end

@@ -6,10 +6,6 @@
     <meta charset="utf-8" />
 
     <%= stylesheet_link_tag "blazer/application" %>
-    <script>
-      var Chartkick = {smarterDates: true, smarterDiscrete: true};
-    </script>
-
     <% if Blazer.async %>
       <%= action_cable_meta_tag %>
       <%= javascript_include_tag "blazer/async" %>
@@ -18,10 +14,10 @@
       </script>
     <% else %>
       <%= javascript_include_tag "blazer/application" %>
-      <script>
-        var runQueryUrl = <%= run_queries_path.to_json.html_safe %>;
-      </script>
     <% end %>
+    <script>
+      var runQueriesPath = <%= run_queries_path.to_json.html_safe %>;
+    </script>
 
     <% if blazer_maps? %>
       <%= stylesheet_link_tag "https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css" %>

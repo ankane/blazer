@@ -1,15 +1,13 @@
 //= require ./core
 
-function runQuery(data, success, failure) {
+function runQuery(data, success, error) {
   return $.ajax({
-    url: window.runQueryUrl,
+    url: window.runQueriesPath,
     method: "POST",
     data: data,
     dataType: "html"
-  }).done(function(data) {
-    success(data);
-  }).fail(function(jqXHR, textStatus, errorThrown) {
+  }).done(success).fail( function(jqXHR, textStatus, errorThrown) {
     var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
-    failure(message);
+    error(message);
   });
 }

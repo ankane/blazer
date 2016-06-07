@@ -77,7 +77,7 @@ module Blazer
           render layout: false
         end
         format.csv do
-          send_data csv_data(@data_source, @columns, @rows), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
+          send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
         end
       end
     end
@@ -155,7 +155,7 @@ module Blazer
       params.require(:query).permit(:name, :description, :statement, :data_source)
     end
 
-    def csv_data(data_source, columns, rows)
+    def csv_data(columns, rows, data_source)
       CSV.generate do |csv|
         csv << columns
         rows.each do |row|
@@ -165,7 +165,6 @@ module Blazer
     end
 
     def blazer_time_value(data_source, k, v)
-      # yuck, instance var
       data_source.local_time_suffix.any? { |s| k.ends_with?(s) } ? v.to_s.sub(" UTC", "") : v.in_time_zone(Blazer.time_zone)
     end
     helper_method :blazer_time_value

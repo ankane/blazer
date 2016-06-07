@@ -121,10 +121,14 @@
     }
 
     $("#results").html('<p class="text-muted">Loading...</p>');
+
     if (xhr) {
       xhr.abort();
     }
-    xhr = $.post("<%= run_queries_path %>", $.extend({}, params, {statement: editor.getValue().replace(/\n/g, "\r\n"), data_source: $("#query_data_source").val()}), function (data) {
+
+    var data = $.extend({}, params, {statement: editor.getValue().replace(/\n/g, "\r\n"), data_source: $("#query_data_source").val()});
+
+    xhr = runQuery(data, function (data) {
       $("#results").html(data);
 
       error_line = /LINE (\d+)/g.exec($("#results").find('.alert-danger').text());
@@ -136,7 +140,7 @@
         editor.gotoLine(error_line, 0, true);
         editor.focus();
       }
-    });
+    }, function (message) {});
   });
 
   if ($("#query_statement").val() != "") {

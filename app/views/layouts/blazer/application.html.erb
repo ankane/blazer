@@ -13,8 +13,14 @@
     <% if Blazer.async %>
       <%= action_cable_meta_tag %>
       <%= javascript_include_tag "blazer/async" %>
+      <script>
+        var randomTopic = <%= SecureRandom.uuid.to_json.html_safe %>;
+      </script>
     <% else %>
       <%= javascript_include_tag "blazer/application" %>
+      <script>
+        var runQueryUrl = <%= run_queries_path.to_json.html_safe %>;
+      </script>
     <% end %>
 
     <% if blazer_maps? %>

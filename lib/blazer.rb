@@ -4,6 +4,8 @@ require "chartkick"
 require "blazer/version"
 require "blazer/data_source"
 require "blazer/engine"
+require "blazer/process_vars"
+require "blazer/run_query"
 
 module Blazer
   class Error < StandardError; end
@@ -25,7 +27,7 @@ module Blazer
   self.audit = true
   self.user_name = :name
   self.check_schedules = ["5 minutes", "1 hour", "1 day"]
-  self.async = true
+  self.async = false
 
   TIMEOUT_MESSAGE = "Query timed out :("
   TIMEOUT_ERRORS = [

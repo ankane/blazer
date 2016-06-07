@@ -105,7 +105,7 @@
                     <% k = @columns[i] %>
                     <td>
                       <% if v.is_a?(Time) %>
-                        <% v = blazer_time_value(k, v) %>
+                        <% v = blazer_time_value(@data_source, k, v) %>
                       <% end %>
 
                       <% unless v.nil? %>

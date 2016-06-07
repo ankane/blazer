@@ -1,9 +1,11 @@
 <p style="text-muted">Running check...</p>
 
 <script>
-  $.post("<%= run_queries_path %>", <%= blazer_json_escape({statement: @query.statement, query_id: @query.id, check: true}.to_json).html_safe %>, function (data) {
+  var data = <%= blazer_json_escape({statement: @query.statement, query_id: @query.id, check: true}.to_json).html_safe %>;
+
+  runQuery(data, function (data) {
     setTimeout( function () {
       window.location.href = "<%= checks_path %>";
     }, 200);
-  });
+  }, function (message) {});
 </script>

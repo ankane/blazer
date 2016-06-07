@@ -15,12 +15,7 @@ function runQuery(data, success, failure) {
       sub.run(data);
     },
     received: function (data) {
-      // console.log(data);
-      if (data.error) {
-        failure(data.error);
-      } else {
-        success(data.data);
-      }
+      success(data.data);
       cable.disconnect();
     },
     run: function(data) {

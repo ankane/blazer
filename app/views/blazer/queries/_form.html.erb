@@ -121,7 +121,6 @@
     }
 
     $("#results").html('<p class="text-muted">Loading...</p>');
-
     if (xhr) {
       xhr.abort();
     }
@@ -140,7 +139,7 @@
         editor.gotoLine(error_line, 0, true);
         editor.focus();
       }
-    }, function (message) {});
+    });
   });
 
   if ($("#query_statement").val() != "") {

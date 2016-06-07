@@ -168,18 +168,7 @@
 
     var data = <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>;
 
-    // make request
-    var request = $.ajax({
-      url: "<%= run_queries_path %>",
-      method: "POST",
-      data: data,
-      dataType: "html"
-    }).done(function(data) {
-      showRun(data);
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-      var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
-      showError(message);
-    });
+    runQuery(data, showRun, showError);
   </script>
 <% end %>
 

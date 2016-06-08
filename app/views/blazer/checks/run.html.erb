@@ -1,11 +1,11 @@
 <p style="text-muted">Running check...</p>
 
+<div id="results" style="display: none;"></div>
+
 <script>
   var data = <%= blazer_json_escape({statement: @query.statement, query_id: @query.id, check: true}.to_json).html_safe %>;
 
   runQuery(data, function (data) {
-    setTimeout( function () {
-      window.location.href = "<%= checks_path %>";
-    }, 200);
+    $("#results").html(data);
   });
 </script>

@@ -125,7 +125,7 @@
       xhr.abort();
     }
 
-    var data = $.extend({}, params, {statement: editor.getValue().replace(/\n/g, "\r\n"), data_source: $("#query_data_source").val()});
+    var data = $.extend({}, params, {statement: editor.getValue().replace(/\n/g, "\r\n"), data_source: $("#query_data_source").val(), edit: true});
 
     xhr = runQuery(data, function (data) {
       $("#results").html(data);

@@ -143,7 +143,7 @@
     </div>
   </div>
   <script>
-    var data = <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>;
+    var data = <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true, chart_index: i}.to_json).html_safe %>;
 
     runQuery(data, function (data) {
       $("#chart-<%= i %>").html(data);

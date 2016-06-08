@@ -1,0 +1,21 @@
+<p class="text-muted">Loading...</p>
+
+<script>
+  setTimeout( function () {
+    var data = <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.try(:id) || params[:query_id], data_source_id: @data_source.id, timestamp: @timestamp, chart_only: @chart_only, chart_index: params[:chart_index], run_id: @run_id, check: params[:check]).to_json).html_safe %>;
+    var chartIndex = <%= blazer_json_escape(params[:chart_index].to_json).html_safe %>;
+
+    runQuery(data, function (data) {
+      if (chartIndex) {
+        $("#chart-" + chartIndex).html(data);
+        $("#chart-" + chartIndex).stupidtable();
+      } else {
+        $("#results").html(data);
+        // TODO skip fixedOffset for run
+        $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
+      }
+    }, function (message) {
+      $("#results").css("color", "red").html(message);
+    })
+  }, 1000);
+</script>

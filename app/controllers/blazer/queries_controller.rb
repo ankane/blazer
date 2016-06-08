@@ -69,24 +69,45 @@ module Blazer
       process_vars(@statement, data_source)
       @only_chart = params[:only_chart]
 
-      if @success
+      if params[:run_id]
+        @run_id = params[:run_id]
+        @timestamp = params[:timestamp].to_i
+        @data_source = Blazer.data_sources[params[:data_source]]
+
+        @columns, @rows, @error, @cached_at = @data_source.run_results(@run_id)
+        if @rows
+          @data_source.delete_results(@run_id)
+          render_run
+        elsif Time.now > Time.at(@timestamp + (@data_source.timeout || 60).to_i)
+          # timed out
+          @error = Blazer::TIMEOUT_MESSAGE
+          render_run
+        else
+          # try it again
+          render :run_async, layout: false
+        end
+      elsif @success
         @query = Query.find_by(id: params[:query_id]) if params[:query_id]
 
         data_source = @query.data_source if @query && @query.data_source
         @data_source = Blazer.data_sources[data_source]
 
-        @columns, @rows, @error, @cached_at, @just_cached = @data_source.run_main_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
+        @run_id = Blazer.async ? SecureRandom.uuid : nil
 
-        render_run
-      end
+        completed =
+          with_thread do
+            @columns, @rows, @error, @cached_at, @just_cached = @data_source.run_main_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id)
+          end
 
-      respond_to do |format|
-        format.html do
-          render layout: false
+        if completed
+          @data_source.delete_results(@run_id) if @run_id
+          render_run
+        else
+          @timestamp = Time.now.to_i
+          render :run_async, layout: false
         end
-        format.csv do
-          send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
-        end
+      else
+        render layout: false
       end
     end
 
@@ -127,6 +148,11 @@ module Blazer
     private
 
     def render_run
+      if params[:check].present?
+        render :run_check, layout: false
+        return
+      end
+
       @first_row = @rows.first || []
       @column_types = []
       if @rows.any?
@@ -174,6 +200,15 @@ module Blazer
                 longitude: r[lon_index]
               }
             end
+        end
+      end
+
+      respond_to do |format|
+        format.html do
+          render layout: false
+        end
+        format.csv do
+          send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
         end
       end
     end
@@ -228,5 +263,20 @@ module Blazer
       data_source.local_time_suffix.any? { |s| k.ends_with?(s) } ? v.to_s.sub(" UTC", "") : v.in_time_zone(Blazer.time_zone)
     end
     helper_method :blazer_time_value
+
+    def with_thread(&block)
+      if Blazer.async
+        thread =
+          Thread.new do
+            ActiveRecord::Base.connection_pool.with_connection do
+              block.call
+            end
+          end
+        !thread.join(1).nil?
+      else
+        yield
+        true
+      end
+    end
   end
 end

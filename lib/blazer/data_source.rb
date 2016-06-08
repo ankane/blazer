@@ -131,16 +131,29 @@ module Blazer
       [columns, rows, error, cached_at, just_cached]
     end
 
+    def read_cache(cache_key)
+      value = Blazer.cache.read(cache_key)
+      Marshal.load(value) if value
+    end
+
+    def run_results(run_id)
+      read_cache(run_cache_key(run_id))
+    end
+
+    def delete_results(run_id)
+      Blazer.cache.delete(run_cache_key(run_id))
+    end
+
     def run_statement(statement, options = {})
       columns = nil
       rows = nil
       error = nil
       cached_at = nil
       just_cached = false
-      cache_key = self.cache_key(statement) if cache
+      run_id = options[:run_id]
+      cache_key = statement_cache_key(statement)
       if cache && !options[:refresh_cache]
-        value = Blazer.cache.read(cache_key)
-        columns, rows, cached_at = Marshal.load(value) if value
+        columns, rows, error, cached_at = read_cache(cache_key)
       end
 
       unless rows
@@ -155,7 +168,7 @@ module Blazer
         if options[:query].respond_to?(:id)
           comment << ",query_id:#{options[:query].id}"
         end
-        columns, rows, error, just_cached = run_statement_helper(statement, comment)
+        columns, rows, error, just_cached = run_statement_helper(statement, comment, options[:run_id])
       end
 
       output = [columns, rows, error, cached_at]
@@ -164,11 +177,19 @@ module Blazer
     end
 
     def clear_cache(statement)
-      Blazer.cache.delete(cache_key(statement))
+      Blazer.cache.delete(statement_cache_key(statement))
     end
 
-    def cache_key(statement)
-      ["blazer", "v3", id, Digest::MD5.hexdigest(statement)].join("/")
+    def cache_key(key)
+      (["blazer", "v4"] + key).join("/")
+    end
+
+    def statement_cache_key(statement)
+      cache_key(["statement", id, Digest::MD5.hexdigest(statement)])
+    end
+
+    def run_cache_key(run_id)
+      cache_key(["run", run_id])
     end
 
     def schemas
@@ -199,7 +220,7 @@ module Blazer
 
     protected
 
-    def run_statement_helper(statement, comment)
+    def run_statement_helper(statement, comment, run_id)
       columns = []
       rows = []
       error = nil
@@ -232,8 +253,13 @@ module Blazer
       duration = Time.now - start_time
       just_cached = false
       if !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
-        Blazer.cache.write(cache_key(statement), Marshal.dump([columns, rows, Time.now]), expires_in: cache_expires_in.to_f * 60)
+        Blazer.cache.write(statement_cache_key(statement), Marshal.dump([columns, rows, error, Time.now]), expires_in: cache_expires_in.to_f * 60)
         just_cached = true
+      end
+
+      if run_id
+        sleep(3)
+        Blazer.cache.write(run_cache_key(run_id), Marshal.dump([columns, rows, error, just_cached ? Time.now : nil]), expires_in: cache_expires_in.to_f * 60)
       end
 
       [columns, rows, error, just_cached]
@@ -244,13 +270,15 @@ module Blazer
     end
 
     def in_transaction
-      if use_transaction?
-        connection_model.transaction do
+      connection_model.connection_pool.with_connection do
+        if use_transaction?
+          connection_model.transaction do
+            yield
+            raise ActiveRecord::Rollback
+          end
+        else
           yield
-          raise ActiveRecord::Rollback
         end
-      else
-        yield
       end
     end
   end

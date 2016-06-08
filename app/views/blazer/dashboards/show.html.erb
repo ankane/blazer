@@ -32,7 +32,7 @@
 
 <div style="margin-bottom: 60px;"></div>
 
-<% if @data_sources.any? { |ds| ds.cache } %>
+<% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
   <p class="text-muted" style="float: right;">
     Some queries are cached
     <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post %>

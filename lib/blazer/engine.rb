@@ -29,6 +29,8 @@ module Blazer
       end
 
       Blazer.cache ||= Rails.cache
+
+      Blazer.async = Blazer.settings["async"] || false
     end
   end
 end

@@ -68,25 +68,51 @@ module Blazer
       data_source = params[:data_source]
       process_vars(@statement, data_source)
       @only_chart = params[:only_chart]
+      @query = Query.find_by(id: params[:query_id]) if params[:query_id]
 
-      if @success
-        @query = Query.find_by(id: params[:query_id]) if params[:query_id]
+      if blazer_params[:run_id]
+        @run_id = blazer_params[:run_id]
+        @timestamp = blazer_params[:timestamp].to_i
+        @data_source = Blazer.data_sources[params[:data_source]]
 
+        @columns, @rows, @error, @cached_at = @data_source.run_results(@run_id)
+        @success = !@rows.nil?
+
+        if @success
+          @data_source.delete_results(@run_id)
+          @just_cached = !@error && @cached_at.present?
+          @cached_at = nil
+          params[:data_source] = nil
+          render_run
+        elsif Time.now > Time.at(@timestamp + (@data_source.timeout || 120).to_i)
+          # timed out
+          @error = Blazer::TIMEOUT_MESSAGE
+          @rows = []
+          @columns = []
+          render_run
+        else
+          continue_run
+        end
+      elsif @success
         data_source = @query.data_source if @query && @query.data_source
         @data_source = Blazer.data_sources[data_source]
 
-        @columns, @rows, @error, @cached_at, @just_cached = @data_source.run_main_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check])
+        @run_id = Blazer.async ? SecureRandom.uuid : nil
 
-        render_run
-      end
+        completed =
+          possibly_async do
+            @columns, @rows, @error, @cached_at, @just_cached = @data_source.run_main_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id)
+          end
 
-      respond_to do |format|
-        format.html do
-          render layout: false
+        if completed
+          @data_source.delete_results(@run_id) if @run_id
+          render_run
+        else
+          @timestamp = Time.now.to_i
+          continue_run
         end
-        format.csv do
-          send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
-        end
+      else
+        render layout: false
       end
     end
 
@@ -125,6 +151,10 @@ module Blazer
     end
 
     private
+
+    def continue_run
+      render json: {run_id: @run_id, timestamp: @timestamp}, status: :accepted
+    end
 
     def render_run
       @first_row = @rows.first || []
@@ -176,6 +206,15 @@ module Blazer
             end
         end
       end
+
+      respond_to do |format|
+        format.html do
+          render layout: false
+        end
+        format.csv do
+          send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
+        end
+      end
     end
 
     def set_queries(limit = nil)
@@ -215,6 +254,10 @@ module Blazer
       params.require(:query).permit(:name, :description, :statement, :data_source)
     end
 
+    def blazer_params
+      params[:blazer] || {}
+    end
+
     def csv_data(columns, rows, data_source)
       CSV.generate do |csv|
         csv << columns
@@ -228,5 +271,22 @@ module Blazer
       data_source.local_time_suffix.any? { |s| k.ends_with?(s) } ? v.to_s.sub(" UTC", "") : v.in_time_zone(Blazer.time_zone)
     end
     helper_method :blazer_time_value
+
+    def possibly_async
+      if Blazer.async && request.format.symbol != :csv
+        thread =
+          Thread.new do
+            ActiveRecord::Base.connection_pool.with_connection do
+              @data_source.connection_model.connection_pool.with_connection do
+                yield
+              end
+            end
+          end
+        !thread.join(3).nil?
+      else
+        yield
+        true
+      end
+    end
   end
 end

@@ -94,6 +94,43 @@ module Blazer
       end
     end
 
+    def run_main_statement(statement, options = {})
+      query = options[:query]
+      Blazer.transform_statement.call(self, statement) if Blazer.transform_statement
+
+      # audit
+      if Blazer.audit
+        audit = Blazer::Audit.new(statement: statement)
+        audit.query = query
+        audit.data_source = id
+        audit.user = options[:user]
+        audit.save!
+      end
+
+      start_time = Time.now
+      columns, rows, error, cached_at, just_cached = run_statement(statement, options.merge(with_just_cached: true))
+      duration = Time.now - start_time
+
+      if Blazer.audit
+        audit.duration = duration if audit.respond_to?(:duration=)
+        audit.error = error if audit.respond_to?(:error=)
+        audit.timed_out = error == Blazer::TIMEOUT_MESSAGE if audit.respond_to?(:timed_out=)
+        audit.cached = cached_at.present? if audit.respond_to?(:cached=)
+        if !cached_at && duration >= 10
+          audit.cost = cost(statement) if audit.respond_to?(:cost=)
+        end
+        audit.save! if audit.changed?
+      end
+
+      if query && error != Blazer::TIMEOUT_MESSAGE
+        query.checks.each do |check|
+          check.update_state(rows, error)
+        end
+      end
+
+      [columns, rows, error, cached_at, just_cached]
+    end
+
     def run_statement(statement, options = {})
       columns = nil
       rows = nil

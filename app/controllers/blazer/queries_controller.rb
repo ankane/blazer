@@ -99,12 +99,21 @@ module Blazer
 
         @run_id = Blazer.async ? SecureRandom.uuid : nil
 
-        completed =
-          possibly_async do
-            @columns, @rows, @error, @cached_at, @just_cached = @data_source.run_main_statement(@statement, user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id)
+        options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id}
+        result = []
+        if Blazer.async && request.format.symbol != :csv
+          Blazer::RunStatementJob.perform_async(result, @data_source, @statement, options)
+          wait_start = Time.now
+          loop do
+            sleep(0.02)
+            break if result.any? || Time.now - wait_start > 3
           end
+        else
+          result = @data_source.run_main_statement(@statement, options)
+        end
 
-        if completed
+        if result.any?
+          @columns, @rows, @error, @cached_at, @just_cached = result
           @data_source.delete_results(@run_id) if @run_id
           render_run
         else
@@ -271,22 +280,5 @@ module Blazer
       data_source.local_time_suffix.any? { |s| k.ends_with?(s) } ? v.to_s.sub(" UTC", "") : v.in_time_zone(Blazer.time_zone)
     end
     helper_method :blazer_time_value
-
-    def possibly_async
-      if Blazer.async && request.format.symbol != :csv
-        thread =
-          Thread.new do
-            ActiveRecord::Base.connection_pool.with_connection do
-              @data_source.connection_model.connection_pool.with_connection do
-                yield
-              end
-            end
-          end
-        !thread.join(3).nil?
-      else
-        yield
-        true
-      end
-    end
   end
 end

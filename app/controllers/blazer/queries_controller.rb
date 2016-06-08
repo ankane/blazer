@@ -68,12 +68,13 @@ module Blazer
       data_source = params[:data_source]
       process_vars(@statement, data_source)
       @only_chart = params[:only_chart]
+      @run_id = blazer_params[:run_id]
       @query = Query.find_by(id: params[:query_id]) if params[:query_id]
+      data_source = @query.data_source if @query && @query.data_source
+      @data_source = Blazer.data_sources[data_source]
 
-      if blazer_params[:run_id]
-        @run_id = blazer_params[:run_id]
+      if @run_id
         @timestamp = blazer_params[:timestamp].to_i
-        @data_source = Blazer.data_sources[params[:data_source]]
 
         @columns, @rows, @error, @cached_at = @data_source.run_results(@run_id)
         @success = !@rows.nil?
@@ -94,9 +95,6 @@ module Blazer
           continue_run
         end
       elsif @success
-        data_source = @query.data_source if @query && @query.data_source
-        @data_source = Blazer.data_sources[data_source]
-
         @run_id = Blazer.async ? SecureRandom.uuid : nil
 
         options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id}

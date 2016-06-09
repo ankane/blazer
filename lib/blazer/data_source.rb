@@ -258,17 +258,25 @@ module Blazer
         end
       end
 
-      just_cached = false
-      if !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
-        Blazer.cache.write(statement_cache_key(statement), Marshal.dump([columns, rows, error, Time.now]), expires_in: cache_expires_in.to_f * 60)
-        just_cached = true
+      cache_data = nil
+      cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
+      if cache || run_id
+        cache_data = Marshal.dump([columns, rows, error, cache ? Time.now : nil]) rescue nil
+      end
+
+      if cache && cache_data
+        Blazer.cache.write(statement_cache_key(statement), cache_data, expires_in: cache_expires_in.to_f * 60)
       end
 
       if run_id
-        Blazer.cache.write(run_cache_key(run_id), Marshal.dump([columns, rows, error, just_cached ? Time.now : nil]), expires_in: 5.seconds)
+        unless cache_data
+          error = "Error storing the results of this query :("
+          cache_data = Marshal.dump([[], [], error, nil])
+        end
+        Blazer.cache.write(run_cache_key(run_id), cache_data, expires_in: 30.seconds)
       end
 
-      [columns, rows, error, just_cached]
+      [columns, rows, error, cache && !cache_data.nil?]
     end
 
     def adapter_name

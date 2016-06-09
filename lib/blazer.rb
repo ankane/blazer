@@ -4,6 +4,7 @@ require "chartkick"
 require "blazer/version"
 require "blazer/data_source"
 require "blazer/engine"
+require "safely/core"
 
 module Blazer
   class Error < StandardError; end
@@ -69,7 +70,7 @@ module Blazer
     checks = Blazer::Check.includes(:query)
     checks = checks.where(schedule: schedule) if schedule
     checks.find_each do |check|
-      run_check(check)
+      Safely.safely { run_check(check) }
     end
   end
 

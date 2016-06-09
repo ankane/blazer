@@ -1012,9 +1012,10 @@
                 step = 1 / 24.0 / 60.0;
               }
 
+
               if (step && timeDiff > 0) {
                 var unitStepSize = Math.ceil(timeDiff / step / (chart.element.offsetWidth / 100.0));
-                if (week) {
+                if (week && step === 1) {
                   unitStepSize = Math.ceil(unitStepSize / 7.0) * 7;
                 }
                 options.scales.xAxes[0].time.unitStepSize = unitStepSize;
@@ -1292,8 +1293,13 @@
   }
 
   function setElement(chart, element, dataSource, opts, callback) {
+    var elementId;
     if (typeof element === "string") {
+      elementId = element;
       element = document.getElementById(element);
+      if (!element) {
+        throw new Error("No element with id " + elementId);
+      }
     }
     chart.element = element;
     chart.options = opts || {};

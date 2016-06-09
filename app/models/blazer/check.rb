@@ -28,7 +28,7 @@ module Blazer
       if respond_to?(:consecutive_errors=)
         if state == "timed out" || state == "error"
           self.consecutive_errors += 1
-          self.state = "disabled" if consecutive_errors >= 3
+          self.state = "disabled" if consecutive_errors >= 5
         else
           self.consecutive_errors = 0
         end

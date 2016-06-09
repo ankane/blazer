@@ -83,15 +83,17 @@ module Blazer
     end
 
     def cost(statement)
+      result = explain(statement)
+      match = /cost=\d+\.\d+..(\d+\.\d+) /.match(result)
+      match[1] if match
+    end
+
+    def explain(statement)
       if postgresql? || redshift?
-        begin
-          result = connection_model.connection.select_all("EXPLAIN #{statement}")
-          match = /cost=\d+\.\d+..(\d+\.\d+) /.match(result.rows.first.first)
-          match[1] if match
-        rescue ActiveRecord::StatementInvalid
-          # do nothing
-        end
+        connection_model.connection.select_all("EXPLAIN #{statement}").rows.first.first
       end
+    rescue
+      nil
     end
 
     def run_main_statement(statement, options = {})
@@ -225,9 +227,10 @@ module Blazer
       rows = []
       error = nil
       start_time = Time.now
+      result = nil
 
-      in_transaction do
-        begin
+      begin
+        in_transaction do
           if timeout
             if postgresql? || redshift?
               connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}")
@@ -239,18 +242,22 @@ module Blazer
           end
 
           result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
-          columns = result.columns
-          cast_method = Rails::VERSION::MAJOR < 5 ? :type_cast : :cast_value
-          result.rows.each do |untyped_row|
-            rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] ? result.column_types[c].send(cast_method, untyped_row[i]) : nil })
-          end
-        rescue ActiveRecord::StatementInvalid => e
-          error = e.message.sub(/.+ERROR: /, "")
-          error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
         end
+      rescue ActiveRecord::StatementInvalid => e
+        error = e.message.sub(/.+ERROR: /, "")
+        error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
       end
 
       duration = Time.now - start_time
+
+      if result
+        columns = result.columns
+        cast_method = Rails::VERSION::MAJOR < 5 ? :type_cast : :cast_value
+        result.rows.each do |untyped_row|
+          rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] ? result.column_types[c].send(cast_method, untyped_row[i]) : nil })
+        end
+      end
+
       just_cached = false
       if !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
         Blazer.cache.write(statement_cache_key(statement), Marshal.dump([columns, rows, error, Time.now]), expires_in: cache_expires_in.to_f * 60)

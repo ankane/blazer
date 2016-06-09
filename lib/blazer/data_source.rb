@@ -237,13 +237,15 @@ module Blazer
         end
       end
 
-      just_cached = false
+      cache_data = nil
       if !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
-        Blazer.cache.write(cache_key(statement), Marshal.dump([columns, rows, Time.now]), expires_in: cache_expires_in.to_f * 60)
-        just_cached = true
+        cache_data = Marshal.dump([columns, rows, Time.now]) rescue nil
+        if cache_data
+          Blazer.cache.write(cache_key(statement), cache_data, expires_in: cache_expires_in.to_f * 60)
+        end
       end
 
-      [columns, rows, error, just_cached]
+      [columns, rows, error, !cache_data.nil?]
     end
 
     def adapter_name

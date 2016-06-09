@@ -1,3 +1,5 @@
+require 'rails_autolink/helpers'
+
 module Blazer
   module BaseHelper
     def blazer_title(title = nil)
@@ -12,7 +14,7 @@ module Blazer
       if value.is_a?(Integer) && !key.to_s.end_with?("id")
         number_with_delimiter(value)
       else
-        value
+        ActionController::Base.helpers.auto_link(value.to_s, link: :urls, html: { target: '_blank' })
       end
     end
 

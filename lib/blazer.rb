@@ -75,10 +75,11 @@ module Blazer
 
       ActiveSupport::Notifications.instrument("run_check.blazer", check_id: check.id, query_id: check.query.id, state_was: check.state) do |instrument|
         # try 3 times on timeout errors
+        data_source = data_sources[check.query.data_source]
+        statement = check.query.statement
+        Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
+
         while tries <= 3
-          data_source = data_sources[check.query.data_source]
-          statement = check.query.statement
-          Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
           columns, rows, error, cached_at = data_source.run_statement(statement, refresh_cache: true)
           if error == Blazer::TIMEOUT_MESSAGE
             Rails.logger.info "[blazer timeout] query=#{check.query.name}"
@@ -97,12 +98,13 @@ module Blazer
         # TODO use proper logfmt
         Rails.logger.info "[blazer check] query=#{check.query.name} state=#{check.state} rows=#{rows.try(:size)} error=#{error}"
 
+        instrument[:statement] = statement
+        instrument[:data_source] = data_source
         instrument[:state] = check.state
         instrument[:rows] = rows.try(:size)
         instrument[:error] = error
         instrument[:tries] = tries
       end
-
     end
   end
 

@@ -34,7 +34,7 @@
 
 <% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
   <p class="text-muted" style="float: right;">
-    Some queries are cached
+    Some queries may be cached
     <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post %>
   </p>
 <% end %>

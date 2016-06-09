@@ -3,7 +3,8 @@ module Blazer
     before_action :set_check, only: [:edit, :update, :destroy, :run]
 
     def index
-      @checks = Blazer::Check.joins(:query).includes(:query).order("state, blazer_queries.name, blazer_checks.id").to_a
+      state_order = [nil, "disabled", "error", "timed out", "failing", "passing"]
+      @checks = Blazer::Check.joins(:query).includes(:query).order("blazer_queries.name, blazer_checks.id").to_a.sort_by { |q| state_order.index(q.state) || 99 }
       @checks.select! { |c| "#{c.query.name} #{c.emails}".downcase.include?(params[:q]) } if params[:q]
     end
 

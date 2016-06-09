@@ -83,15 +83,17 @@ module Blazer
     end
 
     def cost(statement)
+      result = explain(statement)
+      match = /cost=\d+\.\d+..(\d+\.\d+) /.match(result)
+      match[1] if match
+    end
+
+    def explain(statement)
       if postgresql? || redshift?
-        begin
-          result = connection_model.connection.select_all("EXPLAIN #{statement}")
-          match = /cost=\d+\.\d+..(\d+\.\d+) /.match(result.rows.first.first)
-          match[1] if match
-        rescue ActiveRecord::StatementInvalid
-          # do nothing
-        end
+        connection_model.connection.select_all("EXPLAIN #{statement}").rows.first.first
       end
+    rescue
+      nil
     end
 
     def run_main_statement(statement, options = {})

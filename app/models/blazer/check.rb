@@ -25,12 +25,12 @@ module Blazer
 
       self.last_run_at = Time.now if respond_to?(:last_run_at=)
 
-      if respond_to?(:timeouts=)
-        if state == "timed out"
-          self.timeouts += 1
-          self.state = "disabled" if timeouts >= 3
+      if respond_to?(:consecutive_errors=)
+        if state == "timed out" || state == "error"
+          self.consecutive_errors += 1
+          self.state = "disabled" if consecutive_errors >= 3
         else
-          self.timeouts = 0
+          self.consecutive_errors = 0
         end
       end
 

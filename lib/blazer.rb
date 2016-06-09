@@ -106,7 +106,7 @@ module Blazer
 
   def self.send_failing_checks
     emails = {}
-    Blazer::Check.includes(:query).where(state: %w[failing error]).find_each do |check|
+    Blazer::Check.includes(:query).where(state: ["failing", "error", "timed out", "disabled"]).find_each do |check|
       check.split_emails.each do |email|
         (emails[email] ||= []) << check
       end

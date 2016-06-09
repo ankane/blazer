@@ -38,7 +38,6 @@ class <%= migration_class_name %> < ActiveRecord::Migration
       t.text :emails
       t.boolean :invert
       t.timestamp :last_run_at
-      t.integer :consecutive_errors, default: 0
       t.timestamps
     end
   end

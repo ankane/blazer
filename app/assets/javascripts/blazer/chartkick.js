@@ -877,6 +877,9 @@
 
         var setLabelSize = function (chart, data, options) {
           var maxLabelSize = Math.ceil(chart.element.offsetWidth / 4.0 / data.labels.length);
+          if (maxLabelSize > 25) {
+            maxLabelSize = 25;
+          }
           options.scales.xAxes[0].ticks.callback = function (value) {
             value = toStr(value);
             if (value.length > maxLabelSize) {

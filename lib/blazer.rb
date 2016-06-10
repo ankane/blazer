@@ -67,7 +67,7 @@ module Blazer
   def self.run_checks(schedule: nil)
     checks = Blazer::Check.includes(:query)
     checks = checks.where(schedule: schedule) if schedule
-    checks.find_each do |check|
+    checks.where("state <> ?", "disabled").find_each do |check|
       Safely.safely { run_check(check) }
     end
   end

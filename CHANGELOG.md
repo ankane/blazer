@@ -1,4 +1,4 @@
-## 1.4.0 [unreleased]
+## 1.4.0
 
 - Added `slow` cache mode
 - Fixed `BLAZER_DATABASE_URL required` error

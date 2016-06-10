@@ -212,10 +212,21 @@ smart_columns:
 
 ### Caching
 
-Blazer can automatically cache results to improve speed.
+Blazer can automatically cache results to improve speed. It can cache slow queries:
 
 ```yml
-cache: 60 # minutes
+cache:
+  mode: slow
+  expires_in: 60 # min
+  slow_threshold: 15 # sec
+```
+
+Or it can cache all queries:
+
+```yml
+cache:
+  mode: all
+  expires_in: 60 # min
 ```
 
 Of course, you can force a refresh at any time.

@@ -4,6 +4,12 @@ module Blazer
 
     validates :query_id, presence: true
 
+    before_validation :set_state
+
+    def set_state
+      self.state ||= "new"
+    end
+
     def split_emails
       emails.to_s.downcase.split(",").map(&:strip)
     end

@@ -290,6 +290,22 @@ SELECT * FROM ratings WHERE user_id IS NULL /* all ratings should have a user */
 
 Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.
 
+## Anomaly Detection [master]
+
+Anomaly detection is supported thanks to Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
+
+First, [install R](https://cloud.r-project.org/) on your machine. Then, run:
+
+```sh
+R -e 'install.packages("devtools", repos="https://cran.rstudio.com/"); devtools::install_github("twitter/AnomalyDetection")'
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+anomaly_checks: true
+```
+
 ## Data Sources
 
 Blazer supports multiple data sources :tada:

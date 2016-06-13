@@ -27,7 +27,7 @@
     <p class="text-muted">
       <%= pluralize(@rows.size, "row") %>
 
-      <% @checks.each do |check| %>
+      <% @checks.select(&:state).each do |check| %>
         &middot; <small class="check-state <%= check.state.parameterize("_") %>"><%= link_to check.state.upcase, edit_check_path(check) %></small>
       <% end %>
     </p>

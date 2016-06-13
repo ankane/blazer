@@ -176,8 +176,12 @@ module Blazer
         end
 
         series.each do |s|
-          if anomaly?(s[:data])
-            anomaly = true
+          begin
+            if anomaly?(s[:data])
+              anomaly = true
+            end
+          rescue => e
+            error = e.message
           end
         end
       else
@@ -201,7 +205,15 @@ module Blazer
 
     timestamps = []
     output = %x[Rscript #{File.expand_path("../blazer/detect_anomalies.R", __FILE__)} #{Shellwords.escape(csv_str)}]
-    CSV.parse(output, headers: true).each do |row|
+    if output.empty?
+      raise "Unknown R error"
+    end
+
+    rows = CSV.parse(output, headers: true)
+    error = rows.first && rows.first["x"]
+    raise error if error
+
+    rows.each do |row|
       timestamps << Time.parse(row["timestamp"])
     end
     timestamps.include?(series.last[0].to_time)

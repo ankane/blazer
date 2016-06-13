@@ -47,6 +47,7 @@ module Blazer
         end
 
       self.last_run_at = Time.now if respond_to?(:last_run_at=)
+      self.error = error if respond_to?(:error=)
 
       if respond_to?(:timeouts=)
         if state == "timed out"

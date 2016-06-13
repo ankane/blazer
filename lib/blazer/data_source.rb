@@ -126,7 +126,7 @@ module Blazer
 
       if query && error != Blazer::TIMEOUT_MESSAGE
         query.checks.each do |check|
-          check.update_state(rows, error)
+          check.update_state(columns, rows, error)
         end
       end
 

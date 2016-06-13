@@ -3,7 +3,6 @@
 <p style="float: right;"><%= link_to "New Check", new_check_path, class: "btn btn-info" %></p>
 <%= render partial: "blazer/nav" %>
 
-<% colors = {failing: "red", passing: "#5cb85c", error: "#666", timed_out: "orange", disabled: "#000"} %>
 <table class="table">
   <thead>
     <tr>
@@ -20,7 +19,7 @@
         <td><%= link_to check.query.name, check.query %></td>
         <td>
           <% if check.state %>
-            <small style="font-weight: bold; color: <%= colors[check.state.parameterize("_").to_sym] %>;"><%= check.state.upcase %></small>
+            <small class="check-state <%= check.state.parameterize("_") %>"><%= check.state.upcase %></small>
           <% end %>
         </td>
         <td><%= check.schedule if check.respond_to?(:schedule) %></td>
@@ -33,7 +32,7 @@
         </td>
         <td style="text-align: right; padding: 1px;">
           <%= link_to "Edit", edit_check_path(check), class: "btn btn-info" %>
-          <%= link_to "Run Now", run_check_path(check), class: "btn btn-primary" %>
+          <%= link_to "Run Now", run_check_path(check), target: "_blank", class: "btn btn-primary" %>
         </td>
       </tr>
     <% end %>

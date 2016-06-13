@@ -24,7 +24,13 @@
         <% end %>
       </p>
     <% end %>
-    <p class="text-muted"><%= pluralize(@rows.size, "row") %></p>
+    <p class="text-muted">
+      <%= pluralize(@rows.size, "row") %>
+
+      <% @checks.each do |check| %>
+        &middot; <small class="check-state <%= check.state.parameterize("_") %>"><%= link_to check.state.upcase, edit_check_path(check) %></small>
+      <% end %>
+    </p>
   <% end %>
   <% if @rows.any? %>
     <% values = @rows.first %>

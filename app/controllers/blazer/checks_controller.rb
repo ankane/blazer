@@ -40,6 +40,7 @@ module Blazer
 
     def run
       @query = @check.query
+      redirect_to query_path(@query)
     end
 
     private

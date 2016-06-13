@@ -100,3 +100,31 @@ input.search:focus {
 .vars {
   color: #ccc;
 }
+
+.check-state {
+  font-weight: bold;
+}
+
+.check-state a {
+  color: inherit;
+}
+
+.check-state.failing {
+  color: red;
+}
+
+.check-state.passing {
+  color: #5cb85c;
+}
+
+.check-state.error {
+  color: #666;
+}
+
+.check-state.timed_out {
+  color: orange;
+}
+
+.check-state.disabled {
+  color: #000;
+}

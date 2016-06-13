@@ -127,6 +127,8 @@ module Blazer
     private
 
     def render_run
+      @checks = @query ? @query.checks : []
+
       @first_row = @rows.first || []
       @column_types = []
       if @rows.any?

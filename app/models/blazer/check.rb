@@ -14,7 +14,7 @@ module Blazer
       emails.to_s.downcase.split(",").map(&:strip)
     end
 
-    def update_state(columns, rows, error)
+    def update_state(columns, rows, error, data_source)
       check_type =
         if respond_to?(:check_type)
           self.check_type
@@ -32,7 +32,7 @@ module Blazer
             "error"
           end
         elsif check_type == "anomaly"
-          anomaly, error = Blazer.detect_anomaly(columns, rows)
+          anomaly, error = Blazer.detect_anomaly(columns, rows, data_source)
           if error
             "error"
           elsif anomaly

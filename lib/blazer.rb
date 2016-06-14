@@ -93,7 +93,7 @@ module Blazer
           tries += 1
           sleep(10)
         elsif error.to_s.start_with?("PG::ConnectionBad")
-          data_sources[check.query.data_source].reconnect
+          data_source.reconnect
           Rails.logger.info "[blazer reconnect] query=#{check.query.name}"
           tries += 1
           sleep(10)
@@ -101,7 +101,7 @@ module Blazer
           break
         end
       end
-      check.update_state(columns, rows, error)
+      check.update_state(columns, rows, error, data_source)
       # TODO use proper logfmt
       Rails.logger.info "[blazer check] query=#{check.query.name} state=#{check.state} rows=#{rows.try(:size)} error=#{error}"
 
@@ -154,14 +154,14 @@ module Blazer
     end
   end
 
-  def self.detect_anomaly(columns, rows)
+  def self.detect_anomaly(columns, rows, data_source)
     anomaly = false
     error = nil
 
     if rows.empty?
       error = "No data"
     else
-      chart_type = self.chart_type(column_types(columns, rows))
+      chart_type = self.chart_type(column_types(columns, rows, boom(columns, rows, data_source)))
       if chart_type == "line" || chart_type == "line2"
         series = []
 
@@ -217,5 +217,18 @@ module Blazer
       timestamps << Time.parse(row["timestamp"])
     end
     timestamps.include?(series.last[0].to_time)
+  end
+
+  def self.boom(columns, rows, data_source)
+    boom = {}
+    columns.each_with_index do |key, i|
+      query = data_source.smart_columns[key]
+      if query
+        values = rows.map { |r| r[i] }.compact.uniq
+        columns, rows2, error, cached_at = data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+        boom[key] = Hash[rows2.map { |k, v| [k.to_s, v] }]
+      end
+    end
+    boom
   end
 end

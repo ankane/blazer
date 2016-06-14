@@ -85,7 +85,7 @@ module Blazer
       Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
 
       while tries <= 3
-        columns, rows, error, cached_at = data_source.run_statement(statement, refresh_cache: true)
+        columns, rows, error, cached_at = data_source.run_statement(statement, refresh_cache: true, check: check, query: check.query)
         if error == Blazer::TIMEOUT_MESSAGE
           Rails.logger.info "[blazer timeout] query=#{check.query.name}"
           tries += 1

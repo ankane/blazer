@@ -24,6 +24,8 @@ module Blazer
           "bad_data"
         end
 
+      message = error
+
       self.state =
         if error
           if error == Blazer::TIMEOUT_MESSAGE
@@ -32,8 +34,8 @@ module Blazer
             "error"
           end
         elsif check_type == "anomaly"
-          anomaly, error = Blazer.detect_anomaly(columns, rows, data_source)
-          if error
+          anomaly, message = Blazer.detect_anomaly(columns, rows, data_source)
+          if anomaly.nil?
             "error"
           elsif anomaly
             "failing"
@@ -47,7 +49,7 @@ module Blazer
         end
 
       self.last_run_at = Time.now if respond_to?(:last_run_at=)
-      self.error = error if respond_to?(:error=)
+      self.message = message if respond_to?(:message=)
 
       if respond_to?(:timeouts=)
         if state == "timed out"

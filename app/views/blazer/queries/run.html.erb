@@ -29,8 +29,8 @@
 
       <% @checks.select(&:state).each do |check| %>
         &middot; <small class="check-state <%= check.state.parameterize("_") %>"><%= link_to check.state.upcase, edit_check_path(check) %></small>
-        <% if check.try(:error) %>
-          &middot; <%= check.error %>
+        <% if check.try(:message) %>
+          &middot; <%= check.message %>
         <% end %>
       <% end %>
     </p>

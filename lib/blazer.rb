@@ -155,13 +155,14 @@ module Blazer
   end
 
   def self.detect_anomaly(columns, rows, data_source)
-    anomaly = false
-    error = nil
+    anomaly = nil
+    message = nil
 
     if rows.empty?
-      error = "No data"
+      message = "No data"
     else
-      chart_type = self.chart_type(column_types(columns, rows, boom(columns, rows, data_source)))
+      boom = self.boom(columns, rows, data_source)
+      chart_type = self.chart_type(column_types(columns, rows, boom))
       if chart_type == "line" || chart_type == "line2"
         series = []
 
@@ -170,26 +171,37 @@ module Blazer
             series << {name: k, data: rows.map{ |r| [r[0], r[i + 1]] }}
           end
         else
-          rows.group_by { |r| r[1] }.each_with_index.map do |(name, v), i|
+          rows.group_by { |r| v = r[1]; (boom[columns[1]] || {})[v.to_s] || v }.each_with_index.map do |(name, v), i|
             series << {name: name, data: v.map { |v2| [v2[0], v2[2]] }}
           end
         end
 
-        series.each do |s|
-          begin
-            if anomaly?(s[:data])
-              anomaly = true
-            end
-          rescue => e
-            error = e.message
+        current_series = nil
+        begin
+          anomalies = []
+          series.each do |s|
+            current_series = s[:name]
+            anomalies << s[:name] if anomaly?(s[:data])
           end
+          anomaly = anomalies.any?
+          if anomaly
+            if anomalies.size == 1
+              message = "#{anomalies.first} has an anomaly"
+            else
+              message = "#{anomalies.to_sentence} have an anomaly"
+            end
+          else
+            message = "No anomalies detected"
+          end
+        rescue => e
+          message = "#{current_series}: #{e.message}"
         end
       else
-        error = "Bad format"
+        message = "Bad format"
       end
     end
 
-    [anomaly, error]
+    [anomaly, message]
   end
 
   def self.anomaly?(series)

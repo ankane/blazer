@@ -297,8 +297,10 @@ Anomaly detection is supported thanks to Twitter’s [AnomalyDetection](https://
 First, [install R](https://cloud.r-project.org/) on your machine. Then, create an `init.r` with:
 
 ```R
-install.packages("devtools", repos="https://cran.rstudio.com/")
-devtools::install_github("twitter/AnomalyDetection")
+if (!"AnomalyDetection" %in% installed.packages()) {
+  install.packages("devtools", repos="https://cran.rstudio.com/")
+  devtools::install_github("twitter/AnomalyDetection")
+}
 ```
 
 And set up `Rscript init.r` to run on deployments. Add to `config/blazer.yml`:

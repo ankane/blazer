@@ -294,13 +294,14 @@ Then create check with optional emails if you want to be notified. Emails are se
 
 Anomaly detection is supported thanks to Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
 
-First, [install R](https://cloud.r-project.org/) on your machine. Then, run:
+First, [install R](https://cloud.r-project.org/) on your machine. Then, create an `init.r` with:
 
-```sh
-R -e 'install.packages("devtools", repos="https://cran.rstudio.com/"); devtools::install_github("twitter/AnomalyDetection")'
+```R
+install.packages("devtools", repos="https://cran.rstudio.com/")
+devtools::install_github("twitter/AnomalyDetection")
 ```
 
-And add to `config/blazer.yml`:
+And set up `Rscript init.r` to run on deployments. Add to `config/blazer.yml`:
 
 ```yml
 anomaly_checks: true

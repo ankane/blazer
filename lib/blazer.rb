@@ -186,9 +186,9 @@ module Blazer
           anomaly = anomalies.any?
           if anomaly
             if anomalies.size == 1
-              message = "#{anomalies.first} has an anomaly"
+              message = "Anomaly detected in #{anomalies.first}"
             else
-              message = "#{anomalies.to_sentence} have an anomaly"
+              message = "Anomalies detected in #{anomalies.to_sentence}"
             end
           else
             message = "No anomalies detected"

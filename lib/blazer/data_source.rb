@@ -157,6 +157,9 @@ module Blazer
         if options[:query].respond_to?(:id)
           comment << ",query_id:#{options[:query].id}"
         end
+        if options[:check]
+          comment << ",check_id:#{options[:check].id},check_emails:#{options[:check].emails}"
+        end
         columns, rows, error, just_cached = run_statement_helper(statement, comment)
       end
 

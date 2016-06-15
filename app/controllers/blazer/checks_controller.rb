@@ -9,7 +9,7 @@ module Blazer
     end
 
     def new
-      @check = Blazer::Check.new
+      @check = Blazer::Check.new(query_id: params[:query_id])
     end
 
     def create

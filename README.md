@@ -309,6 +309,14 @@ And set up `Rscript init.r` to run on deployments. Add to `config/blazer.yml`:
 anomaly_checks: true
 ```
 
+On Heroku, add the R buildpack.
+
+```sh
+heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git#cedar-14
+```
+
+And deploy. It can take up to 10 minutes to install everything the first time.
+
 ## Data Sources
 
 Blazer supports multiple data sources :tada:

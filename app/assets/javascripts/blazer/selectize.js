@@ -2236,7 +2236,7 @@
      */
     registerOption: function(data) {
       var key = hash_key(data[this.settings.valueField]);
-      if ((!key || this.options.hasOwnProperty(key)) && !this.settings.allowEmptyOption) return false;
+      if (!key || this.options.hasOwnProperty(key)) return false;
       data.$order = data.$order || ++this.order;
       this.options[key] = data;
       return key;

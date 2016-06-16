@@ -4,8 +4,11 @@ module Blazer
 
     def home
       set_queries(1000)
+
+      @dashboards = Blazer::Dashboard.order(:name)
+      @dashboards = @dashboards.includes(:creator) if Blazer.user_class
       @dashboards =
-        Blazer::Dashboard.order(:name).map do |d|
+        @dashboards.map do |d|
           {
             name: "<strong>#{view_context.link_to(d.name, d)}</strong>",
             creator: blazer_user && d.try(:creator) == blazer_user ? "You" : d.try(:creator).try(Blazer.user_name),

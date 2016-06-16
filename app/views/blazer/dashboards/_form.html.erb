@@ -38,10 +38,11 @@ li:hover .glyphicon-remove {
   <div class="form-group">
     <%= f.label :query_id, "Add Chart" %>
     <div class="hide">
-      <%= select_tag :query_id, options_for_select(Blazer::Query.named.order(:name).map { |q| [q.name, q.id] }), {include_blank: true, placeholder: "Select chart"} %>
+      <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
     </div>
     <script>
-      $("#query_id").selectize().parents(".hide").removeClass("hide");
+      var queries = <%= blazer_json_escape(Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} }.to_json).html_safe %>;
+      $("#query_id").selectize({options: queries}).parents(".hide").removeClass("hide");
       $("#query_id").change( function () {
         var $option = $(this).find("option:selected");
         if ($option.val() !== "") {

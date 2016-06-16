@@ -10,10 +10,13 @@
   <div class="form-group">
     <%= f.label :query_id, "Query" %>
     <div class="hide">
-      <%= f.select :query_id, Blazer::Query.named.order(:name).map { |q| [q.name, q.id] }, {include_blank: true} %>
+      <%= f.select :query_id, [], {include_blank: true} %>
     </div>
     <script>
-      $("#check_query_id").selectize().parents(".hide").removeClass("hide");
+      var queries = <%= blazer_json_escape(Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} }.to_json).html_safe %>;
+      var items = <%= blazer_json_escape([@check.query_id].compact.to_json).html_safe %>;
+
+      $("#check_query_id").selectize({options: queries, items: items}).parents(".hide").removeClass("hide");
     </script>
   </div>
 

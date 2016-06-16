@@ -16,7 +16,7 @@
       var queries = <%= blazer_json_escape(Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} }.to_json).html_safe %>;
       var items = <%= blazer_json_escape([@check.query_id].compact.to_json).html_safe %>;
 
-      $("#check_query_id").selectize({options: queries, items: items}).parents(".hide").removeClass("hide");
+      $("#check_query_id").selectize({options: queries, items: items, highlight: false, maxOptions: 100}).parents(".hide").removeClass("hide");
     </script>
   </div>
 

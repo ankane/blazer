@@ -103,6 +103,12 @@
     editor.resize();
   };
 
+  function getSQL() {
+    var selectedText = editor.getSelectedText();
+    var text = selectedText.length == 0 ? editor.getValue() : selectedText;
+    return text.replace(/\n/g, "\r\n");
+  }
+
   editor.getSession().on("change", adjustHeight);
   adjustHeight();
   $("#editor").show();
@@ -125,7 +131,7 @@
       xhr.abort();
     }
 
-    var data = $.extend({}, params, {statement: editor.getValue().replace(/\n/g, "\r\n"), data_source: $("#query_data_source").val()});
+    var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()});
 
     xhr = runQuery(data, function (data) {
       $("#results").html(data);

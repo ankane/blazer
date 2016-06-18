@@ -29,6 +29,7 @@ module Blazer
   TIMEOUT_MESSAGE = "Query timed out :("
   TIMEOUT_ERRORS = [
     "canceling statement due to statement timeout", # postgres
+    "canceling statement due to conflict with recovery", # postgres
     "cancelled on user's request", # redshift
     "canceled on user's request", # redshift
     "system requested abort", # redshift

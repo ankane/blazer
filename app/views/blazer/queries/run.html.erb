@@ -124,6 +124,10 @@
                           <div class="text-muted">empty string</div>
                         <% elsif @linked_columns[k] %>
                           <%= link_to blazer_format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
+                        <% elsif blazer_image?(k, v) %>
+                          <%= link_to blazer_format_value(k, v), target: "_blank" do %>
+                            <%= image_tag blazer_format_value(k, v), width: '200px' %>
+                          <% end %>
                         <% else %>
                           <%= blazer_format_value(k, v) %>
                         <% end %>

@@ -78,7 +78,7 @@
     <% elsif values.size >= 2 && column_types == ["string"] + (values.size - 1).times.map { "numeric" } %>
       <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1]; {name: name, data: @rows.first(20).map { |r| [(@boom[@columns[0]] || {})[r[0].to_s] || r[0], r[i + 1]] } } }, id: chart_id %>
     <% elsif values.size == 3 && column_types == ["string", "string", "numeric"] %>
-      <%= column_chart @rows.group_by { |r| [r[0], r[1]] }.values.first(20).flatten(1).group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.first(20).map { |v2| v3 = v2[0]; [(@boom[@columns[0]] || {})[v3.to_s] || v3, v2[2]] }} }, id: chart_id %>
+      <%= column_chart @rows.group_by { |r| r[0] }.values.first(20).flatten(1).group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.map { |v2| v3 = v2[0]; [(@boom[@columns[0]] || {})[v3.to_s] || v3, v2[2]] }} }, id: chart_id %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
         <% v = @rows.first.first %>

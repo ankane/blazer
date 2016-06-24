@@ -1,3 +1,7 @@
+## 1.4.1
+
+- Added new bar chart format
+
 ## 1.4.0
 
 - Added `slow` cache mode

@@ -1,4 +1,4 @@
-## 1.4.1
+## 1.4.1 [unreleased]
 
 - Added new bar chart format
 

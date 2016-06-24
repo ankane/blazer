@@ -254,10 +254,18 @@ SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 
 ### Column Chart
 
+There are also two ways to generate column charts.
+
 2+ columns - string, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/2-top-genres)
 
 ```sql
 SELECT gender, COUNT(*) FROM users GROUP BY 1
+```
+
+3 columns - string, string, numeric [master]
+
+```sql
+SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
 ```
 
 ### Maps

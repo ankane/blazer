@@ -278,6 +278,14 @@ SELECT name, latitude, longitude FROM cities
 
 To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `ENV["MAPBOX_ACCESS_TOKEN"]`.
 
+### Targets
+
+Use the column name `target` to draw a line for goals.
+
+```sql
+SELECT date_trunc('week', created_at), COUNT(*) AS new_users, 100000 AS target FROM users GROUP BY 1
+```
+
 ## Dashboards
 
 Create a dashboard with multiple queries. [Example](https://blazerme.herokuapp.com/dashboards/1-movielens)

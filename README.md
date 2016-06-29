@@ -306,6 +306,25 @@ SELECT * FROM ratings WHERE user_id IS NULL /* all ratings should have a user */
 
 Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.
 
+## Anomaly Detection [master]
+
+Anomaly detection is supported thanks to Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
+
+First, [install R](https://cloud.r-project.org/). Then, run:
+
+```R
+install.packages("devtools")
+devtools::install_github("twitter/AnomalyDetection")
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+anomaly_checks: true
+```
+
+If upgrading from version 1.4 or below, also follow the [upgrade instructions](#15).
+
 ## Data Sources
 
 Blazer supports multiple data sources :tada:
@@ -345,6 +364,27 @@ Have team members who want to learn SQL? Here are a few great, free resources.
 For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).
 
 ## Upgrading
+
+### 1.5 [unreleased]
+
+To take advantage of the anomaly detection, create a migration
+
+```sh
+rails g migration upgrade_blazer_to_1_5
+```
+
+with:
+
+```ruby
+add_column(:blazer_checks, :check_type, :string)
+add_column(:blazer_checks, :message, :text)
+commit_db_transaction
+
+BlazerCheck.reset_column_information
+
+BlazerCheck.where(invert: true).update_all(check_type: "missing_data")
+BlazerCheck.where(check_type: nil).update_all(check_type: "bad_data")
+```
 
 ### 1.3
 

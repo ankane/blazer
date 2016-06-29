@@ -16,23 +16,6 @@ module Blazer
       end
     end
 
-    def blazer_column_types(columns, rows, boom)
-      columns.each_with_index.map do |k, i|
-        v = (rows.find { |r| r[i] } || {})[i]
-        if boom[k]
-          "string"
-        elsif v.is_a?(Numeric)
-          "numeric"
-        elsif v.is_a?(Time) || v.is_a?(Date)
-          "time"
-        elsif v.nil?
-          nil
-        else
-          "string"
-        end
-      end
-    end
-
     def blazer_maps?
       ENV["MAPBOX_ACCESS_TOKEN"].present?
     end

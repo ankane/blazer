@@ -36,7 +36,8 @@ class <%= migration_class_name %> < ActiveRecord::Migration
       t.string :state
       t.string :schedule
       t.text :emails
-      t.boolean :invert
+      t.string :check_type
+      t.text :message
       t.timestamp :last_run_at
       t.timestamps
     end

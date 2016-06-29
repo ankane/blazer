@@ -152,15 +152,7 @@ module Blazer
       @filename = @query.name.parameterize if @query
       @min_width_types = @columns.each_with_index.select { |c, i| @first_row[i].is_a?(Time) || @first_row[i].is_a?(String) || @data_source.smart_columns[c] }
 
-      @boom = {}
-      @columns.each_with_index do |key, i|
-        query = @data_source.smart_columns[key]
-        if query
-          values = @rows.map { |r| r[i] }.compact.uniq
-          columns, rows, error, cached_at = @data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
-          @boom[key] = Hash[rows.map { |k, v| [k.to_s, v] }]
-        end
-      end
+      @boom = Blazer.boom(@columns, @rows, @data_source)
 
       @linked_columns = @data_source.linked_columns
 

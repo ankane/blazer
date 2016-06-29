@@ -29,13 +29,17 @@
 
       <% @checks.select(&:state).each do |check| %>
         &middot; <small class="check-state <%= check.state.parameterize("_") %>"><%= link_to check.state.upcase, edit_check_path(check) %></small>
+        <% if check.try(:message) %>
+          &middot; <%= check.message %>
+        <% end %>
       <% end %>
     </p>
   <% end %>
   <% if @rows.any? %>
     <% values = @rows.first %>
     <% chart_id = SecureRandom.hex %>
-    <% column_types = blazer_column_types(@columns, @rows, @boom) %>
+    <% column_types = Blazer.column_types(@columns, @rows, @boom) %>
+    <% chart_type = Blazer.chart_type(column_types) %>
     <% chart_options = {id: chart_id, min: nil} %>
     <% series_library = {} %>
     <% target_index = @columns.index { |k| k.downcase == "target" } %>
@@ -71,11 +75,11 @@
         featureLayer.setGeoJSON(geojson);
         map.fitBounds(featureLayer.getBounds());
       </script>
-    <% elsif values.size >= 2 && column_types.compact == ["time"] + (column_types.compact.size - 1).times.map { "numeric" } %>
+    <% elsif chart_type == "line" %>
       <%= line_chart @columns[1..-1].each_with_index.map{ |k, i| {name: k, data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} }, chart_options %>
-    <% elsif values.size == 3 && column_types == ["time", "string", "numeric"] %>
+    <% elsif chart_type == "line2" %>
       <%= line_chart @rows.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} }, chart_options %>
-    <% elsif values.size >= 2 && column_types == ["string"] + (values.size - 1).times.map { "numeric" } %>
+    <% elsif chart_type == "bar" %>
       <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1]; {name: name, data: @rows.first(20).map { |r| [(@boom[@columns[0]] || {})[r[0].to_s] || r[0], r[i + 1]] } } }, id: chart_id %>
     <% elsif values.size == 3 && column_types == ["string", "string", "numeric"] %>
       <% first_20 = @rows.group_by { |r| r[0] }.values.first(20).flatten(1) %>

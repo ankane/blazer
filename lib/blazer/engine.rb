@@ -29,6 +29,8 @@ module Blazer
       end
 
       Blazer.cache ||= Rails.cache
+
+      Blazer.anomaly_checks = Blazer.settings["anomaly_checks"] || false
     end
   end
 end

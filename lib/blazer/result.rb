@@ -129,7 +129,7 @@ module Blazer
       timestamps = []
       r_script = %x[which Rscript].chomp
       raise "R not found" if r_script.empty?
-      output = %x[#{r_script} --vanilla #{File.expand_path("../blazer/detect_anomalies.R", __FILE__)} #{Shellwords.escape(csv_str)}]
+      output = %x[#{r_script} --vanilla #{File.expand_path("../detect_anomalies.R", __FILE__)} #{Shellwords.escape(csv_str)}]
       if output.empty?
         raise "Unknown R error"
       end

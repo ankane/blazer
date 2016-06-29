@@ -38,8 +38,8 @@
   <% if @rows.any? %>
     <% values = @rows.first %>
     <% chart_id = SecureRandom.hex %>
-    <% column_types = Blazer.column_types(@columns, @rows, @boom) %>
-    <% chart_type = Blazer.chart_type(column_types) %>
+    <% column_types = @result.column_types %>
+    <% chart_type = @result.chart_type %>
     <% chart_options = {id: chart_id, min: nil} %>
     <% series_library = {} %>
     <% target_index = @columns.index { |k| k.downcase == "target" } %>
@@ -81,7 +81,7 @@
       <%= line_chart @rows.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} }, chart_options %>
     <% elsif chart_type == "bar" %>
       <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1]; {name: name, data: @rows.first(20).map { |r| [(@boom[@columns[0]] || {})[r[0].to_s] || r[0], r[i + 1]] } } }, id: chart_id %>
-    <% elsif values.size == 3 && column_types == ["string", "string", "numeric"] %>
+    <% elsif chart_type == "bar2" %>
       <% first_20 = @rows.group_by { |r| r[0] }.values.first(20).flatten(1) %>
       <% labels = first_20.map { |r| r[0] }.uniq %>
       <% series = first_20.map { |r| r[1] }.uniq %>

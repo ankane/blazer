@@ -54,9 +54,9 @@ module Blazer
       @bind_vars.each do |var|
         query = data_source.smart_variables[var]
         if query
-          columns, rows, error, cached_at = data_source.run_statement(query)
-          @smart_vars[var] = rows.map { |v| v.reverse }
-          @sql_errors << error if error
+          result = data_source.run_statement(query)
+          @smart_vars[var] = result.rows.map { |v| v.reverse }
+          @sql_errors << result.error if result.error
         end
       end
 
@@ -110,11 +110,10 @@ module Blazer
             break if result.any? || Time.now - wait_start > 3
           end
         else
-          result = @data_source.run_main_statement(@statement, options)
+          @result = @data_source.run_main_statement(@statement, options)
         end
 
-        if result.any?
-          @columns, @rows, @error, @cached_at, @just_cached = result
+        if @result
           @data_source.delete_results(@run_id) if @run_id
           render_run
         else
@@ -167,6 +166,12 @@ module Blazer
     end
 
     def render_run
+      @columns = @result.columns
+      @rows = @result.rows
+      @error = @result.error
+      @cached_at = @result.cached_at
+      @just_cached = @result.just_cached
+
       @checks = @query ? @query.checks : []
 
       @first_row = @rows.first || []
@@ -189,7 +194,7 @@ module Blazer
       @filename = @query.name.parameterize if @query
       @min_width_types = @columns.each_with_index.select { |c, i| @first_row[i].is_a?(Time) || @first_row[i].is_a?(String) || @data_source.smart_columns[c] }
 
-      @boom = Blazer.boom(@columns, @rows, @data_source)
+      @boom = @result.boom
 
       @linked_columns = @data_source.linked_columns
 

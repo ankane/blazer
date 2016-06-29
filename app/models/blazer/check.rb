@@ -15,7 +15,7 @@ module Blazer
       emails.to_s.downcase.split(",").map(&:strip)
     end
 
-    def update_state(columns, rows, error, data_source)
+    def update_state(result)
       check_type =
         if respond_to?(:check_type)
           self.check_type
@@ -25,17 +25,15 @@ module Blazer
           "bad_data"
         end
 
-      message = error
+      message = result.error
 
       self.state =
-        if error
-          if error == Blazer::TIMEOUT_MESSAGE
-            "timed out"
-          else
-            "error"
-          end
+        if result.timed_out?
+          "timed out"
+        elsif result.error
+          "error"
         elsif check_type == "anomaly"
-          anomaly, message = Blazer.detect_anomaly(columns, rows, data_source)
+          anomaly, message = result.detect_anomaly
           if anomaly.nil?
             "error"
           elsif anomaly
@@ -43,7 +41,7 @@ module Blazer
           else
             "passing"
           end
-        elsif rows.any?
+        elsif result.rows.any?
           check_type == "missing_data" ? "passing" : "failing"
         else
           check_type == "missing_data" ? "failing" : "passing"
@@ -53,7 +51,7 @@ module Blazer
       self.message = message if respond_to?(:message=)
 
       if respond_to?(:timeouts=)
-        if state == "timed out"
+        if result.timed_out?
           self.timeouts += 1
           self.state = "disabled" if timeouts >= 3
         else
@@ -63,7 +61,7 @@ module Blazer
 
       # do not notify on creation, except when not passing
       if (state_was || state != "passing") && state != state_was && emails.present?
-        Blazer::CheckMailer.state_change(self, state, state_was, rows.size, message).deliver_later
+        Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message).deliver_later
       end
       save! if changed?
     end

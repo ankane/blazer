@@ -139,8 +139,8 @@ module Blazer
       error = nil
       cached_at = nil
       just_cached = false
-      cache_key = self.cache_key(statement) if cache
-      if cache && !options[:refresh_cache]
+      cache_key = self.cache_key(statement) if cache_mode != "off"
+      if cache_mode != "off" && !options[:refresh_cache]
         value = Blazer.cache.read(cache_key)
         columns, rows, cached_at = Marshal.load(value) if value
       end

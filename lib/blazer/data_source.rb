@@ -149,18 +149,13 @@ module Blazer
     end
 
     def run_statement(statement, options = {})
-      columns = nil
-      rows = nil
-      error = nil
-      cached_at = nil
-      just_cached = false
       run_id = options[:run_id]
-      cache_key = statement_cache_key(statement) if cache_mode != "off"
+      result = nil
       if cache_mode != "off" && !options[:refresh_cache]
-        result = read_cache(cache_key)
+        result = read_cache(statement_cache_key(statement))
       end
 
-      unless rows
+      unless result
         comment = "blazer"
         if options[:user].respond_to?(:id)
           comment << ",user_id:#{options[:user].id}"

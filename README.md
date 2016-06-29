@@ -380,10 +380,10 @@ add_column(:blazer_checks, :check_type, :string)
 add_column(:blazer_checks, :message, :text)
 commit_db_transaction
 
-BlazerCheck.reset_column_information
+Blazer::Check.reset_column_information
 
-BlazerCheck.where(invert: true).update_all(check_type: "missing_data")
-BlazerCheck.where(check_type: nil).update_all(check_type: "bad_data")
+Blazer::Check.where(invert: true).update_all(check_type: "missing_data")
+Blazer::Check.where(check_type: nil).update_all(check_type: "bad_data")
 ```
 
 ### 1.3

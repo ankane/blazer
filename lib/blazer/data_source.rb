@@ -110,7 +110,7 @@ module Blazer
       end
 
       start_time = Time.now
-      result = run_statement(statement, options.merge(with_just_cached: true))
+      result = run_statement(statement, options)
       duration = Time.now - start_time
 
       if Blazer.audit

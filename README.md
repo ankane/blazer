@@ -262,7 +262,7 @@ There are also two ways to generate column charts.
 SELECT gender, COUNT(*) FROM users GROUP BY 1
 ```
 
-3 columns - string, string, numeric [master]
+3 columns - string, string, numeric
 
 ```sql
 SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
@@ -306,7 +306,7 @@ SELECT * FROM ratings WHERE user_id IS NULL /* all ratings should have a user */
 
 Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.
 
-## Anomaly Detection [master]
+## Anomaly Detection
 
 Anomaly detection is supported thanks to Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
 
@@ -365,7 +365,7 @@ For an easy way to group by day, week, month, and more with correct time zones, 
 
 ## Upgrading
 
-### 1.5 [unreleased]
+### 1.5
 
 To take advantage of the anomaly detection, create a migration
 

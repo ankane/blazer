@@ -1,4 +1,4 @@
-## 1.4.1 [unreleased]
+## 1.5.0
 
 - Added new bar chart format
 - Added anomaly detection checks

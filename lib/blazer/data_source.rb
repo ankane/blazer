@@ -133,16 +133,29 @@ module Blazer
       [columns, rows, error, cached_at, just_cached]
     end
 
+    def read_cache(cache_key)
+      value = Blazer.cache.read(cache_key)
+      Marshal.load(value) if value
+    end
+
+    def run_results(run_id)
+      read_cache(run_cache_key(run_id))
+    end
+
+    def delete_results(run_id)
+      Blazer.cache.delete(run_cache_key(run_id))
+    end
+
     def run_statement(statement, options = {})
       columns = nil
       rows = nil
       error = nil
       cached_at = nil
       just_cached = false
-      cache_key = self.cache_key(statement) if cache_mode != "off"
+      run_id = options[:run_id]
+      cache_key = statement_cache_key(statement) if cache_mode != "off"
       if cache_mode != "off" && !options[:refresh_cache]
-        value = Blazer.cache.read(cache_key)
-        columns, rows, cached_at = Marshal.load(value) if value
+        columns, rows, error, cached_at = read_cache(cache_key)
       end
 
       unless rows
@@ -160,7 +173,7 @@ module Blazer
         if options[:check]
           comment << ",check_id:#{options[:check].id},check_emails:#{options[:check].emails}"
         end
-        columns, rows, error, just_cached = run_statement_helper(statement, comment)
+        columns, rows, error, just_cached = run_statement_helper(statement, comment, options[:run_id])
       end
 
       output = [columns, rows, error, cached_at]
@@ -169,11 +182,19 @@ module Blazer
     end
 
     def clear_cache(statement)
-      Blazer.cache.delete(cache_key(statement))
+      Blazer.cache.delete(statement_cache_key(statement))
     end
 
-    def cache_key(statement)
-      ["blazer", "v3", id, Digest::MD5.hexdigest(statement)].join("/")
+    def cache_key(key)
+      (["blazer", "v4"] + key).join("/")
+    end
+
+    def statement_cache_key(statement)
+      cache_key(["statement", id, Digest::MD5.hexdigest(statement)])
+    end
+
+    def run_cache_key(run_id)
+      cache_key(["run", run_id])
     end
 
     def schemas
@@ -204,7 +225,7 @@ module Blazer
 
     protected
 
-    def run_statement_helper(statement, comment)
+    def run_statement_helper(statement, comment, run_id)
       columns = []
       rows = []
       error = nil
@@ -241,14 +262,24 @@ module Blazer
       end
 
       cache_data = nil
-      if !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
-        cache_data = Marshal.dump([columns, rows, Time.now]) rescue nil
-        if cache_data
-          Blazer.cache.write(cache_key(statement), cache_data, expires_in: cache_expires_in.to_f * 60)
-        end
+      cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
+      if cache || run_id
+        cache_data = Marshal.dump([columns, rows, error, cache ? Time.now : nil]) rescue nil
       end
 
-      [columns, rows, error, !cache_data.nil?]
+      if cache && cache_data
+        Blazer.cache.write(statement_cache_key(statement), cache_data, expires_in: cache_expires_in.to_f * 60)
+      end
+
+      if run_id
+        unless cache_data
+          error = "Error storing the results of this query :("
+          cache_data = Marshal.dump([[], [], error, nil])
+        end
+        Blazer.cache.write(run_cache_key(run_id), cache_data, expires_in: 30.seconds)
+      end
+
+      [columns, rows, error, cache && !cache_data.nil?]
     end
 
     def adapter_name

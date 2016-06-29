@@ -31,6 +31,10 @@ module Blazer
       Blazer.cache ||= Rails.cache
 
       Blazer.anomaly_checks = Blazer.settings["anomaly_checks"] || false
+      Blazer.async = Blazer.settings["async"] || false
+      if Blazer.async
+        require "blazer/run_statement_job"
+      end
     end
   end
 end

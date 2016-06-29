@@ -31,7 +31,17 @@ function runQuery(data, success, error) {
     method: "POST",
     data: data,
     dataType: "html"
-  }).done(success).fail( function(jqXHR, textStatus, errorThrown) {
+  }).done( function (d) {
+    if (d[0] == "{") {
+      var response = $.parseJSON(d);
+      data.blazer = response;
+      setTimeout( function () {
+        runQuery(data, success, error);
+      }, 1000);
+    } else {
+      success(d);
+    }
+  }).fail( function(jqXHR, textStatus, errorThrown) {
     var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
     error(message);
   });

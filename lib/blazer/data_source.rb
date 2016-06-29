@@ -136,7 +136,7 @@ module Blazer
     def read_cache(cache_key)
       value = Blazer.cache.read(cache_key)
       if value
-        Blazer::Result.new(*Marshal.load(value))
+        Blazer::Result.new(self, *Marshal.load(value), nil)
       end
     end
 

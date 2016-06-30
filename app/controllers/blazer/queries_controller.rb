@@ -199,7 +199,7 @@ module Blazer
       @filename = @query.name.parameterize if @query
       @min_width_types = @columns.each_with_index.select { |c, i| @first_row[i].is_a?(Time) || @first_row[i].is_a?(String) || @data_source.smart_columns[c] }.map(&:last)
 
-      @boom = @result.boom
+      @boom = @result.boom if @result
 
       @linked_columns = @data_source.linked_columns
 

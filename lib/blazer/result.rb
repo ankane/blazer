@@ -106,6 +106,7 @@ module Blazer
             end
           rescue => e
             message = "#{current_series}: #{e.message}"
+            raise e if Rails.env.development?
           end
         else
           message = "Bad format"
@@ -126,10 +127,12 @@ module Blazer
           end
         end
 
-      timestamps = []
       r_script = %x[which Rscript].chomp
+      type = series.any? && series.last.first.to_time - series.first.first.to_time >= 2.weeks ? "ts" : "vec"
+      args = [type, csv_str]
       raise "R not found" if r_script.empty?
-      output = %x[#{r_script} --vanilla #{File.expand_path("../detect_anomalies.R", __FILE__)} #{Shellwords.escape(csv_str)}]
+      command = "#{r_script} --vanilla #{File.expand_path("../detect_anomalies.R", __FILE__)} #{args.map { |a| Shellwords.escape(a) }.join(" ")}"
+      output = %x[#{command}]
       if output.empty?
         raise "Unknown R error"
       end
@@ -138,10 +141,18 @@ module Blazer
       error = rows.first && rows.first["x"]
       raise error if error
 
-      rows.each do |row|
-        timestamps << Time.parse(row["timestamp"])
+      timestamps = []
+      if type == "ts"
+        rows.each do |row|
+          timestamps << Time.parse(row["timestamp"])
+        end
+        timestamps.include?(series.last[0].to_time)
+      else
+        rows.each do |row|
+          timestamps << row["index"].to_i
+        end
+        timestamps.include?(series.length)
       end
-      timestamps.include?(series.last[0].to_time)
     end
   end
 end

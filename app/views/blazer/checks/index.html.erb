@@ -16,7 +16,7 @@
   <tbody>
     <% @checks.each do |check| %>
       <tr>
-        <td><%= link_to check.query.name, check.query %></td>
+        <td><%= link_to check.query.name, check.query %> <span class="text-muted"><%= check.try(:check_type).to_s.gsub("_", " ") %></span></td>
         <td>
           <% if check.state %>
             <small class="check-state <%= check.state.parameterize("_") %>"><%= check.state.upcase %></small>

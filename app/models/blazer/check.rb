@@ -60,7 +60,7 @@ module Blazer
       end
 
       # do not notify on creation, except when not passing
-      if (state_was || state != "passing") && state != state_was && emails.present?
+      if (state_was != "new" || state != "passing") && state != state_was && emails.present?
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message).deliver_later
       end
       save! if changed?

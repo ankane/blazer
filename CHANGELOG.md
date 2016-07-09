@@ -1,3 +1,9 @@
+## 1.5.1 [unreleased]
+
+- Added anomaly detection for data less than 2 weeks
+- Added autolinking urls
+- Added support for images
+
 ## 1.5.0
 
 - Added new bar chart format

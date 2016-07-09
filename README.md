@@ -325,6 +325,8 @@ anomaly_checks: true
 
 If upgrading from version 1.4 or below, also follow the [upgrade instructions](#15).
 
+If you’re on Heroku, follow [these additional instructions](#anomaly-detection-on-heroku).
+
 ## Data Sources
 
 Blazer supports multiple data sources :tada:
@@ -362,6 +364,25 @@ Have team members who want to learn SQL? Here are a few great, free resources.
 ## Useful Tools
 
 For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).
+
+## Anomaly Detection on Heroku
+
+Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
+
+```sh
+heroku buildpacks:set --index 1 https://github.com/ankane/heroku-buildpack-r.git\#cedar-14
+```
+
+And create an `init.r` with:
+
+```sh
+if (!"AnomalyDetection" %in% installed.packages()) {
+  install.packages("devtools")
+  devtools::install_github("twitter/AnomalyDetection")
+}
+```
+
+Commit and deploy away.
 
 ## Upgrading
 

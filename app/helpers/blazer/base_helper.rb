@@ -8,9 +8,13 @@ module Blazer
       end
     end
 
+    BLAZER_URL_REGEX = /\Ahttps?:\/\/[\S]+\z/
+
     def blazer_format_value(key, value)
       if value.is_a?(Integer) && !key.to_s.end_with?("id")
         number_with_delimiter(value)
+      elsif value =~ BLAZER_URL_REGEX
+        link_to value, value, target: "_blank"
       else
         value
       end

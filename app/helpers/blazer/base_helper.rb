@@ -32,6 +32,10 @@ module Blazer
       ENV["MAPBOX_ACCESS_TOKEN"].present?
     end
 
+    def blazer_image?(key, value)
+      key.to_s.end_with?("image") && value.is_a?(String) && %w[png jpg jpeg gif].include?(value.split(".").last.split("?").first)
+    end
+
     JSON_ESCAPE = { '&' => '\u0026', '>' => '\u003e', '<' => '\u003c', "\u2028" => '\u2028', "\u2029" => '\u2029' }
     JSON_ESCAPE_REGEXP = /[\u2028\u2029&><]/u
 

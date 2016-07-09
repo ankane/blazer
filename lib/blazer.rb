@@ -24,12 +24,14 @@ module Blazer
     attr_accessor :check_schedules
     attr_accessor :anomaly_checks
     attr_accessor :async
+    attr_accessor :images
   end
   self.audit = true
   self.user_name = :name
   self.check_schedules = ["5 minutes", "1 hour", "1 day"]
   self.anomaly_checks = false
   self.async = false
+  self.images = false
 
   TIMEOUT_MESSAGE = "Query timed out :("
   TIMEOUT_ERRORS = [

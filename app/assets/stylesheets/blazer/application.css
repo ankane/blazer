@@ -24,6 +24,11 @@ body {
   background-color: #fff;
 }
 
+.results-table img {
+  max-width: 200px;
+  max-height: 200px;
+}
+
 input.search {
   border: none;
   box-shadow: none;

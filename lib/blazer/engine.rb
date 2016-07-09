@@ -35,6 +35,8 @@ module Blazer
       if Blazer.async
         require "blazer/run_statement_job"
       end
+
+      Blazer.images = Blazer.settings["images"] || false
     end
   end
 end

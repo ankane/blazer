@@ -148,7 +148,7 @@ before_action: require_admin
 
 ### Variables
 
-Create queries with variables. [Example]()
+Create queries with variables.
 
 ```sql
 SELECT * FROM users WHERE gender = {gender}

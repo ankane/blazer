@@ -111,7 +111,7 @@
 
     if (error_line) {
       error_line = parseInt(error_line[1], 10);
-      if (editor.getSelectedText().length > 0) {
+      if (editor.getSelectedText().length >= 10) {
         error_line += editor.getSelectionRange().start.row;
       }
       return error_line;

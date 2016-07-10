@@ -102,7 +102,7 @@
 
   function getSQL() {
     var selectedText = editor.getSelectedText();
-    var text = selectedText.length == 0 ? editor.getValue() : selectedText;
+    var text = selectedText.length < 10 ? editor.getValue() : selectedText;
     return text.replace(/\n/g, "\r\n");
   }
 

@@ -239,13 +239,13 @@ Blazer will automatically generate charts based on the types of the columns retu
 
 There are two ways to generate line charts.
 
-2+ columns - timestamp, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/6-bar-chart-format-1)
+2+ columns - timestamp, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/4-line-chart-format-1)
 
 ```sql
 SELECT date_trunc('week', created_at), COUNT(*) FROM users GROUP BY 1
 ```
 
-3 columns - timestamp, string, numeric - [Example](https://blazerme.herokuapp.com/queries/7-bar-chart-format-2)
+3 columns - timestamp, string, numeric - [Example](https://blazerme.herokuapp.com/queries/5-line-chart-format-2)
 
 
 ```sql

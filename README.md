@@ -382,7 +382,7 @@ if (!"AnomalyDetection" %in% installed.packages()) {
 }
 ```
 
-Commit and deploy away.
+Commit and deploy away. The first deploy may take a few minutes.
 
 ## Upgrading
 

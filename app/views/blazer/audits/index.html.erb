@@ -1,0 +1,24 @@
+<% title = "#{@query.name} Audits" %>
+<% blazer_title title %>
+
+<h3 style="margin: 0; line-height: 34px; display: inline;">
+<%= title %>
+</h3>
+
+<% @audits.each do |audit| %>
+  <div style="clear: both; margin-bottom:40px;">
+    <pre><code><%= audit.statement %></code></pre>
+    <div style="float: right;" class="text-muted">
+      <% if audit.user %>
+        <%= audit.user.name %>
+      <% end %>
+      <%= audit.created_at.in_time_zone(Blazer.time_zone) %>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  if ($("code").text().length < 10000) {
+    hljs.initHighlightingOnLoad();
+  }
+</script>

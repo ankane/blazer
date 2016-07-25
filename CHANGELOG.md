@@ -1,4 +1,4 @@
-## 1.5.1 [unreleased]
+## 1.5.1
 
 - Added anomaly detection for data less than 2 weeks
 - Added autolinking urls

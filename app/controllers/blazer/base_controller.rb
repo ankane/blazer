@@ -1,7 +1,7 @@
 module Blazer
   class BaseController < ApplicationController
     # skip all filters
-    skip_filter *_process_action_callbacks.map(&:filter)
+    skip_action_callback *_process_action_callbacks.map(&:filter)
 
     protect_from_forgery with: :exception
 

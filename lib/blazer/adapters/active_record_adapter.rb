@@ -1,10 +1,10 @@
 module Blazer
   module Adapters
-    class ActiveRecordAdapter
-      attr_reader :data_source, :connection_model
+    class ActiveRecordAdapter < BaseAdapter
+      attr_reader :connection_model
 
       def initialize(data_source)
-        @data_source = data_source
+        super
 
         @connection_model =
           Class.new(Blazer::Connection) do

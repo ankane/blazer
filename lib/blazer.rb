@@ -6,6 +6,7 @@ require "blazer/version"
 require "blazer/data_source"
 require "blazer/result"
 require "blazer/run_statement"
+require "blazer/adapters/base_adapter"
 require "blazer/adapters/active_record_adapter"
 require "blazer/engine"
 

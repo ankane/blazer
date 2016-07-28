@@ -44,11 +44,6 @@ module Blazer
         result.rows.map(&:first)
       end
 
-      def schemas
-        default_schema = (postgresql? || redshift?) ? "public" : connection_model.connection_config[:database]
-        settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
-      end
-
       def reconnect
         connection_model.establish_connection(settings["url"])
       end
@@ -83,6 +78,11 @@ module Blazer
 
       def adapter_name
         connection_model.connection.adapter_name
+      end
+
+      def schemas
+        default_schema = (postgresql? || redshift?) ? "public" : connection_model.connection_config[:database]
+        settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
       end
 
       def set_timeout(timeout)

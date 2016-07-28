@@ -114,7 +114,7 @@ module Blazer
           end
           @result = result.first
         else
-          @result = @data_source.run_main_statement(@statement, options)
+          @result = RunStatement.new.perform(@data_source, @statement, options)
         end
 
         if @result

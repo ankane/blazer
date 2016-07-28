@@ -76,43 +76,6 @@ module Blazer
       @local_time_suffix ||= Array(settings["local_time_suffix"])
     end
 
-    def run_main_statement(statement, options = {})
-      query = options[:query]
-      Blazer.transform_statement.call(self, statement) if Blazer.transform_statement
-
-      # audit
-      if Blazer.audit
-        audit = Blazer::Audit.new(statement: statement)
-        audit.query = query
-        audit.data_source = id
-        audit.user = options[:user]
-        audit.save!
-      end
-
-      start_time = Time.now
-      result = run_statement(statement, options)
-      duration = Time.now - start_time
-
-      if Blazer.audit
-        audit.duration = duration if audit.respond_to?(:duration=)
-        audit.error = result.error if audit.respond_to?(:error=)
-        audit.timed_out = result.timed_out? if audit.respond_to?(:timed_out=)
-        audit.cached = result.cached? if audit.respond_to?(:cached=)
-        if !result.cached? && duration >= 10
-          audit.cost = cost(statement) if audit.respond_to?(:cost=)
-        end
-        audit.save! if audit.changed?
-      end
-
-      if query && !result.timed_out?
-        query.checks.each do |check|
-          check.update_state(result)
-        end
-      end
-
-      result
-    end
-
     def read_cache(cache_key)
       value = Blazer.cache.read(cache_key)
       if value

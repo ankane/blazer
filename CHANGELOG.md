@@ -1,3 +1,7 @@
+## 1.5.2 [unreleased]
+
+- Fixed deprecation warning in Rails 5
+
 ## 1.5.1
 
 - Added anomaly detection for data less than 2 weeks

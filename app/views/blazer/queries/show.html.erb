@@ -19,12 +19,12 @@
     <div class="row" style="padding-top: 13px;">
       <div class="col-sm-9">
         <%= render partial: "blazer/nav" %>
-        <h3 style="margin: 0; line-height: 34px; display: inline-block;">
+        <h3 style="margin: 0; line-height: 34px; display: inline;">
           <%= @query.name %>
         </h3>
       </div>
       <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default" %>
+        <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
         <%= link_to "Fork", new_query_path(variable_params.merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
 
         <% if !@error && @success %>
@@ -52,7 +52,7 @@
 <% end %>
 
 <% if @bind_vars.any? %>
-  <form id="bind" method="get" action="<%= url_for(params) %>" class="form-inline" style="margin-bottom: 10px;">
+  <form id="bind" method="get" action="<%= query_path(@query, variable_params) %>" class="form-inline" style="margin-bottom: 10px;">
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
       <% @bind_vars = @bind_vars - date_vars %>
@@ -149,7 +149,7 @@
   </form>
 <% end %>
 
-<pre><code><%= @statement %></code></pre>
+<pre style="max-height: 236px; overflow: hidden;" onclick="this.style.maxHeight = 'none';"><code><%= @statement %></code></pre>
 
 <% if @success %>
   <div id="results">
@@ -157,24 +157,32 @@
   </div>
 
   <script>
-    var request = $.ajax({
-      url: "<%= run_queries_path %>",
-      method: "POST",
-      data: <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>,
-      dataType: "html"
-    }).done(function(data) {
+    function showRun(data) {
       $("#results").html(data);
       $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-      var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
+    }
+
+    function showError(message) {
       $("#results").css("color", "red").html(message);
-    });
+    }
+
+    var data = <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>;
+
+    runQuery(data, showRun, showError);
+  </script>
+<% end %>
+
+<% if Blazer.data_sources[@query.data_source].adapter == "activerecord" %>
+  <script>
+    // do not highlight really long queries
+    // this can lead to performance issues
+    if ($("code").text().length < 10000) {
+      hljs.initHighlightingOnLoad();
+    }
   </script>
 <% end %>
 
 <script>
-  hljs.initHighlightingOnLoad();
-
   $(".form-inline input, .form-inline select").change( function () {
     submitIfCompleted($(this).closest("form"));
   });

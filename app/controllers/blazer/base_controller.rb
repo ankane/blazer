@@ -1,7 +1,15 @@
 module Blazer
   class BaseController < ApplicationController
     # skip all filters
-    skip_filter *_process_action_callbacks.map(&:filter)
+    filters = _process_action_callbacks.map(&:filter)
+    if Rails::VERSION::MAJOR >= 5
+      skip_before_action(*filters, raise: false)
+      skip_after_action(*filters, raise: false)
+      skip_around_action(*filters, raise: false)
+      before_action :verify_request_size
+    else
+      skip_action_callback *filters
+    end
 
     protect_from_forgery with: :exception
 
@@ -9,24 +17,31 @@ module Blazer
       http_basic_authenticate_with name: ENV["BLAZER_USERNAME"], password: ENV["BLAZER_PASSWORD"]
     end
 
-    layout "blazer/application"
+    if Blazer.before_action
+      before_action Blazer.before_action
+    end
 
-    before_action :ensure_database_url
+    layout "blazer/application"
 
     private
 
-    def ensure_database_url
-      render text: "BLAZER_DATABASE_URL required" if !ENV["BLAZER_DATABASE_URL"] && !Rails.env.development?
-    end
-
-    def process_vars(statement)
+    def process_vars(statement, data_source)
       (@bind_vars ||= []).concat(extract_vars(statement)).uniq!
+      @bind_vars.each do |var|
+        params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
+      end
       @success = @bind_vars.all? { |v| params[v] }
 
       if @success
         @bind_vars.each do |var|
           value = params[var].presence
-          value = value.to_i if value.to_i.to_s == value
+          if value
+            if value =~ /\A\d+\z/
+              value = value.to_i
+            elsif value =~ /\A\d+\.\d+\z/
+              value = value.to_f
+            end
+          end
           if var.end_with?("_at")
             value = Blazer.time_zone.parse(value) rescue nil
           end
@@ -37,12 +52,14 @@ module Blazer
     end
 
     def extract_vars(statement)
-      statement.scan(/\{.*?\}/).map { |v| v[1...-1] }.uniq
+      # strip commented out lines
+      # and regex {1} or {1,2}
+      statement.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{\w*?\}/i).map { |v| v[1...-1] }.reject { |v| /\A\d+(\,\d+)?\z/.match(v) || v.empty? }.uniq
     end
     helper_method :extract_vars
 
     def variable_params
-      params.except(:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id)
+      params.except(:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id, :blazer).permit!
     end
     helper_method :variable_params
 

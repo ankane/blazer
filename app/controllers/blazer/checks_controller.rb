@@ -3,16 +3,20 @@ module Blazer
     before_action :set_check, only: [:edit, :update, :destroy, :run]
 
     def index
-      @checks = Blazer::Check.joins(:query).includes(:query).order("state, blazer_queries.name, blazer_checks.id").to_a
+      state_order = [nil, "disabled", "error", "timed out", "failing", "passing"]
+      @checks = Blazer::Check.joins(:query).includes(:query).order("blazer_queries.name, blazer_checks.id").to_a.sort_by { |q| state_order.index(q.state) || 99 }
       @checks.select! { |c| "#{c.query.name} #{c.emails}".downcase.include?(params[:q]) } if params[:q]
     end
 
     def new
-      @check = Blazer::Check.new
+      @check = Blazer::Check.new(query_id: params[:query_id])
     end
 
     def create
       @check = Blazer::Check.new(check_params)
+      # use creator_id instead of creator
+      # since we setup association without checking if column exists
+      @check.creator = blazer_user if @check.respond_to?(:creator_id=) && blazer_user
 
       if @check.save
         redirect_to run_check_path(@check)
@@ -36,12 +40,13 @@ module Blazer
 
     def run
       @query = @check.query
+      redirect_to query_path(@query)
     end
 
     private
 
     def check_params
-      params.require(:check).permit(:query_id, :emails, :invert)
+      params.require(:check).permit(:query_id, :emails, :invert, :check_type, :schedule)
     end
 
     def set_check

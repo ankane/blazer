@@ -5,14 +5,16 @@ data_sources:
     url: <%%= ENV["BLAZER_DATABASE_URL"] %>
 
     # statement timeout, in seconds
-    # applies to PostgreSQL only
     # none by default
     # timeout: 15
 
-    # time to cache results, in minutes
+    # caching settings
     # can greatly improve speed
-    # none by default
-    # cache: 60
+    # off by default
+    # cache:
+    #   mode: slow # or all
+    #   expires_in: 60 # min
+    #   slow_threshold: 15 # sec, only used in slow mode
 
     # wrap queries in a transaction for safety
     # not necessary if you use a read-only user
@@ -40,5 +42,13 @@ audit: true
 # method name for the user model
 # user_name: name
 
+# optional auth method to use as a before_action (default: nil)
+# before_action: :authenticate!
+
 # email to send checks from
 # from_email: blazer@example.org
+
+check_schedules:
+  - "1 day"
+  - "1 hour"
+  - "5 minutes"

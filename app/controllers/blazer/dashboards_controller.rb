@@ -12,6 +12,9 @@ module Blazer
 
     def create
       @dashboard = Blazer::Dashboard.new
+      # use creator_id instead of creator
+      # since we setup association without checking if column exists
+      @dashboard.creator = blazer_user if @dashboard.respond_to?(:creator_id=) && blazer_user
 
       if update_dashboard(@dashboard)
         redirect_to dashboard_path(@dashboard)
@@ -23,7 +26,7 @@ module Blazer
     def show
       @queries = @dashboard.dashboard_queries.order(:position).preload(:query).map(&:query)
       @queries.each do |query|
-        process_vars(query.statement)
+        process_vars(query.statement, query.data_source)
       end
       @bind_vars ||= []
 
@@ -34,9 +37,9 @@ module Blazer
         @data_sources.each do |data_source|
           query = data_source.smart_variables[var]
           if query
-            rows, error, cached_at = data_source.run_statement(query)
-            ((@smart_vars[var] ||= []).concat(rows.map { |v| v.values.reverse })).uniq!
-            @sql_errors << error if error
+            result = data_source.run_statement(query)
+            ((@smart_vars[var] ||= []).concat(result.rows.map { |v| v.reverse })).uniq!
+            @sql_errors << result.error if result.error
           end
         end
       end
@@ -62,7 +65,7 @@ module Blazer
       @dashboard.queries.each do |query|
         data_source = Blazer.data_sources[query.data_source]
         statement = query.statement.dup
-        process_vars(statement)
+        process_vars(statement, query.data_source)
         Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
         data_source.clear_cache(statement)
       end

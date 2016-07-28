@@ -8,28 +8,23 @@ module Blazer
       end
     end
 
+    BLAZER_URL_REGEX = /\Ahttps?:\/\/[\S]+\z/
+    BLAZER_IMAGE_EXT = %w[png jpg jpeg gif]
+
     def blazer_format_value(key, value)
       if value.is_a?(Integer) && key.to_s != "id" && !key.to_s.end_with?("id") && !key.to_s.start_with?("id")
         number_with_delimiter(value)
+      elsif value =~ BLAZER_URL_REGEX
+        # see if image or link
+        if Blazer.images && (key.include?("image") || BLAZER_IMAGE_EXT.include?(value.split(".").last.split("?").first.try(:downcase)))
+          link_to value, target: "_blank" do
+            image_tag value, referrerpolicy: "no-referrer"
+          end
+        else
+          link_to value, value, target: "_blank"
+        end
       else
         value
-      end
-    end
-
-    def blazer_column_types(columns, rows, boom)
-      columns.map do |k, _|
-        v = (rows.find { |r| r[k] } || {})[k]
-        if boom[k]
-          "string"
-        elsif v.is_a?(Numeric)
-          "numeric"
-        elsif v.is_a?(Time) || v.is_a?(Date)
-          "time"
-        elsif v.nil?
-          nil
-        else
-          "string"
-        end
       end
     end
 

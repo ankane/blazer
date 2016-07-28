@@ -5,6 +5,7 @@ require "safely/core"
 require "blazer/version"
 require "blazer/data_source"
 require "blazer/result"
+require "blazer/adapters/active_record_adapter"
 require "blazer/engine"
 
 module Blazer

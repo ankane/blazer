@@ -8,8 +8,9 @@ module Blazer
 
         begin
           response = client.search(body: JSON.parse(statement))
-          columns = ["response"]
-          rows = [[response]]
+          hits = response["hits"]["hits"]
+          columns = hits.first.try(:keys) || []
+          rows = hits.map { |r| r.values }
         rescue => e
           error = e.message
         end
@@ -18,7 +19,7 @@ module Blazer
       end
 
       def tables
-        client.indices.get_aliases.map { |k, v| [k, v["aliases"].keys] }.flatten.uniq
+        client.indices.get_aliases.map { |k, v| [k, v["aliases"].keys] }.flatten.uniq.sort
       end
 
       protected

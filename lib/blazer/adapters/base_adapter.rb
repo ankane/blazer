@@ -8,18 +8,23 @@ module Blazer
       end
 
       def run_statement(statement, comment)
+        # the one required method
       end
 
       def tables
+        [] # optional, but nice to have
       end
 
       def reconnect
+        # optional
       end
 
       def cost(statement)
+        # optional
       end
 
       def explain(statement)
+        # optional
       end
     end
   end

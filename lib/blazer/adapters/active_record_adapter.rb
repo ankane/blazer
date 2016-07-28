@@ -15,16 +15,6 @@ module Blazer
           end
       end
 
-      def schemas
-        default_schema = (postgresql? || redshift?) ? "public" : connection_model.connection_config[:database]
-        settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
-      end
-
-      def tables
-        result = data_source.run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name FROM information_schema.tables WHERE table_schema IN (?) ORDER BY table_name", schemas]))
-        result.rows.map(&:first)
-      end
-
       def run_statement(statement, comment)
         columns = []
         rows = []
@@ -48,6 +38,16 @@ module Blazer
         end
 
         [columns, rows, error]
+      end
+
+      def tables
+        result = data_source.run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name FROM information_schema.tables WHERE table_schema IN (?) ORDER BY table_name", schemas]))
+        result.rows.map(&:first)
+      end
+
+      def schemas
+        default_schema = (postgresql? || redshift?) ? "public" : connection_model.connection_config[:database]
+        settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
       end
 
       def reconnect

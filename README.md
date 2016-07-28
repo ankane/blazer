@@ -12,7 +12,7 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 ## Features
 
-- **Multiple data sources** - works with PostgreSQL, MySQL, and Redshift
+- **Multiple data sources** - PostgreSQL, MySQL, Redshift, and [many more](#full-list)
 - **Variables** - run the same queries with different values
 - **Checks & alerts** - get emailed when bad data appears
 - **Audits** - all queries are tracked
@@ -345,6 +345,16 @@ data_sources:
     url: <%= ENV["REDSHIFT_DATABASE_URL"] %>
     # ...
 ```
+
+### Full List
+
+- PostgreSQL
+- MySQL
+- Redshift
+- SQL Server
+- Oracle
+- IBM DB2 and Informix
+- SQLite
 
 ### Redshift
 

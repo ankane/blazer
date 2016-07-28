@@ -1,7 +1,15 @@
 module Blazer
   class BaseController < ApplicationController
     # skip all filters
-    skip_action_callback *_process_action_callbacks.map(&:filter)
+    filters = _process_action_callbacks.map(&:filter)
+    if Rails::VERSION::MAJOR >= 5
+      skip_before_action(*filters, raise: false)
+      skip_after_action(*filters, raise: false)
+      skip_around_action(*filters, raise: false)
+      before_action :verify_request_size
+    else
+      skip_action_callback *filters
+    end
 
     protect_from_forgery with: :exception
 

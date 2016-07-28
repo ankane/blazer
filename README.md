@@ -356,6 +356,8 @@ data_sources:
 - IBM DB2 and Informix
 - SQLite
 
+You can also create an adapter for any other data store.
+
 ### Redshift
 
 Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set:

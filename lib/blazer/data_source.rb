@@ -22,6 +22,8 @@ module Blazer
           Blazer::Adapters::ActiveRecordAdapter.new(self)
         when "elasticsearch"
           Blazer::Adapters::ElasticsearchAdapter.new(self)
+        when "mongodb"
+          Blazer::Adapters::MongodbAdapter.new(self)
         else
           raise Blazer::Error, "Unknown adapter"
         end

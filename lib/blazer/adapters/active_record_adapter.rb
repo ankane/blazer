@@ -19,7 +19,6 @@ module Blazer
         columns = []
         rows = []
         error = nil
-        start_time = Time.now
 
         begin
           in_transaction do

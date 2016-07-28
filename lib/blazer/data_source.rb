@@ -4,9 +4,9 @@ module Blazer
   class DataSource
     extend Forwardable
 
-    attr_reader :id, :settings, :adapter
+    attr_reader :id, :settings, :adapter, :adapter_instance
 
-    def_delegators :adapter, :schema, :tables, :reconnect, :cost, :explain
+    def_delegators :adapter_instance, :schema, :tables, :reconnect, :cost, :explain
 
     def initialize(id, settings)
       @id = id
@@ -16,7 +16,19 @@ module Blazer
         raise Blazer::Error, "Empty url"
       end
 
-      @adapter = Blazer::Adapters::ActiveRecordAdapter.new(self)
+      @adapter_instance =
+        case adapter
+        when "activerecord"
+          Blazer::Adapters::ActiveRecordAdapter.new(self)
+        when "elasticsearch"
+          Blazer::Adapters::ElasticsearchAdapter.new(self)
+        else
+          raise Blazer::Error, "Unknown adapter"
+        end
+    end
+
+    def adapter
+      settings["adapter"] || "activerecord"
     end
 
     def name
@@ -139,7 +151,7 @@ module Blazer
 
     def run_statement_helper(statement, comment, run_id)
       start_time = Time.now
-      columns, rows, error = @adapter.run_statement(statement, comment)
+      columns, rows, error = @adapter_instance.run_statement(statement, comment)
       duration = Time.now - start_time
 
       cache_data = nil

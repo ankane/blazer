@@ -62,7 +62,7 @@ module Blazer
         nil
       end
 
-      private
+      protected
 
       def postgresql?
         ["PostgreSQL", "PostGIS"].include?(adapter_name)
@@ -100,18 +100,16 @@ module Blazer
       end
 
       def in_transaction
-        if use_transaction?
-          connection_model.transaction do
+        connection_model.connection_pool.with_connection do
+          if use_transaction?
+            connection_model.transaction do
+              yield
+              raise ActiveRecord::Rollback
+            end
+          else
             yield
-            raise ActiveRecord::Rollback
           end
-        else
-          yield
         end
-      end
-
-      def settings
-        @data_source.settings
       end
     end
   end

@@ -26,6 +26,12 @@ module Blazer
       def explain(statement)
         # optional
       end
+
+      protected
+
+      def settings
+        @data_source.settings
+      end
     end
   end
 end

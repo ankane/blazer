@@ -172,13 +172,17 @@
   </script>
 <% end %>
 
-<script>
-  // do not highlight really long queries
-  // this can lead to performance issues
-  if ($("code").text().length < 10000) {
-    hljs.initHighlightingOnLoad();
-  }
+<% if Blazer.data_sources[@query.data_source].adapter == "activerecord" %>
+  <script>
+    // do not highlight really long queries
+    // this can lead to performance issues
+    if ($("code").text().length < 10000) {
+      hljs.initHighlightingOnLoad();
+    }
+  </script>
+<% end %>
 
+<script>
   $(".form-inline input, .form-inline select").change( function () {
     submitIfCompleted($(this).closest("form"));
   });

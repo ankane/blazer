@@ -9,8 +9,14 @@ module Blazer
         begin
           response = client.search(body: JSON.parse(statement))
           hits = response["hits"]["hits"]
-          columns = hits.first.try(:keys) || []
-          rows = hits.map { |r| r.values }
+          source_keys = hits.flat_map { |r| r["_source"].keys }.uniq
+          hit_keys = ["_score", "_id", "_index", "_type"]
+          columns = source_keys + hit_keys
+          rows =
+            hits.map do |r|
+              source = r["_source"]
+              source_keys.map { |k| source[k] } + hit_keys.map { |k| r[k] }
+            end
         rescue => e
           error = e.message
         end

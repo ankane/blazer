@@ -350,13 +350,13 @@ data_sources:
 
 - PostgreSQL
 - MySQL
-- Redshift
 - SQL Server
 - Oracle
 - IBM DB2 and Informix
 - SQLite
-- MongoDB [beta]
-- Elasticsearch [beta]
+- [Redshift](#redshift)
+- [MongoDB](#mongodb) [beta]
+- [Elasticsearch](#elasticsearch) [beta]
 
 You can also create an adapter for any other data store.
 

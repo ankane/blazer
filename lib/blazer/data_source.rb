@@ -30,7 +30,7 @@ module Blazer
     end
 
     def adapter
-      settings["adapter"] || "sql"
+      settings["adapter"] || detect_adapter
     end
 
     def name
@@ -175,6 +175,14 @@ module Blazer
       end
 
       Blazer::Result.new(self, columns, rows, error, nil, cache && !cache_data.nil?)
+    end
+
+    def detect_adapter
+      if settings["url"].to_s.start_with?("mongodb://")
+        "mongodb"
+      else
+        "sql"
+      end
     end
   end
 end

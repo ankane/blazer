@@ -355,15 +355,48 @@ data_sources:
 - Oracle
 - IBM DB2 and Informix
 - SQLite
+- MongoDB [beta]
+- Elasticsearch [beta]
 
 You can also create an adapter for any other data store.
+
+**Note:** In the examples below, we recommend using environment variables for urls.
+
+```yml
+data_sources:
+  my_source:
+    url: <%= ENV["BLAZER_MY_SOURCE_URL"] %>
+```
 
 ### Redshift
 
 Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set:
 
-```ruby
-ENV["BLAZER_DATABASE_URL"] = "redshift://user:password@hostname:5439/database"
+```yml
+data_sources:
+  my_source:
+    url: redshift://user:password@hostname:5439/database
+```
+
+### MongoDB
+
+Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: mongodb://user:password@hostname:27017/database
+```
+
+### Elasticsearch
+
+Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: elasticsearch
+    url: http://user:password@hostname:9200/
 ```
 
 ## Learn SQL

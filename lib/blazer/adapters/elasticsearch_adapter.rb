@@ -7,10 +7,11 @@ module Blazer
         error = nil
 
         begin
-          response = client.search(body: JSON.parse(statement))
+          header, body = statement.gsub(/\/\/.+/, "").strip.split("\n", 2)
+          response = client.msearch(body: [JSON.parse(header), JSON.parse(body)])["responses"].first
           hits = response["hits"]["hits"]
           source_keys = hits.flat_map { |r| r["_source"].keys }.uniq
-          hit_keys = ["_score", "_id", "_index", "_type"]
+          hit_keys = (hits.first.try(:keys) || []) - ["_source"]
           columns = source_keys + hit_keys
           rows =
             hits.map do |r|
@@ -29,7 +30,7 @@ module Blazer
       end
 
       def preview_statement
-        '{"query": {"match_all": {}}, "size": 10}'
+        %!// header\n{"index": "{table}"}\n\n// body\n{"query": {"match_all": {}}, "size": 10}!
       end
 
       protected

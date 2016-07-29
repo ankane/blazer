@@ -9,7 +9,7 @@ module Blazer
     end
 
     def blazer_format_value(key, value)
-      if value.is_a?(Integer) && key.to_s != "id" && !key.to_s.end_with?("id") && !key.to_s.start_with?("id")
+      if value.is_a?(Integer) && !key.to_s.end_with?("id") && !key.to_s.start_with?("id")
         number_with_delimiter(value)
       else
         value

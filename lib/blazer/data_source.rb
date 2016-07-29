@@ -18,8 +18,8 @@ module Blazer
 
       @adapter_instance =
         case adapter
-        when "activerecord"
-          Blazer::Adapters::ActiveRecordAdapter.new(self)
+        when "sql"
+          Blazer::Adapters::SqlAdapter.new(self)
         when "elasticsearch"
           Blazer::Adapters::ElasticsearchAdapter.new(self)
         when "mongodb"
@@ -30,7 +30,7 @@ module Blazer
     end
 
     def adapter
-      settings["adapter"] || "activerecord"
+      settings["adapter"] || "sql"
     end
 
     def name

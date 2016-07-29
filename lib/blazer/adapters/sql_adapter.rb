@@ -1,6 +1,6 @@
 module Blazer
   module Adapters
-    class ActiveRecordAdapter < BaseAdapter
+    class SqlAdapter < BaseAdapter
       attr_reader :connection_model
 
       def initialize(data_source)

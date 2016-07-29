@@ -32,7 +32,7 @@ module Blazer
       end
 
       def tables
-        client.indices.get_aliases(index: "*").map { |k, v| [k, v["aliases"].keys] }.flatten.uniq.sort
+        client.indices.get_aliases(name: "*").map { |k, v| [k, v["aliases"].keys] }.flatten.uniq.sort
       end
 
       def preview_statement

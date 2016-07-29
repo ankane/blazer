@@ -126,6 +126,7 @@
   var error_line = null;
   var xhr;
   var params = <%= raw blazer_json_escape(variable_params.to_json) %>;
+  var previewStatement = <%= raw blazer_json_escape(Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }].to_json) %>;
 
   $("#run").click(function (e) {
     e.preventDefault();
@@ -162,7 +163,8 @@
   $(document).on("change", "#table_names", function () {
     var val = $(this).val();
     if (val.length > 0) {
-      editor.setValue("SELECT * FROM " + val + " LIMIT 10");
+      var dataSource = $("#query_data_source").val();
+      editor.setValue(previewStatement[dataSource].replace("{table}", val));
       $("#run").click();
     }
   });

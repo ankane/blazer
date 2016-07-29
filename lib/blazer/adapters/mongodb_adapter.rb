@@ -21,6 +21,10 @@ module Blazer
         db.collection_names
       end
 
+      def preview_statement
+        "db.{table}.find().limit(10)"
+      end
+
       protected
 
       def client

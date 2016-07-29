@@ -28,6 +28,10 @@ module Blazer
         client.indices.get_aliases.map { |k, v| [k, v["aliases"].keys] }.flatten.uniq.sort
       end
 
+      def preview_statement
+        '{"query": {"match_all": {}}, "size": 10}'
+      end
+
       protected
 
       def client

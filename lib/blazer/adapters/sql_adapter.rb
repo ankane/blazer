@@ -44,6 +44,10 @@ module Blazer
         result.rows.map(&:first)
       end
 
+      def preview_statement
+        "SELECT * FROM {table} LIMIT 10"
+      end
+
       def reconnect
         connection_model.establish_connection(settings["url"])
       end

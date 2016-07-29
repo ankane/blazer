@@ -6,7 +6,7 @@ module Blazer
 
     attr_reader :id, :settings, :adapter, :adapter_instance
 
-    def_delegators :adapter_instance, :schema, :tables, :reconnect, :cost, :explain
+    def_delegators :adapter_instance, :schema, :tables, :preview_statement, :reconnect, :cost, :explain
 
     def initialize(id, settings)
       @id = id

@@ -2,18 +2,35 @@ require "digest/md5"
 
 module Blazer
   class DataSource
-    attr_reader :id, :settings, :connection_model
+    extend Forwardable
+
+    attr_reader :id, :settings, :adapter, :adapter_instance
+
+    def_delegators :adapter_instance, :schema, :tables, :reconnect, :cost, :explain
 
     def initialize(id, settings)
       @id = id
       @settings = settings
-      @connection_model =
-        Class.new(Blazer::Connection) do
-          def self.name
-            "Blazer::Connection::#{object_id}"
-          end
-          establish_connection(settings["url"]) if settings["url"]
+
+      unless settings["url"] || Rails.env.development?
+        raise Blazer::Error, "Empty url"
+      end
+
+      @adapter_instance =
+        case adapter
+        when "activerecord"
+          Blazer::Adapters::ActiveRecordAdapter.new(self)
+        when "elasticsearch"
+          Blazer::Adapters::ElasticsearchAdapter.new(self)
+        when "mongodb"
+          Blazer::Adapters::MongodbAdapter.new(self)
+        else
+          raise Blazer::Error, "Unknown adapter"
         end
+    end
+
+    def adapter
+      settings["adapter"] || "activerecord"
     end
 
     def name
@@ -32,31 +49,70 @@ module Blazer
       settings["smart_variables"] || {}
     end
 
+    def variable_defaults
+      settings["variable_defaults"] || {}
+    end
+
     def timeout
       settings["timeout"]
     end
 
     def cache
-      settings["cache"]
+      @cache ||= begin
+        if settings["cache"].is_a?(Hash)
+          settings["cache"]
+        elsif settings["cache"]
+          {
+            "mode" => "all",
+            "expires_in" => settings["cache"]
+          }
+        else
+          {
+            "mode" => "off"
+          }
+        end
+      end
     end
 
-    def use_transaction?
-      settings.key?("use_transaction") ? settings["use_transaction"] : true
+    def cache_mode
+      cache["mode"]
+    end
+
+    def cache_expires_in
+      (cache["expires_in"] || 60).to_f
+    end
+
+    def cache_slow_threshold
+      (cache["slow_threshold"] || 15).to_f
+    end
+
+    def local_time_suffix
+      @local_time_suffix ||= Array(settings["local_time_suffix"])
+    end
+
+    def read_cache(cache_key)
+      value = Blazer.cache.read(cache_key)
+      if value
+        Blazer::Result.new(self, *Marshal.load(value), nil)
+      end
+    end
+
+    def run_results(run_id)
+      read_cache(run_cache_key(run_id))
+    end
+
+    def delete_results(run_id)
+      Blazer.cache.delete(run_cache_key(run_id))
     end
 
     def run_statement(statement, options = {})
-      rows = nil
-      error = nil
-      cached_at = nil
-      cache_key = self.cache_key(statement) if cache
-      if cache && !options[:refresh_cache]
-        value = Blazer.cache.read(cache_key)
-        rows, cached_at = Marshal.load(value) if value
+      run_id = options[:run_id]
+      result = nil
+      if cache_mode != "off" && !options[:refresh_cache]
+        result = read_cache(statement_cache_key(statement))
       end
 
-      unless rows
-        rows = []
-
+      unless result
         comment = "blazer"
         if options[:user].respond_to?(:id)
           comment << ",user_id:#{options[:user].id}"
@@ -68,69 +124,57 @@ module Blazer
         if options[:query].respond_to?(:id)
           comment << ",query_id:#{options[:query].id}"
         end
-
-        in_transaction do
-          begin
-            connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}") if timeout && (postgresql? || redshift?)
-            result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
-            result.each do |untyped_row|
-              row = {}
-              untyped_row.each do |k, v|
-                row[k] = result.column_types.empty? ? v : result.column_types[k].send(:type_cast, v)
-              end
-              rows << row
-            end
-          rescue ActiveRecord::StatementInvalid => e
-            error = e.message.sub(/.+ERROR: /, "")
-          end
+        if options[:check]
+          comment << ",check_id:#{options[:check].id},check_emails:#{options[:check].emails}"
         end
-
-        Blazer.cache.write(cache_key, Marshal.dump([rows, Time.now]), expires_in: cache.to_f * 60) if !error && cache
+        result = run_statement_helper(statement, comment, options[:run_id])
       end
 
-      [rows, error, cached_at]
+      result
     end
 
     def clear_cache(statement)
-      Blazer.cache.delete(cache_key(statement))
+      Blazer.cache.delete(statement_cache_key(statement))
     end
 
-    def cache_key(statement)
-      ["blazer", "v2", id, Digest::MD5.hexdigest(statement)].join("/")
+    def cache_key(key)
+      (["blazer", "v4"] + key).join("/")
     end
 
-    def schemas
-      default_schema = (postgresql? || redshift?) ? "public" : connection_model.connection_config[:database]
-      settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
+    def statement_cache_key(statement)
+      cache_key(["statement", id, Digest::MD5.hexdigest(statement)])
     end
 
-    def tables
-      rows, error, cached_at = run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name, column_name, ordinal_position, data_type FROM information_schema.columns WHERE table_schema IN (?)", schemas]))
-      Hash[rows.group_by { |r| r["table_name"] }.map { |t, f| [t, f.sort_by { |f| f["ordinal_position"] }.map { |f| f.slice("column_name", "data_type") }] }.sort_by { |t, _f| t }]
-    end
-
-    def postgresql?
-      connection_model.connection.adapter_name == "PostgreSQL"
-    end
-
-    def redshift?
-      connection_model.connection.adapter_name == "Redshift"
+    def run_cache_key(run_id)
+      cache_key(["run", run_id])
     end
 
     protected
 
-    def in_transaction
-      if use_transaction?
-        connection_model.transaction do
-          begin
-            yield
-          ensure
-            raise ActiveRecord::Rollback
-          end
-        end
-      else
-        yield
+    def run_statement_helper(statement, comment, run_id)
+      start_time = Time.now
+      columns, rows, error = @adapter_instance.run_statement(statement, comment)
+      duration = Time.now - start_time
+
+      cache_data = nil
+      cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
+      if cache || run_id
+        cache_data = Marshal.dump([columns, rows, error, cache ? Time.now : nil]) rescue nil
       end
+
+      if cache && cache_data
+        Blazer.cache.write(statement_cache_key(statement), cache_data, expires_in: cache_expires_in.to_f * 60)
+      end
+
+      if run_id
+        unless cache_data
+          error = "Error storing the results of this query :("
+          cache_data = Marshal.dump([[], [], error, nil])
+        end
+        Blazer.cache.write(run_cache_key(run_id), cache_data, expires_in: 30.seconds)
+      end
+
+      Blazer::Result.new(self, columns, rows, error, nil, cache && !cache_data.nil?)
     end
   end
 end

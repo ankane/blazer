@@ -14,9 +14,6 @@
       <div class="form-group text-right">
         <div class="pull-left" style="margin-top: 6px;">
           <%= link_to "Back", :back %>
-          <% if Blazer.data_sources.size == 1 %>
-            <span class="text-muted" style="margin-left: 20px;"> Use {start_time} and {end_time} for time ranges</span>
-          <% end %>
         </div>
         <%= f.select :data_source, Blazer.data_sources.values.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 140px;" %>
         <div id="tables" style="display: inline-block; width: 260px; margin-right: 10px;" class="hide">
@@ -48,8 +45,17 @@
         <% end %>
         <%= f.submit @query.persisted? ? "Update" : "Create", class: "btn btn-success" %>
       </div>
-      <% if @query.persisted? && (dashboards_count = @query.dashboards.count) > 0 %>
-        <div class="alert alert-info" style="margin-top: 10px; padding: 8px 12px;">Part of <%= pluralize(dashboards_count, "dashboard") %>. Be careful when editing.</div>
+      <% if @query.persisted? %>
+        <% dashboards_count = @query.dashboards.count %>
+        <% checks_count = @query.checks.count %>
+        <% words = [] %>
+        <% words << pluralize(dashboards_count, "dashboard") if dashboards_count > 0 %>
+        <% words << pluralize(checks_count, "check") if checks_count > 0 %>
+        <% if words.any? %>
+          <div class="alert alert-info" style="margin-top: 10px; padding: 8px 12px;">
+            Part of <%= words.to_sentence %>. Be careful when editing.
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>
@@ -94,6 +100,24 @@
     editor.resize();
   };
 
+  function getSQL() {
+    var selectedText = editor.getSelectedText();
+    var text = selectedText.length < 10 ? editor.getValue() : selectedText;
+    return text.replace(/\n/g, "\r\n");
+  }
+
+  function getErrorLine() {
+    var error_line = /LINE (\d+)/g.exec($("#results").find('.alert-danger').text());
+
+    if (error_line) {
+      error_line = parseInt(error_line[1], 10);
+      if (editor.getSelectedText().length >= 10) {
+        error_line += editor.getSelectionRange().start.row;
+      }
+      return error_line;
+    }
+  }
+
   editor.getSession().on("change", adjustHeight);
   adjustHeight();
   $("#editor").show();
@@ -115,13 +139,14 @@
     if (xhr) {
       xhr.abort();
     }
-    xhr = $.post("<%= run_queries_path %>", $.extend({}, params, {statement: editor.getValue().replace(/\n/g, "\r\n"), data_source: $("#query_data_source").val()}), function (data) {
+
+    var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()});
+
+    xhr = runQuery(data, function (data) {
       $("#results").html(data);
 
-      error_line = /LINE (\d+)/g.exec($("#results").find('.alert-danger').text());
-
+      error_line = getErrorLine();
       if (error_line) {
-        error_line = parseInt(error_line[1], 10);
         editor.getSession().addGutterDecoration(error_line - 1, "error");
         editor.scrollToLine(error_line, true, true, function () {});
         editor.gotoLine(error_line, 0, true);

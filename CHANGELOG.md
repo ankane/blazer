@@ -1,7 +1,76 @@
-## 1.1.1 [unreleased]
+## 1.5.2 [unreleased]
 
+- Fixed deprecation warning in Rails 5
+
+## 1.5.1
+
+- Added anomaly detection for data less than 2 weeks
+- Added autolinking urls
+- Added support for images
+
+## 1.5.0
+
+- Added new bar chart format
+- Added anomaly detection checks
+- Added `async` option for polling
+
+## 1.4.0
+
+- Added `slow` cache mode
+- Fixed `BLAZER_DATABASE_URL required` error
+- Fixed issue with duplicate column names
+
+## 1.3.5
+
+- Fixed error with checks
+
+## 1.3.4
+
+- Fixed issue with missing queries
+
+## 1.3.3
+
+- Fixed error with Rails 4.1 and below
+
+## 1.3.2
+
+- Added support for Rails 5
+- Attempt to reconnect for checks
+
+## 1.3.1
+
+- Fixed migration error
+
+## 1.3.0
+
+- Added schedule for checks
+- Switched to Chart.js for charts
+- Better output for explain
+- Support for MySQL timeouts
+- Raise error when timeout not supported
+- Added creator to dashboards and checks
+
+## 1.2.1
+
+- Fixed checks
+
+## 1.2.0
+
+- Added non-editable queries
+- Added variable defaults
+- Added `local_time_suffix` setting
+- Better timeout message
+- Hide variables from commented out lines
+- Fixed regex as variable names
+
+## 1.1.1
+
+- Added `before_action` option
 - Added invert option for checks
 - Added targets
+- Friendlier error message for timeouts
+- Fixed request URI too large
+- Prevent accidental backspace nav on query page
 
 ## 1.1.0
 

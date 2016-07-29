@@ -19,7 +19,7 @@
     <div class="row" style="padding-top: 13px;">
       <div class="col-sm-9">
         <%= render partial: "blazer/nav" %>
-        <h3 style="margin: 0; line-height: 34px; display: inline-block;">
+        <h3 style="margin: 0; line-height: 34px; display: inline;">
           <%= @dashboard.name %>
         </h3>
       </div>
@@ -32,15 +32,15 @@
 
 <div style="margin-bottom: 60px;"></div>
 
-<% if @data_sources.any? { |ds| ds.cache } %>
+<% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
   <p class="text-muted" style="float: right;">
-    Some queries are cached
+    Some queries may be cached
     <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post %>
   </p>
 <% end %>
 
 <% if @bind_vars.any? %>
-  <form id="bind" method="get" action="<%= url_for(params) %>" class="form-inline" style="margin-bottom: 10px;">
+  <form id="bind" method="get" action="<%= dashboard_path(@dashboard, variable_params) %>" class="form-inline" style="margin-bottom: 10px;">
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
       <% @bind_vars = @bind_vars - date_vars %>
@@ -143,16 +143,12 @@
     </div>
   </div>
   <script>
-    var request = $.ajax({
-      url: "<%= run_queries_path %>",
-      method: "POST",
-      data: <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>,
-      dataType: "html"
-    }).done(function(data) {
+    var data = <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>;
+
+    runQuery(data, function (data) {
       $("#chart-<%= i %>").html(data);
       $("#chart-<%= i %> table").stupidtable();
-    }).fail(function(jqXHR, textStatus, errorThrown) {
-      var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
+    }, function (message) {
       $("#chart-<%= i %>").css("color", "red").html(message);
     });
   </script>

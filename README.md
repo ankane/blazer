@@ -8,13 +8,11 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
-**Blazer 1.0 was recently released!** See the [instructions for upgrading](#10).
-
 :envelope: [Subscribe to releases](https://libraries.io/rubygems/blazer)
 
 ## Features
 
-- **Multiple data sources** - works with PostgreSQL, MySQL, and Redshift
+- **Multiple data sources** - PostgreSQL, MySQL, Redshift, and [many more](#full-list)
 - **Variables** - run the same queries with different values
 - **Checks & alerts** - get emailed when bad data appears
 - **Audits** - all queries are tracked
@@ -65,16 +63,27 @@ Be sure to set a host in `config/environments/production.rb` for emails to work.
 config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
 ```
 
-Schedule checks to run every hour (with cron, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc).
+Schedule checks to run (with cron, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc). The default options are every 5 minutes, 1 hour, or 1 day, which you can customize. For each of these options, set up a task to run.
 
 ```sh
-rake blazer:run_checks
+rake blazer:run_checks SCHEDULE="5 minutes"
+rake blazer:run_checks SCHEDULE="1 hour"
+rake blazer:run_checks SCHEDULE="1 day"
 ```
 
 You can also set up failing checks to be sent once a day (or whatever you prefer).
 
 ```sh
 rake blazer:send_failing_checks
+```
+
+Here’s what it looks like with cron.
+
+```
+*/5 * * * * rake blazer:run_checks SCHEDULE="5 minutes"
+0   * * * * rake blazer:run_checks SCHEDULE="1 hour"
+30  7 * * * rake blazer:run_checks SCHEDULE="1 day"
+0   8 * * * rake blazer:send_failing_checks
 ```
 
 ## Permissions
@@ -127,6 +136,14 @@ authenticate :user, lambda { |user| user.admin? } do
 end
 ```
 
+### Other
+
+Specify a `before_action` method to run in `blazer.yml`.
+
+```yml
+before_action: require_admin
+```
+
 ## Queries
 
 ### Variables
@@ -137,7 +154,7 @@ Create queries with variables.
 SELECT * FROM users WHERE gender = {gender}
 ```
 
-Use `{start_time}` and `{end_time}` for time ranges. [Example](https://blazerme.herokuapp.com/queries/8-ratings-by-time-range?start_time=1997-10-03T05%3A00%3A00%2B00%3A00&end_time=1997-10-04T04%3A59%3A59%2B00%3A00)
+Use `{start_time}` and `{end_time}` for time ranges. [Example](https://blazerme.herokuapp.com/queries/9-time-range-selector?start_time=1997-10-03T05%3A00%3A00%2B00%3A00&end_time=1997-10-04T04%3A59%3A59%2B00%3A00)
 
 ```sql
 SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
@@ -145,7 +162,7 @@ SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
 
 ### Smart Variables
 
-[Example](https://blazerme.herokuapp.com/queries/3-users-by-occupation)
+[Example](https://blazerme.herokuapp.com/queries/1-smart-variable)
 
 Suppose you have the query:
 
@@ -166,7 +183,7 @@ The first column is the value of the variable, and the second column is the labe
 
 ### Linked Columns
 
-[Example](https://blazerme.herokuapp.com/queries/4-highest-rated-movies) - title column
+[Example](https://blazerme.herokuapp.com/queries/3-linked-column) - title column
 
 Link results to other pages in your apps or around the web. Specify a column name and where it should link to. You can use the value of the result with `{value}`.
 
@@ -178,7 +195,7 @@ linked_columns:
 
 ### Smart Columns
 
-[Example](https://blazerme.herokuapp.com/queries/10-users) - occupation_id column
+[Example](https://blazerme.herokuapp.com/queries/2-smart-column) - occupation_id column
 
 Suppose you have the query:
 
@@ -195,10 +212,21 @@ smart_columns:
 
 ### Caching
 
-Blazer can automatically cache results to improve speed.
+Blazer can automatically cache results to improve speed. It can cache slow queries:
 
 ```yml
-cache: 60 # minutes
+cache:
+  mode: slow
+  expires_in: 60 # min
+  slow_threshold: 15 # sec
+```
+
+Or it can cache all queries:
+
+```yml
+cache:
+  mode: all
+  expires_in: 60 # min
 ```
 
 Of course, you can force a refresh at any time.
@@ -211,13 +239,13 @@ Blazer will automatically generate charts based on the types of the columns retu
 
 There are two ways to generate line charts.
 
-2+ columns - timestamp, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/1-new-ratings-per-week)
+2+ columns - timestamp, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/4-line-chart-format-1)
 
 ```sql
 SELECT date_trunc('week', created_at), COUNT(*) FROM users GROUP BY 1
 ```
 
-3 columns - timestamp, string, numeric - [Example](https://blazerme.herokuapp.com/queries/7-new-ratings-by-gender-per-month)
+3 columns - timestamp, string, numeric - [Example](https://blazerme.herokuapp.com/queries/5-line-chart-format-2)
 
 
 ```sql
@@ -226,15 +254,23 @@ SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 
 ### Column Chart
 
-2+ columns - string, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/2-top-genres)
+There are also two ways to generate column charts.
+
+2+ columns - string, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/6-column-chart-format-1)
 
 ```sql
 SELECT gender, COUNT(*) FROM users GROUP BY 1
 ```
 
+3 columns - string, string, numeric - [Example](https://blazerme.herokuapp.com/queries/7-column-chart-format-2)
+
+```sql
+SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
+```
+
 ### Maps
 
-Columns named `latitude` and `longitude` or `lat` and `lon` - [Example](https://blazerme.herokuapp.com/queries/11-airports-in-pacific-time-zone)
+Columns named `latitude` and `longitude` or `lat` and `lon` - [Example](https://blazerme.herokuapp.com/queries/15-map)
 
 ```sql
 SELECT name, latitude, longitude FROM cities
@@ -242,9 +278,17 @@ SELECT name, latitude, longitude FROM cities
 
 To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `ENV["MAPBOX_ACCESS_TOKEN"]`.
 
+### Targets
+
+Use the column name `target` to draw a line for goals. [Example](https://blazerme.herokuapp.com/queries/8-target-line)
+
+```sql
+SELECT date_trunc('week', created_at), COUNT(*) AS new_users, 100000 AS target FROM users GROUP BY 1
+```
+
 ## Dashboards
 
-Create a dashboard with multiple queries. [Example](https://blazerme.herokuapp.com/dashboards/1-movielens)
+Create a dashboard with multiple queries. [Example](https://blazerme.herokuapp.com/dashboards/1-dashboard-demo)
 
 If the query has a chart, the chart is shown. Otherwise, you’ll see a table.
 
@@ -261,6 +305,27 @@ SELECT * FROM ratings WHERE user_id IS NULL /* all ratings should have a user */
 ```
 
 Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.
+
+## Anomaly Detection
+
+Anomaly detection is supported thanks to Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
+
+First, [install R](https://cloud.r-project.org/). Then, run:
+
+```R
+install.packages("devtools")
+devtools::install_github("twitter/AnomalyDetection")
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+anomaly_checks: true
+```
+
+If upgrading from version 1.4 or below, also follow the [upgrade instructions](#15).
+
+If you’re on Heroku, follow [these additional instructions](#anomaly-detection-on-heroku).
 
 ## Data Sources
 
@@ -281,6 +346,18 @@ data_sources:
     # ...
 ```
 
+### Full List
+
+- PostgreSQL
+- MySQL
+- Redshift
+- SQL Server
+- Oracle
+- IBM DB2 and Informix
+- SQLite
+
+You can also create an adapter for any other data store.
+
 ### Redshift
 
 Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) to your Gemfile and set:
@@ -300,7 +377,68 @@ Have team members who want to learn SQL? Here are a few great, free resources.
 
 For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).
 
+## Anomaly Detection on Heroku
+
+Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
+
+```sh
+heroku buildpacks:add --index 1 https://github.com/ankane/heroku-buildpack-r.git\#cedar-14
+```
+
+And create an `init.r` with:
+
+```sh
+if (!"AnomalyDetection" %in% installed.packages()) {
+  install.packages("devtools")
+  devtools::install_github("twitter/AnomalyDetection")
+}
+```
+
+Commit and deploy away. The first deploy may take a few minutes.
+
 ## Upgrading
+
+### 1.5
+
+To take advantage of the anomaly detection, create a migration
+
+```sh
+rails g migration upgrade_blazer_to_1_5
+```
+
+with:
+
+```ruby
+add_column(:blazer_checks, :check_type, :string)
+add_column(:blazer_checks, :message, :text)
+commit_db_transaction
+
+Blazer::Check.reset_column_information
+
+Blazer::Check.where(invert: true).update_all(check_type: "missing_data")
+Blazer::Check.where(check_type: nil).update_all(check_type: "bad_data")
+```
+
+### 1.3
+
+To take advantage of the latest features, create a migration
+
+```sh
+rails g migration upgrade_blazer_to_1_3
+```
+
+with:
+
+```ruby
+add_column :blazer_dashboards, :creator_id, :integer
+add_column :blazer_checks, :creator_id, :integer
+add_column :blazer_checks, :invert, :boolean
+add_column :blazer_checks, :schedule, :string
+add_column :blazer_checks, :last_run_at, :timestamp
+commit_db_transaction
+
+Blazer::Check.update_all schedule: "1 hour"
+```
 
 ### 1.0
 

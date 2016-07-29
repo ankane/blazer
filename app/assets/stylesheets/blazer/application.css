@@ -24,6 +24,11 @@ body {
   background-color: #fff;
 }
 
+.results-table img {
+  max-width: 200px;
+  max-height: 200px;
+}
+
 input.search {
   border: none;
   box-shadow: none;
@@ -86,4 +91,45 @@ input.search:focus {
 
 .dashboard a {
   font-weight: bold;
+}
+
+#search-item {
+  display: none;
+}
+
+.creator {
+  text-align: right;
+  color: #999;
+}
+
+.vars {
+  color: #ccc;
+}
+
+.check-state {
+  font-weight: bold;
+}
+
+.check-state a {
+  color: inherit;
+}
+
+.check-state.failing {
+  color: red;
+}
+
+.check-state.passing {
+  color: #5cb85c;
+}
+
+.check-state.error {
+  color: #666;
+}
+
+.check-state.timed_out {
+  color: orange;
+}
+
+.check-state.disabled {
+  color: #000;
 }

@@ -415,7 +415,7 @@ For an easy way to group by day, week, month, and more with correct time zones, 
 Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
 
 ```sh
-heroku buildpacks:add --index 1 https://github.com/ankane/heroku-buildpack-r.git\#cedar-14
+heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git\#cedar-14
 ```
 
 And create an `init.r` with:

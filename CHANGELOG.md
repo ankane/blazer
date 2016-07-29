@@ -1,4 +1,4 @@
-## 1.6.0 [unreleased]
+## 1.6.0
 
 - Added support for MongoDB [beta]
 - Added support for Elasticsearch [beta]

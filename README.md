@@ -367,6 +367,7 @@ data_sources:
 - [Redshift](#redshift)
 - [MongoDB](#mongodb) [beta]
 - [Elasticsearch](#elasticsearch) [beta]
+- [Presto](#presto) [beta] [master]
 
 You can also create an adapter for any other data store.
 
@@ -407,6 +408,16 @@ data_sources:
   my_source:
     adapter: elasticsearch
     url: http://user:password@hostname:9200/
+```
+
+### Presto
+
+Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: presto://user@hostname:8080/catalog?schema=schema
 ```
 
 ## Learn SQL

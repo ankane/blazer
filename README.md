@@ -417,7 +417,7 @@ Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your
 ```yml
 data_sources:
   my_source:
-    url: presto://user@hostname:8080/catalog?schema=schema
+    url: presto://user@hostname:8080/catalog
 ```
 
 ## Learn SQL

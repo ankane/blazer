@@ -34,7 +34,7 @@ module Blazer
           Presto::Client.new(
             server: "#{uri.host}:#{uri.port}",
             catalog: uri.path.to_s.sub(/\A\//, ""),
-            schema: query["schema"],
+            schema: query["schema"] || "public",
             user: uri.user,
             http_debug: false
           )

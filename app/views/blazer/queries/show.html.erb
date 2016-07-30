@@ -172,7 +172,7 @@
   </script>
 <% end %>
 
-<% if Blazer.data_sources[@query.data_source].adapter == "sql" %>
+<% if %w[sql presto].include?(Blazer.data_sources[@query.data_source].adapter) %>
   <script>
     // do not highlight really long queries
     // this can lead to performance issues

@@ -6,7 +6,6 @@ module Blazer
       skip_before_action(*filters, raise: false)
       skip_after_action(*filters, raise: false)
       skip_around_action(*filters, raise: false)
-      before_action :verify_request_size
     else
       skip_action_callback *filters
     end

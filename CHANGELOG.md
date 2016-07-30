@@ -1,3 +1,9 @@
+## 1.6.1
+
+- Added support for Presto [beta]
+- Added support for Elasticsearch timeouts
+- Fixed error in Rails 5
+
 ## 1.6.0
 
 - Added support for MongoDB [beta]

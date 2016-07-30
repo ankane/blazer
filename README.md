@@ -367,7 +367,7 @@ data_sources:
 - [Redshift](#redshift)
 - [MongoDB](#mongodb) [beta]
 - [Elasticsearch](#elasticsearch) [beta]
-- [Presto](#presto) [beta] [master]
+- [Presto](#presto) [beta]
 
 You can also create an adapter for any other data store.
 

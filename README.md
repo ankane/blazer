@@ -111,6 +111,16 @@ GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED 
 FLUSH PRIVILEGES;
 ```
 
+### MongoDB
+
+Create a user with read only permissions:
+
+```
+db.createUser({user: "blazer", pwd: "password", roles: ["read"]})
+```
+
+Also, make sure authorization is enabled when you start the server.
+
 ### Sensitive Data
 
 To protect sensitive info like password hashes and access tokens, use views. Documentation coming soon.

@@ -26,10 +26,11 @@ class ChecksIndex extends React.Component {
           <tbody>
             {this.state.checks.map(function(check, i){
               return (
-                <tr>
+                <tr key={i}>
                   <td>
                     <Link to={Routes.blazer_query_path(check.query.id)}>{check.query.name}</Link>
-                    <span class="text-muted">
+                    {" "}
+                    <span className="text-muted">
                       {check.check_type ? check.check_type.replace("_", "") : null}
                     </span>
                   </td>
@@ -39,10 +40,10 @@ class ChecksIndex extends React.Component {
                     {check.schedule}
                   </td>
                   <td>
-                    <ul class="list-unstyled" style="margin-bottom: 0;">
+                    <ul className="list-unstyled" style={{marginBottom: 0}}>
                     </ul>
                   </td>
-                  <td style="text-align: right; padding: 1px;">
+                  <td style={{textAlign: "right", padding: "1px"}}>
                   </td>
                 </tr>
               );
@@ -55,5 +56,8 @@ class ChecksIndex extends React.Component {
 
   componentDidMount() {
     document.title = "Checks";
+    $.getJSON(Routes.blazer_checks_path(), function(data) {
+      this.setState({checks: data});
+    }.bind(this));
   }
 }

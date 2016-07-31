@@ -1,4 +1,11 @@
-<div id="queries">
+<script>
+  var dashboardValues = <%= blazer_json_escape(@dashboards.to_json).html_safe %>;
+  var queryValues = <%= blazer_json_escape(@queries.to_json).html_safe %>;
+</script>
+
+<%= react_component("Queries") %>
+
+<!-- <div id="queries">
   <div id="header" style="margin-bottom: 20px;">
     <div class="btn-group pull-right">
       <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
@@ -35,26 +42,9 @@
       </tr>
     </tbody>
   </table>
-</div>
+</div> -->
 
-<script>
-  var options = {
-    valueNames: ["name", "vars", "hide", "creator"],
-    item: "search-item",
-    page: 200,
-    indexAsync: true
-  };
-  var dashboardValues = <%= blazer_json_escape(@dashboards.to_json).html_safe %>;
-  var queryValues = <%= blazer_json_escape(@queries.to_json).html_safe %>;
-  var queryList = new List("queries", options, dashboardValues);
-  queryList.add(queryValues);
-
-  var queryIds = {};
-  for (var i = 0; i < queryValues.length; i++) {
-    queryIds[queryValues[i].id] = true;
-  }
-</script>
-
+<!--
 <% if @queries.size >= 200 %>
   <p id="loading" class="text-muted">Loading...</p>
   <script>
@@ -77,3 +67,5 @@
     });
   </script>
 <% end %>
+
+ -->

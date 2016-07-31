@@ -10,7 +10,7 @@ class DashboardsIndex extends React.Component {
     return (
       <div>
         <p style={{float: "right"}}>
-          <Link to={Routes.blazer_new_dashboard_path()} className="btn btn-info">New Dashboard</Link>
+          <Link to="/dashboards/new" className="btn btn-info">New Dashboard</Link>
         </p>
         <Nav />
         <table className="table">
@@ -23,7 +23,7 @@ class DashboardsIndex extends React.Component {
             {this.state.dashboards.map(function(dashboard, i){
                 return (
                   <tr key={i}>
-                    <td><Link to={Routes.blazer_dashboard_path(dashboard.id)}>{dashboard.name}</Link></td>
+                    <td><Link to={"/dashboards/" + dashboard.id}>{dashboard.name}</Link></td>
                   </tr>
                 );
             })}

@@ -10,7 +10,7 @@ class ChecksIndex extends React.Component {
     return (
       <div>
         <p style={{float: "right"}}>
-          <Link to={Routes.blazer_new_check_path()} className="btn btn-info">New Check</Link>
+          <Link to="/checks/new" className="btn btn-info">New Check</Link>
         </p>
         <Nav />
         <table className="table">
@@ -28,7 +28,7 @@ class ChecksIndex extends React.Component {
               return (
                 <tr key={i}>
                   <td>
-                    <Link to={Routes.blazer_query_path(check.query.id)}>{check.query.name}</Link>
+                    <Link to={"/queries/" + check.query.id}>{check.query.name}</Link>
                     {" "}
                     <span className="text-muted">
                       {check.check_type ? check.check_type.replace("_", " ") : null}
@@ -45,9 +45,9 @@ class ChecksIndex extends React.Component {
                     </ul>
                   </td>
                   <td style={{textAlign: "right", padding: "1px"}}>
-                    <Link to={Routes.blazer_edit_check_path(check.id)} className="btn btn-info">Edit</Link>
+                    <Link to={"/checks/" + check.id + "/edit"} className="btn btn-info">Edit</Link>
                     {" "}
-                    <Link to={Routes.blazer_run_check_path(check.id)} className="btn btn-primary">Run Now</Link>
+                    <Link to={"/checks/" + check.id + "/run"} className="btn btn-primary">Run Now</Link>
                   </td>
                 </tr>
               );

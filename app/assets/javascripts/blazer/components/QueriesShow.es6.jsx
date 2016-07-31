@@ -58,6 +58,12 @@ class QueriesShow extends React.Component {
   }
 
   componentDidMount() {
+    if (this.props.adapter === "sql" || this.props.adapter === "presto") {
+      if ($("code").text().length < 10000) {
+        hljs.initHighlightingOnLoad();
+      }
+    }
+
     function showRun(data) {
       $("#results").html(data);
       $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});

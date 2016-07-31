@@ -1,6 +1,6 @@
 <% blazer_title @query.name %>
 
-<%= react_component("QueriesShow", query: @query, error: @error, success: @success, variable_params: variable_params, editable: @query.editable?(blazer_user), statement: @statement) %>
+<%= react_component("QueriesShow", query: @query, error: @error, success: @success, variable_params: variable_params, editable: @query.editable?(blazer_user), statement: @statement, adapter: Blazer.data_sources[@query.data_source].adapter) %>
 
 <!-- <script>
   function submitIfCompleted($form) {

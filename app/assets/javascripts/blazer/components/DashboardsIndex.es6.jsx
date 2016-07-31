@@ -1,4 +1,11 @@
 class DashboardsIndex extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      dashboards: []
+    }
+  }
+
   render() {
     return (
       <div>
@@ -24,13 +31,6 @@ class DashboardsIndex extends React.Component {
         </table>
       </div>
     );
-  }
-
-  constructor(props) {
-    super(props);
-    this.state = {
-      dashboards: []
-    }
   }
 
   componentDidMount() {

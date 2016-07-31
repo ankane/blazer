@@ -25,10 +25,8 @@
 //= require_tree ./components
 //= require ./routes
 
-$( function () {
-  $('.dropdown-toggle').mouseenter( function () {
-    $(this).parent().addClass('open');
-  });
+$(document).on("mouseenter", ".dropdown-toggle", function () {
+  $(this).parent().addClass("open");
 });
 
 function runQuery(data, success, error) {

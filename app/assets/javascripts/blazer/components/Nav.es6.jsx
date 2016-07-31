@@ -7,12 +7,12 @@ class Nav extends React.Component {
         <span className="sr-only">Toggle Dropdown</span>
       </button>
       <ul className="dropdown-menu">
-        <li><a href={Routes.blazer_dashboards_path()}>Dashboards</a></li>
-        <li><a href={Routes.blazer_checks_path()}>Checks</a></li>
+        <li><Link to={Routes.blazer_dashboards_path()}>Dashboards</Link></li>
+        <li><Link to={Routes.blazer_checks_path()}>Checks</Link></li>
         <li role="separator" className="divider"></li>
-        <li><a href={Routes.blazer_new_query_path()}>New Query</a></li>
-        <li><a href={Routes.blazer_new_dashboard_path()}>New Dashboard</a></li>
-        <li><a href={Routes.blazer_new_check_path()}>New Check</a></li>
+        <li><Link to={Routes.blazer_new_query_path()}>New Query</Link></li>
+        <li><Link to={Routes.blazer_new_dashboard_path()}>New Dashboard</Link></li>
+        <li><Link to={Routes.blazer_new_check_path()}>New Check</Link></li>
       </ul>
     </div>;
   }

@@ -21,6 +21,7 @@
 //= require ./shhh_react
 //= require react
 //= require react_ujs
+//= require ./ReactRouter
 //= require_tree ./components
 //= require ./routes
 

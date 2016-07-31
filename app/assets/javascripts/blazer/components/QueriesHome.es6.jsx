@@ -3,7 +3,7 @@ class QueriesHome extends React.Component {
     return <div id="queries">
       <div id="header" style={{marginBottom: "20px"}}>
         <div className="btn-group pull-right">
-          <a href={Routes.blazer_new_query_path()} className="btn btn-info">New Query</a>
+          <Link to="/queries/new" className="btn btn-info">New Query</Link>
           <button type="button" className="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span className="caret"></span>
             <span className="sr-only">Toggle Dropdown</span>

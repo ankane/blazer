@@ -4,6 +4,7 @@ module Blazer
 
     def index
       @dashboards = Blazer::Dashboard.order(:name)
+      render json: @dashboards
     end
 
     def new

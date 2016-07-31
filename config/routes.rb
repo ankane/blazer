@@ -1,14 +1,16 @@
 Blazer::Engine.routes.draw do
-  resources :queries do
+  root "queries#home"
+  get "*path" => "queries#home", constraints: -> (req) { req.format == :html }
+
+  resources :queries, except: [:new] do
     post :run, on: :collection # err on the side of caution
     post :refresh, on: :member
     get :tables, on: :collection
   end
-  resources :checks, except: [:show] do
+  resources :checks, except: [:new, :show] do
     get :run, on: :member
   end
-  resources :dashboards do
+  resources :dashboards, except: [:new] do
     post :refresh, on: :member
   end
-  root to: "queries#home"
 end

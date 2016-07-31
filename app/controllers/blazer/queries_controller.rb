@@ -38,7 +38,8 @@ module Blazer
       @query.creator = blazer_user if @query.respond_to?(:creator)
 
       if @query.save
-        redirect_to query_path(@query, variable_params)
+        # redirect_to query_path(@query, variable_params)
+        render json: @query
       else
         render :new
       end
@@ -61,6 +62,8 @@ module Blazer
       end
 
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
+
+      render json: @query
     end
 
     def edit
@@ -252,7 +255,8 @@ module Blazer
         (@my_queries + @queries).map do |q|
           {
             id: q.id,
-            name: view_context.link_to(q.name, q),
+            name: q.name,
+            slug: q.to_param,
             creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
             hide: q.name.gsub(/\s+/, ""),
             vars: extract_vars(q.statement).join(", ")

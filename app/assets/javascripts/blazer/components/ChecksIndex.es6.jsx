@@ -31,10 +31,11 @@ class ChecksIndex extends React.Component {
                     <Link to={Routes.blazer_query_path(check.query.id)}>{check.query.name}</Link>
                     {" "}
                     <span className="text-muted">
-                      {check.check_type ? check.check_type.replace("_", "") : null}
+                      {check.check_type ? check.check_type.replace("_", " ") : null}
                     </span>
                   </td>
                   <td>
+                    <small className="check-state">{check.state.toUpperCase()}</small>
                   </td>
                   <td>
                     {check.schedule}
@@ -44,6 +45,9 @@ class ChecksIndex extends React.Component {
                     </ul>
                   </td>
                   <td style={{textAlign: "right", padding: "1px"}}>
+                    <Link to={Routes.blazer_edit_check_path(check.id)} className="btn btn-info">Edit</Link>
+                    {" "}
+                    <Link to={Routes.blazer_run_check_path(check.id)} className="btn btn-primary">Run Now</Link>
                   </td>
                 </tr>
               );

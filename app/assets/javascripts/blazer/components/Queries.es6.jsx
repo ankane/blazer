@@ -3,17 +3,17 @@ class Queries extends React.Component {
     return <div id="queries">
       <div id="header" style={{marginBottom: "20px"}}>
         <div className="btn-group pull-right">
-          <a href="<%= new_query_path %>" className="btn btn-info">New Query</a>
+          <a href={Routes.blazer_new_query_path()} className="btn btn-info">New Query</a>
           <button type="button" className="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
             <span className="caret"></span>
             <span className="sr-only">Toggle Dropdown</span>
           </button>
           <ul className="dropdown-menu">
-            <li><a href="">Dashboards</a></li>
-            <li><a href="">Checks</a></li>
+            <li><a href={Routes.blazer_dashboards_path()}>Dashboards</a></li>
+            <li><a href={Routes.blazer_checks_path()}>Checks</a></li>
             <li role="separator" className="divider"></li>
-            <li><a href="">New Dashboard</a></li>
-            <li><a href="">New Check</a></li>
+            <li><a href={Routes.blazer_new_dashboard_path()}>New Dashboard</a></li>
+            <li><a href={Routes.blazer_new_check_path()}>New Check</a></li>
           </ul>
         </div>
         <input type="text" placeholder="Start typing a query or person" style={{width: "300px", display: "inline-block"}} autoFocus="true" className="search form-control" />

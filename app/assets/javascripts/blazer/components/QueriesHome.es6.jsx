@@ -1,4 +1,4 @@
-class Queries extends React.Component {
+class QueriesHome extends React.Component {
   render() {
     return <div id="queries">
       <div id="header" style={{marginBottom: "20px"}}>

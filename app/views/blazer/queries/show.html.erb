@@ -1,6 +1,8 @@
 <% blazer_title @query.name %>
 
-<script>
+<%= react_component("QueriesShow", query: @query, error: @error, success: @success, variable_params: variable_params, editable: @query.editable?(blazer_user), statement: @statement) %>
+
+<!-- <script>
   function submitIfCompleted($form) {
     var completed = true;
     $form.find("input[name], select").each( function () {
@@ -187,3 +189,4 @@
     submitIfCompleted($(this).closest("form"));
   });
 </script>
+ -->

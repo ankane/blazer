@@ -28,7 +28,7 @@ module Blazer
       protected
 
       def client
-        @client ||= Mongo::Client.new(settings["url"])
+        @client ||= Mongo::Client.new(settings["url"], connect_timeout: 1, socket_timeout: 1, server_selection_timeout: 1)
       end
 
       def db

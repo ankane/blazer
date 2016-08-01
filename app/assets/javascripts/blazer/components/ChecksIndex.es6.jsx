@@ -42,12 +42,17 @@ class ChecksIndex extends React.Component {
                   </td>
                   <td>
                     <ul className="list-unstyled" style={{marginBottom: 0}}>
+                      {check.split_emails.map(function(email, i) {
+                        return (
+                          <li key={i}>{email}</li>
+                        );
+                      })}
                     </ul>
                   </td>
                   <td style={{textAlign: "right", padding: "1px"}}>
                     <Link to={"/checks/" + check.id + "/edit"} className="btn btn-info">Edit</Link>
                     {" "}
-                    <Link to={"/checks/" + check.id + "/run"} className="btn btn-primary">Run Now</Link>
+                    <Link to={"/queries/" + check.query.id} className="btn btn-primary">Run Now</Link>
                   </td>
                 </tr>
               );

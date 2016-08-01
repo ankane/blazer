@@ -1,4 +1,9 @@
-const { Router, Route, Link, browserHistory } = ReactRouter;
+const { createHistory } = History;
+const { Router, Route, Link, useRouterHistory } = ReactRouter;
+
+const browserHistory = useRouterHistory(createHistory)({
+  basename: "/boom"
+});
 
 class App extends React.Component {
   render() {

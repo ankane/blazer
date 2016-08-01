@@ -22,6 +22,7 @@
 //= require react
 //= require react_ujs
 //= require ./ReactRouter
+//= require ./history
 //= require_tree ./components
 //= require ./routes
 

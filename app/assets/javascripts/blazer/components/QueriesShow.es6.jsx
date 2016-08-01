@@ -45,7 +45,7 @@ class QueriesShow extends React.Component {
   }
 
   componentDidMount() {
-    this.serverRequest = $.getJSON("/queries/" + this.props.params.id, (query) => {
+    this.serverRequest = $.getJSON(Routes.blazer_query_path(this.props.params.id), (query) => {
       this.setState({query: query});
       this.run(query);
     })

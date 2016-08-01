@@ -35,14 +35,14 @@ class ChecksIndex extends React.Component {
                     </span>
                   </td>
                   <td>
-                    <small className="check-state">{check.state.toUpperCase()}</small>
+                    <small className={"check-state " + check.state.toLowerCase().replace(" ", "_")}>{check.state.toUpperCase()}</small>
                   </td>
                   <td>
                     {check.schedule}
                   </td>
                   <td>
                     <ul className="list-unstyled" style={{marginBottom: 0}}>
-                      {check.split_emails.map(function(email, i) {
+                      {check.split_emails.map((email, i) => {
                         return (
                           <li key={i}>{email}</li>
                         );

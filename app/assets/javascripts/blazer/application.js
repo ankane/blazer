@@ -3,7 +3,6 @@
 //= require ./list
 //= require ./stupidtable
 //= require ./jquery.stickytableheaders
-//= require ./selectize
 //= require ./highlight.pack
 //= require ./moment
 //= require ./moment-timezone
@@ -23,6 +22,9 @@
 //= require react_ujs
 //= require ./ReactRouter
 //= require ./history
+//= require ./classnames
+//= require ./react-input-autosize
+//= require ./react-select
 //= require_tree ./components
 //= require ./routes
 

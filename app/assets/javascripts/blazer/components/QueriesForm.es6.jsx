@@ -32,6 +32,7 @@ class QueriesForm extends React.Component {
       },
       readOnly: false // false if this command should not apply in readOnly mode
     });
+    this.editor = editor;
 
     // http://stackoverflow.com/questions/11584061/
     const adjustHeight = () => {
@@ -44,12 +45,6 @@ class QueriesForm extends React.Component {
       this.setState({editorHeight: newHeight.toString() + "px"})
       editor.resize();
     };
-
-   //  function getSQL() {
-   //    var selectedText = editor.getSelectedText();
-   //    var text = selectedText.length < 10 ? editor.getValue() : selectedText;
-   //    return text.replace(/\n/g, "\r\n");
-   //  }
 
    //  function getErrorLine() {
    //    var error_line = /LINE (\d+)/g.exec($("#results").find('.alert-danger').text());
@@ -114,19 +109,25 @@ class QueriesForm extends React.Component {
     )
   }
 
+  getStatement() {
+    const editor = this.editor;
+    const selectedText = editor.getSelectedText();
+    const text = selectedText.length < 10 ? editor.getValue() : selectedText;
+    return text.replace(/\n/g, "\r\n");
+  }
+
   runQuery(e) {
     e.preventDefault()
     console.log("run")
 
     this.setState({loading: true})
 
-    // $("#results").html('<p class="text-muted">Loading...</p>');
     // if (xhr) {
     //   xhr.abort();
     // }
     // var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()});
 
-    let xhr = runQuery({statement: "SELECT * FROM movies LIMIT 10", data_source: "main"}, (data) => {
+    let xhr = runQuery({statement: this.getStatement(), data_source: "main"}, (data) => {
       this.setState({loading: false, result: data});
 
       // error_line = getErrorLine();

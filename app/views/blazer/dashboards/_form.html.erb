@@ -2,22 +2,6 @@
   <div class="alert alert-danger"><%= @dashboard.errors.full_messages.first %></div>
 <% end %>
 
-<style>
-.glyphicon-remove {
-  cursor: pointer;
-  color: #d9534f;
-  display: none;
-}
-
-li:hover .glyphicon-remove {
-  display: inline;
-}
-
-.list-group {
-  cursor: move;
-}
-</style>
-
 <%= form_for @dashboard, url: (@dashboard.persisted? ? dashboard_path(@dashboard, variable_params) : dashboards_path(variable_params)) do |f| %>
   <div class="form-group">
     <%= f.label :name %>

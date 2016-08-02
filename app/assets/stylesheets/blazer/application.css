@@ -143,3 +143,17 @@ input.search:focus {
   height: 60px;
   z-index: 1001;
 }
+
+.glyphicon-remove {
+  cursor: pointer;
+  color: #d9534f;
+  display: none;
+}
+
+.list-group li:hover .glyphicon-remove {
+  display: inline;
+}
+
+.list-group {
+  cursor: move;
+}

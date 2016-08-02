@@ -133,3 +133,13 @@ input.search:focus {
 .check-state.disabled {
   color: #000;
 }
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: whitesmoke;
+  height: 60px;
+  z-index: 1001;
+}

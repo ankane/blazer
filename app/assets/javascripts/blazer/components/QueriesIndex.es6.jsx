@@ -11,20 +11,6 @@ class QueriesIndex extends React.Component {
     $.getJSON(Routes.blazer_queries_path(), function(data) {
       this.setState({queries: data, filteredQueries: data});
     }.bind(this));
-
-    // const options = {
-    //   valueNames: ["name", "vars", "hide", "creator"],
-    //   item: "search-item",
-    //   page: 200,
-    //   indexAsync: true
-    // };
-    // let queryList = new List("queries", options, dashboardValues);
-    // queryList.add(queryValues);
-
-    // let queryIds = {};
-    // for (var i = 0; i < queryValues.length; i++) {
-    //   queryIds[queryValues[i].id] = true;
-    // }
   }
 
   render() {

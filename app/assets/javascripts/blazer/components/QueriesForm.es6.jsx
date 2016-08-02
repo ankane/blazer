@@ -3,9 +3,12 @@ class QueriesForm extends React.Component {
     super(props)
     this.state = {
       editorHeight: "160px",
-      loading: false
+      loading: false,
+      query: null
     }
     this.runQuery = this.runQuery.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.updateQuery = this.updateQuery.bind(this)
   }
 
   componentDidMount() {
@@ -86,11 +89,11 @@ class QueriesForm extends React.Component {
             <div className="col-xs-4">
               <div className="form-group">
                 <label htmlFor="name">Name</label>
-                <input id="name" type="text" className="form-control" />
+                <input onChange={(e) => this.updateQuery({name: e.target.value})} id="name" type="text" className="form-control" />
               </div>
               <div className="form-group">
                 <label htmlFor="description">Description</label>
-                <textarea id="description" placeholder="Optional" style={{height: "80px"}} className="form-control"></textarea>
+                <textarea onChange={(e) => this.updateQuery({description: e.target.value})} id="description" placeholder="Optional" style={{height: "80px"}} className="form-control"></textarea>
               </div>
               <div className="text-right">
                 <input type="submit" className="btn btn-success" value="Create" />
@@ -140,14 +143,22 @@ class QueriesForm extends React.Component {
     });
   }
 
+  updateQuery(attributes) {
+    this.setState({
+      query: Object.assign({}, this.state.query, attributes)
+    })
+  }
+
   handleSubmit(e) {
     e.preventDefault()
     console.log("submit")
-    // var data = $(e.target).serialize();
-    // console.log(data);
-    // $.post("/queries", data, function (data) {
-    //   console.log(data);
-    //   browserHistory.push('/queries/' + data.id);
-    // }.bind(this));
+    let query = this.state.query
+    query.statement = this.editor.getValue()
+    console.log(query)
+
+    $.post(Routes.blazer_queries_path(), {query: query}, function (data) {
+      console.log(data);
+      browserHistory.push(`/queries/${data.id}`);
+    }.bind(this));
   }
 }

@@ -1,4 +1,12 @@
 class QueriesShow extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      statementHeight: "100px"
+    }
+    this.expandStatement = this.expandStatement.bind(this)
+  }
+
   render() {
     const id = parseInt(this.props.params.id);
     return (
@@ -16,7 +24,9 @@ class QueriesShow extends React.Component {
     if (query) {
       return (
         <div>
-          <pre>{query.statement}</pre>
+          <pre style={{maxHeight: this.state.statementHeight, overflow: "hidden"}} onClick={this.expandStatement}>
+            <code>{query.statement}</code>
+          </pre>
           <div dangerouslySetInnerHTML={{__html: this.state.resultsHtml}}></div>
         </div>
       );
@@ -24,9 +34,12 @@ class QueriesShow extends React.Component {
     return false;
   }
 
-  constructor(props) {
-    super(props);
-    this.state = {}
+  expandStatement() {
+    if (this.state.statementHeight === "100px") {
+      this.setState({statementHeight: "none"})
+    } else {
+      this.setState({statementHeight: "100px"})
+    }
   }
 
   run(query) {
@@ -50,6 +63,14 @@ class QueriesShow extends React.Component {
       this.setState({query: query});
       this.run(query);
     })
+  }
+
+  componentDidUpdate() {
+    // const statement = this.state.query.statement
+    // // console.log(statement)
+    // if (statement && statement.length < 10000) {
+    //   hljs.initHighlightingOnLoad();
+    // }
   }
 
   componentWillUnmount() {

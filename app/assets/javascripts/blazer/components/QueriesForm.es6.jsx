@@ -1,7 +1,11 @@
 class QueriesForm extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {editorHeight: "160px"}
+    this.state = {
+      editorHeight: "160px",
+      loading: false
+    }
+    this.runQuery = this.runQuery.bind(this)
   }
 
   componentDidMount() {
@@ -99,7 +103,13 @@ class QueriesForm extends React.Component {
             </div>
           </div>
         </form>
-        <div id="results"></div>
+        <div id="results">
+          {() => {
+            if (this.state.loading) return <p className="text-muted">Loading...</p>
+            if (this.state.result) return <div dangerouslySetInnerHTML={{__html: this.state.result}}></div>
+            return null
+          }()}
+        </div>
       </div>
     )
   }
@@ -107,6 +117,26 @@ class QueriesForm extends React.Component {
   runQuery(e) {
     e.preventDefault()
     console.log("run")
+
+    this.setState({loading: true})
+
+    // $("#results").html('<p class="text-muted">Loading...</p>');
+    // if (xhr) {
+    //   xhr.abort();
+    // }
+    // var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()});
+
+    let xhr = runQuery({statement: "SELECT * FROM movies LIMIT 10", data_source: "main"}, (data) => {
+      this.setState({loading: false, result: data});
+
+      // error_line = getErrorLine();
+      // if (error_line) {
+      //   editor.getSession().addGutterDecoration(error_line - 1, "error");
+      //   editor.scrollToLine(error_line, true, true, function () {});
+      //   editor.gotoLine(error_line, 0, true);
+      //   editor.focus();
+      // }
+    });
   }
 
   handleSubmit(e) {

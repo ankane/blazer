@@ -2,13 +2,14 @@ class QueriesIndex extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      queries: []
+      queries: [],
+      filteredQueries: []
     }
   }
 
   componentDidMount() {
     $.getJSON(Routes.blazer_queries_path(), function(data) {
-      this.setState({queries: data});
+      this.setState({queries: data, filteredQueries: data});
     }.bind(this));
 
     // const options = {
@@ -27,6 +28,13 @@ class QueriesIndex extends React.Component {
   }
 
   render() {
+    const filterQueries = (e) => {
+      const regexp = new RegExp(e.target.value, "i")
+      this.setState({
+        filteredQueries: this.state.queries.filter((q) => q.hide.match(regexp) || (q.creator || "").match(regexp)).slice(0, 100)
+      })
+    }
+
     return <div id="queries">
       <div id="header" style={{marginBottom: "20px"}}>
         <div className="btn-group pull-right">
@@ -43,7 +51,7 @@ class QueriesIndex extends React.Component {
             <li><Link to="/checks/new">New Check</Link></li>
           </ul>
         </div>
-        <input type="text" placeholder="Start typing a query or person" style={{width: "300px", display: "inline-block"}} autoFocus="true" className="search form-control" />
+        <input onChange={filterQueries} type="text" placeholder="Start typing a query or person" style={{width: "300px", display: "inline-block"}} autoFocus="true" className="search form-control" />
       </div>
       <table className="table">
         <thead>
@@ -53,7 +61,7 @@ class QueriesIndex extends React.Component {
           </tr>
         </thead>
         <tbody className="list">
-          {this.state.queries.map((query, i) => {
+          {this.state.filteredQueries.map((query, i) => {
             return (
               <tr key={i}>
                 <td>

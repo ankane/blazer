@@ -33,7 +33,7 @@ class QueriesShow extends React.Component {
         </div>
         <div style={{marginBottom: "60px"}}></div>
         <pre style={{maxHeight: this.state.statementHeight, overflow: "hidden"}} onClick={this.expandStatement}>
-          <code>{query.statement}</code>
+          <code ref={(c) => this._block = c}>{query.statement}</code>
         </pre>
         <div dangerouslySetInnerHTML={{__html: this.state.resultsHtml}}></div>
       </div>
@@ -68,11 +68,10 @@ class QueriesShow extends React.Component {
   }
 
   componentDidUpdate() {
-    // const statement = this.state.query.statement
-    // // console.log(statement)
-    // if (statement && statement.length < 10000) {
-    //   hljs.initHighlightingOnLoad();
-    // }
+    const statement = this.state.query.statement
+    if (statement && statement.length < 10000) {
+      hljs.highlightBlock(this._block);
+    }
   }
 
   componentWillUnmount() {

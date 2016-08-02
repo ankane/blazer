@@ -1,19 +1,5 @@
 <% blazer_title @query.name %>
 
-<script>
-  function submitIfCompleted($form) {
-    var completed = true;
-    $form.find("input[name], select").each( function () {
-      if ($(this).val() == "") {
-        completed = false;
-      }
-    });
-    if (completed) {
-      $form.submit();
-    }
-  }
-</script>
-
 <div style="position: fixed; top: 0; left: 0; right: 0; background-color: whitesmoke; height: 60px; z-index: 1001;">
   <div class="container">
     <div class="row" style="padding-top: 13px;">

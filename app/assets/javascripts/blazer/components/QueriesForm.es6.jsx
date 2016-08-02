@@ -101,13 +101,7 @@ class QueriesForm extends React.Component {
             </div>
           </div>
         </form>
-        <div id="results">
-          {() => {
-            if (this.state.loading) return <p className="text-muted">Loading...</p>
-            if (this.state.result) return <div dangerouslySetInnerHTML={{__html: this.state.result}}></div>
-            return null
-          }()}
-        </div>
+        <QueriesResult loading={this.state.loading} result={this.state.result} />
       </div>
     )
   }

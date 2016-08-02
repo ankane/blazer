@@ -280,7 +280,7 @@ SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
 
 ### Maps
 
-Columns named `latitude` and `longitude` or `lat` and `lon` - [Example](https://blazerme.herokuapp.com/queries/15-map)
+Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` - [Example](https://blazerme.herokuapp.com/queries/15-map)
 
 ```sql
 SELECT name, latitude, longitude FROM cities

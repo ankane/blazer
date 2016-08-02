@@ -204,7 +204,7 @@ module Blazer
       @linked_columns = @data_source.linked_columns
 
       @markers = []
-      [["latitude", "longitude"], ["lat", "lon"]].each do |keys|
+      [["latitude", "longitude"], ["lat", "lon"], ["lat", "lng"]].each do |keys|
         lat_index = @columns.index(keys.first)
         lon_index = @columns.index(keys.last)
         if lat_index && lon_index

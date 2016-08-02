@@ -67,6 +67,11 @@ class ChecksForm extends React.Component {
         .then((response) => {
           return response.json();
         }).then((json) => {
+          if (!this.state.check.query_id && json[0]) {
+            this.setState({
+              check: Object.assign({}, this.state.check, {query_id: json[0].id})
+            });
+          }
           return {
             options: json.map((query, i) => {
               return {
@@ -88,7 +93,7 @@ class ChecksForm extends React.Component {
                 name="check[query_id]"
                 value={this.state.check.query_id}
                 loadOptions={getOptions}
-                onChange={(e) => updateCheck({query_id: val.value})}
+                onChange={(val) => updateCheck({query_id: val.value})}
                 placeholder=""
                 searchingText=""
                 searchable={false}
@@ -101,7 +106,7 @@ class ChecksForm extends React.Component {
             <label htmlFor="check_check_type">Alert if</label>
             <Select
               name="check[check_type]"
-              value={this.state.check.check_type}
+              value={this.state.check.check_type || getCheckTypeOptions[0]}
               options={getCheckTypeOptions}
               onChange={(val) => updateCheck({check_type: val.value})}
               placeholder=""
@@ -115,7 +120,7 @@ class ChecksForm extends React.Component {
             <label htmlFor="check_schedule">Run every</label>
             <Select
               name="check[schedule]"
-              value={this.state.check.schedule}
+              value={this.state.check.schedule || getScheduleOptions[0]}
               options={getScheduleOptions}
               onChange={(val) => updateCheck({schedule: val.value})}
               placeholder=""

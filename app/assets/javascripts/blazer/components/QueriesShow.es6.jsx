@@ -2,7 +2,8 @@ class QueriesShow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      statementHeight: "236px"
+      statementHeight: "236px",
+      loading: false
     }
     this.expandStatement = this.expandStatement.bind(this)
   }
@@ -35,7 +36,12 @@ class QueriesShow extends React.Component {
         <pre style={{maxHeight: this.state.statementHeight, overflow: "hidden"}} onClick={this.expandStatement}>
           <code ref={(c) => this._block = c}>{query.statement}</code>
         </pre>
-        <div dangerouslySetInnerHTML={{__html: this.state.resultsHtml}}></div>
+        <div id="results">
+          {() => {
+            if (this.state.loading) return <p className="text-muted">Loading...</p>
+            return <div dangerouslySetInnerHTML={{__html: this.state.resultsHtml}}></div>
+          }()}
+        </div>
       </div>
     );
   }
@@ -53,8 +59,9 @@ class QueriesShow extends React.Component {
       }
     );
 
+    this.setState({loading: true})
     runQuery(data, (d) => {
-      this.setState({resultsHtml: d});
+      this.setState({resultsHtml: d, loading: false});
     }, (error) => {
       console.log("Error", error)
     });

@@ -12,9 +12,7 @@ module Blazer
     BLAZER_IMAGE_EXT = %w[png jpg jpeg gif]
 
     def blazer_format_value(key, value)
-      if key == "day_of_week" && value.is_a?(Integer) && defined?(I18n)
-        I18n.t("date.day_names")[value] || value
-      elsif value.is_a?(Integer) && !key.to_s.end_with?("id") && !key.to_s.start_with?("id")
+      if value.is_a?(Integer) && !key.to_s.end_with?("id") && !key.to_s.start_with?("id")
         number_with_delimiter(value)
       elsif value =~ BLAZER_URL_REGEX
         # see if image or link

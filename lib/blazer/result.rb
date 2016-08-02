@@ -30,6 +30,8 @@ module Blazer
             values = rows.map { |r| r[i] }.compact.uniq
             result = data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
             boom[key] = Hash[result.rows.map { |k, v| [k.to_s, v] }]
+          elsif key == "day_of_week" && defined?(I18n)
+            boom[key] = I18n.t("date.day_names")
           end
         end
         boom

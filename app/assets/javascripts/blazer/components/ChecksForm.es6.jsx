@@ -57,12 +57,9 @@ class ChecksForm extends React.Component {
       });
     }
 
-    const handleEmailChange = (e) => {
+    const updateCheck = (attributes) => {
       this.setState({
-        check: {
-          ...this.state.check,
-          emails: e.target.value
-        }
+        check: Object.assign({}, this.state.check, attributes)
       });
     }
 
@@ -101,7 +98,7 @@ class ChecksForm extends React.Component {
           </div>
           <div className="form-group">
             <label htmlFor="check_emails">Emails</label>
-            <input value={this.state.check.emails} onChange={handleEmailChange} placeholder="Optional, comma separated" className="form-control" type="text" name="check[emails]" id="check_emails" />
+            <input value={this.state.check.emails || ""} onChange={(e) => updateCheck({emails: e.target.value})} placeholder="Optional, comma separated" className="form-control" type="text" name="check[emails]" id="check_emails" />
           </div>
           <p className="text-muted">Emails are sent when a check starts failing, and when it starts passing again.</p>
           <p>

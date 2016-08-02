@@ -32,6 +32,12 @@ module Blazer
       ENV["MAPBOX_ACCESS_TOKEN"].present?
     end
 
+    def blazer_js_bootstrap
+      (@js_bootstrap || {}).map do |k, v|
+        tag(:meta, id: "js_bootstrap_#{k}", content: v.to_json)
+      end.join.html_safe
+    end
+
     JSON_ESCAPE = { '&' => '\u0026', '>' => '\u003e', '<' => '\u003c', "\u2028" => '\u2028', "\u2029" => '\u2029' }
     JSON_ESCAPE_REGEXP = /[\u2028\u2029&><]/u
 

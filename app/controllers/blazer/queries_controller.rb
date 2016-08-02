@@ -16,6 +16,9 @@ module Blazer
             vars: nil
           }
         end
+
+      @js_bootstrap[:queries] = @queries
+      @js_bootstrap[:dashboards] = @dashboards
     end
 
     def index

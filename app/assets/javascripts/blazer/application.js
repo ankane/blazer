@@ -25,6 +25,43 @@ $( function () {
   });
 });
 
+function jsBootstrap(key) {
+  var content = $("#js_bootstrap_" + key).attr("content");
+  if (!content) return null;
+  return $.parseJSON(content);
+}
+
+$( function () {
+  var page = jsBootstrap("page");
+  if (page.controller === "queries" && page.action === "home") {
+    var options = {
+      valueNames: ["name", "vars", "hide", "creator"],
+      item: "search-item",
+      page: 200,
+      indexAsync: true
+    };
+    var dashboardValues = jsBootstrap("dashboards");
+    var queryValues = jsBootstrap("queries");
+    var queryList = new List("queries", options, dashboardValues);
+    queryList.add(queryValues);
+
+    var queryIds = {};
+    for (var i = 0; i < queryValues.length; i++) {
+      queryIds[queryValues[i].id] = true;
+    }
+  } else if (page.controller === "checks" && (page.action === "new" || page.action === "edit" || page.action === "create" || page.action === "update")) {
+    var check = jsBootstrap("check");
+    styleSelect("#check_query_id", {options: jsBootstrap("queries"), items: check.query_id ? [check.query_id] : []})
+    styleSelect("#check_check_type");
+    styleSelect("#check_invert");
+    styleSelect("#check_schedule");
+  }
+})
+
+function styleSelect(selector, selectizeOptions) {
+  $(selector).selectize($.extend({}, {highlight: false, maxOptions: 100}, selectizeOptions)).parents(".hide").removeClass("hide");
+}
+
 function runQuery(data, success, error) {
   return $.ajax({
     url: window.runQueriesPath,

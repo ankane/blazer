@@ -20,9 +20,26 @@ module Blazer
       before_action Blazer.before_action
     end
 
+    before_action :set_csp
+
+    before_action :set_js_bootstrap
+
     layout "blazer/application"
 
     private
+
+    def set_js_bootstrap
+      @js_bootstrap = {
+        page: {
+          controller: controller_name,
+          action: action_name
+        }
+      }
+    end
+
+    def set_csp
+      response.headers["Content-Security-Policy"] = "script-src 'self' https://api.mapbox.com"
+    end
 
     def process_vars(statement, data_source)
       (@bind_vars ||= []).concat(extract_vars(statement)).uniq!

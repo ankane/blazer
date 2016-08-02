@@ -3,6 +3,7 @@ class QueriesShow extends React.Component {
     const id = parseInt(this.props.params.id);
     return (
       <div>
+        <Nav />
         <h1>Query {id}</h1>
         <Link to="/">Home</Link>
         {this.renderDetails()}

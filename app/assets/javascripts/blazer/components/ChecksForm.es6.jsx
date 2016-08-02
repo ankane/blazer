@@ -4,7 +4,8 @@ class ChecksForm extends React.Component {
     this.state = {
       check: {
         id: props.checkId
-      }
+      },
+      loaded: !props.checkId
     };
   }
 
@@ -12,12 +13,14 @@ class ChecksForm extends React.Component {
     const checkId = this.state.check.id;
     if (checkId) {
       $.getJSON(Routes.blazer_check_path(checkId), (d) => {
-        this.setState({check: d});
+        this.setState({check: d, loaded: true});
       })
     }
   }
 
   render() {
+    if (!this.state.loaded) return null;
+
     const handleSubmit = (e) => {
       e.preventDefault();
       let check = this.state.check;

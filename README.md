@@ -220,6 +220,20 @@ smart_columns:
   city_id: "SELECT id, name FROM cities WHERE id IN {value}"
 ```
 
+You can also put a Hash into the config for more static data:
+
+```yml
+smart_columns:
+  day_of_week:
+    0: Sun
+    1: Mon
+    2: Tue
+    3: Wed
+    4: Thu
+    5: Fri
+    6: Sat
+```
+
 ### Caching
 
 Blazer can automatically cache results to improve speed. It can cache slow queries:

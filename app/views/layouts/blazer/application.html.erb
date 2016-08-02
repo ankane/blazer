@@ -5,14 +5,14 @@
 
     <meta charset="utf-8" />
 
-    <%= stylesheet_link_tag "blazer/application" %>
-    <%= javascript_include_tag "blazer/application" %>
+    <%= stylesheet_link_tag "blazer/application", "data-turbolinks-track" => "reload" %>
+    <%= javascript_include_tag "blazer/application", "data-turbolinks-track" => "reload" %>
     <script>
       var runQueriesPath = <%= run_queries_path.to_json.html_safe %>;
     </script>
     <% if blazer_maps? %>
-      <%= stylesheet_link_tag "https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css" %>
-      <%= javascript_include_tag "https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js" %>
+      <%= stylesheet_link_tag "https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css", "data-turbolinks-track" => "reload" %>
+      <%= javascript_include_tag "https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js", "data-turbolinks-track" => "reload" %>
     <% end %>
     <%= csrf_meta_tags %>
   </head>

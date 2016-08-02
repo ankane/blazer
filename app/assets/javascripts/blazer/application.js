@@ -18,6 +18,7 @@
 //= require ./ace/snippets/sql
 //= require ./Sortable
 //= require ./bootstrap
+//= require turbolinks
 
 $( function () {
   $('.dropdown-toggle').mouseenter( function () {

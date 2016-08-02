@@ -18,24 +18,9 @@ class ChecksForm extends React.Component {
   }
 
   render() {
-    const logChange = (val) => {
-      // fix for possible bug with react-select
-      if (val instanceof Array) {
-        val = null;
-      }
-
-      this.setState({
-        check: {
-          ...this.state.check,
-          query_id: val.value
-        }
-      });
-    }
-
     const handleSubmit = (e) => {
       e.preventDefault();
       let check = this.state.check;
-      console.log(check);
 
       let action, method;
       if (check.id) {
@@ -51,17 +36,31 @@ class ChecksForm extends React.Component {
         method: method,
         data: {check: check},
         success: function (data) {
-          console.log(data);
-          browserHistory.push("/checks");
+          browserHistory.push("/queries/" + check.query_id);
         }.bind(this)
       });
     }
 
     const updateCheck = (attributes) => {
+      // fix for possible bug with react-select
+      // if (val instanceof Array) val = null;
+
       this.setState({
         check: Object.assign({}, this.state.check, attributes)
       });
     }
+
+    const getScheduleOptions = [
+      {value: "1 day", label: "1 day"},
+      {value: "1 hour", label: "1 hour"},
+      {value: "5 minutes", label: "5 minutes"}
+    ];
+
+    const getCheckTypeOptions = [
+      {label: "Any results (bad data)", value: "bad_data"},
+      {label: "No results (missing data)", value: "missing_data"},
+      {label: "Anomaly (most recent data point)", value: "anomaly"}
+    ];
 
     const getOptions = (input) => {
       return fetch(Routes.blazer_queries_path())
@@ -89,12 +88,40 @@ class ChecksForm extends React.Component {
                 name="check[query_id]"
                 value={this.state.check.query_id}
                 loadOptions={getOptions}
-                onChange={logChange}
+                onChange={(e) => updateCheck({query_id: val.value})}
                 placeholder=""
                 searchingText=""
+                searchable={false}
                 clearable={false}
               />
             </div>
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="check_check_type">Alert if</label>
+            <Select
+              name="check[check_type]"
+              value={this.state.check.check_type}
+              options={getCheckTypeOptions}
+              onChange={(val) => updateCheck({check_type: val.value})}
+              placeholder=""
+              searchingText=""
+              searchable={false}
+              clearable={false}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="check_schedule">Run every</label>
+            <Select
+              name="check[schedule]"
+              value={this.state.check.schedule}
+              options={getScheduleOptions}
+              onChange={(val) => updateCheck({schedule: val.value})}
+              placeholder=""
+              searchingText=""
+              clearable={false}
+            />
           </div>
           <div className="form-group">
             <label htmlFor="check_emails">Emails</label>

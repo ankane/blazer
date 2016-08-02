@@ -7,7 +7,7 @@ Blazer::Engine.routes.draw do
     post :refresh, on: :member
     get :tables, on: :collection
   end
-  resources :checks, except: [:new, :show] do
+  resources :checks, except: [:new] do
     get :run, on: :member
   end
   resources :dashboards, except: [:new] do

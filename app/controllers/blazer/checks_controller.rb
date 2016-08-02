@@ -1,6 +1,6 @@
 module Blazer
   class ChecksController < BaseController
-    before_action :set_check, only: [:edit, :update, :destroy, :run]
+    before_action :set_check, only: [:show, :edit, :update, :destroy, :run]
 
     def index
       state_order = [nil, "disabled", "error", "timed out", "failing", "passing"]
@@ -26,9 +26,13 @@ module Blazer
       end
     end
 
+    def show
+      render json: @check
+    end
+
     def update
       if @check.update(check_params)
-        redirect_to run_check_path(@check)
+        render json: @check
       else
         render :edit
       end

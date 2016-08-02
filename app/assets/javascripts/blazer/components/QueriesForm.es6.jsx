@@ -81,7 +81,7 @@ class QueriesForm extends React.Component {
               </div>
               <div className="form-group text-right">
                 <div className="pull-left" style={{marginTop: "6px"}}>
-                  <a href="">Back</a>
+                  <a href="" onClick={browserHistory.goBack}>Back</a>
                 </div>
                 <button onClick={this.runQuery} className="btn btn-info" style={{verticalAlign: "top"}}>Run</button>
               </div>

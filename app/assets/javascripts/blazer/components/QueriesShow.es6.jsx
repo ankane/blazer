@@ -32,7 +32,7 @@ class QueriesShow extends React.Component {
           </div>
         </div>
         <div style={{marginBottom: "60px"}}></div>
-        <pre style={{maxHeight: "236px", overflow: "hidden"}} onClick={this.expandStatement}>
+        <pre style={{maxHeight: this.state.statementHeight, overflow: "hidden"}} onClick={this.expandStatement}>
           <code>{query.statement}</code>
         </pre>
         <div dangerouslySetInnerHTML={{__html: this.state.resultsHtml}}></div>
@@ -41,11 +41,7 @@ class QueriesShow extends React.Component {
   }
 
   expandStatement() {
-    if (this.state.statementHeight === "100px") {
-      this.setState({statementHeight: "none"})
-    } else {
-      this.setState({statementHeight: "100px"})
-    }
+    this.setState({statementHeight: "none"})
   }
 
   run(query) {

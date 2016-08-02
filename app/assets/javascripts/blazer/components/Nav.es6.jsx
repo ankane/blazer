@@ -1,6 +1,6 @@
 class Nav extends React.Component {
   render() {
-    return <div className="btn-group" style={{verticalAlign: "top", marginRight: "5px"}}>
+    return <div className="btn-group" style={{verticalAlign: "top", marginRight: "10px"}}>
       <Link to="/" className="btn btn-primary">Home</Link>
       <button type="button" className="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <span className="caret"></span>

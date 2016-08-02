@@ -3,19 +3,19 @@ module Blazer
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
 
     def home
-      set_queries(1000)
+      # set_queries(1000)
 
-      @dashboards = Blazer::Dashboard.order(:name)
-      @dashboards = @dashboards.includes(:creator) if Blazer.user_class
-      @dashboards =
-        @dashboards.map do |d|
-          {
-            name: "<strong>#{view_context.link_to(d.name, d)}</strong>",
-            creator: blazer_user && d.try(:creator) == blazer_user ? "You" : d.try(:creator).try(Blazer.user_name),
-            hide: d.name.gsub(/\s+/, ""),
-            vars: nil
-          }
-        end
+      # @dashboards = Blazer::Dashboard.order(:name)
+      # @dashboards = @dashboards.includes(:creator) if Blazer.user_class
+      # @dashboards =
+      #   @dashboards.map do |d|
+      #     {
+      #       name: "<strong>#{view_context.link_to(d.name, d)}</strong>",
+      #       creator: blazer_user && d.try(:creator) == blazer_user ? "You" : d.try(:creator).try(Blazer.user_name),
+      #       hide: d.name.gsub(/\s+/, ""),
+      #       vars: nil
+      #     }
+      #   end
     end
 
     def index

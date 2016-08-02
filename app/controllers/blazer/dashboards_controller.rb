@@ -4,6 +4,19 @@ module Blazer
 
     def index
       @dashboards = Blazer::Dashboard.order(:name)
+
+      @dashboards =
+        @dashboards.map do |q|
+          {
+            id: q.id,
+            name: q.name,
+            slug: q.to_param,
+            creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
+            hide: q.name.gsub(/\s+/, ""),
+            vars: ""
+          }
+        end
+
       render json: @dashboards
     end
 

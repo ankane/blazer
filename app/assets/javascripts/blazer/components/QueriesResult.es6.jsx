@@ -5,9 +5,28 @@ class QueriesResult extends React.Component {
   }
 
   componentDidMount() {
+    const { stickyHeaders, chart_type, columns, rows } = this.props
+
     $(this._table).stupidtable()
     if (this.props.stickyHeaders) {
       $(this._table).stickyTableHeaders({fixedOffset: 60});
+    }
+
+    if (this._chartDiv) {
+      if (chart_type === "line") {
+        // TODO add target
+        let data = columns.slice(1).map((k, i) => {
+          return (
+            {
+              name: k,
+              data: rows.map((r) => [r[0], r[i + 1]])
+            }
+          )
+        })
+        let chartOptions = {min: null}
+        new Chartkick.LineChart(this._chartDiv, data, chartOptions)
+      }
+
     }
   }
 
@@ -110,9 +129,12 @@ class QueriesResult extends React.Component {
   }
 
   renderChart() {
-    const { rows } = this.props
+    const { rows, chart_type } = this.props
 
     if (rows.length > 0) {
+      if (chart_type) {
+        return <div className="chart-div" ref={(n) => this._chartDiv = n}></div>
+      }
 
 
 //     <% values = @rows.first %>

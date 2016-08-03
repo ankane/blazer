@@ -175,3 +175,7 @@ input.search:focus {
 .dashboard-query h4 a {
   color: inherit;
 }
+
+.chart-div {
+  height: 300px;
+}

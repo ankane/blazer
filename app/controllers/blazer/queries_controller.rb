@@ -236,7 +236,8 @@ module Blazer
             min_width_types: @min_width_types,
             markers: @markers,
             linked_columns: @linked_columns,
-            boom: @boom
+            boom: @boom,
+            chart_type: @result.try(:chart_type)
           }
         end
         format.csv do

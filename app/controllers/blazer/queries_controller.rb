@@ -228,10 +228,13 @@ module Blazer
             columns: @columns,
             rows: @rows,
             error: @error,
+            cached_at: @cached_at,
+            just_cached: @just_cached,
             success: @success,
             only_chart: @only_chart,
             column_types: @column_types,
-            min_width_types: @min_width_types
+            min_width_types: @min_width_types,
+            markers: @markers
           }
         end
         format.csv do

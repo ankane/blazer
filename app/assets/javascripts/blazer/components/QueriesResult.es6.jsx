@@ -95,9 +95,7 @@ class QueriesResult extends React.Component {
         {this.renderHeaderRight()}
         {this.renderHeaderLeft()}
         {this.renderChart()}
-        <div className="results-container">
-          {this.renderTable()}
-        </div>
+        {this.renderTable()}
       </div>
     )
   }
@@ -133,7 +131,7 @@ class QueriesResult extends React.Component {
     const { rows, chart_type } = this.props
 
     if (rows.length > 0) {
-      if (chart_type) {
+      if (chart_type === "line") {
         return <div className="chart-div" ref={(n) => this._chartDiv = n}></div>
       }
 
@@ -261,17 +259,18 @@ class QueriesResult extends React.Component {
   }
 
   renderTable() {
-    const { columns, rows, only_chart, column_types, min_width_types } = this.props
-    let noChart = true
+    const { columns, rows, only_chart, column_types, min_width_types, chart_type } = this.props
+    let noChart = chart_type !== "line"
+    let ele
 
     if (rows.length > 0) {
       if (!only_chart || noChart) {
         // TODO better equals
         if (JSON.stringify(columns) === JSON.stringify(["QUERY PLAN"])) {
-          return <pre><code>{rows.map((r) => r[0]).join("\n")}</code></pre>
+          ele = <pre><code>{rows.map((r) => r[0]).join("\n")}</code></pre>
         } else {
           const headerWidth = 100.0 / columns.length
-          return (
+          ele = (
             <table ref={(n) => this._table = n} className="table results-table" style={{marginBottom: 0}}>
               <thead>
                 <tr>
@@ -302,7 +301,11 @@ class QueriesResult extends React.Component {
         }
       }
     } else if (only_chart) {
-      return <p className="text-muted">No rows</p>
+      ele = <p className="text-muted">No rows</p>
+    }
+
+    if (ele) {
+      return <div className="results-container">{ele}</div>
     }
   }
 }

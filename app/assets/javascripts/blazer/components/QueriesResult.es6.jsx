@@ -5,7 +5,7 @@ class QueriesResult extends React.Component {
   }
 
   componentDidMount() {
-    const { stickyHeaders, chart_type, columns, rows } = this.props
+    const { stickyHeaders, chart_type, columns, rows, boom } = this.props
 
     $(this._table).stupidtable()
     if (this.props.stickyHeaders) {
@@ -13,6 +13,8 @@ class QueriesResult extends React.Component {
     }
 
     if (this._chartDiv) {
+      let chartOptions = {min: null}
+
       if (chart_type === "line") {
         // TODO add target
         let data = columns.slice(1).map((k, i) => {
@@ -23,10 +25,26 @@ class QueriesResult extends React.Component {
             }
           )
         })
-        let chartOptions = {min: null}
         new Chartkick.LineChart(this._chartDiv, data, chartOptions)
-      }
+      } else if (chart_type === "line2") {
+//       <%= line_chart @rows.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} }, chart_options %>
+        // new Chartkick.LineChart(this._chartDiv, data, chartOptions)
 
+      } else if (chart_type === "bar") {
+        let data = []
+        for (let i = 0; i < (columns.length - 1); i++) {
+          let name = columns[i + 1]
+          data.push({
+            name: name,
+            data: rows.slice(0, 20).map((r) => {
+              return [(boom[columns[0]] || {})["" + r[0]] || r[0], r[i + 1]]
+            })
+          })
+        }
+        new Chartkick.ColumnChart(this._chartDiv, data, chartOptions)
+      } else if (chart_type === "bar2") {
+
+      }
     }
   }
 
@@ -131,7 +149,7 @@ class QueriesResult extends React.Component {
     const { rows, chart_type } = this.props
 
     if (rows.length > 0) {
-      if (chart_type === "line") {
+      if (chart_type) {
         return <div className="chart-div" ref={(n) => this._chartDiv = n}></div>
       }
 
@@ -260,11 +278,10 @@ class QueriesResult extends React.Component {
 
   renderTable() {
     const { columns, rows, only_chart, column_types, min_width_types, chart_type } = this.props
-    let noChart = chart_type !== "line"
     let ele
 
     if (rows.length > 0) {
-      if (!only_chart || noChart) {
+      if (!only_chart || !chart_type) {
         // TODO better equals
         if (JSON.stringify(columns) === JSON.stringify(["QUERY PLAN"])) {
           ele = <pre><code>{rows.map((r) => r[0]).join("\n")}</code></pre>

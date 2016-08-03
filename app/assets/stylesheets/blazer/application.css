@@ -162,3 +162,16 @@ input.search:focus {
 .list-group {
   cursor: move;
 }
+
+.dashboard-query {
+  padding-top: 10px;
+  clear: both;
+}
+
+.dashboard-query h4 {
+  text-align: center;
+}
+
+.dashboard-query h4 a {
+  color: inherit;
+}

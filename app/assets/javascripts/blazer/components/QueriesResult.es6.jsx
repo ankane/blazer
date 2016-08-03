@@ -35,7 +35,7 @@ class QueriesResult extends React.Component {
       return this.numberWithDelimiter(value)
     }
 
-    if (value.match(this.urlRegex)) {
+    if (typeof value === "string" && value.match(this.urlRegex)) {
       // TODO add referrerPolicy="no-referrer" when React supports it
       // https://github.com/facebook/react/pull/7274
       return <a href={value} target="_blank">{value}</a>
@@ -82,29 +82,30 @@ class QueriesResult extends React.Component {
   }
 
   renderCell(row, v, i) {
-    const { columns } = this.props
-
-    let k = columns[i]
+    const { columns, linked_columns, boom } = this.props
+    const k = columns[i]
+    let ele, smartColumn
 
     if (v !== null) {
-    // <% if v.is_a?(Time) %>
-    //   <% v = blazer_time_value(@data_source, k, v) %>
-    // <% end %>
+      // <% if v.is_a?(Time) %>
+      //   <% v = blazer_time_value(@data_source, k, v) %>
+      // <% end %>
 
-    //   <% if v.is_a?(String) && v == "" %>
-    //     <div class="text-muted">empty string</div>
-    //   <% elsif @linked_columns[k] %>
-    //     <%= link_to blazer_format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
-    //   <% else %>
-    //     <%= blazer_format_value(k, v) %>
-    //   <% end %>
+      if (typeof v === "string" && v === "") {
+        ele = <div class="text-muted">empty string</div>
+      } else if (linked_columns[k]) {
+        ele = <a href={linked_columns[k].replace("{value}", v)} target="_blank">{this.formatValue(k, v)}</a>
+      } else {
+        ele = this.formatValue(k, v)
+      }
 
-    //   <% if v2 = (@boom[k] || {})[v.to_s] %>
-    //     <div class="text-muted"><%= v2 %></div>
-    //   <% end %>
-
-      return this.formatValue(k, v)
+      let v2 = (boom[k] || {})["" + v]
+      if (v2) {
+        smartColumn = <div className="text-muted">{v2}</div>
+      }
     }
+
+    return <td key={i}>{ele}{smartColumn}</td>
   }
 
   renderChart() {
@@ -248,7 +249,7 @@ class QueriesResult extends React.Component {
                   return (
                     <tr key={j}>
                       {row.map((v, i) => {
-                        return <td key={i}>{this.renderCell(row, v, i)}</td>
+                        return this.renderCell(row, v, i)
                       })}
                     </tr>
                   )

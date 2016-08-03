@@ -234,7 +234,9 @@ module Blazer
             only_chart: @only_chart,
             column_types: @column_types,
             min_width_types: @min_width_types,
-            markers: @markers
+            markers: @markers,
+            linked_columns: @linked_columns,
+            boom: @boom
           }
         end
         format.csv do

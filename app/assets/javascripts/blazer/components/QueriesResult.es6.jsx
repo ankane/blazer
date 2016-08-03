@@ -1,13 +1,18 @@
 class QueriesResult extends React.Component {
+  constructor(props) {
+    super(props)
+    this.urlRegex = /^https?:\/\/[\S]+$/
+  }
+
   componentDidMount() {
     if (this.props.stickyHeaders) {
       $(this._table).stupidtable().stickyTableHeaders({fixedOffset: 60});
     }
   }
 
-  formatValue(k, v) {
-    // BLAZER_URL_REGEX = /\Ahttps?:\/\/[\S]+\z/
+  formatValue(key, value) {
     // BLAZER_IMAGE_EXT = %w[png jpg jpeg gif]
+
 
       // if value.is_a?(Integer) && !key.to_s.end_with?("id") && !key.to_s.start_with?("id")
       //   number_with_delimiter(value)
@@ -24,7 +29,30 @@ class QueriesResult extends React.Component {
       //   value
       // end
 
-    return v
+
+    // TODO better integer check
+    if (Number.isInteger(value) && key.slice(0, 2) != "id" && key.slice(-2) != "id") {
+      return this.numberWithDelimiter(value)
+    }
+
+    if (value.match(this.urlRegex)) {
+      // TODO add referrerPolicy="no-referrer" when React supports it
+      // https://github.com/facebook/react/pull/7274
+      return <a href={value} target="_blank">{value}</a>
+    }
+
+    return value
+  }
+
+  // https://gist.github.com/scottwb/821904
+  numberWithDelimiter(number) {
+    let delimiter = delimiter || ','
+    let split = (number + '').split('.')
+    split[0] = split[0].replace(
+        /(\d)(?=(\d\d\d)+(?!\d))/g,
+        '$1' + delimiter
+    )
+    return split.join('.')
   }
 
   render() {

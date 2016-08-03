@@ -35,6 +35,11 @@ class QueriesForm extends React.Component {
     this.editor = editor
   }
 
+  goBack(e) {
+    e.preventDefault()
+    window.history.back()
+  }
+
   render() {
     const { query } = this.props
 
@@ -50,6 +55,7 @@ class QueriesForm extends React.Component {
               </div>
               <div className="form-group text-right">
                 <div className="pull-left" style={{marginTop: "6px"}}>
+                  <a href="#" onClick={this.goBack}>Back</a>
                 </div>
                 <button onClick={this.runStatement} className="btn btn-info" style={{verticalAlign: "top"}}>Run</button>
               </div>

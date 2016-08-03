@@ -1,4 +1,27 @@
 class QueriesResult extends React.Component {
+  componentDidMount() {
+    $(this._table).stupidtable().stickyTableHeaders({fixedOffset: 60});
+  }
+
+  formatValue(k, v) {
+      // if value.is_a?(Integer) && !key.to_s.end_with?("id") && !key.to_s.start_with?("id")
+      //   number_with_delimiter(value)
+      // elsif value =~ BLAZER_URL_REGEX
+      //   # see if image or link
+      //   if Blazer.images && (key.include?("image") || BLAZER_IMAGE_EXT.include?(value.split(".").last.split("?").first.try(:downcase)))
+      //     link_to value, target: "_blank" do
+      //       image_tag value, referrerpolicy: "no-referrer"
+      //     end
+      //   else
+      //     link_to value, value, target: "_blank"
+      //   end
+      // else
+      //   value
+      // end
+
+    return v
+  }
+
   render() {
     const { columns, rows, error, success, only_chart } = this.props
 
@@ -26,14 +49,15 @@ class QueriesResult extends React.Component {
   }
 
   renderCell(row, v, i) {
-    // let k = columns[i]
-    return v
+    const { columns } = this.props
 
+    let k = columns[i]
+
+    if (v !== null) {
     // <% if v.is_a?(Time) %>
     //   <% v = blazer_time_value(@data_source, k, v) %>
     // <% end %>
 
-    // <% unless v.nil? %>
     //   <% if v.is_a?(String) && v == "" %>
     //     <div class="text-muted">empty string</div>
     //   <% elsif @linked_columns[k] %>
@@ -45,7 +69,9 @@ class QueriesResult extends React.Component {
     //   <% if v2 = (@boom[k] || {})[v.to_s] %>
     //     <div class="text-muted"><%= v2 %></div>
     //   <% end %>
-    // <% end %>
+
+      return this.formatValue(k, v)
+    }
   }
 
   renderChart() {
@@ -170,7 +196,7 @@ class QueriesResult extends React.Component {
         } else {
           const headerWidth = 100.0 / columns.length
           return (
-            <table className="table results-table" style={{marginBottom: 0}}>
+            <table ref={(n) => this._table = n} className="table results-table" style={{marginBottom: 0}}>
               <thead>
                 <tr>
                   {columns.map((key, i) => {

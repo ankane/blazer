@@ -14,7 +14,6 @@ class QueriesShow extends React.Component {
     if (success) {
       const showRun = (data) => {
         this.setState({results: data})
-        // $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
       }
 
       const showError = (message) => {

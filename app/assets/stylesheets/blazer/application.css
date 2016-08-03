@@ -144,6 +144,12 @@ input.search:focus {
   z-index: 1001;
 }
 
+.topbar h3 {
+  margin: 0;
+  line-height: 34px;
+  display: inline;
+}
+
 .glyphicon-remove {
   cursor: pointer;
   color: #d9534f;

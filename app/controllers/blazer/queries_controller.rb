@@ -133,7 +133,7 @@ module Blazer
           continue_run
         end
       else
-        render layout: false
+        # render layout: false
       end
     end
 

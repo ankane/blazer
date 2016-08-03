@@ -27,7 +27,6 @@ class QueriesResult extends React.Component {
       }
 
       if (chart_type === "line") {
-        // TODO add target
         let data = columns.slice(1).map((k, i) => {
           return (
             {

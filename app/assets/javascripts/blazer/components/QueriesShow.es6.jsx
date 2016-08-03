@@ -115,6 +115,16 @@ class QueriesShow extends React.Component {
     if (bind_vars.length > 0) {
       return (
         <form className="form-inline" style={{marginBottom: "10px"}}>
+          {bind_vars.map((v, i) => {
+            return (
+              <span>
+                <label for={v}>{v}</label>
+                {" "}
+                <input id={v} type="text" className="form-control" />
+                {" "}
+              </span>
+            )
+          })}
           <input type="submit" className="btn btn-success" value="Run" style={{verticalAlign: "top"}} />
         </form>
       )

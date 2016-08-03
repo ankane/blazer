@@ -276,7 +276,11 @@ class QueriesResult extends React.Component {
                   <a href={Routes.blazer_edit_check_path(check.id)}>{check.state.toUpperCase()}</a>
                   {" "}
                 </small>
-                {check.message && `&middot; ${check.message}`}
+                {() => {
+                  if (check.message) {
+                    return <span>&middot; {check.message}</span>
+                  }
+                }()}
               </span>
             )
           })}

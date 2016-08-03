@@ -34,7 +34,7 @@ function runQuery(data, success, error) {
     url: window.runQueriesPath,
     method: "POST",
     data: data,
-    dataType: "html"
+    dataType: "json"
   }).done( function (d) {
     if (d[0] == "{") {
       var response = $.parseJSON(d);

@@ -20,7 +20,7 @@ class QueriesShow extends React.Component {
         this.setState({errorMessage: message})
       }
 
-      let data = $.extend(variable_params, {statement: statement, query_id: query.id})
+      let data = $.extend({}, variable_params, {statement: statement, query_id: query.id})
       runQuery(data, showRun, showError);
     }
 

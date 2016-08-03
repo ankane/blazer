@@ -5,8 +5,9 @@ class QueriesResult extends React.Component {
   }
 
   componentDidMount() {
+    $(this._table).stupidtable()
     if (this.props.stickyHeaders) {
-      $(this._table).stupidtable().stickyTableHeaders({fixedOffset: 60});
+      $(this._table).stickyTableHeaders({fixedOffset: 60});
     }
   }
 
@@ -220,7 +221,7 @@ class QueriesResult extends React.Component {
 
   renderTable() {
     const { columns, rows, only_chart, column_types, min_width_types } = this.props
-    let noChart = false
+    let noChart = true
 
     if (rows.length > 0) {
       if (!only_chart || noChart) {

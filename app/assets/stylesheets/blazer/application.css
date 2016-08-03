@@ -81,7 +81,7 @@ input.search:focus {
   flex-direction: column;
 }
 
-.chart > .results-container {
+.chart > div > .results-container {
   height: 300px;
   border: solid 1px #ddd;
   overflow: scroll;

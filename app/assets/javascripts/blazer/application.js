@@ -18,6 +18,10 @@
 //= require ./ace/snippets/sql
 //= require ./Sortable
 //= require ./bootstrap
+//= require ./routes
+//= require react
+//= require react_ujs
+//= require_tree ./components
 
 $( function () {
   $('.dropdown-toggle').mouseenter( function () {

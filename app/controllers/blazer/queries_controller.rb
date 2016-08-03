@@ -3,16 +3,17 @@ module Blazer
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
 
     def home
-      set_queries(1000)
+      set_queries(50000)
 
       @dashboards = Blazer::Dashboard.order(:name)
       @dashboards = @dashboards.includes(:creator) if Blazer.user_class
       @dashboards =
         @dashboards.map do |d|
           {
-            name: "<strong>#{view_context.link_to(d.name, d)}</strong>",
+            id: d.id,
+            name: d.name,
+            slug: d.to_param,
             creator: blazer_user && d.try(:creator) == blazer_user ? "You" : d.try(:creator).try(Blazer.user_name),
-            hide: d.name.gsub(/\s+/, ""),
             vars: nil
           }
         end
@@ -252,9 +253,9 @@ module Blazer
         (@my_queries + @queries).map do |q|
           {
             id: q.id,
-            name: view_context.link_to(q.name, q),
+            name: q.name,
+            slug: q.to_param,
             creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
-            hide: q.name.gsub(/\s+/, ""),
             vars: extract_vars(q.statement).join(", ")
           }
         end

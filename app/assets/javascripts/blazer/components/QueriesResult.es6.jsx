@@ -220,31 +220,42 @@ class QueriesResult extends React.Component {
   }
 
   renderHeaderRight() {
-    const { only_chart, cached_at, just_cached } = this.props
+    const { only_chart, cached_at, just_cached, cache_mode, cache_slow_threshold } = this.props
 
     if (!only_chart) {
       if (cached_at || just_cached) {
-        return (
-          <p className="text-muted" style={{float: "right"}}>
-            Cached just now
-          </p>
-        )
-      }
-//       <p class="text-muted" style="float: right;">
-//         <% if @cached_at %>
-//           Cached <%= time_ago_in_words(@cached_at, include_seconds: true) %> ago
-//         <% elsif !params[:data_source] %>
-//           Cached just now
-//           <% if @data_source.cache_mode == "slow" %>
-//             (over <%= "%g" % @data_source.cache_slow_threshold %>s)
-//           <% end %>
-//         <% end %>
+        let cachedText, refreshLink
+
+        if (cached_at) {
+          cachedText = `Cached ${moment(cached_at).fromNow()}`
+        } else {
+          cachedText = "Cached just now"
+          if (cache_mode === "slow") {
+            cachedText += ` (over ${cache_slow_threshold}s)`
+          }
+        }
+
+        refreshLink = <a href="#">Refresh</a>
 
 //         <% if @query && !params[:data_source] %>
 //           <%= link_to "Refresh", refresh_query_path(@query, variable_params), method: :post %>
 //         <% end %>
-//       </p>
+
+
+        return (
+          <p className="text-muted" style={{float: "right"}}>
+            {cachedText}
+            {" "}
+            {refreshLink}
+          </p>
+        )
+      }
     }
+  }
+
+  pluralize(count, singular) {
+    let word = count === 1 ? singular : `${singular}s`
+    return `${count} ${word}`
   }
 
   renderHeaderLeft() {
@@ -253,7 +264,7 @@ class QueriesResult extends React.Component {
     if (!only_chart) {
       return (
         <p className="text-muted">
-          {rows.length} rows
+          {this.pluralize(rows.length, "row")}
         </p>
       )
     }

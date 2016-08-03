@@ -237,7 +237,9 @@ module Blazer
             markers: @markers,
             linked_columns: @linked_columns,
             boom: @boom,
-            chart_type: @result.try(:chart_type)
+            chart_type: @result.try(:chart_type),
+            cache_mode: @data_source.cache_mode,
+            cache_slow_threshold: @data_source.cache_slow_threshold
           }
         end
         format.csv do

@@ -14,6 +14,17 @@ class QueriesResult extends React.Component {
 
     if (this._chartDiv) {
       let chartOptions = {min: null}
+      let seriesLibrary = {}
+      let targetIndex = columns.map((c) => c.toLowerCase()).indexOf("target")
+      if (targetIndex !== -1) {
+        seriesLibrary[targetIndex - 1] = {
+          pointStyle: "line",
+          hitRadius: 5,
+          borderColor: "#109618",
+          pointBackgroundColor: "#109618",
+          backgroundColor: "#109618"
+        }
+      }
 
       if (chart_type === "line") {
         // TODO add target
@@ -21,7 +32,8 @@ class QueriesResult extends React.Component {
           return (
             {
               name: k,
-              data: rows.map((r) => [r[0], r[i + 1]])
+              data: rows.map((r) => [r[0], r[i + 1]]),
+              library: seriesLibrary[i]
             }
           )
         })

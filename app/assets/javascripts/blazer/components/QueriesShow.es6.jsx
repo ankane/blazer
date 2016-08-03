@@ -86,7 +86,7 @@ class QueriesShow extends React.Component {
 
   renderResults() {
     if (this.state.results) {
-      return <QueriesResult {...this.state.results} />
+      return <QueriesResult stickyHeaders={true} {...this.state.results} />
     } else if (this.state.errorMessage) {
       return <p style={{color: "red"}}>{this.state.errorMessage}</p>
     } else if (this.props.success) {

@@ -80,7 +80,7 @@ class QueriesForm extends React.Component {
     if (this.state.loading) {
       return <p className="text-muted">Loading...</p>
     } else if (this.state.results) {
-      return <QueriesResult {...this.state.results} />
+      return <QueriesResult stickyHeaders={false} {...this.state.results} />
     }
   }
 

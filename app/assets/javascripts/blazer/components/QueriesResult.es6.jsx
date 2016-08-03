@@ -1,6 +1,8 @@
 class QueriesResult extends React.Component {
   componentDidMount() {
-    $(this._table).stupidtable().stickyTableHeaders({fixedOffset: 60});
+    if (this.props.stickyHeaders) {
+      $(this._table).stupidtable().stickyTableHeaders({fixedOffset: 60});
+    }
   }
 
   formatValue(k, v) {

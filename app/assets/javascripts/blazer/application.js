@@ -30,7 +30,7 @@ $( function () {
 
 function runQuery(data, success, error) {
   return $.ajax({
-    url: window.runQueriesPath,
+    url: Routes.blazer_run_queries_path(),
     method: "POST",
     data: data,
     dataType: "json"

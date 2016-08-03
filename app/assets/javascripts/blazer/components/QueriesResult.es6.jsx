@@ -6,6 +6,9 @@ class QueriesResult extends React.Component {
   }
 
   formatValue(k, v) {
+    // BLAZER_URL_REGEX = /\Ahttps?:\/\/[\S]+\z/
+    // BLAZER_IMAGE_EXT = %w[png jpg jpeg gif]
+
       // if value.is_a?(Integer) && !key.to_s.end_with?("id") && !key.to_s.start_with?("id")
       //   number_with_delimiter(value)
       // elsif value =~ BLAZER_URL_REGEX

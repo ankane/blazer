@@ -9,19 +9,20 @@ class QueriesShow extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.success) {
-    // function showRun(data) {
-    //   $("#results").html(data);
-    //   $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
-    // }
+    const { query, variable_params, success, statement } = this.props
 
-    // function showError(message) {
-    //   $("#results").css("color", "red").html(message);
-    // }
+    if (success) {
+      const showRun = (data) => {
+        this.setState({results: data})
+        // $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
+      }
 
-    // var data = <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>;
+      const showError = (message) => {
+        this.setState({errorMessage: message})
+      }
 
-    // runQuery(data, showRun, showError);
+      let data = $.extend(variable_params, {statement: statement, query_id: query.id})
+      runQuery(data, showRun, showError);
     }
 
     const sqlAdapter = this.props.adapter === "sql" || this.props.adapter === "presto"
@@ -69,7 +70,9 @@ class QueriesShow extends React.Component {
         <pre style={{maxHeight: this.state.statementHeight, overflow: "hidden"}} onClick={this.expandStatement}>
           <code ref={(n) => this._code = n}>{statement}</code>
         </pre>
-        {this.renderResults}
+        <div id="results">
+          {this.renderResults()}
+        </div>
       </div>
     )
   }
@@ -82,12 +85,12 @@ class QueriesShow extends React.Component {
   }
 
   renderResults() {
-    if (this.props.success) {
-      return (
-        <div id="results">
-          <p className="text-muted">Loading...</p>
-        </div>
-      )
+    if (this.state.results) {
+      return <div dangerouslySetInnerHTML={{__html: this.state.results}}></div>
+    } else if (this.state.errorMessage) {
+      return <p style={{color: "red"}}>{this.state.errorMessage}</p>
+    } else if (this.props.success) {
+      return <p className="text-muted">Loading...</p>
     }
   }
 

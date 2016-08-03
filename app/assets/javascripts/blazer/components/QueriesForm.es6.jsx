@@ -1,7 +1,9 @@
 class QueriesForm extends React.Component {
   constructor(props) {
     super(props)
-    this.state = {}
+    this.state = {
+      loading: false
+    }
     this.runStatement = this.runStatement.bind(this)
   }
 
@@ -75,7 +77,9 @@ class QueriesForm extends React.Component {
   }
 
   renderResults() {
-    if (this.state.results) {
+    if (this.state.loading) {
+      return <p className="text-muted">Loading...</p>
+    } else if (this.state.results) {
       return <QueriesResult {...this.state.results} />
     }
   }
@@ -85,8 +89,10 @@ class QueriesForm extends React.Component {
 
     var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: "main"})
 
+    this.setState({loading: true})
+
     runQuery(data, (data) => {
-      this.setState({results: data})
+      this.setState({results: data, loading: false})
     })
   }
 }

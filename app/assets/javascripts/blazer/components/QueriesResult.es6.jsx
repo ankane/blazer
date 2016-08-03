@@ -92,7 +92,8 @@ class QueriesResult extends React.Component {
 
     return (
       <div>
-        {this.renderHeader()}
+        {this.renderHeaderRight()}
+        {this.renderHeaderLeft()}
         {this.renderChart()}
         <div className="results-container">
           {this.renderTable()}
@@ -208,11 +209,17 @@ class QueriesResult extends React.Component {
     }
   }
 
-  renderHeader() {
-    const { only_chart } = this.props
+  renderHeaderRight() {
+    const { only_chart, cached_at, just_cached } = this.props
 
     if (!only_chart) {
-//     <% if @cached_at || @just_cached %>
+      if (cached_at || just_cached) {
+        return (
+          <p className="text-muted" style={{float: "right"}}>
+            Cached just now
+          </p>
+        )
+      }
 //       <p class="text-muted" style="float: right;">
 //         <% if @cached_at %>
 //           Cached <%= time_ago_in_words(@cached_at, include_seconds: true) %> ago
@@ -227,7 +234,20 @@ class QueriesResult extends React.Component {
 //           <%= link_to "Refresh", refresh_query_path(@query, variable_params), method: :post %>
 //         <% end %>
 //       </p>
-//     <% end %>
+    }
+  }
+
+  renderHeaderLeft() {
+    const { only_chart, rows } = this.props
+
+    if (!only_chart) {
+      return (
+        <p className="text-muted">
+          {rows.length} rows
+        </p>
+      )
+    }
+
 //     <p class="text-muted">
 //       <%= pluralize(@rows.size, "row") %>
 
@@ -238,7 +258,6 @@ class QueriesResult extends React.Component {
 //         <% end %>
 //       <% end %>
 //     </p>
-    }
   }
 
   renderTable() {

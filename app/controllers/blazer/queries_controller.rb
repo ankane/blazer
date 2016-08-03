@@ -239,7 +239,8 @@ module Blazer
             boom: @boom,
             chart_type: @result.try(:chart_type),
             cache_mode: @data_source.cache_mode,
-            cache_slow_threshold: @data_source.cache_slow_threshold
+            cache_slow_threshold: @data_source.cache_slow_threshold,
+            checks: @checks
           }
         end
         format.csv do

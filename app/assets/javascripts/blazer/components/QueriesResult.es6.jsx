@@ -259,26 +259,30 @@ class QueriesResult extends React.Component {
   }
 
   renderHeaderLeft() {
-    const { only_chart, rows } = this.props
+    const { only_chart, rows, checks } = this.props
 
     if (!only_chart) {
       return (
         <p className="text-muted">
           {this.pluralize(rows.length, "row")}
+
+          {checks.filter((c) => c.state).map((check, i) => {
+            return (
+              <span key={i}>
+                {" "}
+                &middot;
+                {" "}
+                <small className={`check-state ${check.state.replace(" ", "_")}`}>
+                  <a href={Routes.blazer_edit_check_path(check.id)}>{check.state.toUpperCase()}</a>
+                  {" "}
+                </small>
+                {check.message && `&middot; ${check.message}`}
+              </span>
+            )
+          })}
         </p>
       )
     }
-
-//     <p class="text-muted">
-//       <%= pluralize(@rows.size, "row") %>
-
-//       <% @checks.select(&:state).each do |check| %>
-//         &middot; <small class="check-state <%= check.state.parameterize("_") %>"><%= link_to check.state.upcase, edit_check_path(check) %></small>
-//         <% if check.try(:message) %>
-//           &middot; <%= check.message %>
-//         <% end %>
-//       <% end %>
-//     </p>
   }
 
   renderTable() {

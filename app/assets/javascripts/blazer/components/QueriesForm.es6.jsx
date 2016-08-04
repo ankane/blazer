@@ -2,7 +2,8 @@ class QueriesForm extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      loading: false
+      loading: false,
+      statement: ""
     }
   }
 
@@ -29,6 +30,10 @@ class QueriesForm extends React.Component {
         // $("#run").click()
       },
       readOnly: false // false if this command should not apply in readOnly mode
+    })
+
+    editor.on('change', () => {
+      this.setState({statement: editor.getValue()})
     })
 
     this.editor = editor
@@ -91,30 +96,32 @@ class QueriesForm extends React.Component {
 
   renderRun() {
     if (this.state.loading) {
-      return <button onClick={this.cancelStatement.bind(this)} className="btn btn-danger" style={{verticalAlign: "top"}}>Cancel</button>
+      return <button onClick={this.cancelStatement.bind(this)} className="btn btn-danger" style={{verticalAlign: "top", width: "80px"}}>Cancel</button>
     } else {
-      return <button onClick={this.runStatement.bind(this)} className="btn btn-info" style={{verticalAlign: "top"}}>Run</button>
+      return <button onClick={this.runStatement.bind(this)} disabled={!this.queryPresent()} className="btn btn-info" style={{verticalAlign: "top", width: "80px"}}>Run</button>
     }
   }
 
   runStatement(e) {
     e.preventDefault()
 
-    if (this.editor.getValue().trim().length > 0) {
-      var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: "main"})
+    var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: "main"})
 
-      this.setState({loading: true, results: null})
+    this.setState({loading: true, results: null})
 
-      runQuery(data, (data) => {
-        this.setState({results: data, loading: false})
-      })
-    }
+    runQuery(data, (data) => {
+      this.setState({results: data, loading: false})
+    })
   }
 
   cancelStatement(e) {
     e.preventDefault()
 
     this.setState({loading: false})
+  }
+
+  queryPresent() {
+    return this.state.statement.trim().length > 0
   }
 }
 

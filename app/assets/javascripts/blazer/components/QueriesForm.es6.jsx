@@ -109,14 +109,17 @@ class QueriesForm extends React.Component {
 
     this.setState({loading: true, results: null})
 
-    runQuery(data, (data) => {
+    this.xhr = runQuery(data, (data) => {
       this.setState({results: data, loading: false})
+    }, (error) => {
+      console.log(error)
     })
   }
 
   cancelStatement(e) {
     e.preventDefault()
 
+    this.xhr.abort()
     this.setState({loading: false})
   }
 

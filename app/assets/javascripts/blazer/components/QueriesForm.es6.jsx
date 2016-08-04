@@ -4,7 +4,6 @@ class QueriesForm extends React.Component {
     this.state = {
       loading: false
     }
-    this.runStatement = this.runStatement.bind(this)
   }
 
   componentDidMount() {
@@ -57,7 +56,7 @@ class QueriesForm extends React.Component {
                 <div className="pull-left" style={{marginTop: "6px"}}>
                   <a href="#" onClick={this.goBack}>Back</a>
                 </div>
-                <button onClick={this.runStatement} className="btn btn-info" style={{verticalAlign: "top"}}>Run</button>
+                {this.renderRun()}
               </div>
             </div>
             <div className="col-xs-4">
@@ -90,16 +89,30 @@ class QueriesForm extends React.Component {
     }
   }
 
+  renderRun() {
+    if (this.state.loading) {
+      return <button onClick={this.cancelStatement.bind(this)} className="btn btn-danger" style={{verticalAlign: "top"}}>Cancel</button>
+    } else {
+      return <button onClick={this.runStatement.bind(this)} className="btn btn-info" style={{verticalAlign: "top"}}>Run</button>
+    }
+  }
+
   runStatement(e) {
     e.preventDefault()
 
     var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: "main"})
 
-    this.setState({loading: true})
+    this.setState({loading: true, results: null})
 
     runQuery(data, (data) => {
       this.setState({results: data, loading: false})
     })
+  }
+
+  cancelStatement(e) {
+    e.preventDefault()
+
+    this.setState({loading: false})
   }
 }
 

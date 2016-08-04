@@ -40,7 +40,7 @@ module Blazer
       end
 
       def tables
-        result = data_source.run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name FROM information_schema.tables WHERE table_schema IN (?) ORDER BY table_name", schemas]))
+        result = data_source.run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name FROM information_schema.tables WHERE table_schema IN (?) ORDER BY table_name", schemas]), refresh_cache: true)
         result.rows.map(&:first)
       end
 
@@ -64,6 +64,10 @@ module Blazer
         end
       rescue
         nil
+      end
+
+      def cachable?(statement)
+        !%w[CREATE ALTER UPDATE INSERT DELETE].include?(statement.split.first.to_s.upcase)
       end
 
       protected

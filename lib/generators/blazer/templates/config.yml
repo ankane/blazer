@@ -29,6 +29,8 @@ data_sources:
 
     smart_columns:
       # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+      # gender: {M: Male, F: Female}
+      # day_of_week: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
 
 # create audits
 audit: true

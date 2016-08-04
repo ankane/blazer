@@ -100,13 +100,15 @@ class QueriesForm extends React.Component {
   runStatement(e) {
     e.preventDefault()
 
-    var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: "main"})
+    if (this.editor.getValue().trim().length > 0) {
+      var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: "main"})
 
-    this.setState({loading: true, results: null})
+      this.setState({loading: true, results: null})
 
-    runQuery(data, (data) => {
-      this.setState({results: data, loading: false})
-    })
+      runQuery(data, (data) => {
+        this.setState({results: data, loading: false})
+      })
+    }
   }
 
   cancelStatement(e) {

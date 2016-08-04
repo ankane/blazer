@@ -179,3 +179,7 @@ input.search:focus {
 .chart-div {
   height: 300px;
 }
+
+button:focus {
+  outline: 0 !important;
+}

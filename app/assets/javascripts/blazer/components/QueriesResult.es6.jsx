@@ -150,7 +150,7 @@ class QueriesResult extends React.Component {
       // <% end %>
 
       if (typeof v === "string" && v === "") {
-        ele = <div class="text-muted">empty string</div>
+        ele = <div className="text-muted">empty string</div>
       } else if (linked_columns[k]) {
         ele = <a href={linked_columns[k].replace("{value}", v)} target="_blank">{this.formatValue(k, v)}</a>
       } else {

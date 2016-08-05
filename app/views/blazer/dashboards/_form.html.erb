@@ -1,4 +1,5 @@
 <%= react_component("DashboardsForm", {
   dashboard: @dashboard,
+  queries: Blazer::Query.named.order(:name).select("id, name").as_json(only: [:id, :name]),
   variable_params: variable_params
   }) %>

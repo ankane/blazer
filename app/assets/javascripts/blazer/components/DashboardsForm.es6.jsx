@@ -1,17 +1,42 @@
 class DashboardsForm extends React.Component {
+  constructor(props) {
+    super(props)
+
+    this.state = {
+      dashboard: {...this.props.dashboard},
+      loading: false,
+      errors: []
+    }
+  }
+
+  handleSubmit(e) {
+    e.preventDefault()
+
+    this.setState({loading: true})
+  }
+
   render() {
-    const { dashboard } = this.props
+    const { dashboard, loading } = this.state
 
     return (
       <div>
-        <form>
-          <div class="form-group">
+        <form onSubmit={this.handleSubmit.bind(this)}>
+          <div className="form-group">
             <label htmlFor="name">Name</label>
-            <input type="text" className="form-control" />
+            <input id="name" type="text" value={dashboard.name || ""} onChange={(e) => this.updateDashboard({name: e.target.value})} className="form-control" />
           </div>
+          <p>
+            <input type="submit" value="Save" className="btn btn-success" disabled={loading} />
+          </p>
         </form>
       </div>
     )
+  }
+
+  updateDashboard(attributes) {
+    this.setState({
+      dashboard: {...this.state.dashboard, ...attributes}
+    })
   }
 }
 

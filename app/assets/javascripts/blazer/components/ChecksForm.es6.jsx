@@ -1,14 +1,37 @@
 class ChecksForm extends React.Component {
+  constructor(props) {
+    super(props)
+    this.state = {
+      check: props.check
+    }
+  }
+
   render() {
     const { check, invert, errors } = this.props
 
+    var options = [
+      { value: 'one', label: 'One' },
+      { value: 'two', label: 'Two' }
+    ];
+
+    function logChange(val) {
+        console.log("Selected: " + val);
+    }
+
     return (
       <div>
-        {this.renderHeader()}
         {this.renderErrors()}
         <form>
           <div className="form-group">
-            <label for="query_id">Query</label>
+            <label htmlFor="query_id">Query</label>
+            <Select
+              name="query_id"
+              value={this.state.check.query_id}
+              options={options}
+              onChange={(val) => this.updateCheck({query_id: val.value})}
+              clearable={false}
+              backspaceRemoves={false}
+          />
           </div>
         </form>
       </div>
@@ -21,10 +44,13 @@ class ChecksForm extends React.Component {
     }
   }
 
-  renderHeader() {
-    // <% unless @check.respond_to?(:invert) %>
-    //   <p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
-    // <% end %>
+  updateCheck(attributes) {
+    this.setState({
+      check: {
+        ...this.state.check,
+        ...attributes
+      }
+    });
   }
 }
 

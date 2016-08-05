@@ -1,5 +1,5 @@
 <%= react_component("ChecksForm",
-  check: @check,
+  check: @check.as_json(only: [:id, :query_id, :check_type, :schedule, :emails]),
   errors: @check.errors.full_messages,
   queries: Blazer::Query.named.order(:name).select("id, name").as_json(only: [:id, :name]),
   check_schedules: Blazer.check_schedules,

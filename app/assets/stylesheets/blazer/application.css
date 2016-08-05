@@ -180,6 +180,6 @@ input.search:focus {
   height: 300px;
 }
 
-button:focus {
+button:focus, input[type=submit]:focus {
   outline: 0 !important;
 }

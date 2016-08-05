@@ -10,7 +10,8 @@ class DashboardsForm extends React.Component {
       dashboard: {...this.props.dashboard},
       queryIdOptions,
       loading: false,
-      errors: []
+      errors: [],
+      queries: []
     }
   }
 
@@ -30,6 +31,7 @@ class DashboardsForm extends React.Component {
             <label htmlFor="name">Name</label>
             <input id="name" type="text" value={dashboard.name || ""} onChange={(e) => this.updateDashboard({name: e.target.value})} className="form-control" />
           </div>
+          {this.renderCharts()}
           <div className="form-group">
             <label htmlFor="query_id">Add Chart</label>
             <Select
@@ -49,8 +51,27 @@ class DashboardsForm extends React.Component {
     )
   }
 
+  renderCharts() {
+    const { queries } = this.state
+
+    if (queries.length > 0) {
+      return (
+        <div className="form-group">
+          <label htmlFor="charts">Charts</label>
+          <ul className="list-group">
+            {queries.map((query, i) => {
+              return <li key={i} className="list-group-item">{query}</li>
+            })}
+          </ul>
+        </div>
+      )
+    }
+  }
+
   addChart(val) {
-    console.log(val)
+    this.setState({
+      queries: [...this.state.queries, val]
+    })
   }
 
   updateDashboard(attributes) {

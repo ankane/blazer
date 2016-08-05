@@ -42,8 +42,6 @@ class ChecksForm extends React.Component {
     this.setState({loading: true})
     let {id, ...data} = this.state.check;
 
-    console.log(data)
-
     let method, url
     if (id) {
       method = "PUT"
@@ -61,16 +59,13 @@ class ChecksForm extends React.Component {
     }).done((data) => {
       window.location.href = Routes.blazer_query_path(data.query_id)
     }).fail((xhr) => {
-      console.log(xhr)
       let json
       try {
         json =  $.parseJSON(xhr.responseText)
       } catch (err) {
         json = {errors: [xhr.statusText]}
       }
-      this.setState({errors: json.errors})
-    }).always(() => {
-      this.setState({loading: false})
+      this.setState({errors: json.errors, loading: false})
     })
   }
 

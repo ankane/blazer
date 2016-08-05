@@ -85,6 +85,7 @@ class ChecksForm extends React.Component {
               options={queryIdOptions}
               onChange={(val) => this.updateCheck({query_id: val.value})}
               clearable={false}
+              autoBlur={true}
             />
           </div>
           <div className="form-group">
@@ -97,6 +98,7 @@ class ChecksForm extends React.Component {
               clearable={false}
               searchable={false}
               backspaceRemoves={false}
+              autoBlur={true}
             />
           </div>
           {this.renderSchedule()}
@@ -134,6 +136,7 @@ class ChecksForm extends React.Component {
             clearable={false}
             searchable={false}
             backspaceRemoves={false}
+            autoBlur={true}
           />
         </div>
       )

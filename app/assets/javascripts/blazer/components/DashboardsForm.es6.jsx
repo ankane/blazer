@@ -41,6 +41,7 @@ class DashboardsForm extends React.Component {
               options={queryIdOptions}
               onChange={(val) => this.addChart(val.value)}
               clearable={false}
+              autoBlur={true}
             />
           </div>
           <p>

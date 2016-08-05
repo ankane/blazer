@@ -31,7 +31,8 @@ class ChecksForm extends React.Component {
       queryIdOptions,
       checkTypeOptions,
       scheduleOptions,
-      loading: false
+      loading: false,
+      errors: []
     }
   }
 
@@ -43,10 +44,25 @@ class ChecksForm extends React.Component {
 
     console.log(data)
 
-    $.post(Routes.blazer_checks_path(), {check: data}, (resp) => {
-      this.setState({loading: false})
+    var jqxhr = $.ajax({
+      method: "POST",
+      url: Routes.blazer_checks_path(),
+      data: {check: data},
+      dataType: "json"
+    }).done((data) => {
       window.location.href = Routes.blazer_query_path(data.query_id)
-    }, "json")
+    }).fail((xhr) => {
+      console.log(xhr)
+      let json
+      try {
+        json =  $.parseJSON(xhr.responseText)
+      } catch (err) {
+        json = {errors: [xhr.statusText]}
+      }
+      this.setState({errors: json.errors})
+    }).always(() => {
+      this.setState({loading: false})
+    })
   }
 
   render() {
@@ -94,8 +110,8 @@ class ChecksForm extends React.Component {
   }
 
   renderErrors() {
-    if (this.props.errors.length > 0) {
-      return <div className="alert alert-danger">{this.props.errors[0]}</div>
+    if (this.state.errors.length > 0) {
+      return <div className="alert alert-danger">{this.state.errors[0]}</div>
     }
   }
 

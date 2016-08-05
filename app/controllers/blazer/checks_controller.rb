@@ -20,9 +20,10 @@ module Blazer
       @check.creator = blazer_user if @check.respond_to?(:creator_id=) && blazer_user
 
       if @check.save
-        redirect_to run_check_path(@check)
+        # redirect_to run_check_path(@check)
+        render json: @check.as_json(only: [:id, :query_id])
       else
-        render :new
+        render json: {errors: @check.errors.full_messages}, status: :unprocessable_entity
       end
     end
 

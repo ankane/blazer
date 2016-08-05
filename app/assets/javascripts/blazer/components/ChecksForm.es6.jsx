@@ -30,19 +30,28 @@ class ChecksForm extends React.Component {
       check,
       queryIdOptions,
       checkTypeOptions,
-      scheduleOptions
+      scheduleOptions,
+      loading: false
     }
   }
 
   handleSubmit(e) {
     e.preventDefault()
 
-    console.log(this.state.check)
+    this.setState({loading: true})
+    let {id, ...data} = this.state.check;
+
+    console.log(data)
+
+    $.post(Routes.blazer_checks_path(), {check: data}, (resp) => {
+      this.setState({loading: false})
+      window.location.href = Routes.blazer_query_path(data.query_id)
+    }, "json")
   }
 
   render() {
     const { invert, errors } = this.props
-    const { check, queryIdOptions, checkTypeOptions } = this.state
+    const { check, queryIdOptions, checkTypeOptions, loading } = this.state
 
     return (
       <div>
@@ -77,7 +86,7 @@ class ChecksForm extends React.Component {
           </div>
           <p className="text-muted">Emails are sent when a check starts failing, and when it starts passing again.</p>
           <p>
-            <input type="submit" value="Save" className="btn btn-success" />
+            <input type="submit" value="Save" className="btn btn-success" disabled={loading} />
           </p>
         </form>
       </div>

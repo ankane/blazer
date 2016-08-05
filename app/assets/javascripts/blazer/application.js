@@ -23,11 +23,9 @@
 //= require ./react-select
 //= require_tree ./components
 
-$( function () {
-  $('.dropdown-toggle').mouseenter( function () {
-    $(this).parent().addClass('open');
-  });
-});
+$(document).on("mouseenter", ".dropdown-toggle", function () {
+  $(this).parent().addClass("open")
+})
 
 function runQuery(data, success, error) {
   return $.ajax({

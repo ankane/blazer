@@ -44,9 +44,18 @@ class ChecksForm extends React.Component {
 
     console.log(data)
 
+    let method, url
+    if (id) {
+      method = "PUT"
+      url = Routes.blazer_check_path(id)
+    } else {
+      method = "POST"
+      url = Routes.blazer_checks_path()
+    }
+
     var jqxhr = $.ajax({
-      method: "POST",
-      url: Routes.blazer_checks_path(),
+      method: method,
+      url: url,
       data: {check: data},
       dataType: "json"
     }).done((data) => {

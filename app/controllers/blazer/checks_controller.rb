@@ -29,9 +29,9 @@ module Blazer
 
     def update
       if @check.update(check_params)
-        redirect_to run_check_path(@check)
+        render json: @check.as_json(only: [:id, :query_id])
       else
-        render :edit
+        render json: {errors: @check.errors.full_messages}, status: :unprocessable_entity
       end
     end
 

@@ -2,7 +2,6 @@ class ChecksForm extends React.Component {
   constructor(props) {
     super(props)
 
-    // TODO move for performance
     const queryIdOptions = props.queries.map((query) => {
       return {value: query.id, label: query.name}
     })
@@ -82,6 +81,7 @@ class ChecksForm extends React.Component {
             <Select
               name="query_id"
               value={check.query_id}
+              placeholder="Select query"
               options={queryIdOptions}
               onChange={(val) => this.updateCheck({query_id: val.value})}
               clearable={false}

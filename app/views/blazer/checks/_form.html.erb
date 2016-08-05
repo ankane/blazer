@@ -1,9 +1,7 @@
 <%= react_component("ChecksForm",
   check: @check,
   errors: @check.errors.full_messages,
-  queries: Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} },
-  check_type: @check.respond_to?(:check_type),
-  invert: @check.respond_to?(:invert),
-  schedule: @check.respond_to?(:schedule),
-  check_schedules: Blazer.check_schedules
+  queries: Blazer::Query.named.order(:name).select("id, name").as_json(only: [:id, :name]),
+  check_schedules: Blazer.check_schedules,
+  anomaly_checks: Blazer.anomaly_checks
   ) %>

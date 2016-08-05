@@ -14,7 +14,6 @@
 //= require ./ace/mode-sql
 //= require ./ace/snippets/text
 //= require ./ace/snippets/sql
-//= require ./Sortable
 //= require ./bootstrap
 //= require ./routes
 //= require react

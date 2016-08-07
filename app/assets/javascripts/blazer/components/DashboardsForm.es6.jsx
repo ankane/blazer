@@ -11,7 +11,7 @@ class DashboardsForm extends React.Component {
       queryIdOptions,
       loading: false,
       errors: [],
-      queries: []
+      queries: [...this.props.dashboard_queries]
     }
   }
 
@@ -61,7 +61,12 @@ class DashboardsForm extends React.Component {
           <label htmlFor="charts">Charts</label>
           <ul className="list-group">
             {queries.map((query, i) => {
-              return <li key={i} className="list-group-item">{query}</li>
+              return (
+                <li key={i} className="list-group-item">
+                  <span onClick={this.removeQuery.bind(this)} className="glyphicon glyphicon-remove" aria-hidden={true}></span>
+                  {query.name}
+                </li>
+              )
             })}
           </ul>
         </div>
@@ -72,6 +77,18 @@ class DashboardsForm extends React.Component {
   addChart(val) {
     this.setState({
       queries: [...this.state.queries, val]
+    })
+  }
+
+  removeQuery(e) {
+    e.preventDefault()
+    let i = 1
+
+    this.setState({
+      queries: [
+        ...this.state.queries.slice(0, i),
+        ...this.state.queries.slice(i + 1)
+      ]
     })
   }
 

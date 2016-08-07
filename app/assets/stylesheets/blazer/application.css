@@ -183,3 +183,8 @@ input.search:focus {
 button:focus, input[type=submit]:focus {
   outline: 0 !important;
 }
+
+.glyphicon-remove {
+  float: right;
+  margin-top: 3px;
+}

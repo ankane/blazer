@@ -63,7 +63,7 @@ class DashboardsForm extends React.Component {
             {queries.map((query, i) => {
               return (
                 <li key={i} className="list-group-item">
-                  <span onClick={this.removeQuery.bind(this)} className="glyphicon glyphicon-remove" aria-hidden={true}></span>
+                  <span onClick={this.removeQuery.bind(this, i)} className="glyphicon glyphicon-remove" aria-hidden={true}></span>
                   {query.name}
                 </li>
               )
@@ -80,10 +80,7 @@ class DashboardsForm extends React.Component {
     })
   }
 
-  removeQuery(e) {
-    e.preventDefault()
-    let i = 1
-
+  removeQuery(i) {
     this.setState({
       queries: [
         ...this.state.queries.slice(0, i),

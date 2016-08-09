@@ -277,7 +277,7 @@ class QueriesForm extends React.Component {
     if (this.state.running) {
       return <button type="button" onClick={this.cancelStatement.bind(this)} className="btn btn-danger" style={{verticalAlign: "top", width: "72px"}}>Cancel</button>
     } else {
-      return <button type="button" onClick={this.runStatement.bind(this)} disabled={!this.queryPresent()} className="btn btn-info" style={{verticalAlign: "top", width: "72px"}}>Run</button>
+      return <button type="button" onClick={this.runStatement.bind(this)} disabled={!this.queryPresent() || this.state.loading} className="btn btn-info" style={{verticalAlign: "top", width: "72px"}}>Run</button>
     }
   }
 

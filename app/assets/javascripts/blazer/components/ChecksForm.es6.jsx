@@ -108,11 +108,39 @@ class ChecksForm extends React.Component {
           </div>
           <p className="text-muted">Emails are sent when a check starts failing, and when it starts passing again.</p>
           <p>
+            {this.renderDelete()}
+            {" "}
             <input type="submit" value="Save" className="btn btn-success" disabled={loading} />
           </p>
         </form>
       </div>
     )
+  }
+
+  renderDelete() {
+    const { check, loading } = this.state
+    if (check.id) {
+      return <button onClick={this.handleDelete.bind(this)} className="btn btn-danger" disabled={loading}>Delete</button>
+    }
+  }
+
+
+  handleDelete(e) {
+    e.preventDefault()
+
+    if (confirm("Are you sure?")) {
+      this.setState({loading: true})
+
+      const { check } = this.state
+
+      $.ajax({
+        method: "DELETE",
+        url: Routes.blazer_check_path(check.id),
+        dataType: "json"
+      }).done((data) => {
+        window.location.href = Routes.blazer_checks_path()
+      })
+    }
   }
 
   renderErrors() {

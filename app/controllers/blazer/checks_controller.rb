@@ -37,7 +37,7 @@ module Blazer
 
     def destroy
       @check.destroy
-      redirect_to checks_path
+      render json: {}
     end
 
     def run

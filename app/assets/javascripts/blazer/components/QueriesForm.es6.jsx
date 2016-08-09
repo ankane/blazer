@@ -169,7 +169,7 @@ class QueriesForm extends React.Component {
       e.preventDefault()
     }
 
-    var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: "main"})
+    var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: this.state.data_source})
 
     this.setState({loading: true, results: null})
 

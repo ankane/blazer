@@ -140,7 +140,7 @@ class QueriesShow extends React.Component {
               <span key={i}>
                 <label htmlFor={v}>{v}</label>
                 {" "}
-                <input id={v} value={variables[v] || ""} onChange={(e) => {
+                <input id={v} defaultValue={variables[v] || ""} onBlur={(e) => {
                   let attributes = {}
                   attributes[v] = e.target.value
                   this.updateVariables(attributes)

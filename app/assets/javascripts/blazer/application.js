@@ -25,8 +25,6 @@ $( function () {
   });
 });
 
-
-
 function cancelQuery(runningQuery) {
   runningQuery.canceled = true;
   var xhr = runningQuery.xhr;

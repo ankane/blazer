@@ -1,3 +1,8 @@
+## 1.6.2 [unreleased]
+
+- Added cancel button for queries
+- Added `lat` and `lng` as map keys
+
 ## 1.6.1
 
 - Added support for Presto [beta]

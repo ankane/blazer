@@ -183,7 +183,7 @@
     var val = $(this).val();
     if (val.length > 0) {
       var dataSource = $("#query_data_source").val();
-      editor.setValue(previewStatement[dataSource].replace("{table}", val));
+      editor.setValue(previewStatement[dataSource].replace("{table}", val), 1);
       $("#run").click();
     }
   });

@@ -188,3 +188,17 @@ button:focus, input[type=submit]:focus {
   float: right;
   margin-top: 3px;
 }
+
+#tables {
+  display: inline-block;
+  width: 260px;
+  margin-right: 10px;
+  text-align: left;
+}
+
+#data-sources {
+  display: inline-block;
+  width: 140px;
+  margin-right: 10px;
+  text-align: left;
+}

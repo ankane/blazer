@@ -1,10 +1,14 @@
 class QueriesForm extends React.Component {
   constructor(props) {
     super(props)
+    let data_source = props.data_sources[0].id
     this.state = {
       loading: false,
-      statement: ""
+      statement: "",
+      data_source: data_source,
+      tables: []
     }
+    this.updateTables(data_source)
   }
 
   componentDidMount() {
@@ -61,6 +65,12 @@ class QueriesForm extends React.Component {
                 <div className="pull-left" style={{marginTop: "6px"}}>
                   <a href="#" onClick={this.goBack}>Back</a>
                 </div>
+                <div id="data-sources">
+                  {this.renderDataSources()}
+                </div>
+                <div id="tables">
+                  {this.renderTables()}
+                </div>
                 {this.renderRun()}
               </div>
             </div>
@@ -86,6 +96,58 @@ class QueriesForm extends React.Component {
     )
   }
 
+  updateTables(data_source) {
+    $.getJSON(Routes.blazer_tables_queries_path({data_source: data_source}), (data) => {
+      this.setState({tables: data})
+    })
+  }
+
+  renderDataSources() {
+    const { data_sources } = this.props
+    const { data_source } = this.state
+
+    if (data_sources.length > 1) {
+      return <Select
+        value={data_source}
+        options={data_sources.map((ds) => {
+          return {
+            label: ds.name,
+            value: ds.id
+          }
+        })}
+        onChange={(val) => {
+          this.setState({data_source: val.value})
+          this.updateTables(val.value)
+        }}
+        clearable={false}
+        searchable={false}
+        backspaceRemoves={false}
+        autoBlur={true}
+      />
+    }
+  }
+
+  renderTables() {
+    const { tables } = this.state
+
+    return <Select
+            value={null}
+            placeholder="Preview table"
+            options={tables.map((v) => {
+              return {label: v, value: v}
+            })}
+            onChange={(val) => this.previewTable(val.value)}
+            clearable={false}
+            autoBlur={true}
+          />
+  }
+
+  previewTable(table) {
+    console.log(table)
+    this.editor.setValue(this.props.preview_statement[this.state.data_source].replace("{table}", table));
+    this.runStatement()
+  }
+
   renderResults() {
     if (this.state.loading) {
       return <p className="text-muted">Loading...</p>
@@ -103,7 +165,9 @@ class QueriesForm extends React.Component {
   }
 
   runStatement(e) {
-    e.preventDefault()
+    if (e) {
+      e.preventDefault()
+    }
 
     var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: "main"})
 

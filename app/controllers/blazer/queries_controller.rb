@@ -168,7 +168,8 @@ module Blazer
 
     def tables
       @tables = Blazer.data_sources[params[:data_source]].tables
-      render partial: "tables", layout: false
+      render json: @tables
+      # render partial: "tables", layout: false
     end
 
     private

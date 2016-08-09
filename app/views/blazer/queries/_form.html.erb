@@ -1,4 +1,6 @@
 <%= react_component("QueriesForm", {
   query: @query,
+  data_sources: Blazer.data_sources.values.map { |ds| {id: ds.id, name: ds.name} },
+  preview_statement: Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }],
   variable_params: variable_params
   }) %>

@@ -19,6 +19,36 @@ class DashboardsForm extends React.Component {
     e.preventDefault()
 
     this.setState({loading: true})
+
+    let {id, ...data} = this.state.dashboard;
+    let queryIds = this.state.queries.map((q) => q.id)
+    console.log(queryIds)
+
+    let method, url
+    if (id) {
+      method = "PUT"
+      url = Routes.blazer_dashboard_path(id)
+    } else {
+      method = "POST"
+      url = Routes.blazer_dashboards_path()
+    }
+
+    var jqxhr = $.ajax({
+      method: method,
+      url: url,
+      data: {dashboard: data, query_ids: queryIds},
+      dataType: "json"
+    }).done((data) => {
+      window.location.href = Routes.blazer_dashboard_path(data.id)
+    }).fail((xhr) => {
+      let json
+      try {
+        json =  $.parseJSON(xhr.responseText)
+      } catch (err) {
+        json = {errors: [xhr.statusText]}
+      }
+      this.setState({errors: json.errors, loading: false})
+    })
   }
 
   render() {
@@ -39,7 +69,7 @@ class DashboardsForm extends React.Component {
               value={null}
               placeholder="Select chart"
               options={queryIdOptions}
-              onChange={(val) => this.addChart(val.value)}
+              onChange={(val) => this.addChart(val)}
               clearable={false}
               autoBlur={true}
             />
@@ -76,7 +106,7 @@ class DashboardsForm extends React.Component {
 
   addChart(val) {
     this.setState({
-      queries: [...this.state.queries, val]
+      queries: [...this.state.queries, {id: val.value, name: val.label}]
     })
   }
 

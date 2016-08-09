@@ -17,7 +17,8 @@ module Blazer
       @dashboard.creator = blazer_user if @dashboard.respond_to?(:creator_id=) && blazer_user
 
       if update_dashboard(@dashboard)
-        redirect_to dashboard_path(@dashboard)
+        # redirect_to dashboard_path(@dashboard)
+        render json: @dashboard.as_json(only: [:id])
       else
         render :new
       end
@@ -50,7 +51,8 @@ module Blazer
 
     def update
       if update_dashboard(@dashboard)
-        redirect_to dashboard_path(@dashboard, variable_params)
+        # redirect_to dashboard_path(@dashboard, variable_params)
+        render json: @dashboard.as_json(only: [:id])
       else
         render :edit
       end

@@ -20,7 +20,8 @@ module Blazer
         # redirect_to dashboard_path(@dashboard)
         render json: @dashboard.as_json(only: [:id])
       else
-        render :new
+        # render :new
+        render json: {errors: @dashboard.errors.full_messages}, status: :unprocessable_entity
       end
     end
 
@@ -54,7 +55,8 @@ module Blazer
         # redirect_to dashboard_path(@dashboard, variable_params)
         render json: @dashboard.as_json(only: [:id])
       else
-        render :edit
+        # render :edit
+        render json: {errors: @dashboard.errors.full_messages}, status: :unprocessable_entity
       end
     end
 

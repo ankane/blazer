@@ -22,7 +22,6 @@ class DashboardsForm extends React.Component {
 
     let {id, ...data} = this.state.dashboard;
     let queryIds = this.state.queries.map((q) => q.id)
-    console.log(queryIds)
 
     let method, url
     if (id) {
@@ -56,6 +55,7 @@ class DashboardsForm extends React.Component {
 
     return (
       <div>
+       {this.renderErrors()}
         <form onSubmit={this.handleSubmit.bind(this)}>
           <div className="form-group">
             <label htmlFor="name">Name</label>
@@ -75,11 +75,35 @@ class DashboardsForm extends React.Component {
             />
           </div>
           <p>
+            {this.renderDelete()}
+            {" "}
             <input type="submit" value="Save" className="btn btn-success" disabled={loading} />
           </p>
         </form>
       </div>
     )
+  }
+
+  renderDelete() {
+    const { dashboard } = this.state
+    if (dashboard.id) {
+      return <button onClick={this.handleDelete.bind(this)} className="btn btn-danger">Delete</button>
+    }
+  }
+
+  handleDelete(e) {
+    e.preventDefault()
+
+    if (confirm("Are you sure?")) {
+      console.log("boom")
+      console.log(this.state.dashboard.id)
+    }
+  }
+
+  renderErrors() {
+    if (this.state.errors.length > 0) {
+      return <div className="alert alert-danger">{this.state.errors[0]}</div>
+    }
   }
 
   renderCharts() {

@@ -17,6 +17,8 @@ class QueriesForm extends React.Component {
   }
 
   componentDidMount() {
+    const { query } = this.state
+
     let editor = ace.edit(this._editor)
     editor.setTheme("ace/theme/twilight")
     editor.getSession().setMode("ace/mode/sql")
@@ -45,10 +47,12 @@ class QueriesForm extends React.Component {
       this.updateQuery({statement: editor.getValue()})
     })
 
-    const { query } = this.state
-    editor.setValue(query.statement)
-
     this.editor = editor
+
+    if (this.queryPresent()) {
+      editor.setValue(query.statement)
+      this.runStatement()
+    }
   }
 
   goBack(e) {
@@ -92,7 +96,11 @@ class QueriesForm extends React.Component {
                 <textarea value={query.description || ""} onChange={(e) => this.updateQuery({description: e.target.value})} style={{height: "80px"}} placeholder="Optional" className="form-control"></textarea>
               </div>
               <div className="text-right">
-                <input type="submit" value="Create" className="btn btn-success" disabled={loading} />
+                {this.renderDelete()}
+                {" "}
+                {this.renderFork()}
+                {" "}
+                <input type="submit" value={query.id ? "Update" : "Create"} className="btn btn-success" disabled={loading} />
               </div>
             </div>
           </div>
@@ -102,6 +110,28 @@ class QueriesForm extends React.Component {
         </div>
       </div>
     )
+  }
+
+  renderDelete() {
+    const { query, loading } = this.state
+    if (query.id) {
+      return <button onClick={this.handleDelete.bind(this)} className="btn btn-danger" disabled={loading}>Delete</button>
+    }
+  }
+
+  renderFork() {
+    const { query, loading } = this.state
+    if (query.id) {
+      return <button onClick={this.handleFork.bind(this)} className="btn btn-info" disabled={loading}>Fork</button>
+    }
+  }
+
+  handleDelete(e) {
+
+  }
+
+  handleFork(e) {
+
   }
 
   updateQuery(attributes) {
@@ -210,9 +240,9 @@ class QueriesForm extends React.Component {
 
   renderRun() {
     if (this.state.running) {
-      return <button onClick={this.cancelStatement.bind(this)} className="btn btn-danger" style={{verticalAlign: "top", width: "80px"}}>Cancel</button>
+      return <button onClick={this.cancelStatement.bind(this)} className="btn btn-danger" style={{verticalAlign: "top", width: "72px"}}>Cancel</button>
     } else {
-      return <button onClick={this.runStatement.bind(this)} disabled={!this.queryPresent()} className="btn btn-info" style={{verticalAlign: "top", width: "80px"}}>Run</button>
+      return <button onClick={this.runStatement.bind(this)} disabled={!this.queryPresent()} className="btn btn-info" style={{verticalAlign: "top", width: "72px"}}>Run</button>
     }
   }
 

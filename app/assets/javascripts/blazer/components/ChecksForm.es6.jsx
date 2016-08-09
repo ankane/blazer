@@ -124,7 +124,6 @@ class ChecksForm extends React.Component {
     }
   }
 
-
   handleDelete(e) {
     e.preventDefault()
 

@@ -1,20 +1,20 @@
-<% title @query.name %>
+<% blazer_title @query.name %>
 
-<div style="position: fixed; top: 0; left: 0; right: 0; background-color: whitesmoke; height: 60px; z-index: 1001;">
+<div class="topbar">
   <div class="container">
     <div class="row" style="padding-top: 13px;">
       <div class="col-sm-9">
-        <%= link_to "Home", root_path, class: "btn btn-primary", style: "vertical-align: top; margin-right: 5px;" %>
-        <h3 style="margin: 0; line-height: 34px; display: inline-block;">
+        <%= render partial: "blazer/nav" %>
+        <h3 style="margin: 0; line-height: 34px; display: inline;">
           <%= @query.name %>
         </h3>
       </div>
       <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_query_path(@query), class: "btn btn-default" %>
-        <%= link_to "Fork", new_query_path(statement: @query.statement), class: "btn btn-info" %>
+        <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
+        <%= link_to "Fork", new_query_path(variable_params.merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
 
-        <% if !@error and @success %>
-          <%= button_to "Download", run_queries_path(statement: @statement, query_id: @query.id, format: "csv"), class: "btn btn-primary" %>
+        <% if !@error && @success %>
+          <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv"), params: {statement: @statement}, class: "btn btn-primary" %>
         <% end %>
       </div>
     </div>
@@ -38,7 +38,7 @@
 <% end %>
 
 <% if @bind_vars.any? %>
-  <form id="bind" method="get" action="<%= url_for(params) %>" class="form-inline" style="margin-bottom: 10px;">
+  <form id="bind" method="get" action="<%= query_path(@query, variable_params) %>" class="form-inline" style="margin-bottom: 10px;">
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
       <% @bind_vars = @bind_vars - date_vars %>
@@ -49,7 +49,7 @@
     <% @bind_vars.each_with_index do |var, i| %>
       <%= label_tag var, var %>
       <% if (data = @smart_vars[var]) %>
-        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), style: "margin-right: 20px; width: 200px;" %>
+        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
         <script>
           $("#<%= var %>").selectize({
             create: true
@@ -59,7 +59,7 @@
         <%= text_field_tag var, params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !params[var], class: "form-control" %>
         <% if var.end_with?("_at") %>
           <script>
-            $("#<%= var %>").datepicker({format: "yyyy-mm-dd", autoclose: true, todayBtn: "linked"})
+            $("#<%= var %>").daterangepicker({singleDatePicker: true, locale: {format: "YYYY-MM-DD"}});
           </script>
         <% end %>
       <% end %>
@@ -102,10 +102,12 @@
              "Last 7 Days": [dateStr(6), dateStr()],
              "Last 30 Days": [dateStr(29), dateStr()]
             },
-            format: format,
+            locale: {
+              format: format
+            },
             startDate: dateStr(29),
             endDate: dateStr(),
-            opens: "left"
+            opens: "right"
           },
           function(start, end) {
             setTimeInputs(start, end);
@@ -121,6 +123,10 @@
           picker.setStartDate(moment.tz($("#start_time").val(), timeZone));
           picker.setEndDate(moment.tz($("#end_time").val(), timeZone));
           $("#reportrange").trigger('apply.daterangepicker', picker)
+        } else {
+          var picker = $("#reportrange").data('daterangepicker');
+          $("#reportrange").trigger('apply.daterangepicker', picker);
+          submitIfCompleted($("#start_time").closest("form"));
         }
       </script>
     <% end %>
@@ -129,7 +135,7 @@
   </form>
 <% end %>
 
-<pre><code><%= @statement %></code></pre>
+<pre style="max-height: 236px; overflow: hidden;" onclick="this.style.maxHeight = 'none';"><code><%= @statement %></code></pre>
 
 <% if @success %>
   <div id="results">
@@ -137,28 +143,32 @@
   </div>
 
   <script>
-    $.post("<%= run_queries_path %>", <%= json_escape({statement: @statement, query_id: @query.id}.to_json).html_safe %>, function (data) {
+    function showRun(data) {
       $("#results").html(data);
       $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60});
-    });
+    }
+
+    function showError(message) {
+      $("#results").css("color", "red").html(message);
+    }
+
+    var data = <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>;
+
+    runQuery(data, showRun, showError);
+  </script>
+<% end %>
+
+<% if %w[sql presto].include?(Blazer.data_sources[@query.data_source].adapter) %>
+  <script>
+    // do not highlight really long queries
+    // this can lead to performance issues
+    if ($("code").text().length < 10000) {
+      hljs.initHighlightingOnLoad();
+    }
   </script>
 <% end %>
 
 <script>
-  hljs.initHighlightingOnLoad();
-
-  function submitIfCompleted($form) {
-    var completed = true;
-    $form.find("input[name], select").each( function () {
-      if ($(this).val() == "") {
-        completed = false;
-      }
-    });
-    if (completed) {
-      $form.submit();
-    }
-  }
-
   $(".form-inline input, .form-inline select").change( function () {
     submitIfCompleted($(this).closest("form"));
   });

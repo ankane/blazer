@@ -1,0 +1,40 @@
+<% blazer_title "Checks" %>
+
+<p style="float: right;"><%= link_to "New Check", new_check_path, class: "btn btn-info" %></p>
+<%= render partial: "blazer/nav" %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Query</th>
+      <th style="width: 10%;">State</th>
+      <th style="width: 10%;">Run</th>
+      <th style="width: 20%;">Emails</th>
+      <th style="width: 15%;"></th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @checks.each do |check| %>
+      <tr>
+        <td><%= link_to check.query.name, check.query %> <span class="text-muted"><%= check.try(:check_type).to_s.gsub("_", " ") %></span></td>
+        <td>
+          <% if check.state %>
+            <small class="check-state <%= check.state.parameterize("_") %>"><%= check.state.upcase %></small>
+          <% end %>
+        </td>
+        <td><%= check.schedule if check.respond_to?(:schedule) %></td>
+        <td>
+          <ul class="list-unstyled" style="margin-bottom: 0;">
+            <% check.split_emails.each do |email| %>
+              <li><%= email %></li>
+            <% end %>
+          </ul>
+        </td>
+        <td style="text-align: right; padding: 1px;">
+          <%= link_to "Edit", edit_check_path(check), class: "btn btn-info" %>
+          <%= link_to "Run Now", run_check_path(check), target: "_blank", class: "btn btn-primary" %>
+        </td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

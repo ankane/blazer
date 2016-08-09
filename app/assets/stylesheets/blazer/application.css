@@ -16,12 +16,17 @@ body {
   padding-bottom: 20px;
 }
 
-#results th {
+.results-table th {
   cursor: pointer;
 }
 
-#results thead {
+.results-table thead {
   background-color: #fff;
+}
+
+.results-table img {
+  max-width: 200px;
+  max-height: 200px;
 }
 
 input.search {
@@ -67,4 +72,88 @@ input.search:focus {
 
 .ace_gutter-cell.error {
   background-color: red;
+}
+
+.chart {
+  height: 300px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.chart > .results-container {
+  height: 300px;
+  border: solid 1px #ddd;
+  overflow: scroll;
+  text-align: left;
+}
+
+.dashboard a {
+  font-weight: bold;
+}
+
+#search-item {
+  display: none;
+}
+
+.creator {
+  text-align: right;
+  color: #999;
+}
+
+.vars {
+  color: #ccc;
+}
+
+.check-state {
+  font-weight: bold;
+}
+
+.check-state a {
+  color: inherit;
+}
+
+.check-state.failing {
+  color: red;
+}
+
+.check-state.passing {
+  color: #5cb85c;
+}
+
+.check-state.error {
+  color: #666;
+}
+
+.check-state.timed_out {
+  color: orange;
+}
+
+.check-state.disabled {
+  color: #000;
+}
+
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: whitesmoke;
+  height: 60px;
+  z-index: 1001;
+}
+
+.glyphicon-remove {
+  cursor: pointer;
+  color: #d9534f;
+  display: none;
+}
+
+.list-group li:hover .glyphicon-remove {
+  display: inline;
+}
+
+.list-group {
+  cursor: move;
 }

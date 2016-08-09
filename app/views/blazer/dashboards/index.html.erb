@@ -1,0 +1,19 @@
+<% blazer_title "Dashboards" %>
+
+<p style="float: right;"><%= link_to "New Dashboard", new_dashboard_path, class: "btn btn-info" %></p>
+<%= render partial: "blazer/nav" %>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Dashboard</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @dashboards.each do |dashboard| %>
+      <tr>
+        <td><%= link_to dashboard.name, dashboard %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

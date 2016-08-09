@@ -1,0 +1,79 @@
+<div id="queries">
+  <div id="header" style="margin-bottom: 20px;">
+    <div class="btn-group pull-right">
+      <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
+      <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><%= link_to "Dashboards", dashboards_path %></li>
+        <li><%= link_to "Checks", checks_path %></li>
+        <li role="separator" class="divider"></li>
+        <li><%= link_to "New Dashboard", new_dashboard_path %></li>
+        <li><%= link_to "New Check", new_check_path %></li>
+      </ul>
+    </div>
+    <input type="text" placeholder="Start typing a query or person" style="width: 300px; display: inline-block;" autofocus=true class="search form-control" />
+  </div>
+
+  <table class="table">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th style="width: 20%; text-align: right;">Mastermind</th>
+      </tr>
+    </thead>
+    <tbody class="list">
+      <tr id="search-item">
+        <td>
+          <span class="name"></span>
+          <span class="vars"></span>
+          <span class="hide"></span>
+        </td>
+        <td class="creator"></td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+  var options = {
+    valueNames: ["name", "vars", "hide", "creator"],
+    item: "search-item",
+    page: 200,
+    indexAsync: true
+  };
+  var dashboardValues = <%= blazer_json_escape(@dashboards.to_json).html_safe %>;
+  var queryValues = <%= blazer_json_escape(@queries.to_json).html_safe %>;
+  var queryList = new List("queries", options, dashboardValues);
+  queryList.add(queryValues);
+
+  var queryIds = {};
+  for (var i = 0; i < queryValues.length; i++) {
+    queryIds[queryValues[i].id] = true;
+  }
+</script>
+
+<% if @queries.size >= 200 %>
+  <p id="loading" class="text-muted">Loading...</p>
+  <script>
+    $.getJSON("<%= queries_path %>", function (data) {
+      var i, j, newValues, val, size = 500;
+      $("#loading").remove();
+      for (i = 0; i < data.length / size; i++) {
+        newValues = [];
+        for (j = 0; j < size; j++) {
+          val = data[i * size + j];
+          if (!val) {
+            break;
+          }
+          if (!queryIds[val.id]) {
+            newValues.push(val);
+          }
+        }
+        queryList.add(newValues);
+      }
+    });
+  </script>
+<% end %>

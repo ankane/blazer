@@ -1,12 +1,58 @@
-linked_columns:
-  # user_id: "/admin/users/{value}"
+# see https://github.com/ankane/blazer for more info
 
-smart_columns:
-  # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+data_sources:
+  main:
+    url: <%%= ENV["BLAZER_DATABASE_URL"] %>
 
-smart_variables:
-  # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
-  #=== You can use it as Array
-  # zone_name: ['Zone 1', 'Zone 2']
-  #=== or as Hash
-  # zone_type: [type_1: 'Type 1', type_2: 'Type 2']
+    # statement timeout, in seconds
+    # none by default
+    # timeout: 15
+
+    # caching settings
+    # can greatly improve speed
+    # off by default
+    # cache:
+    #   mode: slow # or all
+    #   expires_in: 60 # min
+    #   slow_threshold: 15 # sec, only used in slow mode
+
+    # wrap queries in a transaction for safety
+    # not necessary if you use a read-only user
+    # true by default
+    # use_transaction: false
+
+    smart_variables:
+      # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
+      #=== You can use it as Array
+      # zone_name: ['Zone 1', 'Zone 2']
+      #=== or as Hash
+      # zone_type: [type_1: 'Type 1', type_2: 'Type 2']
+
+    linked_columns:
+      # user_id: "/admin/users/{value}"
+
+    smart_columns:
+      # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+
+# create audits
+audit: true
+
+# change the time zone
+# time_zone: "Pacific Time (US & Canada)"
+
+# class name of the user model
+# user_class: User
+
+# method name for the user model
+# user_name: name
+
+# optional auth method to use as a before_action (default: nil)
+# before_action: :authenticate!
+
+# email to send checks from
+# from_email: blazer@example.org
+
+check_schedules:
+  - "1 day"
+  - "1 hour"
+  - "5 minutes"

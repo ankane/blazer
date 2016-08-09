@@ -1,0 +1,6 @@
+<ul>
+  <% @checks.each do |check| %>
+    <li><%= link_to check.query.name, query_url(check.query_id) %> <%= check.state %></li>
+  <% end %>
+</ul>
+<p><%= link_to "Manage checks", checks_url %></p>

@@ -1,3 +1,3 @@
 module Blazer
-  VERSION = "0.0.7"
+  VERSION = "1.6.1"
 end

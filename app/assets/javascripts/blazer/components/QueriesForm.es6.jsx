@@ -50,7 +50,7 @@ class QueriesForm extends React.Component {
     this.editor = editor
 
     if (this.queryPresent()) {
-      editor.setValue(query.statement)
+      editor.setValue(query.statement, 1)
       this.runStatement()
     }
   }
@@ -132,14 +132,14 @@ class QueriesForm extends React.Component {
   renderDelete() {
     const { query, loading } = this.state
     if (query.id) {
-      return <button onClick={this.handleDelete.bind(this)} className="btn btn-danger" disabled={loading}>Delete</button>
+      return <button type="button" onClick={this.handleDelete.bind(this)} className="btn btn-danger" disabled={loading}>Delete</button>
     }
   }
 
   renderFork() {
     const { query, loading } = this.state
     if (query.id) {
-      return <button onClick={this.handleFork.bind(this)} className="btn btn-info" disabled={loading}>Fork</button>
+      return <button type="button" onClick={this.handleFork.bind(this)} className="btn btn-info" disabled={loading}>Fork</button>
     }
   }
 
@@ -261,7 +261,7 @@ class QueriesForm extends React.Component {
     const { query } = this.state
     let statement = this.props.preview_statement[query.data_source].replace("{table}", table)
     this.updateQuery({statement: statement})
-    this.editor.setValue(statement)
+    this.editor.setValue(statement, 1)
     this.runStatement()
   }
 
@@ -275,9 +275,9 @@ class QueriesForm extends React.Component {
 
   renderRun() {
     if (this.state.running) {
-      return <button onClick={this.cancelStatement.bind(this)} className="btn btn-danger" style={{verticalAlign: "top", width: "72px"}}>Cancel</button>
+      return <button type="button" onClick={this.cancelStatement.bind(this)} className="btn btn-danger" style={{verticalAlign: "top", width: "72px"}}>Cancel</button>
     } else {
-      return <button onClick={this.runStatement.bind(this)} disabled={!this.queryPresent()} className="btn btn-info" style={{verticalAlign: "top", width: "72px"}}>Run</button>
+      return <button type="button" onClick={this.runStatement.bind(this)} disabled={!this.queryPresent()} className="btn btn-info" style={{verticalAlign: "top", width: "72px"}}>Run</button>
     }
   }
 

@@ -1,5 +1,6 @@
 //= require ./jquery
 //= require ./jquery_ujs
+//= require ./lodash
 //= require ./stupidtable
 //= require ./jquery.stickytableheaders
 //= require ./highlight.pack

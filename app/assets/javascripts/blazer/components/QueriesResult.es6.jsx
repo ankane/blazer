@@ -38,9 +38,21 @@ class QueriesResult extends React.Component {
         })
         new Chartkick.LineChart(this._chartDiv, data, chartOptions)
       } else if (chart_type === "line2") {
-//       <%= line_chart @rows.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} }, chart_options %>
-        // new Chartkick.LineChart(this._chartDiv, data, chartOptions)
-
+        let groupedData = _.groupBy(rows, (r) => {
+          let v = r[1]
+          return (boom[columns[1]] || {})["" + v] || v
+        })
+        let data = Object.keys(groupedData).map((name, i) => {
+          let v = groupedData[name]
+          return (
+            {
+              name: name,
+              data: v.map((v2) => [v2[0], v2[2]]),
+              library: seriesLibrary[i]
+            }
+          )
+        })
+        new Chartkick.LineChart(this._chartDiv, data, chartOptions)
       } else if (chart_type === "bar") {
         let data = []
         for (let i = 0; i < (columns.length - 1); i++) {
@@ -54,17 +66,34 @@ class QueriesResult extends React.Component {
         }
         new Chartkick.ColumnChart(this._chartDiv, data, chartOptions)
       } else if (chart_type === "bar2") {
-
-//       <% first_20 = @rows.group_by { |r| r[0] }.values.first(20).flatten(1) %>
-//       <% labels = first_20.map { |r| r[0] }.uniq %>
-//       <% series = first_20.map { |r| r[1] }.uniq %>
-//       <% labels.each do |l| %>
-//         <% series.each do |s| %>
-//           <% first_20 << [l, s, 0] unless first_20.find { |r| r[0] == l && r[1] == s } %>
-//         <% end %>
-//       <% end %>
-//       <%= column_chart first_20.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.sort_by { |r2| labels.index(r2[0]) }.map { |v2| v3 = v2[0]; [(@boom[@columns[0]] || {})[v3.to_s] || v3, v2[2]] }} }, id: chart_id %>
-
+        let first20 = _.flatten(_.values(_.groupBy(rows, (r) => r[0])).slice(0, 20))
+        let labels = _.uniq(first20.map((r) => r[0]))
+        let series = _.uniq(first20.map((r) => r[1]))
+        labels.forEach((l) => {
+          series.forEach((s) => {
+            if (!_.find(first20, (r) => r[0] === l && r[1] === s)) {
+              first20.push([l, s, 0])
+            }
+          })
+        })
+        let groupedData = _.groupBy(rows, (r) => {
+          let v = r[1]
+          return (boom[columns[1]] || {})["" + v] || v
+        })
+        let data = Object.keys(groupedData).map((name, i) => {
+          let v = groupedData[name]
+          return (
+            {
+              name: name,
+              data: _.sortBy(v, (r2) => labels.indexOf(r2[0])).map((v2) => {
+                let v3 = v2[0]
+                return [(boom[columns[0]] || {})["" + v3] || v3, v2[2]]
+              }),
+              library: seriesLibrary[i]
+            }
+          )
+        })
+        new Chartkick.ColumnChart(this._chartDiv, data, chartOptions)
       }
     }
   }

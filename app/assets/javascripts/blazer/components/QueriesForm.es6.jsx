@@ -127,11 +127,25 @@ class QueriesForm extends React.Component {
   }
 
   handleDelete(e) {
+    e.preventDefault()
 
+    if (confirm("Are you sure?")) {
+      this.setState({loading: true})
+
+      const { query } = this.state
+
+      $.ajax({
+        method: "DELETE",
+        url: Routes.blazer_query_path(query.id),
+        dataType: "json"
+      }).done((data) => {
+        window.location.href = Routes.blazer_root_path()
+      })
+    }
   }
 
   handleFork(e) {
-
+    this.handleSubmit(e, true)
   }
 
   updateQuery(attributes) {
@@ -143,11 +157,15 @@ class QueriesForm extends React.Component {
     })
   }
 
-  handleSubmit(e) {
+  handleSubmit(e, fork) {
     e.preventDefault()
 
     this.setState({loading: true})
     let {id, ...data} = this.state.query;
+
+    if (fork) {
+      id = null
+    }
 
     let method, url
     if (id) {

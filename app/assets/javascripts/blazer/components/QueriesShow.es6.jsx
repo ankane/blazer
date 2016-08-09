@@ -110,7 +110,9 @@ class QueriesShow extends React.Component {
   }
 
   handleSubmit(e) {
-    e.preventDefault()
+    if (e) {
+      e.preventDefault()
+    }
 
     const { query } = this.props
     const { variables } = this.state
@@ -119,11 +121,21 @@ class QueriesShow extends React.Component {
   }
 
   updateVariables(attributes) {
-    console.log(attributes)
     this.setState({
       variables: {
         ...this.state.variables,
         ...attributes
+      }
+    }, () => {
+      let submit = true
+      this.props.bind_vars.forEach((v) => {
+        if (!this.state.variables[v]) {
+          submit = false
+        }
+      })
+
+      if (submit) {
+        this.handleSubmit()
       }
     })
   }

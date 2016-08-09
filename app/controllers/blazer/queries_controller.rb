@@ -39,9 +39,10 @@ module Blazer
       @query.creator = blazer_user if @query.respond_to?(:creator)
 
       if @query.save
-        redirect_to query_path(@query, variable_params)
+        # redirect_to query_path(@query, variable_params)
+        render json: @query.as_json(only: [:id])
       else
-        render :new
+        # render :new
       end
     end
 
@@ -155,7 +156,8 @@ module Blazer
         @query.errors.add(:base, "Sorry, permission denied")
       end
       if @query.errors.empty? && @query.update(query_params)
-        redirect_to query_path(@query, variable_params)
+        # redirect_to query_path(@query, variable_params)
+        render json: @query.as_json(only: [:id])
       else
         render :edit
       end

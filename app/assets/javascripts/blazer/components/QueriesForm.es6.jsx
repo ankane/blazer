@@ -1,14 +1,19 @@
 class QueriesForm extends React.Component {
   constructor(props) {
     super(props)
-    let data_source = props.data_sources[0].id
+
+    let query = {...props.query}
+    if (!query.data_source) {
+      query.data_source = props.data_sources[0].id
+    }
+
     this.state = {
       loading: false,
-      statement: "",
-      data_source: data_source,
-      tables: []
+      running: false,
+      tables: [],
+      query: query
     }
-    this.updateTables(data_source)
+    this.updateTables(query.data_source)
   }
 
   componentDidMount() {
@@ -37,8 +42,11 @@ class QueriesForm extends React.Component {
     })
 
     editor.on('change', () => {
-      this.setState({statement: editor.getValue()})
+      this.updateQuery({statement: editor.getValue()})
     })
+
+    const { query } = this.state
+    editor.setValue(query.statement)
 
     this.editor = editor
   }
@@ -49,16 +57,16 @@ class QueriesForm extends React.Component {
   }
 
   render() {
-    const { query } = this.props
+    const { query, loading } = this.state
 
     return (
       <div>
-        <form>
+        <form onSubmit={this.handleSubmit.bind(this)}>
           <div className="row">
             <div className="col-xs-8">
               <div className= "form-group">
                 <div id="editor-container">
-                  <div id="editor" ref={(n) => this._editor = n}>{query.statement}</div>
+                  <div id="editor" ref={(n) => this._editor = n}></div>
                 </div>
               </div>
               <div className="form-group text-right">
@@ -77,14 +85,14 @@ class QueriesForm extends React.Component {
             <div className="col-xs-4">
               <div className="form-group">
                 <label htmlFor="name">Name</label>
-                <input type="text" className="form-control" />
+                <input type="text" value={query.name || ""} onChange={(e) => this.updateQuery({name: e.target.value})} className="form-control" />
               </div>
               <div className="form-group">
                 <label htmlFor="description">Description</label>
-                <textarea style={{height: "80px"}} placeholder="Optional" className="form-control"></textarea>
+                <textarea value={query.description || ""} onChange={(e) => this.updateQuery({description: e.target.value})} style={{height: "80px"}} placeholder="Optional" className="form-control"></textarea>
               </div>
               <div className="text-right">
-                <input type="submit" value="Create" className="btn btn-success" />
+                <input type="submit" value="Create" className="btn btn-success" disabled={loading} />
               </div>
             </div>
           </div>
@@ -96,6 +104,48 @@ class QueriesForm extends React.Component {
     )
   }
 
+  updateQuery(attributes) {
+    this.setState({
+      query: {
+        ...this.state.query,
+        ...attributes
+      }
+    })
+  }
+
+  handleSubmit(e) {
+    e.preventDefault()
+
+    this.setState({loading: true})
+    let {id, ...data} = this.state.query;
+
+    let method, url
+    if (id) {
+      method = "PUT"
+      url = Routes.blazer_query_path(id)
+    } else {
+      method = "POST"
+      url = Routes.blazer_queries_path()
+    }
+
+    var jqxhr = $.ajax({
+      method: method,
+      url: url,
+      data: {query: data},
+      dataType: "json"
+    }).done((data) => {
+      window.location.href = Routes.blazer_query_path(data.id)
+    }).fail((xhr) => {
+      let json
+      try {
+        json =  $.parseJSON(xhr.responseText)
+      } catch (err) {
+        json = {errors: [xhr.statusText]}
+      }
+      this.setState({errors: json.errors, loading: false})
+    })
+  }
+
   updateTables(data_source) {
     $.getJSON(Routes.blazer_tables_queries_path({data_source: data_source}), (data) => {
       this.setState({tables: data})
@@ -104,11 +154,11 @@ class QueriesForm extends React.Component {
 
   renderDataSources() {
     const { data_sources } = this.props
-    const { data_source } = this.state
+    const { query } = this.state
 
     if (data_sources.length > 1) {
       return <Select
-        value={data_source}
+        value={query.data_source}
         options={data_sources.map((ds) => {
           return {
             label: ds.name,
@@ -116,7 +166,7 @@ class QueriesForm extends React.Component {
           }
         })}
         onChange={(val) => {
-          this.setState({data_source: val.value})
+          this.updateQuery({data_source: val.value})
           this.updateTables(val.value)
         }}
         clearable={false}
@@ -143,13 +193,15 @@ class QueriesForm extends React.Component {
   }
 
   previewTable(table) {
-    console.log(table)
-    this.editor.setValue(this.props.preview_statement[this.state.data_source].replace("{table}", table));
+    const { query } = this.state
+    let statement = this.props.preview_statement[query.data_source].replace("{table}", table)
+    this.updateQuery({statement: statement})
+    this.editor.setValue(statement)
     this.runStatement()
   }
 
   renderResults() {
-    if (this.state.loading) {
+    if (this.state.running) {
       return <p className="text-muted">Loading...</p>
     } else if (this.state.results) {
       return <QueriesResult stickyHeaders={false} {...this.state.results} />
@@ -157,7 +209,7 @@ class QueriesForm extends React.Component {
   }
 
   renderRun() {
-    if (this.state.loading) {
+    if (this.state.running) {
       return <button onClick={this.cancelStatement.bind(this)} className="btn btn-danger" style={{verticalAlign: "top", width: "80px"}}>Cancel</button>
     } else {
       return <button onClick={this.runStatement.bind(this)} disabled={!this.queryPresent()} className="btn btn-info" style={{verticalAlign: "top", width: "80px"}}>Run</button>
@@ -169,12 +221,14 @@ class QueriesForm extends React.Component {
       e.preventDefault()
     }
 
-    var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: this.state.data_source})
+    const { query } = this.state
 
-    this.setState({loading: true, results: null})
+    var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: query.data_source})
+
+    this.setState({running: true, results: null})
 
     this.xhr = runQuery(data, (data) => {
-      this.setState({results: data, loading: false})
+      this.setState({results: data, running: false})
     }, (error) => {
       console.log(error)
     })
@@ -184,11 +238,11 @@ class QueriesForm extends React.Component {
     e.preventDefault()
 
     this.xhr.abort()
-    this.setState({loading: false})
+    this.setState({running: false})
   }
 
   queryPresent() {
-    return this.state.statement.trim().length > 0
+    return (this.state.query.statement || "").trim().length > 0
   }
 }
 

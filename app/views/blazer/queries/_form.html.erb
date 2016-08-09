@@ -179,10 +179,6 @@
     }, runningQuery);
   });
 
-  if ($("#query_statement").val() != "") {
-    $("#run").click();
-  }
-
   $(document).on("change", "#table_names", function () {
     var val = $(this).val();
     if (val.length > 0) {

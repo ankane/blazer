@@ -17,6 +17,8 @@
 //= require ./classnames-index
 //= require ./react-input-autosize
 //= require ./react-select
+//= require ./Sortable
+//= require ./react-mixin-sortable
 //= require_tree ./components
 
 $(document).on("mouseenter", ".dropdown-toggle", function () {

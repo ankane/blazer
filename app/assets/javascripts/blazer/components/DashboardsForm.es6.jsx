@@ -21,7 +21,7 @@ class DashboardsForm extends React.Component {
     this.setState({loading: true})
 
     let {id, ...data} = this.state.dashboard;
-    let queryIds = this.state.queries.map((q) => q.id)
+    let queryIds = this._sortable.toArray()
 
     let method, url
     if (id) {
@@ -115,6 +115,23 @@ class DashboardsForm extends React.Component {
     }
   }
 
+  sortableGroupDecorator(componentBackingInstance) {
+    // check if backing instance not null
+    if (componentBackingInstance) {
+      let options = {
+        draggable: "li",
+        filter: ".glyphicon-remove",
+        onFilter: (evt) => {
+          let item = evt.item, ctrl = evt.target
+          if (Sortable.utils.is(ctrl, ".glyphicon-remove")) {
+            item.parentNode.removeChild(item)
+          }
+        }
+      }
+      this._sortable = Sortable.create(componentBackingInstance, options)
+    }
+  }
+
   renderCharts() {
     const { queries } = this.state
 
@@ -122,11 +139,11 @@ class DashboardsForm extends React.Component {
       return (
         <div className="form-group">
           <label htmlFor="charts">Charts</label>
-          <ul className="list-group">
+          <ul className="list-group" ref={this.sortableGroupDecorator.bind(this)}>
             {queries.map((query, i) => {
               return (
-                <li key={i} className="list-group-item">
-                  <span onClick={this.removeQuery.bind(this, i)} className="glyphicon glyphicon-remove" aria-hidden={true}></span>
+                <li key={i} data-id={query.id} className="list-group-item">
+                  <span className="glyphicon glyphicon-remove" aria-hidden={true}></span>
                   {query.name}
                 </li>
               )

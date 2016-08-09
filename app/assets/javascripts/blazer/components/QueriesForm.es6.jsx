@@ -102,6 +102,7 @@ class QueriesForm extends React.Component {
                 {" "}
                 <input type="submit" value={query.id ? "Update" : "Create"} className="btn btn-success" disabled={loading} />
               </div>
+              {this.renderWarnings()}
             </div>
           </div>
         </form>
@@ -110,6 +111,22 @@ class QueriesForm extends React.Component {
         </div>
       </div>
     )
+  }
+
+  renderWarnings() {
+    // TODO
+    // <% if @query.persisted? %>
+    //   <% dashboards_count = @query.dashboards.count %>
+    //   <% checks_count = @query.checks.count %>
+    //   <% words = [] %>
+    //   <% words << pluralize(dashboards_count, "dashboard") if dashboards_count > 0 %>
+    //   <% words << pluralize(checks_count, "check") if checks_count > 0 %>
+    //   <% if words.any? %>
+    //     <div class="alert alert-info" style="margin-top: 10px; padding: 8px 12px;">
+    //       Part of <%= words.to_sentence %>. Be careful when editing.
+    //     </div>
+    //   <% end %>
+    // <% end %>
   }
 
   renderDelete() {

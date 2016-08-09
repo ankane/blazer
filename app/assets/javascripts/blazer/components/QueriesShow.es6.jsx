@@ -3,7 +3,8 @@ class QueriesShow extends React.Component {
     super(props)
 
     this.state = {
-      statementHeight: "236px"
+      statementHeight: "236px",
+      variables: props.variable_params
     }
     this.expandStatement = this.expandStatement.bind(this)
   }
@@ -108,18 +109,42 @@ class QueriesShow extends React.Component {
     }
   }
 
+  handleSubmit(e) {
+    e.preventDefault()
+
+    const { query } = this.props
+    const { variables } = this.state
+
+    window.location.href = Routes.blazer_query_path(query.id, variables)
+  }
+
+  updateVariables(attributes) {
+    console.log(attributes)
+    this.setState({
+      variables: {
+        ...this.state.variables,
+        ...attributes
+      }
+    })
+  }
+
   renderVariables() {
     const { bind_vars } = this.props
+    const { variables } = this.state
 
     if (bind_vars.length > 0) {
       return (
-        <form className="form-inline" style={{marginBottom: "10px"}}>
+        <form onSubmit={this.handleSubmit.bind(this)} className="form-inline" style={{marginBottom: "10px"}}>
           {bind_vars.map((v, i) => {
             return (
-              <span>
-                <label for={v}>{v}</label>
+              <span key={i}>
+                <label htmlFor={v}>{v}</label>
                 {" "}
-                <input id={v} type="text" className="form-control" />
+                <input id={v} value={variables[v] || ""} onChange={(e) => {
+                  let attributes = {}
+                  attributes[v] = e.target.value
+                  this.updateVariables(attributes)
+                }} type="text" className="form-control" />
                 {" "}
               </span>
             )

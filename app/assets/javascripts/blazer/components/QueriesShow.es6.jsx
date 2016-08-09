@@ -140,9 +140,42 @@ class QueriesShow extends React.Component {
     })
   }
 
+  renderVariableInput(v) {
+    const { bind_vars, smart_vars } = this.props
+    const { variables } = this.state
+
+    if (smart_vars[v]) {
+      return <div className="boom">
+        <Select
+        value={"" + variables[v]}
+        options={smart_vars[v].map((sv) => {
+          return {
+            label: sv[0],
+            value: "" + sv[1]
+          }
+        })}
+        onChange={(val) => {
+          let attributes = {}
+          attributes[v] = val.value
+          this.updateVariables(attributes)
+        }}
+        clearable={false}
+        searchable={false}
+        backspaceRemoves={false}
+        autoBlur={true}
+      />
+      </div>
+    } else {
+      return <input id={v} defaultValue={variables[v] || ""} onBlur={(e) => {
+          let attributes = {}
+          attributes[v] = e.target.value
+          this.updateVariables(attributes)
+        }} type="text" className="form-control" />
+    }
+  }
+
   renderVariables() {
     const { bind_vars } = this.props
-    const { variables } = this.state
 
     if (bind_vars.length > 0) {
       return (
@@ -152,11 +185,7 @@ class QueriesShow extends React.Component {
               <span key={i}>
                 <label htmlFor={v}>{v}</label>
                 {" "}
-                <input id={v} defaultValue={variables[v] || ""} onBlur={(e) => {
-                  let attributes = {}
-                  attributes[v] = e.target.value
-                  this.updateVariables(attributes)
-                }} type="text" className="form-control" />
+                {this.renderVariableInput(v)}
                 {" "}
               </span>
             )

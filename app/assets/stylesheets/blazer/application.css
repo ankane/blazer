@@ -47,12 +47,13 @@ input.search:focus {
   outline: none;
 }
 
-.form-inline .selectize-control, .text-right .selectize-control {
+.form-inline .boom {
   display: inline-block;
   vertical-align: middle;
   margin-left: 5px;
-  margin-right: 20px;
+  margin-right: 5px;
   text-align: left;
+  width: 200px;
 }
 
 #editor-container {

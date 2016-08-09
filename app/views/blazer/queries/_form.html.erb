@@ -26,7 +26,8 @@
           updatePreviewSelect();
           $("#query_data_source").selectize().change(updatePreviewSelect);
         </script>
-        <%= link_to "Run", "#", class: "btn btn-info", id: "run", style: "vertical-align: top;" %>
+        <%= link_to "Run", "#", class: "btn btn-info", id: "run", style: "vertical-align: top; width: 70px;" %>
+        <%= link_to "Cancel", "#", class: "btn btn-danger hide", id: "cancel", style: "vertical-align: top; width: 70px;" %>
       </div>
     </div>
     <div class="col-xs-4">
@@ -128,8 +129,28 @@
   var params = <%= raw blazer_json_escape(variable_params.to_json) %>;
   var previewStatement = <%= raw blazer_json_escape(Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }].to_json) %>;
 
-  $("#run").click(function (e) {
+
+  function queryDone() {
+    $("#run").removeClass("hide")
+    $("#cancel").addClass("hide")
+    if (xhr) {
+      xhr.abort()
+    }
+  }
+
+  $("#cancel").click( function (e) {
+    e.preventDefault()
+
+    queryDone()
+
+    $("#results").html("")
+  })
+
+  $("#run").click( function (e) {
     e.preventDefault();
+
+    $(this).addClass("hide")
+    $("#cancel").removeClass("hide")
 
     if (error_line) {
       editor.getSession().removeGutterDecoration(error_line - 1, "error");
@@ -137,13 +158,12 @@
     }
 
     $("#results").html('<p class="text-muted">Loading...</p>');
-    if (xhr) {
-      xhr.abort();
-    }
 
     var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()});
 
     xhr = runQuery(data, function (data) {
+      queryDone()
+
       $("#results").html(data);
 
       error_line = getErrorLine();
@@ -153,6 +173,9 @@
         editor.gotoLine(error_line, 0, true);
         editor.focus();
       }
+    }, function (data) {
+      // TODO show error
+      queryDone()
     });
   });
 

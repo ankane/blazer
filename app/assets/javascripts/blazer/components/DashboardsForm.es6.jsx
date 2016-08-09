@@ -85,9 +85,9 @@ class DashboardsForm extends React.Component {
   }
 
   renderDelete() {
-    const { dashboard } = this.state
+    const { dashboard, loading } = this.state
     if (dashboard.id) {
-      return <button onClick={this.handleDelete.bind(this)} className="btn btn-danger">Delete</button>
+      return <button onClick={this.handleDelete.bind(this)} className="btn btn-danger" disabled={loading}>Delete</button>
     }
   }
 
@@ -95,8 +95,17 @@ class DashboardsForm extends React.Component {
     e.preventDefault()
 
     if (confirm("Are you sure?")) {
-      console.log("boom")
-      console.log(this.state.dashboard.id)
+      this.setState({loading: true})
+
+      const { dashboard } = this.state
+
+      $.ajax({
+        method: "DELETE",
+        url: Routes.blazer_dashboard_path(dashboard.id),
+        dataType: "json"
+      }).done((data) => {
+        window.location.href = Routes.blazer_dashboards_path()
+      })
     }
   }
 

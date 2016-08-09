@@ -62,7 +62,8 @@ module Blazer
 
     def destroy
       @dashboard.destroy
-      redirect_to dashboards_path
+      # redirect_to dashboards_path
+      render json: {}
     end
 
     def refresh

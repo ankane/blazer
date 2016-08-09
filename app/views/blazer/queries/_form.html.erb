@@ -125,7 +125,7 @@
   editor.focus();
 
   var error_line = null;
-  var xhr;
+  var runningQuery;
   var params = <%= raw blazer_json_escape(variable_params.to_json) %>;
   var previewStatement = <%= raw blazer_json_escape(Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }].to_json) %>;
 
@@ -133,14 +133,12 @@
   function queryDone() {
     $("#run").removeClass("hide")
     $("#cancel").addClass("hide")
-    if (xhr) {
-      xhr.abort()
-    }
   }
 
   $("#cancel").click( function (e) {
     e.preventDefault()
 
+    cancelQuery(runningQuery)
     queryDone()
 
     $("#results").html("")
@@ -161,7 +159,9 @@
 
     var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()});
 
-    xhr = runQuery(data, function (data) {
+    runningQuery = {};
+
+    runQuery(data, function (data) {
       queryDone()
 
       $("#results").html(data);
@@ -176,7 +176,7 @@
     }, function (data) {
       // TODO show error
       queryDone()
-    });
+    }, runningQuery);
   });
 
   if ($("#query_statement").val() != "") {

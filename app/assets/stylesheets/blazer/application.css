@@ -157,3 +157,7 @@ input.search:focus {
 .list-group {
   cursor: move;
 }
+
+#header a.active {
+  color: #999;
+}

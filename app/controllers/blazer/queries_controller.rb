@@ -7,6 +7,9 @@ module Blazer
 
       @dashboards = Blazer::Dashboard.order(:name)
       @dashboards = @dashboards.includes(:creator) if Blazer.user_class
+      if params[:filter] == "mine"
+        @dashboards = [] # TODO show my dashboards
+      end
       @dashboards =
         @dashboards.map do |d|
           {
@@ -233,7 +236,7 @@ module Blazer
 
     def set_queries(limit = nil)
       @my_queries =
-        if limit && blazer_user
+        if limit && blazer_user && !params[:filter]
           favorite_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys
           queries = Blazer::Query.named.where(id: favorite_query_ids)
           queries = queries.includes(:creator) if Blazer.user_class
@@ -244,9 +247,14 @@ module Blazer
         end
 
       @queries = Blazer::Query.named.order(:name)
+      if params[:filter] == "mine"
+        @queries = @queries.where(creator_id: blazer_user.try(:id)).reorder(created_at: :desc)
+      end
       @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
       @queries = @queries.includes(:creator) if Blazer.user_class
       @queries = @queries.limit(limit) if limit
+
+      @more = @queries.size >= limit && !params[:filter]
 
       @queries = (@my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
 

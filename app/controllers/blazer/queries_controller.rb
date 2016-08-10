@@ -52,15 +52,15 @@ module Blazer
       @sql_errors = []
       data_source = Blazer.data_sources[@query.data_source]
       @bind_vars.each do |var|
-        query = smart_variables[var]
+        query = data_source.smart_variables[var]
         if query.is_a? Hash
           @smart_vars[var] = query.map {|k,v| [k,v]}
         elsif query.is_a? Array
           @smart_vars[var] = query
         elsif query
-          rows, error = run_statement(query)
-          @smart_vars[var] = rows.map { |v| v.values.reverse }
-          @sql_errors << error if error
+          result = data_source.run_statement(query)
+          @smart_vars[var] = result.rows.map { |v| v.reverse }
+          @sql_errors << result.error if result.error
         end
       end
 

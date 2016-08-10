@@ -36,7 +36,11 @@ module Blazer
       @bind_vars.each do |var|
         @data_sources.each do |data_source|
           query = data_source.smart_variables[var]
-          if query
+          if query.is_a? Hash
+            @smart_vars[var] = query.map {|k,v| [k,v]}
+          elsif query.is_a? Array
+            @smart_vars[var] = query
+          elsif query
             result = data_source.run_statement(query)
             ((@smart_vars[var] ||= []).concat(result.rows.map { |v| v.reverse })).uniq!
             @sql_errors << result.error if result.error

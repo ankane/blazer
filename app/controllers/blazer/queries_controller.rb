@@ -48,8 +48,6 @@ module Blazer
       @statement = @query.statement.dup
       process_vars(@statement, @query.data_source)
 
-      p "==============#{@bind_vars}"
-
       @smart_vars = {}
       @sql_errors = []
       data_source = Blazer.data_sources[@query.data_source]

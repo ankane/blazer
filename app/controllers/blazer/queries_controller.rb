@@ -55,12 +55,9 @@ module Blazer
       @sql_errors = []
       data_source = Blazer.data_sources[@query.data_source]
       @bind_vars.each do |var|
-        query = data_source.smart_variables[var]
-        if query
-          result = data_source.run_statement(query)
-          @smart_vars[var] = result.rows.map { |v| v.reverse }
-          @sql_errors << result.error if result.error
-        end
+        smart_var, error = parse_smart_variables(var, data_source)
+        @smart_vars[var] = smart_var if smart_var
+        @sql_errors << error if error
       end
 
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement

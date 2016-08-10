@@ -1,5 +1,6 @@
 ## 1.6.2 [unreleased]
 
+- Added basic query permissions
 - Added cancel button for queries
 - Added `lat` and `lng` as map keys
 

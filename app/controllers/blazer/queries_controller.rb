@@ -248,8 +248,10 @@ module Blazer
       @queries = @queries.includes(:creator) if Blazer.user_class
       @queries = @queries.limit(limit) if limit
 
+      @queries = (@my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
+
       @queries =
-        (@my_queries + @queries).map do |q|
+        @queries.map do |q|
           {
             id: q.id,
             name: view_context.link_to(q.name, q),

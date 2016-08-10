@@ -253,12 +253,14 @@ module Blazer
       @queries = Blazer::Query.named.order(:name)
       if params[:filter] == "mine"
         @queries = @queries.where(creator_id: blazer_user.try(:id)).reorder(updated_at: :desc)
+        limit = nil
       end
       @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
       @queries = @queries.includes(:creator) if Blazer.user_class
       @queries = @queries.limit(limit) if limit
+      @queries = @queries.to_a
 
-      @more = @queries.size >= limit && !params[:filter]
+      @more = limit && @queries.size >= limit
 
       @queries = (@my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
 

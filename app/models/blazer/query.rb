@@ -19,7 +19,7 @@ module Blazer
     end
 
     def editable?(user)
-      (name.present? && name.first != "*" && name.first != "#") || user == creator
+      !persisted? || (name.present? && name.first != "*" && name.first != "#") || user == creator
     end
   end
 end

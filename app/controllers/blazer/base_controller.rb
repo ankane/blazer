@@ -53,7 +53,7 @@ module Blazer
     def parse_smart_variables(var, data_source)
       query = data_source.smart_variables[var]
       if query.is_a? Hash
-        smart_var = query.map { |k,v| [k, v] }
+        smart_var = query.map { |k,v| [v, k] }
       elsif query.is_a? Array
         smart_var = query.map { |v| [v, v] }
       elsif query

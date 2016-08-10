@@ -44,7 +44,7 @@ function runQuery(data, success, error, runningQuery) {
       var response = $.parseJSON(d);
       data.blazer = response;
       setTimeout( function () {
-        if (runningQuery && !runningQuery.canceled) {
+        if (!(runningQuery && runningQuery.canceled)) {
           runQuery(data, success, error, runningQuery);
         }
       }, 1000);

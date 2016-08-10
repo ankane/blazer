@@ -1,6 +1,7 @@
 ## 1.6.2 [unreleased]
 
 - Added basic query permissions
+- Added ability to use arrays and hashes for smart variables
 - Added cancel button for queries
 - Added `lat` and `lng` as map keys
 

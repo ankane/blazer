@@ -173,6 +173,10 @@ module Blazer
       render partial: "tables", layout: false
     end
 
+    def schema
+      @schema = Blazer.data_sources[params[:data_source]].schema
+    end
+
     private
 
     def continue_run

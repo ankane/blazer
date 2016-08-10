@@ -44,6 +44,11 @@ module Blazer
         result.rows.map(&:first)
       end
 
+      def schema
+        result = data_source.run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns WHERE table_schema IN (?) ORDER BY 1, 2", schemas]))
+        result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], columns: vs.sort_by { |v| v[4].to_i }.map { |v| {name: v[2], data_type: v[3]} }} }
+      end
+
       def preview_statement
         "SELECT * FROM {table} LIMIT 10"
       end

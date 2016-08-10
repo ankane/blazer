@@ -4,7 +4,7 @@
 
 <%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params) : queries_path(variable_params)), html: {class: "the_form", autocomplete: "off"} do |f| %>
   <div class="row">
-    <div class="col-xs-8">
+    <div id="statement-box" class="col-xs-8">
       <div class= "form-group">
         <%= f.hidden_field :statement %>
         <div id="editor-container">
@@ -16,7 +16,7 @@
           <%= link_to "Back", :back %>
         </div>
         <%= f.select :data_source, Blazer.data_sources.values.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 140px;" %>
-        <div id="tables" style="display: inline-block; width: 260px; margin-right: 10px;" class="hide">
+        <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;" class="hide">
           <%= render partial: "tables" %>
         </div>
         <script>

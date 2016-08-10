@@ -55,6 +55,10 @@ input.search:focus {
   text-align: left;
 }
 
+#statement-box .selectize-control {
+  margin-right: 0;
+}
+
 #editor-container {
   background-color: #141414;
   padding-top: 10px;

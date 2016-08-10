@@ -26,7 +26,7 @@ data_sources:
       #=== You can use it as Array
       # zone_name: ['Zone 1', 'Zone 2']
       #=== or as Hash
-      # zone_type: [type_1: 'Type 1', type_2: 'Type 2']
+      # zone_type: {type_1: 'Type 1', type_2: 'Type 2'}
 
     linked_columns:
       # user_id: "/admin/users/{value}"

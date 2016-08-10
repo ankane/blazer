@@ -50,6 +50,20 @@ module Blazer
       end
     end
 
+    def parse_smart_variables(var, data_source)
+      query = data_source.smart_variables[var]
+      if query.is_a? Hash
+        smart_var = query.map { |k,v| [k, v] }
+      elsif query.is_a? Array
+        smart_var = query.map { |v| [v, v] }
+      elsif query
+        result = data_source.run_statement(query)
+        smart_var = result.rows.map { |v| v.reverse }
+        error = result.error if result.error
+      end
+      return smart_var, error
+    end
+
     def extract_vars(statement)
       # strip commented out lines
       # and regex {1} or {1,2}

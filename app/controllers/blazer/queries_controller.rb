@@ -54,7 +54,7 @@ module Blazer
       @bind_vars.each do |var|
         query = smart_variables[var]
         if query.is_a? Hash
-          @smart_vars[var] = query.map {|k,v| [k.humanize,v]}
+          @smart_vars[var] = query.map {|k,v| [k,v]}
         elsif query.is_a? Array
           @smart_vars[var] = query
         elsif query

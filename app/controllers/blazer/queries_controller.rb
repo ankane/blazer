@@ -252,7 +252,7 @@ module Blazer
 
       @queries = Blazer::Query.named.order(:name)
       if params[:filter] == "mine"
-        @queries = @queries.where(creator_id: blazer_user.try(:id)).reorder(created_at: :desc)
+        @queries = @queries.where(creator_id: blazer_user.try(:id)).reorder(updated_at: :desc)
       end
       @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
       @queries = @queries.includes(:creator) if Blazer.user_class

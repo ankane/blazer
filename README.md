@@ -420,14 +420,6 @@ data_sources:
     url: presto://user@hostname:8080/catalog
 ```
 
-## Permissions [master]
-
-Blazer supports a simple permissions model.
-
-1. Queries without a name are unlisted
-2. Queries whose name starts with `#` are only listed to the creator
-3. Queries whose name starts with `*` can only be edited by the creator
-
 ## Learn SQL
 
 Have team members who want to learn SQL? Here are a few great, free resources.

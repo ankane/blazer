@@ -1,4 +1,4 @@
-## 1.6.2 [unreleased]
+## 1.6.2
 
 - Added basic query permissions
 - Added ability to use arrays and hashes for smart variables

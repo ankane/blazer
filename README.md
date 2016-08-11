@@ -191,6 +191,14 @@ smart_variables:
 
 The first column is the value of the variable, and the second column is the label.
 
+You can also use an array or hash for static data and enums.
+
+```yml
+smart_variables:
+  period: ["day", "week", "month"]
+  status: {0: "Active", 1: "Archived"}
+```
+
 ### Linked Columns
 
 [Example](https://blazerme.herokuapp.com/queries/3-linked-column) - title column

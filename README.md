@@ -428,7 +428,7 @@ data_sources:
     url: presto://user@hostname:8080/catalog
 ```
 
-## Permissions [master]
+## Query Permissions
 
 Blazer supports a simple permissions model.
 

@@ -191,7 +191,7 @@ module Blazer
             case @first_row[i]
             when Integer
               "int"
-            when Float
+            when Float, BigDecimal
               "float"
             else
               "string-ins"

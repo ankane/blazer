@@ -42,9 +42,9 @@ class ChecksIndex extends React.Component {
                     </ul>
                   </td>
                   <td style={{textAlign: "right", padding: "1px"}}>
-                    <a href={Routes.blazer_edit_check_path(check.id)} className="btn btn-info">Edit</a>
+                    <a href={Routes.blazer_edit_check_path(check)} className="btn btn-info">Edit</a>
                     {" "}
-                    <a href={Routes.blazer_query_path(check.query.id)} className="btn btn-primary" target="_blank">Run Now</a>
+                    <a href={Routes.blazer_query_path(check.query)} className="btn btn-primary" target="_blank">Run Now</a>
                   </td>
                 </tr>
               )

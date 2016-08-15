@@ -51,7 +51,6 @@ class QueriesForm extends React.Component {
 
     if (this.queryPresent()) {
       editor.setValue(query.statement, 1)
-      this.runStatement()
     }
   }
 

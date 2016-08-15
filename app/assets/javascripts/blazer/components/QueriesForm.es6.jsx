@@ -198,7 +198,7 @@ class QueriesForm extends React.Component {
       data: {query: data},
       dataType: "json"
     }).done((data) => {
-      window.location.href = Routes.blazer_query_path(data.id)
+      window.location.href = Routes.blazer_query_path(data)
     }).fail((xhr) => {
       let json
       try {

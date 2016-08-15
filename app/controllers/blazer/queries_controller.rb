@@ -40,7 +40,7 @@ module Blazer
 
       if @query.save
         # redirect_to query_path(@query, variable_params)
-        render json: @query.as_json(only: [:id])
+        render json: @query.as_json(only: [:id], methods: [:to_param])
       else
         # render :new
       end
@@ -157,7 +157,7 @@ module Blazer
       end
       if @query.errors.empty? && @query.update(query_params)
         # redirect_to query_path(@query, variable_params)
-        render json: @query.as_json(only: [:id])
+        render json: @query.as_json(only: [:id], methods: [:to_param])
       else
         render :edit
       end

@@ -1,7 +1,7 @@
 <% blazer_title @dashboard.name %>
 
 <%= react_component("DashboardsShow",
-  dashboard: @dashboard,
-  queries: @queries,
+  dashboard: @dashboard.as_json(methods: [:to_param]),
+  queries: @queries.as_json(methods: [:to_param]),
   variable_params: variable_params
   ) %>

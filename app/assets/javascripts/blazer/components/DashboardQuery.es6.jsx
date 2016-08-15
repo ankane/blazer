@@ -20,7 +20,7 @@ class DashboardQuery extends React.Component {
     return (
       <div className="dashboard-query">
         <h4>
-          <a href={Routes.blazer_query_path(query.id, variable_params)} target="_blank">{query.name}</a>
+          <a href={Routes.blazer_query_path(query, variable_params)} target="_blank">{query.name}</a>
         </h4>
         <div className="chart">
           {this.renderResults()}

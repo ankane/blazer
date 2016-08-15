@@ -12,7 +12,7 @@ class DashboardsShow extends React.Component {
                 <h3>{dashboard.name}</h3>
               </div>
               <div className="col-sm-3 text-right">
-                <a href={Routes.blazer_edit_dashboard_path(dashboard.id, variable_params)} className="btn btn-info">Edit</a>
+                <a href={Routes.blazer_edit_dashboard_path(dashboard, variable_params)} className="btn btn-info">Edit</a>
               </div>
             </div>
           </div>

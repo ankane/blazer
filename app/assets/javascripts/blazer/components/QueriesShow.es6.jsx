@@ -50,7 +50,7 @@ class QueriesShow extends React.Component {
                 </h3>
               </div>
               <div className="col-sm-3 text-right">
-                <a href={Routes.blazer_edit_query_path(query.id, variable_params)} className="btn btn-default" disabled={!editable}>Edit</a>
+                <a href={Routes.blazer_edit_query_path(query, variable_params)} className="btn btn-default" disabled={!editable}>Edit</a>
                 {" "}
                 <a href={Routes.blazer_new_query_path($.extend({}, variable_params, {fork_query_id: query.id, data_source: query.data_source, name: query.name}))} className="btn btn-info">Fork</a>
                 {" "}

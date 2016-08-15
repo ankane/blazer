@@ -72,6 +72,7 @@ module Blazer
     def set_gon
       gon.mapbox_access_token = ENV["MAPBOX_ACCESS_TOKEN"]
       gon.images = Blazer.images
+      gon.time_zone = Blazer.time_zone.tzinfo.name
     end
   end
 end

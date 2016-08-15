@@ -2,6 +2,7 @@ class QueriesResult extends React.Component {
   constructor(props) {
     super(props)
     this.urlRegex = /^https?:\/\/[\S]+$/
+    this.timeRegex = /^\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d(\.\d+)?Z$/
   }
 
   componentDidMount() {
@@ -146,6 +147,10 @@ class QueriesResult extends React.Component {
     // TODO better integer check
     if (Number.isInteger(value) && key.slice(0, 2) != "id" && key.slice(-2) != "id") {
       return this.numberWithDelimiter(value)
+    }
+
+    if (typeof value === "string" && value.match(this.timeRegex)) {
+      return moment(value).tz(gon.time_zone).format()
     }
 
     if (typeof value === "string" && value.match(this.urlRegex)) {

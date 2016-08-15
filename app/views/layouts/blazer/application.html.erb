@@ -11,6 +11,7 @@
       <%= stylesheet_link_tag "https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css" %>
       <%= javascript_include_tag "https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js" %>
     <% end %>
+    <%= Gon::Base.render_data %>
     <%= csrf_meta_tags %>
   </head>
   <body>

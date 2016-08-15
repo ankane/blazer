@@ -20,6 +20,8 @@ module Blazer
       before_action Blazer.before_action
     end
 
+    before_action :set_gon
+
     layout "blazer/application"
 
     private
@@ -66,5 +68,10 @@ module Blazer
       send(Blazer.user_method) if Blazer.user_method && respond_to?(Blazer.user_method)
     end
     helper_method :blazer_user
+
+    def set_gon
+      gon.mapbox_access_token = ENV["MAPBOX_ACCESS_TOKEN"]
+      gon.images = Blazer.images
+    end
   end
 end

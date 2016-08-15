@@ -5,14 +5,39 @@ class QueriesResult extends React.Component {
   }
 
   componentDidMount() {
-    const { stickyHeaders, chart_type, columns, rows, boom } = this.props
+    const { stickyHeaders, chart_type, columns, rows, boom, markers } = this.props
 
     $(this._table).stupidtable()
     if (this.props.stickyHeaders) {
       $(this._table).stickyTableHeaders({fixedOffset: 60});
     }
 
-    if (this._chartDiv) {
+    if (gon.mapbox_access_token && markers.length > 0) {
+      L.mapbox.accessToken = gon.mapbox_access_token
+      var m = L.mapbox.map('map', 'ankane.ioo8nki0')
+      var featureLayer = L.mapbox.featureLayer().addTo(m)
+      var geojson = []
+      for (var i = 0; i < markers.length; i++) {
+        var marker = markers[i];
+        geojson.push({
+          type: 'Feature',
+          geometry: {
+            type: 'Point',
+            coordinates: [
+              marker.longitude,
+              marker.latitude
+            ]
+          },
+          properties: {
+            description: marker.title,
+            'marker-color': '#f86767',
+            'marker-size': 'medium'
+          }
+        });
+      }
+      featureLayer.setGeoJSON(geojson);
+      m.fitBounds(featureLayer.getBounds());
+    } else if (this._chartDiv) {
       let chartOptions = {min: null}
       let seriesLibrary = {}
       let targetIndex = columns.map((c) => c.toLowerCase()).indexOf("target")
@@ -124,9 +149,13 @@ class QueriesResult extends React.Component {
     }
 
     if (typeof value === "string" && value.match(this.urlRegex)) {
-      // TODO add referrerPolicy="no-referrer" when React supports it
-      // https://github.com/facebook/react/pull/7274
-      return <a href={value} target="_blank">{value}</a>
+      if (gon.images && key.indexOf("image") !== -1) {
+        // TODO add referrerPolicy="no-referrer" when React supports it
+        // https://github.com/facebook/react/pull/7274
+        return <a href={value} target="_blank"><img src={value} /></a>
+      } else {
+        return <a href={value} target="_blank">{value}</a>
+      }
     }
 
     return value
@@ -197,40 +226,10 @@ class QueriesResult extends React.Component {
 
   renderChart() {
     const { rows, chart_type, only_chart, markers } = this.props
-    let maps = false
 
     if (rows.length > 0) {
-      if (maps && markers.length > 0) {
-
-//       <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
-//       <script>
-//         L.mapbox.accessToken = '<%= ENV["MAPBOX_ACCESS_TOKEN"] %>';
-//         var map = L.mapbox.map('map', 'ankane.ioo8nki0');
-//         var markers = <%= blazer_json_escape(@markers.to_json).html_safe %>;
-//         var featureLayer = L.mapbox.featureLayer().addTo(map);
-//         var geojson = [];
-//         for (var i = 0; i < markers.length; i++) {
-//           var marker = markers[i];
-//           geojson.push({
-//             type: 'Feature',
-//             geometry: {
-//               type: 'Point',
-//               coordinates: [
-//                 marker.longitude,
-//                 marker.latitude
-//               ]
-//             },
-//             properties: {
-//               description: marker.title,
-//               'marker-color': '#f86767',
-//               'marker-size': 'medium'
-//             }
-//           });
-//         }
-//         featureLayer.setGeoJSON(geojson);
-//         map.fitBounds(featureLayer.getBounds());
-//       </script>
-
+      if (gon.mapbox_access_token && markers.length > 0) {
+        return <div id="map" style={{height: only_chart ? "300px" : "500px"}}></div>
       } else if (chart_type) {
         return <div className="chart-div" ref={(n) => this._chartDiv = n}></div>
       } else if (only_chart) {

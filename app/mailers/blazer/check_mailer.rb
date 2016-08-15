@@ -15,6 +15,7 @@ module Blazer
 
     def failing_checks(email, checks)
       @checks = checks
+      # add reply_to for mailing lists
       mail to: email, reply_to: email, subject: "#{pluralize(checks.size, "Check")} Failing"
     end
   end

@@ -37,6 +37,7 @@ class QueriesShow extends React.Component {
 
   render() {
     const { query, variable_params, editable, error, success, statement } = this.props
+    const authenticityToken = $("meta[name=csrf-token]").attr("content")
 
     return (
       <div>
@@ -56,8 +57,11 @@ class QueriesShow extends React.Component {
                 {" "}
                 {() => {
                   if (!error && success) {
-                    // return <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv"), params: {statement: @statement}, class: "btn btn-primary" %>
-                    return <input className="btn btn-primary" type="submit" value="Download" />
+                    return <form method="post" action={Routes.blazer_run_queries_path({query_id: query.id, format: "csv"})} style={{display: "inline"}}>
+                      <input type="hidden" name="authenticity_token" value={authenticityToken} />
+                      <input type="hidden" name="statement" value={statement} />
+                      <input className="btn btn-primary" type="submit" value="Download" />
+                    </form>
                   }
                 }()}
               </div>

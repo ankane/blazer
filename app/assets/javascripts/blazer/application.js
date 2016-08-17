@@ -25,7 +25,15 @@ $(document).on("mouseenter", ".dropdown-toggle", function () {
   $(this).parent().addClass("open")
 })
 
-function runQuery(data, success, error) {
+function cancelQuery(runningQuery) {
+  runningQuery.canceled = true;
+  var xhr = runningQuery.xhr;
+  if (xhr) {
+    xhr.abort();
+  }
+}
+
+function runQuery(data, success, error, runningQuery) {
   return $.ajax({
     url: Routes.blazer_run_queries_path(),
     method: "POST",
@@ -36,7 +44,9 @@ function runQuery(data, success, error) {
       var response = $.parseJSON(d);
       data.blazer = response;
       setTimeout( function () {
-        runQuery(data, success, error);
+        if (!(runningQuery && runningQuery.canceled)) {
+          runQuery(data, success, error, runningQuery);
+        }
       }, 1000);
     } else {
       success(d);
@@ -45,6 +55,10 @@ function runQuery(data, success, error) {
     var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
     error(message);
   });
+  if (runningQuery) {
+    runningQuery.xhr = xhr;
+  }
+  return xhr;
 }
 
 function submitIfCompleted($form) {

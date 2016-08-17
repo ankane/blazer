@@ -7,6 +7,9 @@ module Blazer
 
       @dashboards = Blazer::Dashboard.order(:name)
       @dashboards = @dashboards.includes(:creator) if Blazer.user_class
+      if params[:filter] == "mine"
+        @dashboards = [] # TODO show my dashboards
+      end
       @dashboards =
         @dashboards.map do |d|
           {
@@ -54,12 +57,9 @@ module Blazer
       @sql_errors = []
       data_source = Blazer.data_sources[@query.data_source]
       @bind_vars.each do |var|
-        query = data_source.smart_variables[var]
-        if query
-          result = data_source.run_statement(query)
-          @smart_vars[var] = result.rows.map { |v| v.reverse }
-          @sql_errors << result.error if result.error
-        end
+        smart_var, error = parse_smart_variables(var, data_source)
+        @smart_vars[var] = smart_var if smart_var
+        @sql_errors << error if error
       end
 
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
@@ -175,6 +175,10 @@ module Blazer
       # render partial: "tables", layout: false
     end
 
+    def schema
+      @schema = Blazer.data_sources[params[:data_source]].schema
+    end
+
     private
 
     def continue_run
@@ -192,7 +196,7 @@ module Blazer
             case @first_row[i]
             when Integer
               "int"
-            when Float
+            when Float, BigDecimal
               "float"
             else
               "string-ins"
@@ -209,7 +213,7 @@ module Blazer
       @linked_columns = @data_source.linked_columns
 
       @markers = []
-      [["latitude", "longitude"], ["lat", "lon"]].each do |keys|
+      [["latitude", "longitude"], ["lat", "lon"], ["lat", "lng"]].each do |keys|
         lat_index = @columns.index(keys.first)
         lon_index = @columns.index(keys.last)
         if lat_index && lon_index
@@ -255,7 +259,7 @@ module Blazer
 
     def set_queries(limit = nil)
       @my_queries =
-        if limit && blazer_user
+        if limit && blazer_user && !params[:filter]
           favorite_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys
           queries = Blazer::Query.named.where(id: favorite_query_ids)
           queries = queries.includes(:creator) if Blazer.user_class
@@ -266,12 +270,21 @@ module Blazer
         end
 
       @queries = Blazer::Query.named.order(:name)
+      if params[:filter] == "mine"
+        @queries = @queries.where(creator_id: blazer_user.try(:id)).reorder(updated_at: :desc)
+        limit = nil
+      end
       @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
       @queries = @queries.includes(:creator) if Blazer.user_class
       @queries = @queries.limit(limit) if limit
+      @queries = @queries.to_a
+
+      @more = limit && @queries.size >= limit
+
+      @queries = (@my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
 
       @queries =
-        (@my_queries + @queries).map do |q|
+        @queries.map do |q|
           {
             id: q.id,
             name: q.name,

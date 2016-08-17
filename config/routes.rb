@@ -3,6 +3,7 @@ Blazer::Engine.routes.draw do
     post :run, on: :collection # err on the side of caution
     post :refresh, on: :member
     get :tables, on: :collection
+    get :schema, on: :collection
   end
   resources :checks, except: [:show] do
     get :run, on: :member

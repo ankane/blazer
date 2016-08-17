@@ -6,9 +6,9 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 [![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-18d79092e635b4b220f57ff7a1ecea41.png)](https://blazerme.herokuapp.com)
 
-:tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
+:envelope: [Get notified of updates](http://eepurl.com/cbUwsD)
 
-:envelope: [Subscribe to releases](https://libraries.io/rubygems/blazer)
+:tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
 ## Features
 
@@ -191,6 +191,14 @@ smart_variables:
 
 The first column is the value of the variable, and the second column is the label.
 
+You can also use an array or hash for static data and enums.
+
+```yml
+smart_variables:
+  period: ["day", "week", "month"]
+  status: {0: "Active", 1: "Archived"}
+```
+
 ### Linked Columns
 
 [Example](https://blazerme.herokuapp.com/queries/3-linked-column) - title column
@@ -280,7 +288,7 @@ SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
 
 ### Maps
 
-Columns named `latitude` and `longitude` or `lat` and `lon` - [Example](https://blazerme.herokuapp.com/queries/15-map)
+Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` - [Example](https://blazerme.herokuapp.com/queries/15-map)
 
 ```sql
 SELECT name, latitude, longitude FROM cities
@@ -419,6 +427,14 @@ data_sources:
   my_source:
     url: presto://user@hostname:8080/catalog
 ```
+
+## Query Permissions
+
+Blazer supports a simple permissions model.
+
+1. Queries without a name are unlisted
+2. Queries whose name starts with `#` are only listed to the creator
+3. Queries whose name starts with `*` can only be edited by the creator
 
 ## Learn SQL
 

@@ -15,6 +15,10 @@ module Blazer
         [] # optional, but nice to have
       end
 
+      def schema
+        [] # optional, but nice to have
+      end
+
       def preview_statement
         "" # also optional, but nice to have
       end

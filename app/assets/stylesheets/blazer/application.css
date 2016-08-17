@@ -56,6 +56,10 @@ input.search:focus {
   width: 200px;
 }
 
+#statement-box .selectize-control {
+  margin-right: 0;
+}
+
 #editor-container {
   background-color: #141414;
   padding-top: 10px;
@@ -164,6 +168,7 @@ input.search:focus {
   cursor: move;
 }
 
+<<<<<<< HEAD
 .dashboard-query {
   padding-top: 10px;
   clear: both;
@@ -202,4 +207,8 @@ button:focus, input[type=submit]:focus {
   width: 140px;
   margin-right: 10px;
   text-align: left;
+}
+
+#header a.active {
+  color: #999;
 }

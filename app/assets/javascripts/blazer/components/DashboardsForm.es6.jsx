@@ -38,7 +38,7 @@ class DashboardsForm extends React.Component {
       data: {dashboard: data, query_ids: queryIds},
       dataType: "json"
     }).done((data) => {
-      window.location.href = Routes.blazer_dashboard_path(data.id)
+      window.location.href = Routes.blazer_dashboard_path(data)
     }).fail((xhr) => {
       let json
       try {
@@ -101,7 +101,7 @@ class DashboardsForm extends React.Component {
 
       $.ajax({
         method: "DELETE",
-        url: Routes.blazer_dashboard_path(dashboard.id),
+        url: Routes.blazer_dashboard_path(dashboard),
         dataType: "json"
       }).done((data) => {
         window.location.href = Routes.blazer_dashboards_path()

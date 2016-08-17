@@ -18,7 +18,7 @@ module Blazer
 
       if update_dashboard(@dashboard)
         # redirect_to dashboard_path(@dashboard)
-        render json: @dashboard.as_json(only: [:id])
+        render json: @dashboard.as_json(only: [:id], methods: [:to_param])
       else
         # render :new
         render json: {errors: @dashboard.errors.full_messages}, status: :unprocessable_entity
@@ -50,7 +50,7 @@ module Blazer
     def update
       if update_dashboard(@dashboard)
         # redirect_to dashboard_path(@dashboard, variable_params)
-        render json: @dashboard.as_json(only: [:id])
+        render json: @dashboard.as_json(only: [:id], methods: [:to_param])
       else
         # render :edit
         render json: {errors: @dashboard.errors.full_messages}, status: :unprocessable_entity

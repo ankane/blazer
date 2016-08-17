@@ -6,9 +6,9 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 [![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-18d79092e635b4b220f57ff7a1ecea41.png)](https://blazerme.herokuapp.com)
 
-:tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
+:envelope: [Get notified of updates](http://eepurl.com/cbUwsD)
 
-:envelope: [Subscribe to releases](https://libraries.io/rubygems/blazer)
+:tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
 ## Features
 

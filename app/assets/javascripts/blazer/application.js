@@ -43,10 +43,29 @@ function uuid() {
   });
 }
 
+// TODO don't use global, stop all queries
+var stopId;
+
+$(window).unload(function() {
+  if (stopId) {
+    data = {stop_id: stopId}
+    var csrfParam = $('meta[name=csrf-param]').attr('content')
+    var csrfToken = $('meta[name=csrf-token]').attr('content')
+    data[csrfParam] = csrfToken
+    var data2 = new Blob([JSON.stringify(data)], {type : 'application/json; charset=UTF-8'});
+    navigator.sendBeacon(cancelQueriesPath, data2);
+  }
+})
+
 function runQuery(data, success, error, runningQuery) {
+  if (!runningQuery) {
+    runningQuery = {}
+  }
+
   if (runningQuery && !runningQuery.stop_id) {
     runningQuery.stop_id = uuid();
     data.stop_id = runningQuery.stop_id
+    stopId = runningQuery.stop_id
   }
 
   var xhr = $.ajax({

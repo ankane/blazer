@@ -38,7 +38,7 @@ class DashboardsForm extends React.Component {
       data: {dashboard: data, query_ids: queryIds},
       dataType: "json"
     }).done((data) => {
-      window.location.href = Routes.blazer_dashboard_path(data)
+      window.location.href = Routes.blazer_dashboard_path(data, this.props.variable_params)
     }).fail((xhr) => {
       let json
       try {

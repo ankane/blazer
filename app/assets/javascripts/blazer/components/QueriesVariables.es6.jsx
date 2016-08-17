@@ -88,6 +88,8 @@ class QueriesVariables extends React.Component {
           <input type="submit" className="btn btn-success" value="Run" style={{verticalAlign: "top"}} />
         </form>
       )
+    } else {
+      return null
     }
   }
 }

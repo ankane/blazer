@@ -10,7 +10,10 @@ class DashboardQuery extends React.Component {
     const data = {statement: query.statement, query_id: query.id, only_chart: true}
 
     runQuery(data, (results) => {
+      results.only_chart = true
       this.setState({results: results})
+    }, (error) => {
+      console.log(error)
     });
   }
 

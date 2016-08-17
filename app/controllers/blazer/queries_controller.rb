@@ -134,7 +134,7 @@ module Blazer
           continue_run
         end
       else
-        # render layout: false
+        render json: {}
       end
     end
 

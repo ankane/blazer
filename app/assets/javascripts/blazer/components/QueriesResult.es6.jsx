@@ -13,7 +13,7 @@ class QueriesResult extends React.Component {
       $(this._table).stickyTableHeaders({fixedOffset: 60});
     }
 
-    if (gon.mapbox_access_token && markers.length > 0) {
+    if (gon.mapbox_access_token && markers && markers.length > 0) {
       L.mapbox.accessToken = gon.mapbox_access_token
       var m = L.mapbox.map('map', 'ankane.ioo8nki0')
       var featureLayer = L.mapbox.featureLayer().addTo(m)
@@ -125,25 +125,6 @@ class QueriesResult extends React.Component {
   }
 
   formatValue(key, value) {
-    // BLAZER_IMAGE_EXT = %w[png jpg jpeg gif]
-
-
-      // if value.is_a?(Integer) && !key.to_s.end_with?("id") && !key.to_s.start_with?("id")
-      //   number_with_delimiter(value)
-      // elsif value =~ BLAZER_URL_REGEX
-      //   # see if image or link
-      //   if Blazer.images && (key.include?("image") || BLAZER_IMAGE_EXT.include?(value.split(".").last.split("?").first.try(:downcase)))
-      //     link_to value, target: "_blank" do
-      //       image_tag value, referrerpolicy: "no-referrer"
-      //     end
-      //   else
-      //     link_to value, value, target: "_blank"
-      //   end
-      // else
-      //   value
-      // end
-
-
     // TODO better integer check
     if (Number.isInteger(value) && key.slice(0, 2) != "id" && key.slice(-2) != "id") {
       return this.numberWithDelimiter(value)
@@ -154,6 +135,7 @@ class QueriesResult extends React.Component {
     }
 
     if (typeof value === "string" && value.match(this.urlRegex)) {
+      // TODO check for image extension
       if (gon.images && key.indexOf("image") !== -1) {
         // TODO add referrerPolicy="no-referrer" when React supports it
         // https://github.com/facebook/react/pull/7274

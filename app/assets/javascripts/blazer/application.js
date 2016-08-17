@@ -28,12 +28,27 @@ $( function () {
 function cancelQuery(runningQuery) {
   runningQuery.canceled = true;
   var xhr = runningQuery.xhr;
-  if (xhr) {
-    xhr.abort();
-  }
+  // if (xhr) {
+  //   xhr.abort();
+  // }
+  $.post(cancelQueriesPath, {stop_id: runningQuery.stop_id})
+  // console.log(runningQuery.run_id)
+}
+
+// http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript
+function uuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
 }
 
 function runQuery(data, success, error, runningQuery) {
+  if (runningQuery && !runningQuery.stop_id) {
+    runningQuery.stop_id = uuid();
+    data.stop_id = runningQuery.stop_id
+  }
+
   var xhr = $.ajax({
     url: window.runQueriesPath,
     method: "POST",

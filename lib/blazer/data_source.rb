@@ -22,6 +22,8 @@ module Blazer
           Blazer::Adapters::ElasticsearchAdapter.new(self)
         when "mongodb"
           Blazer::Adapters::MongodbAdapter.new(self)
+        when "postgresql"
+          Blazer::Adapters::PostgresqlAdapter.new(self)
         when "presto"
           Blazer::Adapters::PrestoAdapter.new(self)
         when "sql"
@@ -129,7 +131,7 @@ module Blazer
         if options[:check]
           comment << ",check_id:#{options[:check].id},check_emails:#{options[:check].emails}"
         end
-        result = run_statement_helper(statement, comment, options[:run_id])
+        result = run_statement_helper(statement, comment, options)
       end
 
       result
@@ -153,9 +155,11 @@ module Blazer
 
     protected
 
-    def run_statement_helper(statement, comment, run_id)
+    def run_statement_helper(statement, comment, options)
       start_time = Time.now
-      columns, rows, error = @adapter_instance.run_statement(statement, comment)
+      run_id = options[:run_id]
+      stop_id = options[:stop_id]
+      columns, rows, error = @adapter_instance.run_statement(statement, comment, stop_id)
       duration = Time.now - start_time
 
       cache_data = nil
@@ -182,6 +186,8 @@ module Blazer
     def detect_adapter
       schema = settings["url"].to_s.split("://").first
       case schema
+      when "postgres", "postgresql"
+        "postgresql"
       when "mongodb", "presto"
         schema
       else

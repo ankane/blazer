@@ -103,7 +103,7 @@ module Blazer
       elsif @success
         @run_id = Blazer.async ? SecureRandom.uuid : nil
 
-        options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id}
+        options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id, stop_id: params[:stop_id]}
         if Blazer.async && request.format.symbol != :csv
           result = []
           Blazer::RunStatementJob.perform_async(result, @data_source, @statement, options)
@@ -172,6 +172,12 @@ module Blazer
 
     def schema
       @schema = Blazer.data_sources[params[:data_source]].schema
+    end
+
+    def cancel
+      @stop_id = params[:stop_id]
+      Blazer.cache.write(["blazer", "v4", "stop", @stop_id].join("/"), true)
+      render json: {}
     end
 
     private

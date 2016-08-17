@@ -3,5 +3,7 @@
 <%= react_component("DashboardsShow",
   dashboard: @dashboard.as_json(methods: [:to_param]),
   queries: @queries.as_json(methods: [:to_param]),
-  variable_params: variable_params
+  variable_params: variable_params,
+  bind_vars: @bind_vars,
+  smart_vars: @smart_vars
   ) %>

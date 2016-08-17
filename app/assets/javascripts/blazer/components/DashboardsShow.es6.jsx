@@ -1,4 +1,9 @@
 class DashboardsShow extends React.Component {
+  constructor(props) {
+    super(props)
+    this.handleSubmit = this.handleSubmit.bind(this)
+  }
+
   render() {
     const { dashboard, queries, variable_params } = this.props
 
@@ -18,11 +23,16 @@ class DashboardsShow extends React.Component {
           </div>
         </div>
         <div style={{marginBottom: "60px"}}></div>
+        <QueriesVariables onSubmit={this.handleSubmit} {...this.props} />
         {queries.map((query, i) => {
           return <DashboardQuery key={i} query={query} variable_params={variable_params} />
         })}
       </div>
     )
+  }
+
+  handleSubmit(variables) {
+    window.location.href = Routes.blazer_dashboard_path(this.props.dashboard, variables)
   }
 }
 

@@ -212,7 +212,7 @@ class QueriesResult extends React.Component {
   }
 
   renderChart() {
-    const { rows, chart_type, only_chart, markers } = this.props
+    const { columns, rows, chart_type, only_chart, markers } = this.props
 
     if (rows.length > 0) {
       if (gon.mapbox_access_token && markers.length > 0) {

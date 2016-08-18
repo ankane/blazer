@@ -232,6 +232,9 @@ module Blazer
         format.csv do
           send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
         end
+        format.json do
+          render json: json_data(@columns, @rows, @data_source)
+        end
       end
     end
 
@@ -291,6 +294,12 @@ module Blazer
         rows.each do |row|
           csv << row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(data_source, columns[i], v) : v }
         end
+      end
+    end
+
+    def json_data(columns, rows, data_source)
+      rows.map do |row|
+        Hash[row.map.with_index { |cell, index| [columns[index], cell] }]
       end
     end
 

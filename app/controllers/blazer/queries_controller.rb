@@ -5,11 +5,13 @@ module Blazer
     def home
       set_queries(1000)
 
-      @dashboards = Blazer::Dashboard.order(:name)
-      @dashboards = @dashboards.includes(:creator) if Blazer.user_class
-      if params[:filter] == "mine"
+      if params[:filter]
         @dashboards = [] # TODO show my dashboards
+      else
+        @dashboards = Blazer::Dashboard.order(:name)
+        @dashboards = @dashboards.includes(:creator) if Blazer.user_class
       end
+
       @dashboards =
         @dashboards.map do |d|
           {
@@ -241,23 +243,23 @@ module Blazer
     def set_queries(limit = nil)
       @my_queries =
         if limit && blazer_user && !params[:filter]
-          favorite_query_ids = Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys
-          queries = Blazer::Query.named.where(id: favorite_query_ids)
-          queries = queries.includes(:creator) if Blazer.user_class
-          queries = queries.index_by(&:id)
-          favorite_query_ids.map { |query_id| queries[query_id] }.compact
+          queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys)
         else
           []
         end
 
-      @queries = Blazer::Query.named.order(:name)
-      if params[:filter] == "mine"
-        @queries = @queries.where(creator_id: blazer_user.try(:id)).reorder(updated_at: :desc)
-        limit = nil
+      @queries = Blazer::Query.named
+
+      if blazer_user && params[:filter] == "mine"
+        @queries = @queries.where(creator_id: blazer_user.id).reorder(updated_at: :desc)
+        @queries = @queries.includes(:creator) if Blazer.user_class
+      elsif blazer_user && params[:filter] == "viewed"
+        @queries = queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).order(created_at: :desc).limit(500).pluck(:query_id).uniq)
+      else
+        @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
+        @queries = @queries.limit(limit) if limit
+        @queries = @queries.order(:name)
       end
-      @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
-      @queries = @queries.includes(:creator) if Blazer.user_class
-      @queries = @queries.limit(limit) if limit
       @queries = @queries.to_a
 
       @more = limit && @queries.size >= limit
@@ -274,6 +276,13 @@ module Blazer
             vars: extract_vars(q.statement).join(", ")
           }
         end
+    end
+
+    def queries_by_ids(favorite_query_ids)
+      queries = Blazer::Query.named.where(id: favorite_query_ids)
+      queries = queries.includes(:creator) if Blazer.user_class
+      queries = queries.index_by(&:id)
+      favorite_query_ids.map { |query_id| queries[query_id] }.compact
     end
 
     def set_query

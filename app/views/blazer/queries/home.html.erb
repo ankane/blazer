@@ -1,8 +1,15 @@
 <div id="queries">
   <div id="header" style="margin-bottom: 20px;">
     <div class="pull-right">
-      <%= link_to "All", root_path, class: params[:filter] != "mine" ? "active" : nil, style: "margin-right: 40px;" %>
-      <%= link_to "Mine", root_path(filter: "mine"), class: params[:filter] == "mine" ? "active" : nil, style: "margin-right: 40px;" %>
+      <% if blazer_user %>
+        <%= link_to "All", root_path, class: !params[:filter] ? "active" : nil, style: "margin-right: 40px;" %>
+
+        <% if Blazer.audit %>
+          <%= link_to "Viewed", root_path(filter: "viewed"), class: params[:filter] == "viewed" ? "active" : nil, style: "margin-right: 40px;" %>
+        <% end %>
+
+        <%= link_to "Mine", root_path(filter: "mine"), class: params[:filter] == "mine" ? "active" : nil, style: "margin-right: 40px;" %>
+      <% end %>
       <div class="btn-group">
         <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
         <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

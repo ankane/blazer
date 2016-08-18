@@ -76,6 +76,9 @@ module Blazer
       data_source = @query.data_source if @query && @query.data_source
       @data_source = Blazer.data_sources[data_source]
 
+      # fix for CSV download and caching
+      @statement = @statement.to_s.gsub("\r\n", "\n")
+
       if @run_id
         @timestamp = blazer_params[:timestamp].to_i
 

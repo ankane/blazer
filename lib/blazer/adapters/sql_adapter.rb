@@ -31,7 +31,7 @@ module Blazer
               rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] ? result.column_types[c].send(cast_method, untyped_row[i]) : nil })
             end
           end
-        rescue ActiveRecord::StatementInvalid => e
+        rescue => e
           error = e.message.sub(/.+ERROR: /, "")
           error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
         end

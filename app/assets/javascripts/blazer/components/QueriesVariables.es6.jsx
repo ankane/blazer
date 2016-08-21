@@ -85,11 +85,17 @@ class QueriesVariables extends React.Component {
               </span>
             )
           })}
-          <input type="submit" className="btn btn-success" value="Run" style={{verticalAlign: "top"}} />
+          {this.renderRun()}
         </form>
       )
     } else {
       return null
+    }
+  }
+
+  renderRun() {
+    if (this.props.runButton) {
+      return  <input type="submit" className="btn btn-success" value="Run" style={{verticalAlign: "top"}} />
     }
   }
 }

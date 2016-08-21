@@ -72,7 +72,7 @@ class QueriesShow extends React.Component {
         <div style={{marginBottom: "60px"}}></div>
         {this.renderSqlErrors()}
         {this.renderDescription()}
-        <QueriesVariables onSubmit={this.handleSubmit} {...this.props} />
+        <QueriesVariables onSubmit={this.handleSubmit} runButton={true} {...this.props} />
         <pre style={{maxHeight: this.state.statementHeight, overflow: "hidden"}} onClick={this.expandStatement}>
           <code ref={(n) => this._code = n}>{statement}</code>
         </pre>

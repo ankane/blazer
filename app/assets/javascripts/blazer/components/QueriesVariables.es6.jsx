@@ -1,8 +1,20 @@
 class QueriesVariables extends React.Component {
   constructor(props) {
     super(props)
+
+    let dateVars, bindVars
+    if (props.bind_vars.indexOf("start_time") !== -1 && props.bind_vars.indexOf("end_time") !== -1) {
+      dateVars = true
+      bindVars = _.difference(props.bind_vars, ["start_time", "end_time"])
+    } else {
+      dateVars = false
+      bindVars = props.bind_vars
+    }
+
     this.state = {
-      variables: props.variable_params
+      variables: props.variable_params,
+      dateVars: dateVars,
+      bindVars: bindVars
     }
   }
 
@@ -27,7 +39,7 @@ class QueriesVariables extends React.Component {
   }
 
   renderVariableInput(v) {
-    const { bind_vars, smart_vars } = this.props
+    const { smart_vars } = this.props
     const { variables } = this.state
 
     if (smart_vars[v]) {
@@ -69,13 +81,14 @@ class QueriesVariables extends React.Component {
   }
 
   render() {
-    const { bind_vars, onSubmit } = this.props
+    const { onSubmit } = this.props
+    const { bindVars, dateVars } = this.state
 
     // TODO datepicker
-    if (bind_vars.length > 0) {
+    if (bindVars.length > 0 || dateVars) {
       return (
         <form onSubmit={this.handleSubmit.bind(this)} className="form-inline" style={{marginBottom: "10px"}}>
-          {bind_vars.map((v, i) => {
+          {bindVars.map((v, i) => {
             return (
               <span key={i}>
                 <label htmlFor={v}>{v}</label>
@@ -85,11 +98,29 @@ class QueriesVariables extends React.Component {
               </span>
             )
           })}
+          {this.renderDateVars()}
           {this.renderRun()}
         </form>
       )
     } else {
       return null
+    }
+  }
+
+  renderDateVars() {
+    const { dateVars } = this.state
+
+    if (dateVars) {
+      return (
+        <div>
+          <label>start_time & end_time</label>
+          <div className="selectize-control single" style={{width: "300px"}}>
+            <div id="reportrange" className="selectize-input" style={{display: "inline-block"}}>
+              <span>Select a time range</span>
+            </div>
+          </div>
+        </div>
+      )
     }
   }
 

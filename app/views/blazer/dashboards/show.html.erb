@@ -5,5 +5,6 @@
   queries: @queries.as_json(methods: [:to_param]),
   variable_params: variable_params,
   bind_vars: @bind_vars,
-  smart_vars: @smart_vars
+  smart_vars: @smart_vars,
+  cached: @data_sources.any? { |ds| ds.cache_mode != "off" }
   ) %>

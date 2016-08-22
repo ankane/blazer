@@ -18,6 +18,78 @@ class QueriesVariables extends React.Component {
     }
   }
 
+  componentDidMount() {
+    if (this._dateRangePicker) {
+      const timeZone = gon.time_zone
+      const format = "YYYY-MM-DD"
+      const now = moment.tz(timeZone)
+
+      const dateStr = (daysAgo) => {
+        return now.clone().subtract(daysAgo || 0, "days").format(format)
+      }
+
+      const toDate = (time) => {
+        return moment.tz(time.format(format), timeZone)
+      }
+
+      const updateStartTime = (time) => {
+        this.updateVariables({start_time: toDate(time).utc().format()})
+      }
+
+      const updateEndTime = (time) => {
+        this.updateVariables({end_time: toDate(time).endOf("day").utc().format()})
+      }
+
+      const onSubmit = (startTime, endTime) => {
+        this.updateVariables({
+          start_time: toDate(startTime).utc().format(),
+          end_time: toDate(endTime).endOf("day").utc().format()
+        })
+      }
+
+      let { start_time, end_time } = this.state.variables
+      let submit = false
+
+      if (start_time) {
+        start_time = moment(start_time).tz(timeZone).format(format)
+      } else {
+        start_time = dateStr(29)
+        submit = true
+      }
+
+      if (end_time) {
+        end_time = moment(end_time).tz(timeZone).format(format)
+      } else {
+        end_time = dateStr()
+        submit = true
+      }
+
+      if (submit) {
+        onSubmit(moment(start_time), moment(end_time))
+      }
+
+      $(this._dateRangePicker).daterangepicker(
+        {
+          ranges: {
+           "Today": [dateStr(), dateStr()],
+           "Last 7 Days": [dateStr(6), dateStr()],
+           "Last 30 Days": [dateStr(29), dateStr()]
+          },
+          locale: {
+            format: format
+          },
+          startDate: start_time,
+          endDate: end_time,
+          opens: "right"
+        },
+        onSubmit
+      )
+
+      let picker = $(this._dateRangePicker).data('daterangepicker');
+      $(this._dateRangePicker).trigger('apply.daterangepicker', picker);
+    }
+  }
+
   updateVariables(attributes) {
     this.setState({
       variables: {
@@ -108,18 +180,31 @@ class QueriesVariables extends React.Component {
   }
 
   renderDateVars() {
-    const { dateVars } = this.state
+    const { dateVars, variables } = this.state
 
     if (dateVars) {
       return (
-        <div>
+        <span>
           <label>start_time & end_time</label>
-          <div className="selectize-control single" style={{width: "300px"}}>
-            <div id="reportrange" className="selectize-input" style={{display: "inline-block"}}>
-              <span>Select a time range</span>
+          {" "}
+          <div className="boom" style={{width: "auto"}}>
+            <div className="Select Select--single has-value" style={{width: "300px", display: "inline-block"}}>
+              <div ref={(c) => this._dateRangePicker = c} className="Select-control">
+                <span className="Select-multi-value-wrapper">
+                  <div className="Select-value">
+                    <span className="Select-value-label">
+                      {moment(variables.start_time).tz(gon.time_zone).format("MMMM D, YYYY")}
+                      {" - "}
+                      {moment(variables.end_time).tz(gon.time_zone).format("MMMM D, YYYY")}
+                    </span>
+                  </div>
+                </span>
+                <span className="Select-arrow-zone"><span className="Select-arrow"></span></span>
+              </div>
             </div>
           </div>
-        </div>
+          {" "}
+        </span>
       )
     }
   }

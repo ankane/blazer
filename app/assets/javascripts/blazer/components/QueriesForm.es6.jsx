@@ -204,7 +204,7 @@ class QueriesForm extends React.Component {
       data: {query: data},
       dataType: "json"
     }).done((data) => {
-      window.location.href = Routes.blazer_query_path(data)
+      window.location.href = Routes.blazer_query_path(data, this.props.variable_params)
     }).fail((xhr) => {
       let json
       try {
@@ -293,7 +293,7 @@ class QueriesForm extends React.Component {
 
     const { query } = this.state
 
-    var data = $.extend({}, this.props.variableParams, {statement: this.editor.getValue(), data_source: query.data_source})
+    var data = $.extend({}, this.props.variable_params, {statement: this.editor.getValue(), data_source: query.data_source})
 
     this.setState({running: true, results: null})
 

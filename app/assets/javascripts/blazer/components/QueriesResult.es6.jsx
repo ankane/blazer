@@ -235,7 +235,7 @@ class QueriesResult extends React.Component {
   }
 
   renderHeaderRight() {
-    const { only_chart, cached_at, just_cached, cache_mode, cache_slow_threshold } = this.props
+    const { only_chart, cached_at, just_cached, cache_mode, cache_slow_threshold, query, variable_params } = this.props
 
     if (!only_chart) {
       if (cached_at || just_cached) {
@@ -250,12 +250,9 @@ class QueriesResult extends React.Component {
           }
         }
 
-        refreshLink = <a href="#">Refresh</a>
-
-//         <% if @query && !params[:data_source] %>
-//           <%= link_to "Refresh", refresh_query_path(@query, variable_params), method: :post %>
-//         <% end %>
-
+        if (query) {
+          refreshLink = <a href={Routes.blazer_refresh_query_path(query, variable_params)} data-method="post">Refresh</a>
+        }
 
         return (
           <p className="text-muted" style={{float: "right"}}>

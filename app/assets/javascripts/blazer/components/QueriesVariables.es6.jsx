@@ -16,6 +16,8 @@ class QueriesVariables extends React.Component {
       dateVars: dateVars,
       bindVars: bindVars
     }
+
+    this.handleSubmit = this.handleSubmit.bind(this)
   }
 
   componentDidMount() {
@@ -159,7 +161,7 @@ class QueriesVariables extends React.Component {
     // TODO datepicker
     if (bindVars.length > 0 || dateVars) {
       return (
-        <form onSubmit={this.handleSubmit.bind(this)} className="form-inline" style={{marginBottom: "10px"}}>
+        <form onSubmit={this.handleSubmit} className="form-inline" style={{marginBottom: "10px"}}>
           {bindVars.map((v, i) => {
             return (
               <span key={i}>

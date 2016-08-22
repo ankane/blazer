@@ -33,6 +33,9 @@ class ChecksForm extends React.Component {
       loading: false,
       errors: []
     }
+
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
   }
 
   handleSubmit(e) {
@@ -75,7 +78,7 @@ class ChecksForm extends React.Component {
     return (
       <div>
         {this.renderErrors()}
-        <form onSubmit={this.handleSubmit.bind(this)}>
+        <form onSubmit={this.handleSubmit}>
           <div className="form-group">
             <label htmlFor="query_id">Query</label>
             <Select
@@ -120,7 +123,7 @@ class ChecksForm extends React.Component {
   renderDelete() {
     const { check, loading } = this.state
     if (check.id) {
-      return <button onClick={this.handleDelete.bind(this)} className="btn btn-danger" disabled={loading}>Delete</button>
+      return <button onClick={this.handleDelete} className="btn btn-danger" disabled={loading}>Delete</button>
     }
   }
 

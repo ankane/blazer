@@ -13,6 +13,10 @@ class DashboardsForm extends React.Component {
       errors: [],
       queries: [...this.props.dashboard_queries]
     }
+
+    this.handleSubmit = this.handleSubmit.bind(this)
+    this.handleDelete = this.handleDelete.bind(this)
+    this.sortableGroupDecorator = this.sortableGroupDecorator.bind(this)
   }
 
   handleSubmit(e) {
@@ -56,7 +60,7 @@ class DashboardsForm extends React.Component {
     return (
       <div>
        {this.renderErrors()}
-        <form onSubmit={this.handleSubmit.bind(this)}>
+        <form onSubmit={this.handleSubmit}>
           <div className="form-group">
             <label htmlFor="name">Name</label>
             <input id="name" type="text" value={dashboard.name || ""} onChange={(e) => this.updateDashboard({name: e.target.value})} className="form-control" />
@@ -87,7 +91,7 @@ class DashboardsForm extends React.Component {
   renderDelete() {
     const { dashboard, loading } = this.state
     if (dashboard.id) {
-      return <button onClick={this.handleDelete.bind(this)} className="btn btn-danger" disabled={loading}>Delete</button>
+      return <button onClick={this.handleDelete} className="btn btn-danger" disabled={loading}>Delete</button>
     }
   }
 
@@ -139,7 +143,7 @@ class DashboardsForm extends React.Component {
       return (
         <div className="form-group">
           <label htmlFor="charts">Charts</label>
-          <ul className="list-group" ref={this.sortableGroupDecorator.bind(this)}>
+          <ul className="list-group" ref={this.sortableGroupDecorator}>
             {queries.map((query, i) => {
               return (
                 <li key={i} data-id={query.id} className="list-group-item">

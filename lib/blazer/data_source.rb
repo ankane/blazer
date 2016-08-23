@@ -144,7 +144,7 @@ module Blazer
     end
 
     def statement_cache_key(statement)
-      cache_key(["statement", id, Digest::MD5.hexdigest(statement)])
+      cache_key(["statement", id, Digest::MD5.hexdigest(statement.to_s.gsub("\r\n", "\n"))])
     end
 
     def run_cache_key(run_id)

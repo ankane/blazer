@@ -1,3 +1,7 @@
+## 1.6.3 [unreleased]
+
+- Fixed issues with caching
+
 ## 1.6.2
 
 - Added basic query permissions

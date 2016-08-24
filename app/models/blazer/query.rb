@@ -15,7 +15,7 @@ module Blazer
     end
 
     def friendly_name
-      name.to_s.gsub(/\[.+\]/, "").strip
+      name.to_s.sub(/\A[#\*]/, "").gsub(/\[.+\]/, "").strip
     end
 
     def editable?(user)

@@ -246,10 +246,10 @@ module Blazer
         end
 
       @queries = Blazer::Query.named
+      @queries = @queries.includes(:creator) if Blazer.user_class
 
       if blazer_user && params[:filter] == "mine"
         @queries = @queries.where(creator_id: blazer_user.id).reorder(updated_at: :desc)
-        @queries = @queries.includes(:creator) if Blazer.user_class
       elsif blazer_user && params[:filter] == "viewed"
         @queries = queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).order(created_at: :desc).limit(500).pluck(:query_id).uniq)
       else

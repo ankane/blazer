@@ -34,6 +34,7 @@ module Blazer
         rescue => e
           error = e.message.sub(/.+ERROR: /, "")
           error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
+          reconnect if defined?(PG::ConnectionBad) && e.is_a?(PG::ConnectionBad)
         end
 
         [columns, rows, error]

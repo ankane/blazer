@@ -71,7 +71,10 @@ function now() {
 function startTimer(timerId) {
   var startTime = now();
   timers[timerId] = setInterval( function () {
-    var duration = Math.round((now() - startTime) / 100) / 10.0;
+    var duration = "" + Math.round((now() - startTime) / 100) / 10.0;
+    if (duration.indexOf(".") === -1) {
+      duration = duration + ".0";
+    }
     $(timerId).text(duration + " sec");
   }, 100);
 }

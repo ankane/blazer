@@ -96,7 +96,7 @@ function runQueryHelper(data, success, error, runningQuery, timerId) {
       data.blazer = response;
       setTimeout( function () {
         if (!(runningQuery && runningQuery.canceled)) {
-          runQueryHelper(data, success, error, runningQuery);
+          runQueryHelper(data, success, error, runningQuery, timerId);
         }
       }, 1000);
     } else {

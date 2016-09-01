@@ -176,7 +176,7 @@ module Blazer
         Blazer.cache.write(run_cache_key(run_id), cache_data, expires_in: 30.seconds)
       end
 
-      Blazer::Result.new(self, columns, rows, error, nil, cache && !cache_data.nil?)
+      Blazer::Result.new(self, columns, rows, error, nil, cache && !cache_data.nil?, duration)
     end
 
     def detect_adapter

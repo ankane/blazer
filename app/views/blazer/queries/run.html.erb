@@ -8,11 +8,16 @@
   <% end %>
 <% else %>
   <% unless @only_chart %>
-    <% if @cached_at || @just_cached %>
-      <p class="text-muted" style="float: right;">
+    <p class="text-muted" style="float: right;">
+      <% if @result.duration %>
+        <%= @result.duration.round(1) %> sec
+      <% end %>
+
+      <% if @cached_at || @just_cached %>
         <% if @cached_at %>
           Cached <%= time_ago_in_words(@cached_at, include_seconds: true) %> ago
         <% elsif !params[:data_source] %>
+          &middot;
           Cached just now
           <% if @data_source.cache_mode == "slow" %>
             (over <%= "%g" % @data_source.cache_slow_threshold %>s)
@@ -22,8 +27,8 @@
         <% if @query && !params[:data_source] %>
           <%= link_to "Refresh", refresh_query_path(@query, variable_params), method: :post %>
         <% end %>
-      </p>
-    <% end %>
+      <% end %>
+    </p>
     <p class="text-muted">
       <%= pluralize(@rows.size, "row") %>
 

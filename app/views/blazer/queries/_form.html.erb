@@ -155,7 +155,7 @@
       error_line = null;
     }
 
-    $("#results").html('<p class="text-muted">Loading...</p>');
+    $("#results").html('<p class="text-muted">Loading... <span id="timer"></span></p>');
 
     var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()});
 

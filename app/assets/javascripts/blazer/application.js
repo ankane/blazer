@@ -31,7 +31,7 @@ function cancelQuery(runningQuery) {
   if (xhr) {
     xhr.abort();
   }
-  queryComplete();
+  queryComplete("#timer");
 }
 
 var queriesQueue = [];
@@ -54,18 +54,37 @@ function runNext() {
   }
 }
 
-function queryComplete() {
+function queryComplete(timerId) {
   runningQueries--;
+  if (timerId) {
+    clearInterval(timers[timerId]);
+  }
   runNext();
 }
 
-function runQuery(data, success, error, runningQuery) {
+var timers = {};
+
+function now() {
+  return (new Date()).getTime();
+}
+
+function startTimer(timerId) {
+  var startTime = now();
+  timers[timerId] = setInterval( function () {
+    var duration = Math.round((now() - startTime) / 100) / 10.0;
+    $(timerId).text(duration + " sec");
+  }, 100);
+}
+
+function runQuery(data, success, error, runningQuery, timerId) {
   queueQuery( function () {
-    return runQueryHelper(data, success, error, runningQuery);
+    timerId = timerId || "#timer";
+    startTimer(timerId);
+    return runQueryHelper(data, success, error, runningQuery, timerId);
   });
 }
 
-function runQueryHelper(data, success, error, runningQuery) {
+function runQueryHelper(data, success, error, runningQuery, timerId) {
   var xhr = $.ajax({
     url: window.runQueriesPath,
     method: "POST",
@@ -82,12 +101,12 @@ function runQueryHelper(data, success, error, runningQuery) {
       }, 1000);
     } else {
       success(d);
-      queryComplete();
+      queryComplete(timerId);
     }
   }).fail( function(jqXHR, textStatus, errorThrown) {
     var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
     error(message);
-    queryComplete();
+    queryComplete(timerId);
   });
   if (runningQuery) {
     runningQuery.xhr = xhr;

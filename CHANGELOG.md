@@ -1,6 +1,7 @@
 ## 1.6.3 [unreleased]
 
 - Fixed issues with caching
+- Only run 3 queries at a time on dashboards
 
 ## 1.6.2
 

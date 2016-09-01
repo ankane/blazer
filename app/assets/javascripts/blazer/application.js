@@ -33,7 +33,38 @@ function cancelQuery(runningQuery) {
   }
 }
 
+var queriesQueue = [];
+var runningQueries = 0;
+var maxQueries = 3;
+
+function queueQuery(callback) {
+  queriesQueue.push(callback);
+  runNext();
+}
+
+function runNext() {
+  if (runningQueries < maxQueries) {
+    var callback = queriesQueue.shift();
+    if (callback) {
+      runningQueries++;
+      callback();
+      runNext();
+    }
+  }
+}
+
+function queryComplete() {
+  runningQueries--;
+  runNext();
+}
+
 function runQuery(data, success, error, runningQuery) {
+  queueQuery( function () {
+    return runQueryHelper(data, success, error, runningQuery);
+  });
+}
+
+function runQueryHelper(data, success, error, runningQuery) {
   var xhr = $.ajax({
     url: window.runQueriesPath,
     method: "POST",
@@ -45,15 +76,17 @@ function runQuery(data, success, error, runningQuery) {
       data.blazer = response;
       setTimeout( function () {
         if (!(runningQuery && runningQuery.canceled)) {
-          runQuery(data, success, error, runningQuery);
+          runQueryHelper(data, success, error, runningQuery);
         }
       }, 1000);
     } else {
       success(d);
+      queryComplete();
     }
   }).fail( function(jqXHR, textStatus, errorThrown) {
     var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
     error(message);
+    queryComplete();
   });
   if (runningQuery) {
     runningQuery.xhr = xhr;

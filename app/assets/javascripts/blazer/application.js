@@ -31,6 +31,7 @@ function cancelQuery(runningQuery) {
   if (xhr) {
     xhr.abort();
   }
+  queryComplete();
 }
 
 var queriesQueue = [];

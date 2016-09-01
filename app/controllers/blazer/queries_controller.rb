@@ -93,9 +93,9 @@ module Blazer
           @cached_at = nil
           params[:data_source] = nil
           render_run
-        elsif Time.now > Time.at(@timestamp + (@data_source.timeout || 120).to_i)
-          # timed out
-          @error = Blazer::TIMEOUT_MESSAGE
+        elsif Time.now > Time.at(@timestamp + (@data_source.timeout || 600).to_i + 5)
+          # query lost
+          @error = "We lost your query :("
           @rows = []
           @columns = []
           render_run

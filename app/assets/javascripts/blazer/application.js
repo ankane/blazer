@@ -71,12 +71,14 @@ function now2() {
 function startTimer(timerId) {
   var startTime = now2();
   timers[timerId] = setInterval( function () {
-    var duration = "" + Math.round((now2() - startTime) / 100) / 10.0;
+    var duration = "" + Math.round((now2() - startTime) / 10) / 100.0;
     if (duration.indexOf(".") === -1) {
-      duration = duration + ".0";
+      duration = duration + ".00";
+    } else if (duration.split(".")[1].length === 1) {
+      duration = duration + "0";
     }
     $(timerId).text(duration + " sec");
-  }, 100);
+  }, 44);
 }
 
 function runQuery(data, success, error, runningQuery, timerId) {

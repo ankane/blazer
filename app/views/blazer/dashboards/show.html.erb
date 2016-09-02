@@ -125,7 +125,7 @@
   <div style="padding-top: 10px; clear: both;">
     <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank", style: "color: inherit;" %></h4>
     <div id="chart-<%= i %>" class="chart">
-      <p class="text-muted">Loading...</p>
+      <p class="text-muted">Loading... <span id="timer-<%= i %>"></span></p>
     </div>
   </div>
   <script>
@@ -136,7 +136,7 @@
       $("#chart-<%= i %> table").stupidtable();
     }, function (message) {
       $("#chart-<%= i %>").css("color", "red").html(message);
-    });
+    }, null, "#timer-<%= i %>");
   </script>
 <% end %>
 

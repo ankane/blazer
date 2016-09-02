@@ -39,7 +39,7 @@ function cancelQuery(runningQuery) {
     xhr.abort();
   }
   remoteCancelQuery(runningQuery);
-  queryComplete();
+  queryComplete("#timer");
 }
 
 function csrfProtect(payload) {
@@ -80,21 +80,45 @@ function runNext() {
   }
 }
 
-function queryComplete() {
+function queryComplete(timerId) {
   runningQueries--;
+  if (timerId) {
+    clearInterval(timers[timerId]);
+  }
   runNext();
 }
 
-function runQuery(data, success, error, runningQuery) {
+var timers = {};
+
+function now2() {
+  return (new Date()).getTime();
+}
+
+function startTimer(timerId) {
+  var startTime = now2();
+  timers[timerId] = setInterval( function () {
+    var duration = "" + Math.round((now2() - startTime) / 10) / 100.0;
+    if (duration.indexOf(".") === -1) {
+      duration = duration + ".00";
+    } else if (duration.split(".")[1].length === 1) {
+      duration = duration + "0";
+    }
+    $(timerId).text(duration + " sec");
+  }, 44);
+}
+
+function runQuery(data, success, error, runningQuery, timerId) {
   queueQuery( function () {
     runningQuery = runningQuery || {};
     runningQuery.run_id = data.run_id = uuid();
     runningQuery.data_source = data.data_source;
-    return runQueryHelper(data, success, error, runningQuery);
+    timerId = timerId || "#timer";
+    startTimer(timerId);
+    return runQueryHelper(data, success, error, runningQuery, timerId);
   });
 }
 
-function runQueryHelper(data, success, error, runningQuery) {
+function runQueryHelper(data, success, error, runningQuery, timerId) {
   var xhr = $.ajax({
     url: window.runQueriesPath,
     method: "POST",
@@ -106,17 +130,17 @@ function runQueryHelper(data, success, error, runningQuery) {
       data.blazer = response;
       setTimeout( function () {
         if (!(runningQuery && runningQuery.canceled)) {
-          runQueryHelper(data, success, error, runningQuery);
+          runQueryHelper(data, success, error, runningQuery, timerId);
         }
       }, 1000);
     } else {
       success(d);
-      queryComplete();
+      queryComplete(timerId);
     }
   }).fail( function(jqXHR, textStatus, errorThrown) {
     var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
     error(message);
-    queryComplete();
+    queryComplete(timerId);
   });
   if (runningQuery) {
     runningQuery.xhr = xhr;

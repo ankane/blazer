@@ -12,16 +12,20 @@
         </div>
       </div>
       <div class="form-group text-right">
-        <div class="pull-left" style="margin-top: 6px;">
+        <div class="pull-left" style="margin-top: 9px;">
           <%= link_to "Back", :back %>
         </div>
+        <%= link_to "Schema", "#", target: "_blank", id: "view-schema", style: "margin-right: 10px;" %>
         <%= f.select :data_source, Blazer.data_sources.values.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 140px;" %>
         <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;" class="hide">
           <%= render partial: "tables" %>
         </div>
         <script>
+          var schemaPath = <%= raw blazer_json_escape(schema_queries_path.to_json) %>;
           function updatePreviewSelect() {
-            $("#tables").load("<%= tables_queries_path %>?" + $.param({data_source: $("#query_data_source").val()}));
+            var dataSource = $("#query_data_source").val();
+            $("#tables").load("<%= tables_queries_path %>?" + $.param({data_source: dataSource}));
+            $("#view-schema").attr("href", schemaPath + "?data_source=" + dataSource);
           }
           updatePreviewSelect();
           $("#query_data_source").selectize().change(updatePreviewSelect);
@@ -129,7 +133,6 @@
   var params = <%= raw blazer_json_escape(variable_params.to_json) %>;
   var previewStatement = <%= raw blazer_json_escape(Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }].to_json) %>;
 
-
   function queryDone() {
     runningQuery = null
     $("#run").removeClass("hide")
@@ -162,7 +165,7 @@
       error_line = null;
     }
 
-    $("#results").html('<p class="text-muted">Loading...</p>');
+    $("#results").html('<p class="text-muted">Loading... <span id="timer"></span></p>');
 
     var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()});
 

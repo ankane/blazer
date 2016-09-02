@@ -64,14 +64,14 @@ function queryComplete(timerId) {
 
 var timers = {};
 
-function now() {
+function now2() {
   return (new Date()).getTime();
 }
 
 function startTimer(timerId) {
-  var startTime = now();
+  var startTime = now2();
   timers[timerId] = setInterval( function () {
-    var duration = "" + Math.round((now() - startTime) / 100) / 10.0;
+    var duration = "" + Math.round((now2() - startTime) / 100) / 10.0;
     if (duration.indexOf(".") === -1) {
       duration = duration + ".0";
     }

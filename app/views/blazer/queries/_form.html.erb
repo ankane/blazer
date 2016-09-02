@@ -12,10 +12,10 @@
         </div>
       </div>
       <div class="form-group text-right">
-        <div class="pull-left" style="margin-top: 6px;">
+        <div class="pull-left" style="margin-top: 9px;">
           <%= link_to "Back", :back %>
         </div>
-        <%= link_to "View Schema", "#", target: "_blank", id: "view-schema", style: "margin-right: 20px;" %>
+        <%= link_to "Schema", "#", target: "_blank", id: "view-schema", style: "margin-right: 10px;" %>
         <%= f.select :data_source, Blazer.data_sources.values.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 140px;" %>
         <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;" class="hide">
           <%= render partial: "tables" %>

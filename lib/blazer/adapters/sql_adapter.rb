@@ -72,7 +72,22 @@ module Blazer
         nil
       end
 
+      def cancel(run_id)
+        if postgresql?
+          execute("SELECT pg_cancel_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND query LIKE '%,run_id:#{run_id}%'")
+        elsif redshift?
+          first_row = connection_model.connection.select_all("SELECT pid FROM stv_recents WHERE status = 'Running' AND query LIKE '%,run_id:#{run_id}%'").first
+          if first_row
+            execute("CANCEL #{first_row["pid"].to_i}")
+          end
+        end
+      end
+
       protected
+
+      def execute(statement)
+        connection_model.connection.execute(statement)
+      end
 
       def postgresql?
         ["PostgreSQL", "PostGIS"].include?(adapter_name)

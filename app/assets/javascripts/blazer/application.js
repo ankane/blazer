@@ -25,13 +25,39 @@ $( function () {
   });
 });
 
+function uuid() {
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8);
+    return v.toString(16);
+  });
+}
+
 function cancelQuery(runningQuery) {
   runningQuery.canceled = true;
   var xhr = runningQuery.xhr;
   if (xhr) {
     xhr.abort();
   }
+  remoteCancelQuery(runningQuery);
   queryComplete();
+}
+
+function csrfProtect(payload) {
+  var param = $("meta[name=csrf-param]").attr("content");
+  var token = $("meta[name=csrf-token]").attr("content");
+  if (param && token) payload[param] = token;
+  return new Blob([JSON.stringify(payload)], {type : "application/json; charset=utf-8"});
+}
+
+function remoteCancelQuery(runningQuery) {
+  var path = window.cancelQueriesPath;
+  var data = {run_id: runningQuery.run_id, data_source: runningQuery.data_source};
+  if (navigator.sendBeacon) {
+    navigator.sendBeacon(path, csrfProtect(data));
+  } else {
+    // TODO make sync
+    $.post(path, data);
+  }
 }
 
 var queriesQueue = [];
@@ -61,6 +87,9 @@ function queryComplete() {
 
 function runQuery(data, success, error, runningQuery) {
   queueQuery( function () {
+    runningQuery = runningQuery || {};
+    runningQuery.run_id = data.run_id = uuid();
+    runningQuery.data_source = data.data_source;
     return runQueryHelper(data, success, error, runningQuery);
   });
 }

@@ -6,7 +6,7 @@ module Blazer
 
     attr_reader :id, :settings, :adapter, :adapter_instance
 
-    def_delegators :adapter_instance, :schema, :tables, :preview_statement, :reconnect, :cost, :explain
+    def_delegators :adapter_instance, :schema, :tables, :preview_statement, :reconnect, :cost, :explain, :cancel
 
     def initialize(id, settings)
       @id = id
@@ -109,6 +109,7 @@ module Blazer
 
     def run_statement(statement, options = {})
       run_id = options[:run_id]
+      async = options[:async]
       result = nil
       if cache_mode != "off" && !options[:refresh_cache]
         result = read_cache(statement_cache_key(statement))
@@ -129,7 +130,10 @@ module Blazer
         if options[:check]
           comment << ",check_id:#{options[:check].id},check_emails:#{options[:check].emails}"
         end
-        result = run_statement_helper(statement, comment, options[:run_id])
+        if options[:run_id]
+          comment << ",run_id:#{options[:run_id]}"
+        end
+        result = run_statement_helper(statement, comment, async ? options[:run_id] : nil)
       end
 
       result

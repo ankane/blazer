@@ -131,6 +131,7 @@
 
 
   function queryDone() {
+    runningQuery = null
     $("#run").removeClass("hide")
     $("#cancel").addClass("hide")
   }
@@ -142,6 +143,12 @@
     queryDone()
 
     $("#results").html("")
+  })
+
+  $(window).unload(function() {
+    if (runningQuery) {
+      remoteCancelQuery(runningQuery)
+    }
   })
 
   $("#run").click( function (e) {

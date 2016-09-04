@@ -150,12 +150,16 @@
 
   $(window).unload(function() {
     if (runningQuery) {
-      remoteCancelQuery(runningQuery)
+      cancelQuery(runningQuery);
     }
   })
 
   $("#run").click( function (e) {
     e.preventDefault();
+
+    if (runningQuery) {
+      cancelQuery(runningQuery);
+    }
 
     $(this).addClass("hide")
     $("#cancel").removeClass("hide")

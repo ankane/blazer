@@ -24,7 +24,7 @@ module Blazer
           in_transaction do
             set_timeout(data_source.timeout) if data_source.timeout
 
-            result = connection_model.connection.select_all("#{statement} /*#{comment}*/")
+            result = select_all("#{statement} /*#{comment}*/")
             columns = result.columns
             cast_method = Rails::VERSION::MAJOR < 5 ? :type_cast : :cast_value
             result.rows.each do |untyped_row|
@@ -66,13 +66,17 @@ module Blazer
 
       def explain(statement)
         if postgresql? || redshift?
-          connection_model.connection.select_all("EXPLAIN #{statement}").rows.first.first
+          select_all("EXPLAIN #{statement}").rows.first.first
         end
       rescue
         nil
       end
 
       protected
+
+      def select_all(statement)
+        connection_model.connection.select_all(statement)
+      end
 
       def postgresql?
         ["PostgreSQL", "PostGIS"].include?(adapter_name)
@@ -97,9 +101,9 @@ module Blazer
 
       def set_timeout(timeout)
         if postgresql? || redshift?
-          connection_model.connection.execute("SET statement_timeout = #{timeout.to_i * 1000}")
+          select_all("SET statement_timeout = #{timeout.to_i * 1000}")
         elsif mysql?
-          connection_model.connection.execute("SET max_execution_time = #{timeout.to_i * 1000}")
+          select_all("SET max_execution_time = #{timeout.to_i * 1000}")
         else
           raise Blazer::TimeoutNotSupported, "Timeout not supported for #{adapter_name} adapter"
         end

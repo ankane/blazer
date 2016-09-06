@@ -116,7 +116,7 @@ module Blazer
           end
           @result = result.first
         else
-          @result = RunStatement.new.perform(@data_source, @statement, options)
+          @result = Blazer::RunStatement.new.perform(@data_source, @statement, options)
         end
 
         if @result

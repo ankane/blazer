@@ -8,7 +8,7 @@ module Blazer
     def perform(result, data_source, statement, options)
       begin
         ActiveRecord::Base.connection_pool.with_connection do
-          result << RunStatement.new.perform(data_source, statement, options)
+          result << Blazer::RunStatement.new.perform(data_source, statement, options)
         end
       rescue Exception => e
         result.clear

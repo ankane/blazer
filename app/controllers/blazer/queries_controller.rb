@@ -239,7 +239,7 @@ module Blazer
 
     def set_queries(limit = nil)
       @my_queries =
-        if limit && blazer_user && !params[:filter]
+        if limit && blazer_user && !params[:filter] && Blazer.audit
           queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys)
         else
           []
@@ -250,7 +250,7 @@ module Blazer
 
       if blazer_user && params[:filter] == "mine"
         @queries = @queries.where(creator_id: blazer_user.id).reorder(updated_at: :desc)
-      elsif blazer_user && params[:filter] == "viewed"
+      elsif blazer_user && params[:filter] == "viewed" && Blazer.audit
         @queries = queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).order(created_at: :desc).limit(500).pluck(:query_id).uniq)
       else
         @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?

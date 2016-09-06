@@ -8,7 +8,7 @@ module Blazer
 
     validates :statement, presence: true
 
-    scope :named, -> { where("name <> ''") }
+    scope :named, -> { where("blazer_queries.name <> ''") }
 
     def to_param
       [id, name].compact.join("-").gsub("'", "").parameterize

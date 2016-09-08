@@ -1,4 +1,4 @@
-## 1.7.0 [unreleased]
+## 1.7.0
 
 - Added ability to cancel queries on backend for Postgres and Redshift
 - Only run 3 queries at a time on dashboards

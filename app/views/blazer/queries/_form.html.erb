@@ -88,6 +88,8 @@
     },
     readOnly: false // false if this command should not apply in readOnly mode
   });
+  // fix command+L
+  editor.commands.removeCommands(["gotoline"]);
 
  // http://stackoverflow.com/questions/11584061/
  function adjustHeight() {

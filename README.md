@@ -373,9 +373,9 @@ data_sources:
 - IBM DB2 and Informix
 - SQLite
 - [Redshift](#redshift)
+- [Presto](#presto)
 - [MongoDB](#mongodb) [beta]
 - [Elasticsearch](#elasticsearch) [beta]
-- [Presto](#presto) [beta]
 
 You can also create an adapter for any other data store.
 
@@ -397,6 +397,16 @@ data_sources:
     url: redshift://user:password@hostname:5439/database
 ```
 
+### Presto
+
+Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: presto://user@hostname:8080/catalog
+```
+
 ### MongoDB
 
 Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:
@@ -416,16 +426,6 @@ data_sources:
   my_source:
     adapter: elasticsearch
     url: http://user:password@hostname:9200/
-```
-
-### Presto
-
-Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
-
-```yml
-data_sources:
-  my_source:
-    url: presto://user@hostname:8080/catalog
 ```
 
 ## Query Permissions

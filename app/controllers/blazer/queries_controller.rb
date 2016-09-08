@@ -103,9 +103,9 @@ module Blazer
           continue_run
         end
       elsif @success
-        @run_id = Blazer.async ? SecureRandom.uuid : nil
+        @run_id = blazer_run_id
 
-        options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id}
+        options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id, async: Blazer.async}
         if Blazer.async && request.format.symbol != :csv
           result = []
           Blazer::RunStatementJob.perform_async(result, @data_source, @statement, options)
@@ -174,6 +174,11 @@ module Blazer
 
     def schema
       @schema = Blazer.data_sources[params[:data_source]].schema
+    end
+
+    def cancel
+      Blazer.data_sources[params[:data_source]].cancel(blazer_run_id)
+      render json: {}
     end
 
     private
@@ -307,5 +312,9 @@ module Blazer
       data_source.local_time_suffix.any? { |s| k.ends_with?(s) } ? v.to_s.sub(" UTC", "") : v.in_time_zone(Blazer.time_zone)
     end
     helper_method :blazer_time_value
+
+    def blazer_run_id
+      params[:run_id].to_s.gsub(/[^a-z0-9\-]/i, "")
+    end
   end
 end

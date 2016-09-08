@@ -35,6 +35,10 @@ module Blazer
         # optional
       end
 
+      def cancel(run_id)
+        # optional
+      end
+
       protected
 
       def settings

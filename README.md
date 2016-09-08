@@ -430,7 +430,7 @@ data_sources:
 
 ## Query Permissions
 
-Blazer supports a simple permissions model.
+Blazer supports a basic permissions model.
 
 1. Queries without a name are unlisted
 2. Queries whose name starts with `#` are only listed to the creator

@@ -1,7 +1,8 @@
-## 1.6.3 [unreleased]
+## 1.7.0 [unreleased]
 
-- Fixed issues with caching
+- Added ability to cancel queries on backend for Postgres and Redshift
 - Only run 3 queries at a time on dashboards
+- Fixed issues with caching
 
 ## 1.6.2
 

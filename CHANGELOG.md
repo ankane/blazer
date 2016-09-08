@@ -2,6 +2,8 @@
 
 - Added ability to cancel queries on backend for Postgres and Redshift
 - Only run 3 queries at a time on dashboards
+- Better anomaly detection
+- Attempt to reconnect when connection issues
 - Fixed issues with caching
 
 ## 1.6.2

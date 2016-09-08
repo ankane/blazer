@@ -9,7 +9,7 @@ module Blazer
         @connection_model =
           Class.new(Blazer::Connection) do
             def self.name
-              "Blazer::Connection::#{object_id}"
+              "Blazer::Connection::Adapter#{object_id}"
             end
             establish_connection(data_source.settings["url"]) if data_source.settings["url"]
           end
@@ -34,7 +34,7 @@ module Blazer
         rescue => e
           error = e.message.sub(/.+ERROR: /, "")
           error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
-          reconnect if defined?(PG::ConnectionBad) && e.is_a?(PG::ConnectionBad)
+          reconnect if error.include?("can't get socket descriptor")
         end
 
         [columns, rows, error]

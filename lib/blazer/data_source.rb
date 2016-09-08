@@ -110,8 +110,12 @@ module Blazer
     def run_statement(statement, options = {})
       run_id = options[:run_id]
       result = nil
-      if cache_mode != "off" && !options[:refresh_cache]
-        result = read_cache(statement_cache_key(statement))
+      if cache_mode != "off"
+        if options[:refresh_cache]
+          clear_cache(statement) # for checks
+        else
+          result = read_cache(statement_cache_key(statement))
+        end
       end
 
       unless result

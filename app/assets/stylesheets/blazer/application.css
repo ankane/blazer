@@ -165,3 +165,12 @@ input.search:focus {
 #header a.active {
   color: #999;
 }
+
+#code {
+  max-height: 236px;
+  overflow: hidden;
+}
+
+#code.expanded {
+  max-height: none;
+}

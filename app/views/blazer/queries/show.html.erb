@@ -135,7 +135,13 @@
   </form>
 <% end %>
 
-<pre style="max-height: 236px; overflow: hidden;" onclick="this.style.maxHeight = 'none';"><code><%= @statement %></code></pre>
+<pre id="code"><code><%= @statement %></code></pre>
+
+<script>
+  $("#code").click( function () {
+    $(this).toggleClass("expanded");
+  })
+</script>
 
 <% if @success %>
   <div id="results">

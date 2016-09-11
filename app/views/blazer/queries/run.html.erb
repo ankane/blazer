@@ -20,7 +20,7 @@
         <% end %>
 
         <% if @query && !params[:data_source] %>
-          <%= link_to "Refresh", refresh_query_path(@query, variable_params), method: :post, remote: true, class: "refresh-link" %>
+          <%= link_to "Refresh", refresh_query_path(@query, variable_params), method: :post, remote: true %>
         <% end %>
       </p>
     <% end %>

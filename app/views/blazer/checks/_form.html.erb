@@ -63,7 +63,7 @@
   <p class="text-muted">Emails are sent when a check starts failing, and when it starts passing again.
   <p>
     <% if @check.persisted? %>
-      <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+      <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger", remote: true %>
     <% end %>
     <%= f.submit "Save", class: "btn btn-success" %>
     <%= link_to "Back", :back, class: "btn btn-link" %>

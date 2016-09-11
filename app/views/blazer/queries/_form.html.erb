@@ -2,7 +2,7 @@
   <div class="alert alert-danger"><%= @query.errors.full_messages.first %></div>
 <% end %>
 
-<%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params) : queries_path(variable_params)), html: {class: "the_form", autocomplete: "off"} do |f| %>
+<%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params) : queries_path(variable_params)), html: {class: "the_form", autocomplete: "off"}, remote: true do |f| %>
   <div class="row">
     <div id="statement-box" class="col-xs-8">
       <div class= "form-group">
@@ -41,7 +41,7 @@
       </div>
       <div class="text-right">
         <% if @query.persisted? %>
-          <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+          <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger", remote: true %>
           <%= f.submit "Fork", class: "btn btn-info" %>
         <% end %>
         <%= f.submit @query.persisted? ? "Update" : "Create", class: "btn btn-success" %>

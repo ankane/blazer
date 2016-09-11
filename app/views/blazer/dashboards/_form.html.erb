@@ -43,7 +43,7 @@
   </div>
   <p>
     <% if @dashboard.persisted? %>
-      <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+      <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger", remote: true %>
     <% end %>
     <%= f.submit "Save", class: "btn btn-success" %>
     <%= link_to "Back", :back, class: "btn btn-link" %>

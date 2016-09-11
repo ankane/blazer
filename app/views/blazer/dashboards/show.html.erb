@@ -21,7 +21,7 @@
 <% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
   <p class="text-muted" style="float: right;">
     Some queries may be cached
-    <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post, remote: true, class: "refresh-link" %>
+    <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post, remote: true %>
   </p>
 <% end %>
 

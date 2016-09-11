@@ -24,10 +24,6 @@ $(document).on('mouseenter', '.dropdown-toggle', function () {
   $(this).parent().addClass('open');
 });
 
-$(document).on('ajax:complete', '.refresh-link', function () {
-  Turbolinks.visit(window.location.pathname + window.location.search);
-});
-
 $(document).on("submit", "form[method=get]", function() {
   Turbolinks.visit(this.action+(this.action.indexOf('?') == -1 ? '?' : '&')+$(this).serialize());
   return false;

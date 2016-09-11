@@ -1,6 +1,4 @@
-<% if @dashboard.errors.any? %>
-  <div class="alert alert-danger"><%= @dashboard.errors.full_messages.first %></div>
-<% end %>
+<div id="errors"></div>
 
 <%= form_for @dashboard, url: (@dashboard.persisted? ? dashboard_path(@dashboard, variable_params) : dashboards_path(variable_params)), remote: true do |f| %>
   <div class="form-group">

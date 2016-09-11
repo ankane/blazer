@@ -2,9 +2,7 @@
   <p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
 <% end %>
 
-<% if @check.errors.any? %>
-  <div class="alert alert-danger"><%= @check.errors.full_messages.first %></div>
-<% end %>
+<div id="errors"></div>
 
 <%= form_for @check, remote: true do |f| %>
   <div class="form-group">

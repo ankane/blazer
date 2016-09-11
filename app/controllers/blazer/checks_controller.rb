@@ -21,7 +21,7 @@ module Blazer
       if @check.save
         redirect_to query_path(@check.query)
       else
-        render :new
+        render_errors @check
       end
     end
 
@@ -29,7 +29,7 @@ module Blazer
       if @check.update(check_params)
         redirect_to query_path(@check.query)
       else
-        render :edit
+        render_errors @check
       end
     end
 

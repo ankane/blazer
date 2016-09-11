@@ -45,7 +45,7 @@ module Blazer
       if @query.save
         redirect_to query_path(@query, variable_params)
       else
-        render :new
+        render_errors @query
       end
     end
 
@@ -158,7 +158,7 @@ module Blazer
       if @query.errors.empty? && @query.update(query_params)
         redirect_to query_path(@query, variable_params)
       else
-        render :edit
+        render_errors @query
       end
     end
 

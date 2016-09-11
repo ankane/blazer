@@ -81,6 +81,11 @@ module Blazer
     end
     helper_method :blazer_user
 
+    def render_errors(resource)
+      @errors = resource.errors
+      render partial: "blazer/errors", status: :unprocessable_entity
+    end
+
     # from turbolinks
     # https://github.com/turbolinks/turbolinks-rails/blob/master/lib/turbolinks/redirection.rb
     def redirect_to(url = {}, options = {})

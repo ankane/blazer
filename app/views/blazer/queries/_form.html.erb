@@ -1,6 +1,4 @@
-<% if @query.errors.any? %>
-  <div class="alert alert-danger"><%= @query.errors.full_messages.first %></div>
-<% end %>
+<div id="errors"></div>
 
 <%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params) : queries_path(variable_params)), html: {class: "the_form", autocomplete: "off"}, remote: true do |f| %>
   <div class="row">

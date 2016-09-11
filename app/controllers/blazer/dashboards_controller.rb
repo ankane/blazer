@@ -19,7 +19,7 @@ module Blazer
       if update_dashboard(@dashboard)
         redirect_to dashboard_path(@dashboard)
       else
-        render :new
+        render_errors @dashboard
       end
     end
 
@@ -49,7 +49,7 @@ module Blazer
       if update_dashboard(@dashboard)
         redirect_to dashboard_path(@dashboard, variable_params)
       else
-        render :edit
+        render_errors @dashboard
       end
     end
 

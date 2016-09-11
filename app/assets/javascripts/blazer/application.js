@@ -38,7 +38,7 @@ $(document).on("click", "#code", function () {
 });
 
 $(document).on("ajax:error", "form", function(e, data, status, xhr) {
-  $("#errors").replaceWith(data.responseText);
+  $("#errors").html(data.responseText);
 });
 
 function uuid() {

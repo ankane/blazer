@@ -12,5 +12,9 @@ Blazer::Engine.routes.draw do
   resources :dashboards do
     post :refresh, on: :member
   end
+  resources :data_sources, only: [] do
+    get :tables, on: :member
+    get :schema, on: :member
+  end
   root to: "queries#home"
 end

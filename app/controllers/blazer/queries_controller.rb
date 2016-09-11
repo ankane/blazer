@@ -168,12 +168,11 @@ module Blazer
     end
 
     def tables
-      @tables = Blazer.data_sources[params[:data_source]].tables
-      render partial: "tables", layout: false
+      redirect_to tables_data_source_path(params[:data_source])
     end
 
     def schema
-      @schema = Blazer.data_sources[params[:data_source]].schema
+      redirect_to schema_data_source_path(params[:data_source])
     end
 
     def cancel

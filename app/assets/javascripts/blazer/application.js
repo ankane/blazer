@@ -179,3 +179,145 @@ function preventBackspaceNav() {
     }
   });
 }
+
+var editor;
+
+// http://stackoverflow.com/questions/11584061/
+function adjustHeight() {
+  var lines = editor.getSession().getScreenLength();
+  if (lines < 9) {
+    lines = 9;
+  }
+
+  var newHeight = (lines + 1) * 16;
+  $("#editor").height(newHeight.toString() + "px");
+  editor.resize();
+};
+
+function getSQL() {
+  var selectedText = editor.getSelectedText();
+  var text = selectedText.length < 10 ? editor.getValue() : selectedText;
+  return text.replace(/\n/g, "\r\n");
+}
+
+function getErrorLine() {
+  var error_line = /LINE (\d+)/g.exec($("#results").find('.alert-danger').text());
+
+  if (error_line) {
+    error_line = parseInt(error_line[1], 10);
+    if (editor.getSelectedText().length >= 10) {
+      error_line += editor.getSelectionRange().start.row;
+    }
+    return error_line;
+  }
+}
+
+var error_line = null;
+var runningQuery;
+
+function queryDone() {
+  runningQuery = null
+  $("#run").removeClass("hide")
+  $("#cancel").addClass("hide")
+}
+
+$(document).on("click", "#cancel", function (e) {
+  e.preventDefault()
+
+  cancelQuery(runningQuery)
+  queryDone()
+
+  $("#results").html("")
+})
+
+function cancelQuery() {
+  if (runningQuery) {
+    remoteCancelQuery(runningQuery)
+  }
+}
+
+$(window).unload(cancelQuery)
+$(document).on("turbolinks:click", cancelQuery)
+
+$(document).on("click", "#run", function (e) {
+  e.preventDefault();
+
+  $(this).addClass("hide")
+  $("#cancel").removeClass("hide")
+
+  if (error_line) {
+    editor.getSession().removeGutterDecoration(error_line - 1, "error");
+    error_line = null;
+  }
+
+  $("#results").html('<p class="text-muted">Loading...</p>');
+
+  var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()});
+
+  runningQuery = {};
+
+  runQuery(data, function (data) {
+    queryDone()
+
+    $("#results").html(data);
+
+    error_line = getErrorLine();
+    if (error_line) {
+      editor.getSession().addGutterDecoration(error_line - 1, "error");
+      editor.scrollToLine(error_line, true, true, function () {});
+      editor.gotoLine(error_line, 0, true);
+      editor.focus();
+    }
+  }, function (data) {
+    // TODO show error
+    queryDone()
+  }, runningQuery);
+});
+
+$(document).on("change", "#table_names", function () {
+  var val = $(this).val();
+  if (val.length > 0) {
+    var dataSource = $("#query_data_source").val();
+    editor.setValue(previewStatement[dataSource].replace("{table}", val), 1);
+    $("#run").click();
+  }
+});
+
+function showEditor() {
+  editor = ace.edit("editor");
+  editor.setTheme("ace/theme/twilight");
+  editor.getSession().setMode("ace/mode/sql");
+  editor.setOptions({
+    enableBasicAutocompletion: false,
+    enableSnippets: false,
+    enableLiveAutocompletion: false,
+    highlightActiveLine: false,
+    fontSize: 12,
+    minLines: 10
+  });
+  editor.renderer.setShowGutter(true);
+  editor.renderer.setPrintMarginColumn(false);
+  editor.renderer.setPadding(10);
+  editor.getSession().setUseWrapMode(true);
+  editor.commands.addCommand({
+    name: 'run',
+    bindKey: {win: 'Ctrl-Enter',  mac: 'Command-Enter'},
+    exec: function(editor) {
+      $("#run").click();
+    },
+    readOnly: false // false if this command should not apply in readOnly mode
+  });
+  // fix command+L
+  editor.commands.removeCommands(["gotoline"]);
+
+  editor.getSession().on("change", function () {
+    $("#query_statement").val(editor.getValue());
+    adjustHeight();
+  });
+  adjustHeight();
+  $("#editor").show();
+  editor.focus();
+}
+
+preventBackspaceNav();
+

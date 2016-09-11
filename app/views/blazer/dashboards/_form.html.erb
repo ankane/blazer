@@ -2,7 +2,7 @@
   <div class="alert alert-danger"><%= @dashboard.errors.full_messages.first %></div>
 <% end %>
 
-<%= form_for @dashboard, url: (@dashboard.persisted? ? dashboard_path(@dashboard, variable_params) : dashboards_path(variable_params)) do |f| %>
+<%= form_for @dashboard, url: (@dashboard.persisted? ? dashboard_path(@dashboard, variable_params) : dashboards_path(variable_params)), remote: true do |f| %>
   <div class="form-group">
     <%= f.label :name %>
     <%= f.text_field :name, class: "form-control" %>

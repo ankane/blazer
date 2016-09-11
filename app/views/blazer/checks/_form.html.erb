@@ -6,7 +6,7 @@
   <div class="alert alert-danger"><%= @check.errors.full_messages.first %></div>
 <% end %>
 
-<%= form_for @check do |f| %>
+<%= form_for @check, remote: true do |f| %>
   <div class="form-group">
     <%= f.label :query_id, "Query" %>
     <div class="hide">

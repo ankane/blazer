@@ -436,6 +436,15 @@ Blazer supports a basic permissions model.
 2. Queries whose name starts with `#` are only listed to the creator
 3. Queries whose name starts with `*` can only be edited by the creator
 
+## Desktop App
+
+Turn Blazer into a desktop app with [Nativefier](https://github.com/jiahaog/nativefier).
+
+```sh
+npm install nativefier -g
+nativefier --name "Blazer" "https://yoursite.com/blazer"
+```
+
 ## Learn SQL
 
 Have team members who want to learn SQL? Here are a few great, free resources.

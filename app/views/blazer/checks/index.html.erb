@@ -32,7 +32,7 @@
         </td>
         <td style="text-align: right; padding: 1px;">
           <%= link_to "Edit", edit_check_path(check), class: "btn btn-info" %>
-          <%= link_to "Run Now", run_check_path(check), class: "btn btn-primary" %>
+          <%= link_to "Run Now", query_path(check.query), class: "btn btn-primary" %>
         </td>
       </tr>
     <% end %>

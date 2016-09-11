@@ -19,7 +19,7 @@ module Blazer
       @check.creator = blazer_user if @check.respond_to?(:creator_id=) && blazer_user
 
       if @check.save
-        redirect_to run_check_path(@check)
+        redirect_to query_path(@check.query)
       else
         render :new
       end
@@ -27,7 +27,7 @@ module Blazer
 
     def update
       if @check.update(check_params)
-        redirect_to run_check_path(@check)
+        redirect_to query_path(@check.query)
       else
         render :edit
       end

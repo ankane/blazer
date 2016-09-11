@@ -66,7 +66,7 @@ module Blazer
         Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
         data_source.clear_cache(statement)
       end
-      redirect_to dashboard_path(@dashboard, variable_params)
+      head :ok
     end
 
     protected

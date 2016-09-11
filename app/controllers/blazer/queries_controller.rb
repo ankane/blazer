@@ -144,7 +144,7 @@ module Blazer
       process_vars(@statement, @query.data_source)
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
       data_source.clear_cache(@statement)
-      redirect_to query_path(@query, variable_params)
+      head :ok
     end
 
     def update

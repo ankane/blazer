@@ -1,3 +1,7 @@
+## 1.7.1 [unreleased]
+
+- Added turbolinks
+
 ## 1.7.0
 
 - Added ability to cancel queries on backend for Postgres and Redshift

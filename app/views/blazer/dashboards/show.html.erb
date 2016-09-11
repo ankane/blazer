@@ -21,12 +21,12 @@
 <% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
   <p class="text-muted" style="float: right;">
     Some queries may be cached
-    <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post %>
+    <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post, remote: true, class: "refresh-link" %>
   </p>
 <% end %>
 
 <% if @bind_vars.any? %>
-  <form id="bind" method="get" action="<%= dashboard_path(@dashboard, variable_params) %>" class="form-inline" style="margin-bottom: 10px;">
+  <form id="bind" method="get" action="<%= dashboard_path(@dashboard) %>" class="form-inline" style="margin-bottom: 10px;">
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
       <% @bind_vars = @bind_vars - date_vars %>
@@ -123,7 +123,7 @@
 
 <% @queries.each_with_index do |query, i| %>
   <div style="padding-top: 10px; clear: both;">
-    <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank", style: "color: inherit;" %></h4>
+    <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), style: "color: inherit;" %></h4>
     <div id="chart-<%= i %>" class="chart">
       <p class="text-muted">Loading...</p>
     </div>

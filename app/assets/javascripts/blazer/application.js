@@ -1,5 +1,6 @@
 //= require ./jquery
 //= require ./jquery_ujs
+//= require ./turbolinks
 //= require ./list
 //= require ./stupidtable
 //= require ./jquery.stickytableheaders
@@ -19,10 +20,17 @@
 //= require ./Sortable
 //= require ./bootstrap
 
-$( function () {
-  $('.dropdown-toggle').mouseenter( function () {
-    $(this).parent().addClass('open');
-  });
+$(document).on('mouseenter', '.dropdown-toggle', function () {
+  $(this).parent().addClass('open');
+});
+
+$(document).on('ajax:complete', '.refresh-link', function () {
+  Turbolinks.visit(window.location.pathname + window.location.search);
+});
+
+$(document).on("submit", "form[method=get]", function() {
+  Turbolinks.visit(this.action+(this.action.indexOf('?') == -1 ? '?' : '&')+$(this).serialize());
+  return false;
 });
 
 function uuid() {

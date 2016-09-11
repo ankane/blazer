@@ -46,6 +46,7 @@
       <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
     <% end %>
     <%= f.submit "Save", class: "btn btn-success" %>
+    <%= link_to "Back", :back, class: "btn btn-link" %>
   </p>
 <% end %>
 
@@ -54,20 +55,4 @@
     $(this).parents("li:first").remove();
   });
   Sortable.create($(".list-group").get(0));
-
-  // $("form").submit( function () {
-  //   var query_ids = $("li").map( function () {
-  //     return $(this).attr("data-query-id");
-  //   });
-  //   console.log(query_ids.join(","));
-  //   return false;
-  // });
-
-  // var editableList = Sortable.create($(".list-group").get(0), {
-  //   filter: '.js-remove',
-  //   onFilter: function (evt) {
-  //     var el = editableList.closest(evt.item); // get dragged item
-  //     el && el.parentNode.removeChild(el);
-  //   }
-  // });
 </script>

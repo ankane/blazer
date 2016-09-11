@@ -147,11 +147,14 @@
     $("#results").html("")
   })
 
-  $(window).unload(function() {
+  function cancelQuery() {
     if (runningQuery) {
       remoteCancelQuery(runningQuery)
     }
-  })
+  }
+
+  $(window).unload(cancelQuery)
+  $(document).on("turbolinks:click", cancelQuery)
 
   $("#run").click( function (e) {
     e.preventDefault();

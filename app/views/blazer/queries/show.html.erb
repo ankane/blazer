@@ -38,7 +38,7 @@
 <% end %>
 
 <% if @bind_vars.any? %>
-  <form id="bind" method="get" action="<%= query_path(@query, variable_params) %>" class="form-inline" style="margin-bottom: 10px;">
+  <form id="bind" method="get" action="<%= query_path(@query) %>" class="form-inline" style="margin-bottom: 10px;">
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
       <% @bind_vars = @bind_vars - date_vars %>
@@ -169,7 +169,7 @@
     // do not highlight really long queries
     // this can lead to performance issues
     if ($("code").text().length < 10000) {
-      hljs.initHighlightingOnLoad();
+      hljs.highlightBlock(document.getElementById("code"));
     }
   </script>
 <% end %>

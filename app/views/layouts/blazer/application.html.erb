@@ -4,9 +4,10 @@
     <title><%= blazer_title ? blazer_title : "Blazer" %></title>
 
     <meta charset="utf-8" />
+    <meta name="turbolinks-cache-control" content="no-cache">
 
-    <%= stylesheet_link_tag "blazer/application" %>
-    <%= javascript_include_tag "blazer/application" %>
+    <%= stylesheet_link_tag "blazer/application", "data-turbolinks-track" => "reload" %>
+    <%= javascript_include_tag "blazer/application", "data-turbolinks-track" => "reload" %>
     <script>
       var runQueriesPath = <%= run_queries_path.to_json.html_safe %>;
       var cancelQueriesPath = <%= cancel_queries_path.to_json.html_safe %>;

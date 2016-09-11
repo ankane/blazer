@@ -14,10 +14,6 @@
       var schemaPath = <%= schema_queries_path.to_json.html_safe %>;
       var tablesPath = <%= tables_queries_path.to_json.html_safe %>;
     </script>
-    <% if blazer_maps? %>
-      <%= stylesheet_link_tag "https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.css" %>
-      <%= javascript_include_tag "https://api.mapbox.com/mapbox.js/v2.4.0/mapbox.js" %>
-    <% end %>
     <%= csrf_meta_tags %>
   </head>
   <body>

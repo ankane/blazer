@@ -19,6 +19,7 @@
 //= require ./ace/snippets/sql
 //= require ./Sortable
 //= require ./bootstrap
+//= require ./mapbox
 
 $(document).on('mouseenter', '.dropdown-toggle', function () {
   $(this).parent().addClass('open');

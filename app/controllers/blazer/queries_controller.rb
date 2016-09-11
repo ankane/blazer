@@ -188,7 +188,7 @@ module Blazer
     end
 
     def render_run
-      @checks = @query ? @query.checks : []
+      @checks = @query ? @query.checks.order(:id) : []
 
       @first_row = @rows.first || []
       @column_types = []

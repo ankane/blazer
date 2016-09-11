@@ -321,3 +321,8 @@ function showEditor() {
 
 preventBackspaceNav();
 
+function updatePreviewSelect() {
+  var dataSource = $("#query_data_source").val();
+  $("#tables").load(tablesPath + "?" + $.param({data_source: dataSource}));
+  $("#view-schema").attr("href", schemaPath + "?data_source=" + dataSource);
+}

@@ -41,12 +41,6 @@
 
 <pre id="code"><code><%= @statement %></code></pre>
 
-<script>
-  $("#code").click( function () {
-    $(this).toggleClass("expanded");
-  })
-</script>
-
 <% if @success %>
   <div id="results">
     <p class="text-muted">Loading...</p>

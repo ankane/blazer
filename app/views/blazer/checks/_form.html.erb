@@ -2,9 +2,11 @@
   <p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
 <% end %>
 
-<div id="errors"></div>
+<% if @check.errors.any? %>
+  <div class="alert alert-danger"><%= @check.errors.full_messages.first %></div>
+<% end %>
 
-<%= form_for @check, remote: true do |f| %>
+<%= form_for @check do |f| %>
   <div class="form-group">
     <%= f.label :query_id, "Query" %>
     <div class="hide">
@@ -61,7 +63,7 @@
   <p class="text-muted">Emails are sent when a check starts failing, and when it starts passing again.
   <p>
     <% if @check.persisted? %>
-      <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger", remote: true %>
+      <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
     <% end %>
     <%= f.submit "Save", class: "btn btn-success" %>
     <%= link_to "Back", :back, class: "btn btn-link" %>

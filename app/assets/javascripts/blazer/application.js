@@ -1,6 +1,5 @@
 //= require ./jquery
 //= require ./jquery_ujs
-//= require ./turbolinks
 //= require ./list
 //= require ./stupidtable
 //= require ./jquery.stickytableheaders
@@ -24,21 +23,12 @@ $(document).on('mouseenter', '.dropdown-toggle', function () {
   $(this).parent().addClass('open');
 });
 
-$(document).on("submit", "form[method=get]", function() {
-  Turbolinks.visit(this.action+(this.action.indexOf('?') == -1 ? '?' : '&')+$(this).serialize());
-  return false;
-});
-
 $(document).on("change", "#bind input, #bind select", function () {
   submitIfCompleted($(this).closest("form"));
 });
 
 $(document).on("click", "#code", function () {
   $(this).toggleClass("expanded");
-});
-
-$(document).on("ajax:error", "form", function(e, data, status, xhr) {
-  $("#errors").html(data.responseText);
 });
 
 function uuid() {
@@ -245,7 +235,6 @@ function cancelQuery2() {
 }
 
 $(window).unload(cancelQuery2)
-$(document).on("turbolinks:click", cancelQuery2)
 
 $(document).on("click", "#run", function (e) {
   e.preventDefault();

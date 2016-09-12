@@ -174,7 +174,3 @@ input.search:focus {
 #code.expanded {
   max-height: none;
 }
-
-.turbolinks-progress-bar {
-  visibility: hidden;
-}

@@ -126,12 +126,16 @@ function runQueryHelper(data, success, error, runningQuery) {
         }
       }, 1000);
     } else {
-      success(d);
+      if (!(runningQuery && runningQuery.canceled)) {
+        success(d);
+      }
       queryComplete();
     }
   }).fail( function(jqXHR, textStatus, errorThrown) {
-    var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
-    error(message);
+    if (!(runningQuery && runningQuery.canceled)) {
+      var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
+      error(message);
+    }
     queryComplete();
   });
   if (runningQuery) {
@@ -234,14 +238,14 @@ $(document).on("click", "#cancel", function (e) {
   $("#results").html("")
 })
 
-function cancelQuery() {
+function cancelQuery2() {
   if (runningQuery) {
     remoteCancelQuery(runningQuery)
   }
 }
 
-$(window).unload(cancelQuery)
-$(document).on("turbolinks:click", cancelQuery)
+$(window).unload(cancelQuery2)
+$(document).on("turbolinks:click", cancelQuery2)
 
 $(document).on("click", "#run", function (e) {
   e.preventDefault();

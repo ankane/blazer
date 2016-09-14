@@ -28,7 +28,7 @@ $(document).on("change", "#bind input, #bind select", function () {
 });
 
 $(document).on("click", "#code", function () {
-  $(this).toggleClass("expanded");
+  $(this).addClass("expanded");
 });
 
 function uuid() {

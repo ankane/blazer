@@ -1,25 +1,25 @@
 <% blazer_title @dashboard.name %>
 
-<div class="topbar">
-  <div class="container">
-    <div class="row" style="padding-top: 13px;">
-      <div class="col-sm-9">
-        <%= render partial: "blazer/nav" %>
-        <h3 style="margin: 0; line-height: 34px; display: inline;">
-          <%= @dashboard.name %>
-        </h3>
-      </div>
-      <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_dashboard_path(@dashboard, variable_params), class: "btn btn-info" %>
+<% content_for :topbar do %>
+  <div class="topbar">
+    <div class="container">
+      <div class="row" style="padding-top: 13px;">
+        <div class="col-sm-6 col-xs-12">
+          <h3 style="margin: 0; line-height: 34px; display: inline;">
+            <%= @dashboard.name %>
+          </h3>
+        </div>
+        <div class="col-sm-6 col-xs-12 text-right">
+          <%= render partial: "blazer/nav" %>
+          <%= link_to "Edit", edit_dashboard_path(@dashboard, variable_params), class: "btn btn-info" %>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-<div style="margin-bottom: 60px;"></div>
+<% end %>
 
 <% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
-  <p class="text-muted" style="float: right;">
+  <p class="text-muted pull-right">
     Some queries may be cached
     <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post %>
   </p>

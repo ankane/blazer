@@ -1,27 +1,27 @@
 <% blazer_title @query.name %>
 
-<div class="topbar">
-  <div class="container">
-    <div class="row" style="padding-top: 13px;">
-      <div class="col-sm-9">
-        <%= render partial: "blazer/nav" %>
-        <h3 style="margin: 0; line-height: 34px; display: inline;">
-          <%= @query.name %>
-        </h3>
-      </div>
-      <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
-        <%= link_to "Fork", new_query_path(variable_params.merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
+<% content_for :topbar do %>
+  <div class="topbar">
+    <div class="container">
+      <div class="row" style="padding-top: 13px;">
+        <div class="col-sm-6 col-xs-12">
+          <h3 style="margin: 0; line-height: 34px; display: inline;">
+            <%= @query.name %>
+          </h3>
+        </div>
+        <div class="col-sm-6 col-xs-12 text-right">
+          <%= render partial: "blazer/nav" %>
+          <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
+          <%= link_to "Fork", new_query_path(variable_params.merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
 
-        <% if !@error && @success %>
-          <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv"), params: {statement: @statement}, class: "btn btn-primary" %>
-        <% end %>
+          <% if !@error && @success %>
+            <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv"), params: {statement: @statement}, class: "btn btn-primary" %>
+          <% end %>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
-<div style="margin-bottom: 60px;"></div>
+<% end %>
 
 <% if @sql_errors.any? %>
   <div class="alert alert-danger">

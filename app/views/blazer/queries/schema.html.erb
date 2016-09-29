@@ -5,14 +5,17 @@
       <small><%= table[:schema] %></small>
     <% end %>
   </h4>
-  <table class="table" style="max-width: 500px;">
-    <tbody>
-      <% table[:columns].each do |column| %>
-        <tr>
-          <td style="width: 60%;"><%= column[:name] %></td>
-          <td class="text-muted"><%= column[:data_type] %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
+
+  <div class="table-responsive">
+    <table class="table">
+      <tbody>
+        <% table[:columns].each do |column| %>
+          <tr>
+            <td style="width: 60%;"><%= column[:name] %></td>
+            <td class="text-muted"><%= column[:data_type] %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 <% end %>

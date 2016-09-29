@@ -1,19 +1,29 @@
 <% blazer_title "Dashboards" %>
 
-<p style="float: right;"><%= link_to "New Dashboard", new_dashboard_path, class: "btn btn-info" %></p>
-<%= render partial: "blazer/nav" %>
+<% content_for :topbar do %>
+  <div class="topbar topbar-transparent">
+    <div class="container">
+      <div class="pull-right">
+        <%= render partial: "blazer/nav" %>
+        <%= link_to "New Dashboard", new_dashboard_path, class: "btn btn-info" %>
+      </div>
+    </div>
+  </div>
+<% end %>
 
-<table class="table">
-  <thead>
-    <tr>
-      <th>Dashboard</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @dashboards.each do |dashboard| %>
+<div class="table-responsive">
+  <table class="table">
+    <thead>
       <tr>
-        <td><%= link_to dashboard.name, dashboard %></td>
+        <th>Dashboard</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @dashboards.each do |dashboard| %>
+        <tr>
+          <td><%= link_to dashboard.name, dashboard %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

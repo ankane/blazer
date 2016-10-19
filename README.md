@@ -366,12 +366,12 @@ data_sources:
 
 ### Full List
 
-- PostgreSQL
-- MySQL
-- SQL Server
-- Oracle
-- IBM DB2 and Informix
-- SQLite
+- [PostgreSQL](#postgresql)
+- [MySQL](#mysql)
+- [SQL Server](#sql-server)
+- [Oracle](#oracle)
+- [IBM DB2 and Informix](#ibm-db2-and-informix)
+- [SQLite](#sqlite)
 - [Redshift](#redshift)
 - [Presto](#presto)
 - [MongoDB](#mongodb) [beta]
@@ -386,6 +386,38 @@ data_sources:
   my_source:
     url: <%= ENV["BLAZER_MY_SOURCE_URL"] %>
 ```
+
+### PostgreSQL
+
+Add [pg](https://bitbucket.org/ged/ruby-pg/wiki/Home) to your Gemfile (if it’s not there) and set:
+
+```yml
+data_sources:
+  my_source:
+    url: postgres://user:password@hostname:5432/database
+```
+
+### MySQL
+
+Add [mysql2](https://github.com/brianmario/mysql2) to your Gemfile (if it’s not there) and set:
+
+```yml
+data_sources:
+  my_source:
+    url: mysql2://user:password@hostname:3306/database
+```
+
+### SQL Server
+
+Use [activerecord-sqlserver-adapter](https://github.com/rails-sqlserver/activerecord-sqlserver-adapter).
+
+### IMB DB2 and Informix
+
+Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).
+
+### SQLite
+
+Use [sqlite3](https://github.com/sparklemotion/sqlite3-ruby).
 
 ### Redshift
 

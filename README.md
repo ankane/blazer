@@ -366,15 +366,15 @@ data_sources:
 
 ### Full List
 
-- [PostgreSQL](#postgresql)
-- [MySQL](#mysql)
+- [PostgreSQL](#postgresql-1)
+- [MySQL](#mysql-1)
 - [SQL Server](#sql-server)
 - [Oracle](#oracle)
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [SQLite](#sqlite)
 - [Redshift](#redshift)
 - [Presto](#presto)
-- [MongoDB](#mongodb) [beta]
+- [MongoDB](#mongodb-1) [beta]
 - [Elasticsearch](#elasticsearch) [beta]
 
 You can also create an adapter for any other data store.

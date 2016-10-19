@@ -13,7 +13,7 @@ module Blazer
       @settings = settings
 
       unless settings["url"] || Rails.env.development?
-        raise Blazer::Error, "Empty url"
+        raise Blazer::Error, "Empty url for data source: #{id}"
       end
 
       @adapter_instance =

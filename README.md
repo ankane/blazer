@@ -411,6 +411,10 @@ data_sources:
 
 Use [activerecord-sqlserver-adapter](https://github.com/rails-sqlserver/activerecord-sqlserver-adapter).
 
+### Oracle
+
+Use [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced).
+
 ### IBM DB2 and Informix
 
 Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).

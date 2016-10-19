@@ -411,7 +411,7 @@ data_sources:
 
 Use [activerecord-sqlserver-adapter](https://github.com/rails-sqlserver/activerecord-sqlserver-adapter).
 
-### IMB DB2 and Informix
+### IBM DB2 and Informix
 
 Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).
 

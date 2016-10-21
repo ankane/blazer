@@ -4,6 +4,7 @@
     <title><%= blazer_title ? blazer_title : "Blazer" %></title>
 
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
     <%= stylesheet_link_tag "blazer/application" %>
     <%= javascript_include_tag "blazer/application" %>
@@ -19,7 +20,8 @@
     <% end %>
     <%= csrf_meta_tags %>
   </head>
-  <body>
+  <body <% unless content_for?(:topbar) %>class="no-topbar"<% end %>>
+    <%= yield(:topbar) if content_for?(:topbar) %>
     <div class="container">
       <%= yield %>
     </div>

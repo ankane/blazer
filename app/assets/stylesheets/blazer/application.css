@@ -12,8 +12,11 @@ pre {
 }
 
 body {
-  padding-top: 20px;
   padding-bottom: 20px;
+}
+
+body.no-topbar {
+  padding-top: 20px;
 }
 
 .results-table th {
@@ -139,13 +142,14 @@ input.search:focus {
 }
 
 .topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   background-color: whitesmoke;
-  height: 60px;
   z-index: 1001;
+  padding: 10px 0;
+  margin-bottom: 10px;
+}
+
+.topbar.topbar-transparent {
+  background-color: transparent;
 }
 
 .glyphicon-remove {
@@ -173,4 +177,43 @@ input.search:focus {
 
 #code.expanded {
   max-height: none;
+}
+
+.blazer-nav {
+  vertical-align: top;
+  margin-right: 5px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.btn-query {
+  vertical-align: top;
+  width: 70px;
+}
+
+.selectize-schemas-wrapper {
+  display: inline;
+}
+
+@media screen and (min-width: 768px) and (max-width: 991px) {
+  .query-actions .btn-link {
+    padding: 2px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .btn-query {
+    width: 100%;
+  }
+  .selectize-schemas-wrapper {
+    text-align: center;
+    display: block;
+  }
+
+  .query-actions {
+    text-align: center;
+  }
 }

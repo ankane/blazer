@@ -12,7 +12,7 @@
     <ul class="list-group">
       <% (@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).each do |query| %>
         <li class="list-group-item">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span>
+          <span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" style="margin-top: 3px;"></span>
           <%= query.name %>
           <%= hidden_field_tag "query_ids[]", query.id %>
         </li>
@@ -33,7 +33,7 @@
           var $li = $("<li></li>");
           $li.addClass("list-group-item");
           $li.text($option.text());
-          $li.prepend('<span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span><input type="hidden" name="query_ids[]" id="query_ids_" value="' + $option.val() + '">');
+          $li.prepend('<span class="glyphicon glyphicon-remove pull-right" aria-hidden="true" style="margin-top: 3px;"></span><input type="hidden" name="query_ids[]" id="query_ids_" value="' + $option.val() + '">');
           $(".list-group").append($li);
           $(this)[0].selectize.setValue("");
           $(".form-group").removeClass("hide");

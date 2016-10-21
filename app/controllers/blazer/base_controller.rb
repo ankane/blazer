@@ -17,7 +17,7 @@ module Blazer
     end
 
     if Blazer.before_action
-      before_action Blazer.before_action
+      before_action Blazer.before_action.to_sym
     end
 
     layout "blazer/application"

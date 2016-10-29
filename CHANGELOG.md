@@ -1,5 +1,6 @@
 ## 1.7.1 [unreleased]
 
+- Do not fork when enter key pressed
 - Use custom version of Chart.js to fix label overlap
 
 ## 1.7.0

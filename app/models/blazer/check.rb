@@ -16,12 +16,6 @@ module Blazer
       emails.to_s.downcase.split(",").map(&:strip)
     end
 
-    def fix_emails
-      # some people like doing ; instead of ,
-      # but we know what they mean, so let's fix it
-      self.emails = emails.gsub(";", ",") if emails.present?
-    end
-
     def update_state(result)
       check_type =
         if respond_to?(:check_type)
@@ -72,5 +66,13 @@ module Blazer
       end
       save! if changed?
     end
+
+    private
+
+      def fix_emails
+        # some people like doing ; instead of ,
+        # but we know what they mean, so let's fix it
+        self.emails = emails.gsub(";", ",") if emails.present?
+      end
   end
 end

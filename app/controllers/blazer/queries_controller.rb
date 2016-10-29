@@ -286,7 +286,7 @@ module Blazer
           verified = q.verified ? "<span class=\"glyphicon glyphicon-ok-sign\"></span> " : ""
           {
             id: q.id,
-            name: verified + view_context.link_to(q.name, q),
+            name: verified + view_context.link_to(q.name.sub(/\A\$ */, ""), q),
             creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
             hide: q.name.gsub(/\s+/, ""),
             vars: extract_vars(q.statement).join(", ")

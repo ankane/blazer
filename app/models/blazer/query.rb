@@ -12,6 +12,8 @@ module Blazer
 
     str_enum :status, [:active, :archived]
 
+    before_save :set_verified
+
     def to_param
       [id, name].compact.join("-").gsub("'", "").parameterize
     end
@@ -21,7 +23,14 @@ module Blazer
     end
 
     def editable?(user)
-      (!persisted? || (name.present? && name.first != "*" && name.first != "#") || user == creator) && (!verified || Blazer.verifier_ids.include?(user.try(:id)))
+      (!persisted? || (name.present? && name.first != "*" && name.first != "#") || user == creator) && (!verified || Blazer.verifier_ids.include?(user.try(:id).to_s))
     end
+
+      private
+
+      def set_verified
+        self.verified = name.start_with?("$")
+        true
+      end
   end
 end

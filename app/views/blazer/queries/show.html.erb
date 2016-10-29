@@ -9,7 +9,7 @@
           <% if @query.verified %>
             <span class="glyphicon glyphicon-ok-sign"></span>
           <% end %>
-          <%= @query.name %>
+          <%= @query.name.sub(/\A\$ */, "") %>
         </h3>
       </div>
       <div class="col-sm-3 text-right">

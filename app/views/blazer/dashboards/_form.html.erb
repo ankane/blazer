@@ -25,7 +25,7 @@
       <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
     </div>
     <script>
-      var queries = <%= blazer_json_escape(Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} }.to_json).html_safe %>;
+      var queries = <%= blazer_json_escape(Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} }.to_json).html_safe %>;
       $("#query_id").selectize({options: queries, highlight: false, maxOptions: 100}).parents(".hide").removeClass("hide");
       $("#query_id").change( function () {
         var $option = $(this).find("option:selected");

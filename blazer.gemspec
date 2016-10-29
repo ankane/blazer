@@ -21,6 +21,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails"
   spec.add_dependency "chartkick"
   spec.add_dependency "safely_block", ">= 0.1.1"
+  spec.add_dependency "str_enum", ">= 0.1.4"
   spec.add_dependency "js-routes"
   spec.add_dependency "gon"
 

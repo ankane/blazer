@@ -69,6 +69,10 @@ module Blazer
         @sql_errors << error if error
       end
 
+      if @query.archived?
+        @query.update_attributes(status: "active")
+      end
+
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
     end
 
@@ -257,7 +261,7 @@ module Blazer
           []
         end
 
-      @queries = Blazer::Query.named
+      @queries = Blazer::Query.active.named
       @queries = @queries.includes(:creator) if Blazer.user_class
 
       if blazer_user && params[:filter] == "mine"
@@ -288,7 +292,7 @@ module Blazer
     end
 
     def queries_by_ids(favorite_query_ids)
-      queries = Blazer::Query.named.where(id: favorite_query_ids)
+      queries = Blazer::Query.active.named.where(id: favorite_query_ids)
       queries = queries.includes(:creator) if Blazer.user_class
       queries = queries.index_by(&:id)
       favorite_query_ids.map { |query_id| queries[query_id] }.compact

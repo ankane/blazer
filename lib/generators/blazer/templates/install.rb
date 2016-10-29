@@ -6,6 +6,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
       t.text :description
       t.text :statement
       t.string :data_source
+      t.string :status
       t.timestamps
     end
 

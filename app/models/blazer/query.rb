@@ -10,6 +10,8 @@ module Blazer
 
     scope :named, -> { where("blazer_queries.name <> ''") }
 
+    str_enum :status, [:active, :archived]
+
     def to_param
       [id, name].compact.join("-").gsub("'", "").parameterize
     end

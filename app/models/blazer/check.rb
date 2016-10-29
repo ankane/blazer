@@ -8,10 +8,6 @@ module Blazer
     before_validation :set_state
     before_validation :fix_emails
 
-    def set_state
-      self.state ||= "new"
-    end
-
     def split_emails
       emails.to_s.downcase.split(",").map(&:strip)
     end
@@ -68,6 +64,10 @@ module Blazer
     end
 
     private
+
+      def set_state
+        self.state ||= "new"
+      end
 
       def fix_emails
         # some people like doing ; instead of ,

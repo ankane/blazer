@@ -1,6 +1,5 @@
 //= require ./jquery
 //= require ./jquery_ujs
-//= require ./list
 //= require ./stupidtable
 //= require ./jquery.stickytableheaders
 //= require ./selectize

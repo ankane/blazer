@@ -6,6 +6,9 @@
       <div class="col-sm-9">
         <%= render partial: "blazer/nav" %>
         <h3 style="margin: 0; line-height: 34px; display: inline;">
+          <% if @query.verified %>
+            <span class="glyphicon glyphicon-ok-sign"></span>
+          <% end %>
           <%= @query.name %>
         </h3>
       </div>

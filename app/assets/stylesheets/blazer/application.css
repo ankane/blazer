@@ -174,3 +174,7 @@ input.search:focus {
 #code.expanded {
   max-height: none;
 }
+
+.glyphicon-ok-sign {
+  color: #5bc0de;
+}

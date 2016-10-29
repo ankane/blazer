@@ -21,7 +21,7 @@ module Blazer
     end
 
     def editable?(user)
-      !persisted? || (name.present? && name.first != "*" && name.first != "#") || user == creator
+      (!persisted? || (name.present? && name.first != "*" && name.first != "#") || user == creator) && (!verified || Blazer.verifier_ids.include?(user.try(:id)))
     end
   end
 end

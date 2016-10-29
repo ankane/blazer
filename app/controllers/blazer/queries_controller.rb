@@ -247,6 +247,16 @@ module Blazer
     end
 
     def set_queries(limit = nil)
+      @queries = Blazer::Query.active.named
+      @queries = @queries.includes(:creator) if Blazer.user_class
+
+      @verified_queries =
+        if limit
+          @queries.where(verified: true).order(:name)
+        else
+          []
+        end
+
       @my_queries =
         if limit && blazer_user && !params[:filter] && Blazer.audit
           queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys)
@@ -254,15 +264,14 @@ module Blazer
           []
         end
 
-      @queries = Blazer::Query.active.named
-      @queries = @queries.includes(:creator) if Blazer.user_class
+      @queries = @queries.where(verified: false)
+      @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
 
       if blazer_user && params[:filter] == "mine"
         @queries = @queries.where(creator_id: blazer_user.id).reorder(updated_at: :desc)
       elsif blazer_user && params[:filter] == "viewed" && Blazer.audit
         @queries = queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).order(created_at: :desc).limit(500).pluck(:query_id).uniq)
       else
-        @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
         @queries = @queries.limit(limit) if limit
         @queries = @queries.order(:name)
       end
@@ -270,13 +279,14 @@ module Blazer
 
       @more = limit && @queries.size >= limit
 
-      @queries = (@my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
+      @queries = (@verified_queries + @my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
 
       @queries =
         @queries.map do |q|
+          verified = q.verified ? "<span class=\"glyphicon glyphicon-ok-sign\"></span> " : ""
           {
             id: q.id,
-            name: view_context.link_to(q.name, q),
+            name: verified + view_context.link_to(q.name, q),
             creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
             hide: q.name.gsub(/\s+/, ""),
             vars: extract_vars(q.statement).join(", ")
@@ -285,7 +295,7 @@ module Blazer
     end
 
     def queries_by_ids(favorite_query_ids)
-      queries = Blazer::Query.active.named.where(id: favorite_query_ids)
+      queries = Blazer::Query.active.named.where(id: favorite_query_ids).where(verified: false)
       queries = queries.includes(:creator) if Blazer.user_class
       queries = queries.index_by(&:id)
       favorite_query_ids.map { |query_id| queries[query_id] }.compact

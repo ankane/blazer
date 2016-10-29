@@ -18,6 +18,8 @@
 //= require ./ace/snippets/sql
 //= require ./Sortable
 //= require ./bootstrap
+//= require ./vue
+//= require ./routes
 
 $(document).on('mouseenter', '.dropdown-toggle', function () {
   $(this).parent().addClass('open');

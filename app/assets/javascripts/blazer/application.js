@@ -15,6 +15,8 @@
 //= require ./vue
 //= require ./routes
 
+Vue.config.devtools = false
+
 $(document).on('mouseenter', '.dropdown-toggle', function () {
   $(this).parent().addClass('open');
 });

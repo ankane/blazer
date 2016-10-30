@@ -38,10 +38,10 @@
     <tbody class="list" v-cloak>
       <tr v-for="query in visibleItems">
         <td>
-          <span v-bind:class="{dashboard: query.dashboard}"><a :href="itemPath(query)">{{query.name}}</a></span>
-          <span class="vars">{{query.vars}}</span>
+          <span :class="{dashboard: query.dashboard}"><a :href="itemPath(query)">{{ query.name }}</a></span>
+          <span class="vars">{{ query.vars }}</span>
         </td>
-        <td class="creator">{{query.creator}}</td>
+        <td class="creator">{{ query.creator }}</td>
       </tr>
     </tbody>
   </table>

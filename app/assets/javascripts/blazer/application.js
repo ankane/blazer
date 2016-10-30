@@ -301,7 +301,7 @@ function showEditor() {
     readOnly: false // false if this command should not apply in readOnly mode
   });
   // fix command+L
-  editor.commands.removeCommands(["gotoline"]);
+  editor.commands.removeCommands(["gotoline", "find"]);
 
   editor.getSession().on("change", function () {
     $("#query_statement").val(editor.getValue());

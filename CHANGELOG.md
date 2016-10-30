@@ -1,3 +1,7 @@
+## 1.7.2 [unreleased]
+
+- Prevent Ace from taking over find command
+
 ## 1.7.1
 
 - Do not fork when enter key pressed

@@ -10,9 +10,9 @@
 //= require ./Chart.js
 //= require ./chartkick
 //= require ./ace
-//= require ./Sortable
 //= require ./bootstrap
 //= require ./vue
+//= require ./vue.drag-and-drop
 //= require ./routes
 
 Vue.config.devtools = false

@@ -254,7 +254,7 @@ module Blazer
           []
         end
 
-      @queries = Blazer::Query.active.named
+      @queries = Blazer::Query.named
       @queries = @queries.includes(:creator) if Blazer.user_class
 
       if blazer_user && params[:filter] == "mine"
@@ -264,7 +264,7 @@ module Blazer
       else
         @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
         @queries = @queries.limit(limit) if limit
-        @queries = @queries.order(:name)
+        @queries = @queries.active.order(:name)
       end
       @queries = @queries.to_a
 

@@ -25,7 +25,7 @@
         </ul>
       </div>
     </div>
-    <input type="text" placeholder="Start typing a query or person" style="width: 300px; display: inline-block;" autofocus=true class="search form-control" />
+    <input type="text" v-model="searchTerm" placeholder="Start typing a query or person" style="width: 300px; display: inline-block;" autofocus=true class="search form-control" />
   </div>
 
   <table class="table">
@@ -35,56 +35,107 @@
         <th style="width: 20%; text-align: right;">Mastermind</th>
       </tr>
     </thead>
-    <tbody class="list">
-      <tr id="search-item">
+    <tbody class="list" v-cloak>
+      <tr v-for="query in visibleItems">
         <td>
-          <span class="name"></span>
-          <span class="vars"></span>
-          <span class="hide"></span>
+          <span v-bind:class="{dashboard: query.dashboard}"><a :href="itemPath(query)">{{query.name}}</a></span>
+          <span class="vars">{{query.vars}}</span>
         </td>
-        <td class="creator"></td>
+        <td class="creator">{{query.creator}}</td>
       </tr>
     </tbody>
   </table>
+
+  <p v-if="more" class="text-muted">Loading...</p>
 </div>
 
 <script>
-  var options = {
-    valueNames: ["name", "vars", "hide", "creator"],
-    item: "search-item",
-    page: 200,
-    indexAsync: true
-  };
-  var dashboardValues = <%= blazer_json_escape(@dashboards.to_json).html_safe %>;
-  var queryValues = <%= blazer_json_escape(@queries.to_json).html_safe %>;
-  var queryList = new List("queries", options, dashboardValues);
-  queryList.add(queryValues);
-
-  var queryIds = {};
-  for (var i = 0; i < queryValues.length; i++) {
-    queryIds[queryValues[i].id] = true;
+  var prepareSearch = function (list) {
+    var i, q
+    for (i = 0; i < list.length; i++) {
+      q = list[i]
+      q.searchStr = prepareQuery(q.name + q.creator)
+    }
   }
-</script>
 
-<% if @more %>
-  <p id="loading" class="text-muted">Loading...</p>
-  <script>
-    $.getJSON("<%= queries_path %>", function (data) {
-      var i, j, newValues, val, size = 500;
-      $("#loading").remove();
-      for (i = 0; i < data.length / size; i++) {
-        newValues = [];
-        for (j = 0; j < size; j++) {
-          val = data[i * size + j];
-          if (!val) {
-            break;
-          }
-          if (!queryIds[val.id]) {
-            newValues.push(val);
-          }
-        }
-        queryList.add(newValues);
+  var prepareQuery = function (str) {
+    return str.toLowerCase().replace(/\W+/g, "")
+  }
+
+  var app = new Vue({
+    el: "#queries",
+    data: {
+      searchTerm: "",
+      more: gon.more,
+      updateCounter: 0
+    },
+    created: function() {
+      this.listItems = gon.dashboards.concat(gon.queries)
+
+      prepareSearch(this.listItems)
+
+      this.queryIds = {}
+      for (i = 0; i < gon.queries.length; i++) {
+        this.queryIds[gon.queries[i].id] = true
       }
-    });
-  </script>
-<% end %>
+
+      if (this.more) {
+        var _this = this
+
+        $.getJSON(Routes.blazer_queries_path(), function (data) {
+          var i, j, newValues, val, size = 500;
+
+          var newValues = []
+          for (j = 0; j < data.length; j++) {
+            val = data[j]
+            if (val && !_this.queryIds[val.id]) {
+              newValues.push(val)
+            }
+          }
+
+          prepareSearch(newValues)
+
+          _this.listItems = _this.listItems.concat(newValues)
+          _this.more = false
+          // hack to get to update
+          _this.updateCounter++
+        })
+      }
+    },
+    computed: {
+      visibleItems: function () {
+        // hack to get to update
+        this.updateCounter
+
+        var pageSize = 200
+        var q, i
+
+        if (this.searchTerm.length > 0) {
+          var term = prepareQuery(this.searchTerm)
+          var items = []
+          for (i = 0; i < this.listItems.length; i++) {
+            q = this.listItems[i]
+            if (q.searchStr.indexOf(term) !== -1) {
+              items.push(q)
+              if (items.length == pageSize) {
+                break
+              }
+            }
+          }
+          return items
+        } else {
+          return this.listItems.slice(0, pageSize)
+        }
+      }
+    },
+    methods: {
+      itemPath: function (item) {
+        if (item.dashboard) {
+          return Routes.blazer_dashboard_path(item.to_param)
+        } else {
+          return Routes.blazer_query_path(item.to_param)
+        }
+      }
+    }
+  })
+</script>

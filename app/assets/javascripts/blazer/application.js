@@ -1,6 +1,5 @@
 //= require ./jquery
 //= require ./jquery_ujs
-//= require ./list
 //= require ./stupidtable
 //= require ./jquery.stickytableheaders
 //= require ./selectize
@@ -10,14 +9,11 @@
 //= require ./daterangepicker
 //= require ./Chart.js
 //= require ./chartkick
-//= require ./ace/ace
-//= require ./ace/ext-language_tools
-//= require ./ace/theme-twilight
-//= require ./ace/mode-sql
-//= require ./ace/snippets/text
-//= require ./ace/snippets/sql
+//= require ./ace
 //= require ./Sortable
 //= require ./bootstrap
+//= require ./vue
+//= require ./routes
 
 $(document).on('mouseenter', '.dropdown-toggle', function () {
   $(this).parent().addClass('open');
@@ -56,7 +52,7 @@ function csrfProtect(payload) {
 }
 
 function remoteCancelQuery(runningQuery) {
-  var path = window.cancelQueriesPath;
+  var path = Routes.blazer_cancel_queries_path();
   var data = {run_id: runningQuery.run_id, data_source: runningQuery.data_source};
   if (navigator.sendBeacon) {
     navigator.sendBeacon(path, csrfProtect(data));
@@ -102,7 +98,7 @@ function runQuery(data, success, error, runningQuery) {
 
 function runQueryHelper(data, success, error, runningQuery) {
   var xhr = $.ajax({
-    url: window.runQueriesPath,
+    url: Routes.blazer_run_queries_path(),
     method: "POST",
     data: data,
     dataType: "html"
@@ -319,7 +315,7 @@ function showEditor() {
 preventBackspaceNav();
 
 function updatePreviewSelect() {
-  var dataSource = $("#query_data_source").val();
-  $("#tables").load(tablesPath + "?" + $.param({data_source: dataSource}));
-  $("#view-schema").attr("href", schemaPath + "?data_source=" + dataSource);
+  var dataSource = $("#query_data_source").val()
+  $("#tables").load(Routes.blazer_tables_queries_path({data_source: dataSource}))
+  $("#view-schema").attr("href", Routes.blazer_schema_queries_path({data_source: dataSource}))
 }

@@ -174,3 +174,7 @@ input.search:focus {
 #code.expanded {
   max-height: none;
 }
+
+[v-cloak] {
+  display: none;
+}

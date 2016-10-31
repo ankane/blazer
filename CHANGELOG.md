@@ -3,6 +3,7 @@
 - Cancel all queries on page nav
 - Prevent Ace from taking over find command
 - Added ability to use hashes for smart columns
+- Added ability to inherit smart variables
 
 ## 1.7.1
 

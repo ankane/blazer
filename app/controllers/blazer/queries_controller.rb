@@ -102,6 +102,7 @@ module Blazer
           render_run
         elsif Time.now > Time.at(@timestamp + (@data_source.timeout || 600).to_i + 5)
           # query lost
+          Rails.logger.info "[blazer lost query] #{@run_id}"
           @error = "We lost your query :("
           @rows = []
           @columns = []

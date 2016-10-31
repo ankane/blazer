@@ -51,10 +51,14 @@
 
 <script>
   var prepareSearch = function (list) {
-    var i, q
+    var i, q, searchStr
     for (i = 0; i < list.length; i++) {
       q = list[i]
-      q.searchStr = prepareQuery(q.name + q.creator)
+      searchStr = q.name + q.creator
+      if (q.creator === "You") {
+        searchStr += "mine me"
+      }
+      q.searchStr = prepareQuery(searchStr)
     }
   }
 

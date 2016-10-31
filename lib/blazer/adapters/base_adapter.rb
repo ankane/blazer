@@ -39,6 +39,10 @@ module Blazer
         # optional
       end
 
+      def cachable?(statement)
+        true # optional
+      end
+
       protected
 
       def settings

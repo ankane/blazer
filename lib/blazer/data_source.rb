@@ -172,7 +172,7 @@ module Blazer
         cache_data = Marshal.dump([columns, rows, error, cache ? Time.now : nil]) rescue nil
       end
 
-      if cache && cache_data
+      if cache && cache_data && @adapter_instance.cachable?(statement)
         Blazer.cache.write(statement_cache_key(statement), cache_data, expires_in: cache_expires_in.to_f * 60)
       end
 

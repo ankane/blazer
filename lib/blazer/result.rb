@@ -23,11 +23,21 @@ module Blazer
       @boom ||= begin
         boom = {}
         columns.each_with_index do |key, i|
-          query = data_source.smart_columns[key]
-          if query
-            values = rows.map { |r| r[i] }.compact.uniq
-            result = data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
-            boom[key] = Hash[result.rows.map { |k, v| [k.to_s, v] }]
+          smart_columns_data_source =
+            ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_columns[key] }
+
+          if smart_columns_data_source
+            query = smart_columns_data_source.smart_columns[key]
+            res =
+              if query.is_a?(Hash)
+                query
+              else
+                values = rows.map { |r| r[i] }.compact.uniq
+                result = smart_columns_data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+                result.rows
+              end
+
+            boom[key] = Hash[res.map { |k, v| [k.nil? ? k : k.to_s, v] }]
           end
         end
         boom

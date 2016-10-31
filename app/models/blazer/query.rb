@@ -23,7 +23,10 @@ module Blazer
     end
 
     def editable?(user)
-      (!persisted? || (name.present? && name.first != "*" && name.first != "#") || user == creator) && (!verified || Blazer.verifier_ids.include?(user.try(:id).to_s))
+      editable = !persisted? || (name.present? && name.first != "*" && name.first != "#") || user == creator
+      editable &&= !verified || Blazer.verifier_ids.include?(user.try(:id).to_s)
+      editable &&= Blazer.query_editable.call(self, user) if Blazer.query_editable
+      editable
     end
 
       private

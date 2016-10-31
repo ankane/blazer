@@ -59,17 +59,24 @@ module Blazer
     end
 
     def parse_smart_variables(var, data_source)
-      query = data_source.smart_variables[var]
-      if query.is_a? Hash
-        smart_var = query.map { |k,v| [v, k] }
-      elsif query.is_a? Array
-        smart_var = query.map { |v| [v, v] }
-      elsif query
-        result = data_source.run_statement(query)
-        smart_var = result.rows.map { |v| v.reverse }
-        error = result.error if result.error
+      smart_var_data_source =
+        ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_variables[var] }
+
+      if smart_var_data_source
+        query = smart_var_data_source.smart_variables[var]
+
+        if query.is_a? Hash
+          smart_var = query.map { |k,v| [v, k] }
+        elsif query.is_a? Array
+          smart_var = query.map { |v| [v, v] }
+        elsif query
+          result = smart_var_data_source.run_statement(query)
+          smart_var = result.rows.map { |v| v.reverse }
+          error = result.error if result.error
+        end
       end
-      return smart_var, error
+
+      [smart_var, error]
     end
 
     def extract_vars(statement)

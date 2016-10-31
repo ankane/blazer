@@ -15,12 +15,19 @@ module Blazer
       @dashboards =
         @dashboards.map do |d|
           {
-            name: "<strong>#{view_context.link_to(d.name, d)}</strong>",
+            id: d.id,
+            name: d.name,
             creator: blazer_user && d.try(:creator) == blazer_user ? "You" : d.try(:creator).try(Blazer.user_name),
-            hide: d.name.gsub(/\s+/, ""),
-            vars: nil
+            to_param: d.to_param,
+            dashboard: true
           }
         end
+
+      gon.push(
+        dashboards: @dashboards,
+        queries: @queries,
+        more: @more
+      )
     end
 
     def index
@@ -99,6 +106,7 @@ module Blazer
           render_run
         elsif Time.now > Time.at(@timestamp + (@data_source.timeout || 600).to_i + 5)
           # query lost
+          Rails.logger.info "[blazer lost query] #{@run_id}"
           @error = "We lost your query :("
           @rows = []
           @columns = []
@@ -247,7 +255,7 @@ module Blazer
     end
 
     def set_queries(limit = nil)
-      @queries = Blazer::Query.active.named
+      @queries = Blazer::Query.active.named.select(:id, :name, :creator_id, :statement)
       @queries = @queries.includes(:creator) if Blazer.user_class
 
       @verified_queries =
@@ -283,13 +291,13 @@ module Blazer
 
       @queries =
         @queries.map do |q|
-          verified = q.verified ? "<span class=\"glyphicon glyphicon-ok-sign\"></span> " : ""
           {
             id: q.id,
-            name: verified + view_context.link_to(q.name.sub(/\A\$ */, ""), q),
+            name: q.name,
+            verified: q.verified,
             creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
-            hide: q.name.gsub(/\s+/, ""),
-            vars: extract_vars(q.statement).join(", ")
+            vars: extract_vars(q.statement).join(", "),
+            to_param: q.to_param
           }
         end
     end

@@ -175,6 +175,10 @@ input.search:focus {
   max-height: none;
 }
 
+[v-cloak] {
+  display: none;
+}
+
 .glyphicon-ok-sign {
   color: #5bc0de;
 }

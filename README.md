@@ -228,6 +228,13 @@ smart_columns:
   city_id: "SELECT id, name FROM cities WHERE id IN {value}"
 ```
 
+You can also use a hash for static data and enums.
+
+```yml
+smart_columns:
+  status: {0: "Active", 1: "Archived"}
+```
+
 ### Caching
 
 Blazer can automatically cache results to improve speed. It can cache slow queries:
@@ -421,7 +428,13 @@ Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).
 
 ### SQLite
 
-Use [sqlite3](https://github.com/sparklemotion/sqlite3-ruby).
+Add [sqlite3](https://github.com/sparklemotion/sqlite3-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: sqlite3:path/to/database.sqlite3
+```
 
 ### Redshift
 

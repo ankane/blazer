@@ -33,7 +33,7 @@ module Blazer
 
     def index
       set_queries
-      render json: @queries
+      render json: queries_json(@queries)
     end
 
     def new

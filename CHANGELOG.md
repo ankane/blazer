@@ -1,5 +1,6 @@
 ## 1.7.2 [unreleased]
 
+- Cancel all queries on page nav
 - Prevent Ace from taking over find command
 
 ## 1.7.1

@@ -39,7 +39,7 @@
       <tr v-for="query in visibleItems">
         <td>
           <span class="glyphicon glyphicon-ok-sign" v-if="query.verified"></span>
-          <a :class="{ dashboard: query.dashboard }" :href="itemPath(query)">{{ query.name }}</a>
+          <a :href="itemPath(query)" :class="{dashboard: query.dashboard}">{{ query.name }}</a>
           <span class="vars">{{ query.vars }}</span>
         </td>
         <td class="creator">{{ query.creator }}</td>

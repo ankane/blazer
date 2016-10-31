@@ -159,7 +159,6 @@
         this.editor = editor
 
         editor.getSession().on("change", function () {
-          console.log("hi")
           $("#query_statement").val(editor.getValue())
           _this.adjustHeight()
         })

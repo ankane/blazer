@@ -44,27 +44,11 @@ module Blazer
     end
 
     def smart_columns
-      @smart_columns ||= begin
-        sc = settings["smart_columns"] || {}
-        Array(settings["inherit_smart_settings"]).each do |ds|
-          (Blazer.data_sources[ds].settings["smart_columns"] || {}).each do |k, v|
-            sc[k] ||= v
-          end
-        end
-        sc
-      end
+      settings["smart_columns"] || {}
     end
 
     def smart_variables
-      @smart_variables ||= begin
-        sv = settings["smart_variables"] || {}
-        Array(settings["inherit_smart_settings"]).each do |ds|
-          (Blazer.data_sources[ds].settings["smart_variables"] || {}).each do |k, v|
-            sv[k] ||= v
-          end
-        end
-        sv
-      end
+      settings["smart_variables"] || {}
     end
 
     def variable_defaults

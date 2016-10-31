@@ -113,6 +113,7 @@
         if (this.searchTerm.length > 0) {
           var term = prepareQuery(this.searchTerm)
           var items = []
+          var fuzzyItems = []
           for (i = 0; i < this.listItems.length; i++) {
             q = this.listItems[i]
             if (q.searchStr.indexOf(term) !== -1) {
@@ -120,9 +121,11 @@
               if (items.length == pageSize) {
                 break
               }
+            } else if (fuzzysearch(term, q.searchStr)) {
+              fuzzyItems.push(q)
             }
           }
-          return items
+          return items.concat(fuzzyItems).slice(0, pageSize)
         } else {
           return this.listItems.slice(0, pageSize)
         }

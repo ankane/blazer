@@ -15,6 +15,7 @@
 //= require ./vue
 //= require ./routes
 //= require ./queries
+//= require ./fuzzysearch
 
 Vue.config.devtools = false
 

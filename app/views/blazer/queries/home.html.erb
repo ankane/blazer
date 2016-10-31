@@ -52,10 +52,14 @@
 
 <script>
   var prepareSearch = function (list) {
-    var i, q
+    var i, q, searchStr
     for (i = 0; i < list.length; i++) {
       q = list[i]
-      q.searchStr = prepareQuery(q.name + q.creator)
+      searchStr = q.name + q.creator
+      if (q.creator === "You") {
+        searchStr += "mine me"
+      }
+      q.searchStr = prepareQuery(searchStr)
     }
   }
 
@@ -114,6 +118,7 @@
         if (this.searchTerm.length > 0) {
           var term = prepareQuery(this.searchTerm)
           var items = []
+          var fuzzyItems = []
           for (i = 0; i < this.listItems.length; i++) {
             q = this.listItems[i]
             if (q.searchStr.indexOf(term) !== -1) {
@@ -121,9 +126,11 @@
               if (items.length == pageSize) {
                 break
               }
+            } else if (fuzzysearch(term, q.searchStr)) {
+              fuzzyItems.push(q)
             }
           }
-          return items
+          return items.concat(fuzzyItems).slice(0, pageSize)
         } else {
           return this.listItems.slice(0, pageSize)
         }

@@ -57,13 +57,37 @@ module Blazer
       end
 
       # do not notify on creation, except when not passing
-      if (state_was != "new" || state != "passing") && state != state_was && emails.present?
+      if notify?
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message).deliver_later
       end
       save! if changed?
     end
 
     private
+
+      def notify?
+        send_it = true
+        send_it &&= emails.present?
+
+        # Do not notify if the state has not changed
+        send_it &&= (state != state_was)
+
+        error_states = ["error", "timed out"]
+
+        # Do not notify on creation, except when not passing
+        send_it &&= (state_was != "new" || state != "passing")
+
+        if self.respond_to?(:notify_on_error)
+          # Do not notify on error when notify_on_error is false
+          send_it &&= (!state.in?(error_states) || notify_on_error)
+
+          # Do not send on passing when notify_on_pass is false, or when notify_on_pass is true but
+          # the previous state was 'error' and notify_on_error is false.
+          send_it &&= (state != "passing" || (notify_on_pass && (!state_was.in?(error_states) || notify_on_error)))
+        end
+
+        send_it
+      end
 
       def set_state
         self.state ||= "new"

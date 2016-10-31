@@ -33,7 +33,11 @@ module Blazer
           end
         rescue => e
           error = e.message.sub(/.+ERROR: /, "")
-          error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
+          if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
+            Rails.logger.info "[blazer original error] #{error}"
+            error = Blazer::TIMEOUT_MESSAGE
+          end
+
           reconnect if error.include?("PG::ConnectionBad")
         end
 
@@ -77,6 +81,7 @@ module Blazer
           select_all("SELECT pg_cancel_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND query LIKE '%,run_id:#{run_id}%'")
         elsif redshift?
           first_row = select_all("SELECT pid FROM stv_recents WHERE status = 'Running' AND query LIKE '%,run_id:#{run_id}%'").first
+          Rails.logger.info "[blazer cancel] #{first_row.inspect}"
           if first_row
             select_all("CANCEL #{first_row["pid"].to_i}")
           end

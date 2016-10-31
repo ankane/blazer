@@ -113,6 +113,10 @@ module Blazer
           Rails.logger.info "[blazer reconnect] query=#{check.query.name}"
           tries += 1
           sleep(10)
+        elsif result.error.to_s.include?("permission denied for relation")
+          Rails.logger.info "[blazer permissions] query=#{check.query.name}"
+          tries += 1
+          sleep(10)
         else
           break
         end

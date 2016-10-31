@@ -108,65 +108,6 @@ function getErrorLine() {
 
 var error_line = null
 
-$(document).on("click", "#cancel", function (e) {
-  e.preventDefault()
-
-  cancelAllQueries()
-
-  queryDone()
-
-  $("#results").html("")
-})
-
-function queryDone() {
-  $("#run").removeClass("hide")
-  $("#cancel").addClass("hide")
-}
-
-$(document).on("click", "#run", function (e) {
-  e.preventDefault()
-
-  $(this).addClass("hide")
-  $("#cancel").removeClass("hide")
-
-  if (error_line) {
-    editor.getSession().removeGutterDecoration(error_line - 1, "error")
-    error_line = null
-  }
-
-  $("#results").html('<p class="text-muted">Loading...</p>')
-
-  var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()})
-
-  cancelAllQueries()
-
-  runQuery(data, function (data) {
-    queryDone()
-
-    $("#results").html(data)
-
-    error_line = getErrorLine()
-    if (error_line) {
-      editor.getSession().addGutterDecoration(error_line - 1, "error")
-      editor.scrollToLine(error_line, true, true, function () {})
-      editor.gotoLine(error_line, 0, true)
-      editor.focus()
-    }
-  }, function (data) {
-    // TODO show error
-    queryDone()
-  })
-})
-
-$(document).on("change", "#table_names", function () {
-  var val = $(this).val()
-  if (val.length > 0) {
-    var dataSource = $("#query_data_source").val()
-    editor.setValue(previewStatement[dataSource].replace("{table}", val), 1)
-    $("#run").click()
-  }
-})
-
 function showEditor() {
   editor = ace.edit("editor")
   editor.setTheme("ace/theme/twilight")
@@ -205,8 +146,3 @@ function showEditor() {
 
 preventBackspaceNav()
 
-function updatePreviewSelect() {
-  var dataSource = $("#query_data_source").val()
-  $("#tables").load(Routes.blazer_tables_queries_path({data_source: dataSource}))
-  $("#view-schema").attr("href", Routes.blazer_schema_queries_path({data_source: dataSource}))
-}

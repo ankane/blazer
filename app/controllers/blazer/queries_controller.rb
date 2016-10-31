@@ -176,8 +176,7 @@ module Blazer
     end
 
     def tables
-      @tables = Blazer.data_sources[params[:data_source]].tables
-      render partial: "tables", layout: false
+      render json: Blazer.data_sources[params[:data_source]].tables
     end
 
     def schema

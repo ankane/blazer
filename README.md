@@ -228,6 +228,19 @@ smart_columns:
   city_id: "SELECT id, name FROM cities WHERE id IN {value}"
 ```
 
+You can also put a Hash into the config for static data:
+
+```yml
+smart_columns:
+  gender: {M: Male, F: Female}
+```
+
+Or an array for numeric index based lookups:
+```yml
+smart_columns:
+  day_of_week: ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+```
+
 ### Caching
 
 Blazer can automatically cache results to improve speed. It can cache slow queries:

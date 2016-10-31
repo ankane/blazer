@@ -38,7 +38,8 @@
     <tbody class="list" v-cloak>
       <tr v-for="query in visibleItems">
         <td>
-          <span :class="{dashboard: query.dashboard}"><a :href="itemPath(query)">{{ query.name }}</a></span>
+          <span class="glyphicon glyphicon-ok-sign" v-if="query.verified"></span>
+          <a :href="itemPath(query)" :class="{dashboard: query.dashboard}">{{ query.name }}</a>
           <span class="vars">{{ query.vars }}</span>
         </td>
         <td class="creator">{{ query.creator }}</td>
@@ -70,7 +71,7 @@
       updateCounter: 0
     },
     created: function() {
-      this.listItems = gon.dashboards.concat(gon.queries)
+      this.listItems = gon.verified_queries.concat(gon.dashboards).concat(gon.queries)
 
       prepareSearch(this.listItems)
 

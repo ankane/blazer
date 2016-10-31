@@ -7,6 +7,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
       t.text :statement
       t.string :data_source
       t.string :status
+      t.boolean :verified, default: false
       t.timestamps
     end
 

@@ -93,7 +93,7 @@ input.search:focus {
   text-align: left;
 }
 
-.dashboard a {
+.dashboard {
   font-weight: bold;
 }
 
@@ -177,4 +177,8 @@ input.search:focus {
 
 [v-cloak] {
   display: none;
+}
+
+.glyphicon-ok-sign {
+  color: #5bc0de;
 }

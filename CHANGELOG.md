@@ -1,9 +1,9 @@
-## 1.7.2 [unreleased]
+## 1.7.2
 
 - Cancel all queries on page nav
 - Prevent Ace from taking over find command
 - Added ability to use hashes for smart columns
-- Added ability to inherit smart variables
+- Added ability to inherit smart variables and columns from other data sources
 
 ## 1.7.1
 

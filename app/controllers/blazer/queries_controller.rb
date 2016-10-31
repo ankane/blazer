@@ -25,7 +25,8 @@ module Blazer
 
       gon.push(
         dashboards: @dashboards,
-        queries: @queries,
+        queries: queries_json(@queries),
+        verified_queries: queries_json(@verified_queries),
         more: @more
       )
     end
@@ -256,6 +257,16 @@ module Blazer
     end
 
     def set_queries(limit = nil)
+      @queries = Blazer::Query.active.named.select(:id, :name, :creator_id, :statement, :verified)
+      @queries = @queries.includes(:creator) if Blazer.user_class
+
+      @verified_queries =
+        if limit
+          @queries.where(verified: true).order(:name)
+        else
+          []
+        end
+
       @my_queries =
         if limit && blazer_user && !params[:filter] && Blazer.audit
           queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys)
@@ -263,15 +274,14 @@ module Blazer
           []
         end
 
-      @queries = Blazer::Query.named.select(:id, :name, :creator_id, :statement)
-      @queries = @queries.includes(:creator) if Blazer.user_class
+      @queries = @queries.where(verified: false)
+      @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
 
       if blazer_user && params[:filter] == "mine"
         @queries = @queries.where(creator_id: blazer_user.id).reorder(updated_at: :desc)
       elsif blazer_user && params[:filter] == "viewed" && Blazer.audit
         @queries = queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).order(created_at: :desc).limit(500).pluck(:query_id).uniq)
       else
-        @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
         @queries = @queries.limit(limit) if limit
         @queries = @queries.active.order(:name)
       end
@@ -280,21 +290,23 @@ module Blazer
       @more = limit && @queries.size >= limit
 
       @queries = (@my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
+    end
 
-      @queries =
-        @queries.map do |q|
-          {
-            id: q.id,
-            name: q.name,
-            creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
-            vars: extract_vars(q.statement).join(", "),
-            to_param: q.to_param
-          }
-        end
+    def queries_json(queries)
+      queries.map do |q|
+        {
+          id: q.id,
+          name: q.name.sub(/\A\$ */, ""),
+          verified: q.verified,
+          creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
+          vars: extract_vars(q.statement).join(", "),
+          to_param: q.to_param
+        }
+      end
     end
 
     def queries_by_ids(favorite_query_ids)
-      queries = Blazer::Query.active.named.where(id: favorite_query_ids)
+      queries = Blazer::Query.active.named.where(id: favorite_query_ids).where(verified: false)
       queries = queries.includes(:creator) if Blazer.user_class
       queries = queries.index_by(&:id)
       favorite_query_ids.map { |query_id| queries[query_id] }.compact

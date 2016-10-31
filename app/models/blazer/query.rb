@@ -12,18 +12,28 @@ module Blazer
 
     str_enum :status, [:active, :archived]
 
+    before_save :set_verified
+
     def to_param
       [id, name].compact.join("-").gsub("'", "").parameterize
     end
 
     def friendly_name
-      name.to_s.sub(/\A[#\*]/, "").gsub(/\[.+\]/, "").strip
+      name.to_s.sub(/\A[#\*\$]/, "").gsub(/\[.+\]/, "").strip
     end
 
     def editable?(user)
       editable = !persisted? || (name.present? && name.first != "*" && name.first != "#") || user == creator
+      editable &&= !verified || Blazer.verifier_ids.include?(user.try(:id).to_s)
       editable &&= Blazer.query_editable.call(self, user) if Blazer.query_editable
       editable
     end
+
+      private
+
+      def set_verified
+        self.verified = name.start_with?("$")
+        true
+      end
   end
 end

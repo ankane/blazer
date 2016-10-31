@@ -37,6 +37,8 @@ module Blazer
       end
 
       Blazer.images = Blazer.settings["images"] || false
+
+      Blazer.verifier_ids = Blazer.settings["verifier_ids"].to_a.map(&:to_s)
     end
   end
 end

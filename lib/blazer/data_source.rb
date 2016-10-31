@@ -48,7 +48,15 @@ module Blazer
     end
 
     def smart_variables
-      settings["smart_variables"] || {}
+      @smart_variables ||= begin
+        sv = settings["smart_variables"] || {}
+        Array(settings["inherit_smart_variables"]).each do |ds|
+          (Blazer.data_sources[ds].settings["smart_variables"] || {}).each do |k, v|
+            sv[k] ||= v
+          end
+        end
+        sv
+      end
     end
 
     def variable_defaults

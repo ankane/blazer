@@ -69,7 +69,7 @@ module Blazer
         smart_var = result.rows.map { |v| v.reverse }
         error = result.error if result.error
       end
-      return smart_var, error
+      [smart_var, error]
     end
 
     def extract_vars(statement)

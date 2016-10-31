@@ -3,6 +3,8 @@ require "yaml"
 require "chartkick"
 require "safely/core"
 require "str_enum"
+require "js-routes"
+require "gon"
 require "blazer/version"
 require "blazer/data_source"
 require "blazer/result"
@@ -32,6 +34,7 @@ module Blazer
     attr_accessor :anomaly_checks
     attr_accessor :async
     attr_accessor :images
+    attr_accessor :query_editable
   end
   self.audit = true
   self.user_name = :name

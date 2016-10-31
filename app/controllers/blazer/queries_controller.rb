@@ -15,12 +15,19 @@ module Blazer
       @dashboards =
         @dashboards.map do |d|
           {
-            name: "<strong>#{view_context.link_to(d.name, d)}</strong>",
+            id: d.id,
+            name: d.name,
             creator: blazer_user && d.try(:creator) == blazer_user ? "You" : d.try(:creator).try(Blazer.user_name),
-            hide: d.name.gsub(/\s+/, ""),
-            vars: nil
+            to_param: d.to_param,
+            dashboard: true
           }
         end
+
+      gon.push(
+        dashboards: @dashboards,
+        queries: @queries,
+        more: @more
+      )
     end
 
     def index
@@ -254,7 +261,7 @@ module Blazer
           []
         end
 
-      @queries = Blazer::Query.named
+      @queries = Blazer::Query.named.select(:id, :name, :creator_id, :statement)
       @queries = @queries.includes(:creator) if Blazer.user_class
 
       if blazer_user && params[:filter] == "mine"
@@ -276,10 +283,10 @@ module Blazer
         @queries.map do |q|
           {
             id: q.id,
-            name: view_context.link_to(q.name, q),
+            name: q.name,
             creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
-            hide: q.name.gsub(/\s+/, ""),
-            vars: extract_vars(q.statement).join(", ")
+            vars: extract_vars(q.statement).join(", "),
+            to_param: q.to_param
           }
         end
     end

@@ -48,7 +48,15 @@ module Blazer
     end
 
     def smart_variables
-      settings["smart_variables"] || {}
+      @smart_variables ||= begin
+        sv = settings["smart_variables"] || {}
+        Array(settings["inherit_smart_variables"]).each do |ds|
+          (Blazer.data_sources[ds].settings["smart_variables"] || {}).each do |k, v|
+            sv[k] ||= v
+          end
+        end
+        sv
+      end
     end
 
     def variable_defaults
@@ -172,7 +180,7 @@ module Blazer
         cache_data = Marshal.dump([columns, rows, error, cache ? Time.now : nil]) rescue nil
       end
 
-      if cache && cache_data
+      if cache && cache_data && @adapter_instance.cachable?(statement)
         Blazer.cache.write(statement_cache_key(statement), cache_data, expires_in: cache_expires_in.to_f * 60)
       end
 

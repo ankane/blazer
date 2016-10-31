@@ -6,10 +6,7 @@ module Blazer
     validates :query_id, presence: true
 
     before_validation :set_state
-
-    def set_state
-      self.state ||= "new"
-    end
+    before_validation :fix_emails
 
     def split_emails
       emails.to_s.downcase.split(",").map(&:strip)
@@ -65,5 +62,17 @@ module Blazer
       end
       save! if changed?
     end
+
+    private
+
+      def set_state
+        self.state ||= "new"
+      end
+
+      def fix_emails
+        # some people like doing ; instead of ,
+        # but we know what they mean, so let's fix it
+        self.emails = emails.gsub(";", ",") if emails.present?
+      end
   end
 end

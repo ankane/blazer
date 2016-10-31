@@ -1,6 +1,15 @@
-## 1.7.1 [unreleased]
+## 1.7.2 [unreleased]
 
+- Cancel all queries on page nav
+- Prevent Ace from taking over find command
+- Added ability to use hashes for smart columns
+- Added ability to inherit smart variables
+
+## 1.7.1
+
+- Do not fork when enter key pressed
 - Use custom version of Chart.js to fix label overlap
+- Improved performance of home page
 
 ## 1.7.0
 

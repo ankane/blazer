@@ -141,10 +141,10 @@
                         <% else %>
                           <%= blazer_format_value(k, v) %>
                         <% end %>
+                      <% end %>
 
-                        <% if v2 = (@boom[k] || {})[v.to_s] %>
-                          <div class="text-muted"><%= v2 %></div>
-                        <% end %>
+                      <% if v2 = (@boom[k] || {})[v.nil? ? v : v.to_s] %>
+                        <div class="text-muted"><%= v2 %></div>
                       <% end %>
                     </td>
                   <% end %>

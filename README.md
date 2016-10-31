@@ -421,7 +421,13 @@ Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).
 
 ### SQLite
 
-Use [sqlite3](https://github.com/sparklemotion/sqlite3-ruby).
+Add [sqlite3](https://github.com/sparklemotion/sqlite3-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: sqlite3:path/to/database.sqlite3
+```
 
 ### Redshift
 

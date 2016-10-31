@@ -16,7 +16,7 @@
           <%= link_to "Back", :back %>
         </div>
         <%= link_to "Schema", "#", target: "_blank", id: "view-schema", style: "margin-right: 10px;" %>
-        <%= f.select :data_source, Blazer.data_sources.values.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 140px;" %>
+        <%= f.select :data_source, Blazer.data_sources.values.select { |ds| q = @query.dup; q.data_source = ds.id; q.editable?(blazer_user) }.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size == 1), style: "width: 140px;" %>
         <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;" class="hide">
           <%= render partial: "tables" %>
         </div>
@@ -38,6 +38,7 @@
         <%= f.text_area :description, placeholder: "Optional", style: "height: 80px;", class: "form-control" %>
       </div>
       <div class="text-right">
+        <%= f.submit "For Enter Press", class: "hide" %>
         <% if @query.persisted? %>
           <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
           <%= f.submit "Fork", class: "btn btn-info" %>

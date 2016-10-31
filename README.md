@@ -228,7 +228,7 @@ smart_columns:
   city_id: "SELECT id, name FROM cities WHERE id IN {value}"
 ```
 
-You can also use a hash for static data and enums. [master]
+You can also use a hash for static data and enums.
 
 ```yml
 smart_columns:

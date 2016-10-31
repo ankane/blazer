@@ -25,9 +25,13 @@ module Blazer
         columns.each_with_index do |key, i|
           query = data_source.smart_columns[key]
           if query
-            values = rows.map { |r| r[i] }.compact.uniq
-            result = data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
-            boom[key] = Hash[result.rows.map { |k, v| [k.to_s, v] }]
+            if query.is_a?(Hash)
+              boom[key] = query.stringify_keys
+            else
+              values = rows.map { |r| r[i] }.compact.uniq
+              result = data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+              boom[key] = Hash[result.rows.map { |k, v| [k.to_s, v] }]
+            end
           end
         end
         boom

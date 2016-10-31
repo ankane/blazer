@@ -9,7 +9,7 @@
         <div class= "form-group">
           <%= f.hidden_field :statement %>
           <div id="editor-container">
-            <div id="editor"><%= @query.statement %></div>
+            <div id="editor" :style="{ height: editorHeight }"><%= @query.statement %></div>
           </div>
         </div>
         <div class="form-group text-right">
@@ -74,7 +74,8 @@
       running: false,
       results: "",
       dataSource: "",
-      selectize: null
+      selectize: null,
+      editorHeight: "180px"
     },
     computed: {
       dataSourcePath: function() {
@@ -87,7 +88,7 @@
         this.results = ""
         cancelAllQueries()
 
-        var data = $.extend({}, params, {statement: getSQL(), data_source: $("#query_data_source").val()})
+        var data = $.extend({}, params, {statement: this.getSQL(), data_source: $("#query_data_source").val()})
 
         var _this = this
 
@@ -95,11 +96,11 @@
           _this.running = false
           _this.results = data
 
-          error_line = getErrorLine()
-          if (error_line) {
-            editor.getSession().addGutterDecoration(error_line - 1, "error")
-            editor.scrollToLine(error_line, true, true, function () {})
-            editor.gotoLine(error_line, 0, true)
+          errorLine = _this.getErrorLine()
+          if (errorLine) {
+            editor.getSession().addGutterDecoration(errorLine - 1, "error")
+            editor.scrollToLine(errorLine, true, true, function () {})
+            editor.gotoLine(errorLine, 0, true)
             editor.focus()
           }
         }, function (data) {
@@ -113,7 +114,7 @@
       },
       updateDataSource: function(dataSource) {
         this.dataSource = dataSource
-        _this = this
+        var _this = this
 
         $.getJSON(Routes.blazer_tables_queries_path({data_source: this.dataSource}), function(data) {
           var newOptions = []
@@ -125,10 +126,80 @@
           selectize.addOption(newOptions)
           selectize.refreshOptions(false)
         })
+      },
+      showEditor: function() {
+        var _this = this
+
+        editor = ace.edit("editor")
+        editor.setTheme("ace/theme/twilight")
+        editor.getSession().setMode("ace/mode/sql")
+        editor.setOptions({
+          enableBasicAutocompletion: false,
+          enableSnippets: false,
+          enableLiveAutocompletion: false,
+          highlightActiveLine: false,
+          fontSize: 12,
+          minLines: 10
+        })
+        editor.renderer.setShowGutter(true)
+        editor.renderer.setPrintMarginColumn(false)
+        editor.renderer.setPadding(10)
+        editor.getSession().setUseWrapMode(true)
+        editor.commands.addCommand({
+          name: "run",
+          bindKey: {win: "Ctrl-Enter",  mac: "Command-Enter"},
+          exec: function(editor) {
+            _this.run()
+          },
+          readOnly: false // false if this command should not apply in readOnly mode
+        })
+        // fix command+L
+        editor.commands.removeCommands(["gotoline", "find"])
+
+        this.editor = editor
+
+        editor.getSession().on("change", function () {
+          console.log("hi")
+          $("#query_statement").val(editor.getValue())
+          _this.adjustHeight()
+        })
+        this.adjustHeight()
+        editor.focus()
+      },
+      adjustHeight: function() {
+        // http://stackoverflow.com/questions/11584061/
+        var editor = this.editor
+        var lines = editor.getSession().getScreenLength()
+        if (lines < 9) {
+          lines = 9
+        }
+
+        this.editorHeight = ((lines + 1) * 16).toString() + "px"
+
+        Vue.nextTick(function () {
+          editor.resize()
+        })
+      },
+      getSQL: function() {
+        var selectedText = editor.getSelectedText()
+        var text = selectedText.length < 10 ? editor.getValue() : selectedText
+        return text.replace(/\n/g, "\r\n")
+      },
+      getErrorLine: function() {
+        var editor = this.editor
+        var errorLine = this.results.substring(0, 100).includes("alert-danger") && /LINE (\d+)/g.exec(this.results)
+
+        if (errorLine) {
+          errorLine = parseInt(errorLine[1], 10)
+          if (editor.getSelectedText().length >= 10) {
+            errorLine += editor.getSelectionRange().start.row
+          }
+          return errorLine
+        }
       }
     },
     mounted: function() {
-      _this = this
+      var _this = this
 
       var $select = $("#table_names").selectize({})
       var selectize = $select[0].selectize
@@ -149,7 +220,7 @@
         dsSelectize.blur()
       })
 
-      showEditor()
+      this.showEditor()
     }
   })
 </script>

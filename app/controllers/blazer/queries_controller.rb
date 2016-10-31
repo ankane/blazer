@@ -25,7 +25,8 @@ module Blazer
 
       gon.push(
         dashboards: @dashboards,
-        queries: @queries,
+        queries: queries_json(@queries),
+        verified_queries: queries_json(@verified_queries),
         more: @more
       )
     end
@@ -255,7 +256,7 @@ module Blazer
     end
 
     def set_queries(limit = nil)
-      @queries = Blazer::Query.active.named.select(:id, :name, :creator_id, :statement)
+      @queries = Blazer::Query.active.named.select(:id, :name, :creator_id, :statement, :verified)
       @queries = @queries.includes(:creator) if Blazer.user_class
 
       @verified_queries =
@@ -287,19 +288,20 @@ module Blazer
 
       @more = limit && @queries.size >= limit
 
-      @queries = (@verified_queries + @my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
+      @queries = (@my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
+    end
 
-      @queries =
-        @queries.map do |q|
-          {
-            id: q.id,
-            name: q.name,
-            verified: q.verified,
-            creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
-            vars: extract_vars(q.statement).join(", "),
-            to_param: q.to_param
-          }
-        end
+    def queries_json(queries)
+      queries.map do |q|
+        {
+          id: q.id,
+          name: q.name.sub(/\A\$ */, ""),
+          verified: q.verified,
+          creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
+          vars: extract_vars(q.statement).join(", "),
+          to_param: q.to_param
+        }
+      end
     end
 
     def queries_by_ids(favorite_query_ids)

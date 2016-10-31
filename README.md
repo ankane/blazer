@@ -228,6 +228,13 @@ smart_columns:
   city_id: "SELECT id, name FROM cities WHERE id IN {value}"
 ```
 
+You can also use a hash for static data and enums. [master]
+
+```yml
+smart_columns:
+  status: {0: "Active", 1: "Archived"}
+```
+
 ### Caching
 
 Blazer can automatically cache results to improve speed. It can cache slow queries:

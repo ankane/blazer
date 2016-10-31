@@ -177,3 +177,16 @@ input.search:focus {
 [v-cloak] {
   display: none;
 }
+
+.chart-container {
+  padding-top: 10px;
+  clear: both;
+}
+
+.chart-container h4 {
+  text-align: center;
+}
+
+.chart-container h4 a {
+  color: inherit;
+}

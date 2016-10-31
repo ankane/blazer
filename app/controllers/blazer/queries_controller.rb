@@ -260,7 +260,7 @@ module Blazer
       @queries = @queries.includes(:creator) if Blazer.user_class
 
       @verified_queries =
-        if limit
+        if limit && !params[:filter]
           @queries.where(verified: true).order(:name)
         else
           []
@@ -273,7 +273,6 @@ module Blazer
           []
         end
 
-      @queries = @queries.where(verified: false)
       @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
 
       if blazer_user && params[:filter] == "mine"
@@ -281,6 +280,7 @@ module Blazer
       elsif blazer_user && params[:filter] == "viewed" && Blazer.audit
         @queries = queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).order(created_at: :desc).limit(500).pluck(:query_id).uniq)
       else
+        @queries = @queries.where(verified: false)
         @queries = @queries.limit(limit) if limit
         @queries = @queries.active.order(:name)
       end

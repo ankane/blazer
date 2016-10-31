@@ -11,6 +11,7 @@ Blazer::Engine.routes.draw do
   end
   resources :dashboards do
     post :refresh, on: :member
+    get :full_screen, on: :member
   end
   root to: "queries#home"
 end

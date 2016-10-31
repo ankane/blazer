@@ -1,0 +1,48 @@
+<style>
+  .container {
+    width: 100%;
+  }
+</style>
+
+<script>
+  var refreshRate = <%= @refresh %> * 1000;
+</script>
+
+<% i = 0 %>
+<% @rows.times do %>
+  <div class="row">
+    <% @cols.times do %>
+      <div class="col-xs-<%= 12 / @cols %>">
+        <% query = @queries[i] %>
+        <% if query %>
+          <div style="padding-top: 10px;">
+            <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank", style: "color: inherit;" %></h4>
+            <div id="chart-<%= i %>" class="chart">
+              <p class="text-muted">Loading...</p>
+            </div>
+          </div>
+          <script>
+            function loadChart<%= i %>() {
+              var request = $.ajax({
+                url: "<%= run_queries_path %>",
+                method: "POST",
+                data: <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>,
+                dataType: "html"
+              }).done(function(data) {
+                $("#chart-<%= i %>").html(data);
+                $("#chart-<%= i %> table").stupidtable();
+                setTimeout(loadChart<%= i %>, refreshRate);
+              }).fail(function(jqXHR, textStatus, errorThrown) {
+                var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message;
+                $("#chart-<%= i %>").css("color", "red").html(message);
+                setTimeout(loadChart<%= i %>, refreshRate);
+              });
+            }
+            loadChart<%= i %>();
+          </script>
+        <% end %>
+        <% i += 1 %>
+      </div>
+    <% end %>
+  </div>
+<% end %>

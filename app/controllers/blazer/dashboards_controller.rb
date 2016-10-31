@@ -1,6 +1,6 @@
 module Blazer
   class DashboardsController < BaseController
-    before_action :set_dashboard, only: [:show, :edit, :update, :destroy, :refresh]
+    before_action :set_dashboard, only: [:show, :edit, :update, :destroy, :refresh, :full_screen]
 
     def index
       @dashboards = Blazer::Dashboard.order(:name)
@@ -67,6 +67,25 @@ module Blazer
         data_source.clear_cache(statement)
       end
       redirect_to dashboard_path(@dashboard, variable_params)
+    end
+
+    def full_screen
+      show
+      @rows, @cols =
+        case @queries.size
+        when 1
+          [1, 1]
+        when 2
+          [2, 1]
+        when 3, 4
+          [2, 2]
+        when 5, 6
+          [2, 3]
+        else
+          [2, 4]
+        end
+
+      @refresh = (params[:refresh] || 30.minutes).to_i
     end
 
     protected

@@ -103,5 +103,5 @@ function csrfProtect(payload) {
   var param = $("meta[name=csrf-param]").attr("content")
   var token = $("meta[name=csrf-token]").attr("content")
   if (param && token) payload[param] = token
-  return new Blob([JSON.stringify(payload)], {type : "application/json charset=utf-8"})
+  return new Blob([JSON.stringify(payload)], {type : "application/json; charset=utf-8"})
 }

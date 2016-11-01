@@ -37,7 +37,7 @@
   <p><%= @query.description %></p>
 <% end %>
 
-<%= render partial: "blazer/variables", locals: {action: query_path(@query)} %>
+<%= render partial: "blazer/variables/form", locals: {action: query_path(@query), bind_vars: @bind_vars, smart_vars: @smart_vars} if @bind_vars.any? %>
 
 <pre id="code"><code><%= @statement %></code></pre>
 

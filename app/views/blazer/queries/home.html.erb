@@ -17,10 +17,11 @@
           <span class="sr-only">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu">
+          <li><%= link_to "Dashboards", dashboards_path %></li>
+          <li><%= link_to "Checks", checks_path %></li>
+          <li role="separator" class="divider"></li>
           <li><%= link_to "New Dashboard", new_dashboard_path %></li>
           <li><%= link_to "New Check", new_check_path %></li>
-          <li role="separator" class="divider"></li>
-          <li><%= link_to "Checks", checks_path %></li>
         </ul>
       </div>
     </div>

@@ -3,9 +3,13 @@ module Blazer
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
 
     def home
-      set_queries(1000)
+      if params[:filter] == "dashboards"
+        @queries = []
+      else
+        set_queries(1000)
+      end
 
-      if params[:filter]
+      if params[:filter] && params[:filter] != "dashboards"
         @dashboards = [] # TODO show my dashboards
       else
         @dashboards = Blazer::Dashboard.order(:name)

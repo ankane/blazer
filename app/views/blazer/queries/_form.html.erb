@@ -60,7 +60,7 @@
 
   <div id="results">
     <p class="text-muted" v-if="running">Loading...</p>
-    <div v-html="results" v-if="!running"></div>
+    <div id="results-html" v-if="!running"></div>
   </div>
 </div>
 
@@ -94,7 +94,7 @@
 
         runQuery(data, function (data) {
           _this.running = false
-          _this.results = data
+          _this.showResults(data)
 
           errorLine = _this.getErrorLine()
           if (errorLine) {
@@ -105,7 +105,7 @@
           }
         }, function (data) {
           _this.running = false
-          _this.results = data
+          _this.showResults(data)
         })
       },
       cancel: function(e) {
@@ -195,6 +195,14 @@
           }
           return errorLine
         }
+      },
+      showResults(data) {
+        // can't do it the Vue way due to script tags in results
+        // this.results = data
+
+        Vue.nextTick(function () {
+          $("#results-html").html(data)
+        })
       }
     },
     mounted: function() {

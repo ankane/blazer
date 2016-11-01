@@ -23,6 +23,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "str_enum", ">= 0.1.4"
   spec.add_dependency "js-routes"
   spec.add_dependency "gon"
+  spec.add_dependency "rails_autolink"
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"

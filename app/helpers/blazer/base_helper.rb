@@ -1,3 +1,5 @@
+require 'rails_autolink/helpers'
+
 module Blazer
   module BaseHelper
     def blazer_title(title = nil)
@@ -24,7 +26,7 @@ module Blazer
           link_to value, value, target: "_blank"
         end
       else
-        value
+        ActionController::Base.helpers.auto_link(value.to_s, link: :urls, html: { target: '_blank' })
       end
     end
 

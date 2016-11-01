@@ -66,7 +66,6 @@ input.search:focus {
 }
 
 #editor {
-  display: none;
   height: 160px;
 }
 
@@ -181,4 +180,17 @@ input.search:focus {
 
 .glyphicon-ok-sign {
   color: #5bc0de;
+}
+
+.chart-container {
+  padding-top: 10px;
+  clear: both;
+}
+
+.chart-container h4 {
+  text-align: center;
+}
+
+.chart-container h4 a {
+  color: inherit;
 }

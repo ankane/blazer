@@ -28,8 +28,8 @@
 <%= render partial: "blazer/variables", locals: {action: dashboard_path(@dashboard)} %>
 
 <% @queries.each_with_index do |query, i| %>
-  <div style="padding-top: 10px; clear: both;">
-    <h4 style="text-align: center;"><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank", style: "color: inherit;" %></h4>
+  <div class="chart-container">
+    <h4><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank" %></h4>
     <div id="chart-<%= i %>" class="chart">
       <p class="text-muted">Loading...</p>
     </div>

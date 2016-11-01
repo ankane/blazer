@@ -16,6 +16,12 @@
   var $reportRange = $('#reportrange');
   var $startTime = $("#start_time");
   var $endTime = $("#end_time");
+  var ranges = {
+    "Today": [dateStr(), dateStr()],
+    "Last 7 Days": [dateStr(6), dateStr()],
+    "Last 30 Days": [dateStr(29), dateStr()]
+  };
+  var startDate = ranges["<%= Blazer.date_range %>"][0];
 
   function dateStr(daysAgo) {
     return now.clone().subtract(daysAgo || 0, "days").format(format);
@@ -32,15 +38,11 @@
 
   $reportRange.daterangepicker(
     {
-      ranges: {
-       "Today": [dateStr(), dateStr()],
-       "Last 7 Days": [dateStr(6), dateStr()],
-       "Last 30 Days": [dateStr(29), dateStr()]
-      },
+      ranges: ranges,
       locale: {
         format: format
       },
-      startDate: dateStr(29),
+      startDate: startDate,
       endDate: dateStr(),
       opens: "right"
     },

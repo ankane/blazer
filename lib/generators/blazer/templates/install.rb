@@ -14,7 +14,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration
       t.references :query
       t.text :statement
       t.string :data_source
-      t.timestamp :created_at, null: false
+      t.timestamp :created_at
     end
 
     create_table :blazer_dashboards do |t|

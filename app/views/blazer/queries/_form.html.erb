@@ -114,14 +114,18 @@
       },
       updateDataSource: function(dataSource) {
         this.dataSource = dataSource
-        var _this = this
+        var selectize = this.selectize
+        selectize.clearOptions()
 
-        $.getJSON(Routes.tables_queries_path({data_source: this.dataSource}), function(data) {
+        if (this.tablesXhr) {
+          this.tablesXhr.abort()
+        }
+
+        this.tablesXhr = $.getJSON(Routes.tables_queries_path({data_source: this.dataSource}), function(data) {
           var newOptions = []
           for (var i = 0; i < data.length; i++) {
             newOptions.push({text: data[i], value: data[i]})
           }
-          var selectize = _this.selectize
           selectize.clearOptions()
           selectize.addOption(newOptions)
           selectize.refreshOptions(false)

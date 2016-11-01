@@ -19,6 +19,7 @@ module Blazer
     if Blazer.before_action
       before_action Blazer.before_action.to_sym
     end
+    before_action :set_js_routes
 
     layout "blazer/application"
 
@@ -100,6 +101,12 @@ module Blazer
       @errors = resource.errors
       action = resource.persisted? ? :edit : :new
       render action, status: :unprocessable_entity
+    end
+
+    def set_js_routes
+      gon.push(
+        root_path: root_path
+      )
     end
   end
 end

@@ -1,3 +1,7 @@
+## 1.7.3 [unreleased]
+
+- Include sample data in email when bad data checks fail
+
 ## 1.7.2
 
 - Cancel all queries on page nav

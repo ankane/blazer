@@ -3,9 +3,13 @@ module Blazer
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
 
     def home
-      set_queries(1000)
+      if params[:filter] == "dashboards"
+        @queries = []
+      else
+        set_queries(1000)
+      end
 
-      if params[:filter]
+      if params[:filter] && params[:filter] != "dashboards"
         @dashboards = [] # TODO show my dashboards
       else
         @dashboards = Blazer::Dashboard.order(:name)
@@ -268,7 +272,7 @@ module Blazer
 
       @my_queries =
         if limit && blazer_user && !params[:filter] && Blazer.audit
-          queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys)
+          queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys, verified: false)
         else
           []
         end
@@ -304,8 +308,9 @@ module Blazer
       end
     end
 
-    def queries_by_ids(favorite_query_ids)
-      queries = Blazer::Query.active.named.where(id: favorite_query_ids).where(verified: false)
+    def queries_by_ids(favorite_query_ids, verified: nil)
+      queries = Blazer::Query.active.named.where(id: favorite_query_ids)
+      queries = queries.where(verified: verified) unless verified.nil?
       queries = queries.includes(:creator) if Blazer.user_class
       queries = queries.index_by(&:id)
       favorite_query_ids.map { |query_id| queries[query_id] }.compact

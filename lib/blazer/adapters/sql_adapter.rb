@@ -116,7 +116,7 @@ module Blazer
 
       def set_timeout(timeout)
         if postgresql? || redshift?
-          select_all("SET statement_timeout = #{timeout.to_i * 1000}")
+          select_all("SET #{use_transaction? ? "LOCAL " : ""}statement_timeout = #{timeout.to_i * 1000}")
         elsif mysql?
           select_all("SET max_execution_time = #{timeout.to_i * 1000}")
         else

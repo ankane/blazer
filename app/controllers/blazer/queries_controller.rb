@@ -259,7 +259,7 @@ module Blazer
       @queries = @queries.includes(:creator) if Blazer.user_class
 
       @verified_queries =
-        if limit
+        if limit && !params[:filter]
           @queries.where(verified: true).order(:name)
         else
           []
@@ -267,12 +267,11 @@ module Blazer
 
       @my_queries =
         if limit && blazer_user && !params[:filter] && Blazer.audit
-          queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys)
+          queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys, verified: false)
         else
           []
         end
 
-      @queries = @queries.where(verified: false)
       @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
 
       if blazer_user && params[:filter] == "mine"
@@ -280,6 +279,7 @@ module Blazer
       elsif blazer_user && params[:filter] == "viewed" && Blazer.audit
         @queries = queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).order(created_at: :desc).limit(500).pluck(:query_id).uniq)
       else
+        @queries = @queries.where(verified: false)
         @queries = @queries.limit(limit) if limit
         @queries = @queries.order(:name)
       end
@@ -303,8 +303,9 @@ module Blazer
       end
     end
 
-    def queries_by_ids(favorite_query_ids)
-      queries = Blazer::Query.active.named.where(id: favorite_query_ids).where(verified: false)
+    def queries_by_ids(favorite_query_ids, verified: nil)
+      queries = Blazer::Query.active.named.where(id: favorite_query_ids)
+      queries = queries.where(verified: verified) unless verified.nil?
       queries = queries.includes(:creator) if Blazer.user_class
       queries = queries.index_by(&:id)
       favorite_query_ids.map { |query_id| queries[query_id] }.compact

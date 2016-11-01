@@ -5,6 +5,7 @@ module Blazer
     def home
       if params[:filter] == "dashboards"
         @queries = []
+        @verified_queries = []
       else
         set_queries(1000)
       end

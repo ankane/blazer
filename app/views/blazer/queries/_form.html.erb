@@ -79,7 +79,7 @@
     },
     computed: {
       dataSourcePath: function() {
-        return Routes.blazer_schema_queries_path({data_source: this.dataSource})
+        return Routes.schema_queries_path({data_source: this.dataSource})
       }
     },
     methods: {
@@ -116,7 +116,7 @@
         this.dataSource = dataSource
         var _this = this
 
-        $.getJSON(Routes.blazer_tables_queries_path({data_source: this.dataSource}), function(data) {
+        $.getJSON(Routes.tables_queries_path({data_source: this.dataSource}), function(data) {
           var newOptions = []
           for (var i = 0; i < data.length; i++) {
             newOptions.push({text: data[i], value: data[i]})

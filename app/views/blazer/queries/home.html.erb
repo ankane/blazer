@@ -86,7 +86,7 @@
       if (this.more) {
         var _this = this
 
-        $.getJSON(Routes.blazer_queries_path(), function (data) {
+        $.getJSON(Routes.queries_path(), function (data) {
           var i, j, newValues, val, size = 500;
 
           var newValues = []
@@ -138,9 +138,9 @@
     methods: {
       itemPath: function (item) {
         if (item.dashboard) {
-          return Routes.blazer_dashboard_path(item.to_param)
+          return Routes.dashboard_path(item.to_param)
         } else {
-          return Routes.blazer_query_path(item.to_param)
+          return Routes.query_path(item.to_param)
         }
       }
     }

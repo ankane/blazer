@@ -30,7 +30,7 @@ function runNext() {
 
 function runQueryHelper(query) {
   var xhr = $.ajax({
-    url: Routes.blazer_run_queries_path(),
+    url: Routes.run_queries_path(),
     method: "POST",
     data: query.data,
     dataType: "html"
@@ -89,7 +89,7 @@ function cancelQuery(query) {
   }
 
   // tell server
-  var path = Routes.blazer_cancel_queries_path()
+  var path = Routes.cancel_queries_path()
   var data = {run_id: query.run_id, data_source: query.data_source}
   if (navigator.sendBeacon) {
     navigator.sendBeacon(path, csrfProtect(data))

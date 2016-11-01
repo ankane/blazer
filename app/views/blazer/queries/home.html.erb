@@ -10,7 +10,6 @@
 
         <%= link_to "Mine", root_path(filter: "mine"), class: params[:filter] == "mine" ? "active" : nil, style: "margin-right: 40px;" %>
       <% end %>
-      <%= link_to "Dashboards", root_path(filter: "dashboards"), class: params[:filter] == "dashboards" ? "active" : nil, style: "margin-right: 40px;" %>
       <div class="btn-group">
         <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
         <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

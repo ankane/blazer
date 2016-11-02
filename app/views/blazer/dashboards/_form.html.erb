@@ -2,7 +2,7 @@
   <div class="alert alert-danger"><%= @dashboard.errors.full_messages.first %></div>
 <% end %>
 
-<%= form_for @dashboard, url: (@dashboard.persisted? ? dashboard_path(@dashboard, variable_params) : dashboards_path(variable_params)) do |f| %>
+<%= form_for @dashboard, url: (@dashboard.persisted? ? dashboard_path(@dashboard, variable_params) : dashboards_path(variable_params)), html: {id: "app"} do |f| %>
   <div class="form-group">
     <%= f.label :name %>
     <%= f.text_field :name, class: "form-control" %>
@@ -19,25 +19,7 @@
   </div>
   <div class="form-group">
     <%= f.label :query_id, "Add Chart" %>
-    <div class="hide">
-      <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
-    </div>
-    <script>
-      var queries = <%= blazer_json_escape(Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} }.to_json).html_safe %>;
-
-      $("#query_id").selectize({
-        options: queries,
-        highlight: false,
-        maxOptions: 100,
-        onChange: function(val) {
-          if (val) {
-            var option = this.getOption(val)
-            app.queries.push({id: val, name: option.text()})
-            this.setValue("");
-          }
-        }
-      }).parents(".hide").removeClass("hide");
-    </script>
+    <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
   </div>
   <p>
     <% if @dashboard.persisted? %>
@@ -49,18 +31,32 @@
 <% end %>
 
 <script>
+  var queries = <%= blazer_json_escape(Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} }.to_json).html_safe %>;
   var dashboardQueries = <%= blazer_json_escape((@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).to_json).html_safe %>
 
   var app = new Vue({
-    el: "#queries",
+    el: "#app",
     data: {
-      queries: dashboardQueries,
-      updateCounter: 0
+      queries: dashboardQueries
     },
     methods: {
       remove: function(index) {
         this.queries.splice(index, 1)
       }
+    },
+    mounted: function() {
+      $("#query_id").selectize({
+        options: queries,
+        highlight: false,
+        maxOptions: 100,
+        onChange: function(val) {
+          if (val) {
+            var option = this.getOption(val)
+            app.queries.push({id: val, name: option.text()})
+            this.setValue("")
+          }
+        }
+      })
     }
   })
   Sortable.create($("#queries").get(0), {

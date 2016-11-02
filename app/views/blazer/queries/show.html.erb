@@ -53,7 +53,7 @@
     }
 
     function showError(message) {
-      $("#results").css("color", "red").html(message);
+      $("#results").addClass("query-error").html(message);
     }
 
     <%= blazer_js_var "data", variable_params.merge(statement: @statement, query_id: @query.id) %>

@@ -56,7 +56,7 @@
       $("#results").css("color", "red").html(message);
     }
 
-    var data = <%= blazer_json_escape(variable_params.merge(statement: @statement, query_id: @query.id).to_json).html_safe %>;
+    <%= blazer_js_var "data", variable_params.merge(statement: @statement, query_id: @query.id) %>
 
     runQuery(data, showRun, showError);
   </script>

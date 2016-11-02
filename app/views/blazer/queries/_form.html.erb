@@ -65,8 +65,8 @@
 </div>
 
 <script>
-  var params = <%= raw blazer_json_escape(variable_params.to_json) %>;
-  var previewStatement = <%= raw blazer_json_escape(Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }].to_json) %>;
+  <%= blazer_js_var "params", variable_params %>
+  <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }] %>
 
   var app = new Vue({
     el: "#app",

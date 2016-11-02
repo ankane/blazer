@@ -31,8 +31,8 @@
 <% end %>
 
 <script>
-  var queries = <%= blazer_json_escape(Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} }.to_json).html_safe %>;
-  var dashboardQueries = <%= blazer_json_escape((@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).to_json).html_safe %>
+  <%= blazer_js_var "queries", Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
+  <%= blazer_js_var "dashboardQueries", @queries || @dashboard.dashboard_queries.order(:position).map(&:query) %>
 
   var app = new Vue({
     el: "#app",
@@ -61,7 +61,7 @@
   })
   Sortable.create($("#queries").get(0), {
     onEnd: function(e) {
-      app.queries.splice(e.newIndex, 0, app.queries.splice(e.oldIndex, 1)[0]);
+      app.queries.splice(e.newIndex, 0, app.queries.splice(e.oldIndex, 1)[0])
     }
-  });
+  })
 </script>

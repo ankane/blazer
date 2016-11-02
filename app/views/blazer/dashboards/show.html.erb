@@ -35,13 +35,13 @@
     </div>
   </div>
   <script>
-    var data = <%= blazer_json_escape({statement: query.statement, query_id: query.id, only_chart: true}.to_json).html_safe %>;
+    <%= blazer_js_var "data", {statement: query.statement, query_id: query.id, only_chart: true} %>
 
     runQuery(data, function (data) {
-      $("#chart-<%= i %>").html(data);
-      $("#chart-<%= i %> table").stupidtable();
+      $("#chart-<%= i %>").html(data)
+      $("#chart-<%= i %> table").stupidtable()
     }, function (message) {
-      $("#chart-<%= i %>").css("color", "red").html(message);
+      $("#chart-<%= i %>").css("color", "red").html(message)
     });
   </script>
 <% end %>

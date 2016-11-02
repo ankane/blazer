@@ -9,14 +9,12 @@
   </div>
   <div class="form-group <%= "hide" if (@queries || @dashboard.queries).empty? %>">
     <%= f.label :charts %>
-    <ul class="list-group">
-      <% (@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).each do |query| %>
-        <li class="list-group-item">
-          <span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span>
-          <%= query.name %>
-          <%= hidden_field_tag "query_ids[]", query.id %>
-        </li>
-      <% end %>
+    <ul id="queries" class="list-group">
+      <li class="list-group-item" v-for="(query, index) in queries" :key="query.id" v-cloak>
+        <span class="glyphicon glyphicon-remove" aria-hidden="true" v-on:click="remove(index)"></span>
+        {{ query.name }}
+        <input type="hidden" name="query_ids[]" :value="query.id">
+      </li>
     </ul>
   </div>
   <div class="form-group">
@@ -26,19 +24,19 @@
     </div>
     <script>
       var queries = <%= blazer_json_escape(Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} }.to_json).html_safe %>;
-      $("#query_id").selectize({options: queries, highlight: false, maxOptions: 100}).parents(".hide").removeClass("hide");
-      $("#query_id").change( function () {
-        var $option = $(this).find("option:selected");
-        if ($option.val() !== "") {
-          var $li = $("<li></li>");
-          $li.addClass("list-group-item");
-          $li.text($option.text());
-          $li.prepend('<span class="glyphicon glyphicon-remove" aria-hidden="true" style="float: right; margin-top: 3px;"></span><input type="hidden" name="query_ids[]" id="query_ids_" value="' + $option.val() + '">');
-          $(".list-group").append($li);
-          $(this)[0].selectize.setValue("");
-          $(".form-group").removeClass("hide");
+
+      $("#query_id").selectize({
+        options: queries,
+        highlight: false,
+        maxOptions: 100,
+        onChange: function(val) {
+          if (val) {
+            var option = this.getOption(val)
+            app.queries.push({id: val, name: option.text()})
+            this.setValue("");
+          }
         }
-      });
+      }).parents(".hide").removeClass("hide");
     </script>
   </div>
   <p>
@@ -51,8 +49,23 @@
 <% end %>
 
 <script>
-  $(".list-group").on("click", ".glyphicon-remove", function () {
-    $(this).parents("li:first").remove();
+  var dashboardQueries = <%= blazer_json_escape((@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).to_json).html_safe %>
+
+  var app = new Vue({
+    el: "#queries",
+    data: {
+      queries: dashboardQueries,
+      updateCounter: 0
+    },
+    methods: {
+      remove: function(index) {
+        this.queries.splice(index, 1)
+      }
+    }
+  })
+  Sortable.create($("#queries").get(0), {
+    onEnd: function(e) {
+      app.queries.splice(e.newIndex, 0, app.queries.splice(e.oldIndex, 1)[0]);
+    }
   });
-  Sortable.create($(".list-group").get(0));
 </script>

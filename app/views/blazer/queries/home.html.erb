@@ -38,7 +38,7 @@
     <tbody class="list" v-cloak>
       <tr v-for="query in visibleItems">
         <td>
-          <a :href="itemPath(query)" :class="{dashboard: query.dashboard}">{{ query.name }}</a>
+          <a :href="itemPath(query)" :class="{ dashboard: query.dashboard }">{{ query.name }}</a>
           <span class="vars">{{ query.vars }}</span>
         </td>
         <td class="creator">{{ query.creator }}</td>

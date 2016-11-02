@@ -1,0 +1,21 @@
+<%= label_tag bind_var, bind_var %>
+<% if (data = smart_vars[bind_var]) %>
+  <%= select_tag bind_var, options_for_select([[nil, nil]] + data, selected: params[bind_var]), style: "margin-right: 20px; width: 200px; display: none;" %>
+  <script>
+    $("#<%= bind_var %>").selectize({
+      create: true
+    });
+  </script>
+<% else %>
+  <%= text_field_tag bind_var, params[bind_var], style: "width: 120px; margin-right: 20px;", autofocus: bind_var_counter == 0 && !bind_var.end_with?("_at") && !params[bind_var], class: "form-control" %>
+  <% if bind_var.end_with?("_at") %>
+    <script>
+      $("#<%= bind_var %>").daterangepicker({singleDatePicker: true, locale: {format: "YYYY-MM-DD"}, autoUpdateInput: false});
+      // hack to start with empty date
+      $("#<%= bind_var %>").on("apply.daterangepicker", function(ev, picker) {
+        $(this).val(picker.startDate.format("YYYY-MM-DD"));
+        $(this).change();
+      });
+    </script>
+  <% end %>
+<% end %>

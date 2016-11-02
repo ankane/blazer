@@ -25,7 +25,7 @@
   </p>
 <% end %>
 
-<%= render partial: "blazer/variables", locals: {action: dashboard_path(@dashboard)} %>
+<%= render partial: "blazer/variables/form", locals: {action: dashboard_path(@dashboard), bind_vars: @bind_vars, smart_vars: @smart_vars} if @bind_vars.any? %>
 
 <% @queries.each_with_index do |query, i| %>
   <div class="chart-container">

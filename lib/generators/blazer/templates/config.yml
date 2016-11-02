@@ -35,6 +35,9 @@ data_sources:
 # create audits
 audit: true
 
+# "Last 30 Days" by default
+# date_range: "Last 30 Days" # one of "Today", "Last 7 Days" or "Last 30 Days"
+
 # change the time zone
 # time_zone: "Pacific Time (US & Canada)"
 

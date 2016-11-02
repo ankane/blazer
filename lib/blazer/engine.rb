@@ -7,6 +7,7 @@ module Blazer
       app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/application\.(js|css)\z/ }
       app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/.+\.(eot|svg|ttf|woff)\z/ }
 
+      Blazer.date_range = ["Today", "Last 7 Days", "Last 30 Days"].include?(Blazer.settings["date_range"]) ? Blazer.settings["date_range"] : "Last 30 Days"
       Blazer.time_zone ||= Blazer.settings["time_zone"] || Time.zone
       Blazer.audit = Blazer.settings.key?("audit") ? Blazer.settings["audit"] : true
       Blazer.user_name = Blazer.settings["user_name"] if Blazer.settings["user_name"]

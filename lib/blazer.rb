@@ -21,6 +21,7 @@ module Blazer
 
   class << self
     attr_accessor :audit
+    attr_accessor :date_range
     attr_reader :time_zone
     attr_accessor :user_name
     attr_accessor :user_class

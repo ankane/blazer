@@ -1,0 +1,13 @@
+<form id="bind" method="get" action="<%= action %>" class="form-inline" style="margin-bottom: 10px;">
+  <% date_vars = ["start_time", "end_time"] %>
+  <% if (date_vars - bind_vars).empty? %>
+    <% bind_vars.delete_if { |var| date_vars.include? var } %>
+  <% else %>
+    <% date_vars = nil %>
+  <% end %>
+
+  <%= render partial: "blazer/variables/bind_var", collection: bind_vars, cached: true, locals: {smart_vars: smart_vars} %>
+  <%= render partial: "blazer/variables/date_vars", locals: {date_vars: date_vars} if date_vars %>
+
+  <input type="submit" class="btn btn-success" value="Run" style="vertical-align: top;" />
+</form>

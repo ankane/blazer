@@ -39,7 +39,7 @@
       <tr v-for="query in visibleItems">
         <td>
           <span class="glyphicon glyphicon-ok-sign" v-if="query.verified"></span>
-          <a :href="itemPath(query)" :class="{dashboard: query.dashboard}">{{ query.name }}</a>
+          <a :href="itemPath(query)" :class="{ dashboard: query.dashboard }">{{ query.name }}</a>
           <span class="vars">{{ query.vars }}</span>
         </td>
         <td class="creator">{{ query.creator }}</td>
@@ -51,6 +51,11 @@
 </div>
 
 <script>
+  <%= blazer_js_var "verifiedQueries", @verified_queries %>
+  <%= blazer_js_var "dashboards", @dashboards %>
+  <%= blazer_js_var "queries", @queries %>
+  <%= blazer_js_var "more", @more %>
+
   var prepareSearch = function (list) {
     var i, q, searchStr
     for (i = 0; i < list.length; i++) {
@@ -71,23 +76,23 @@
     el: "#queries",
     data: {
       searchTerm: "",
-      more: gon.more,
+      more: more,
       updateCounter: 0
     },
     created: function() {
-      this.listItems = gon.verified_queries.concat(gon.dashboards).concat(gon.queries)
+      this.listItems = verifiedQueries.concat(dashboards).concat(queries)
 
       prepareSearch(this.listItems)
 
       this.queryIds = {}
-      for (i = 0; i < gon.queries.length; i++) {
-        this.queryIds[gon.queries[i].id] = true
+      for (i = 0; i < queries.length; i++) {
+        this.queryIds[queries[i].id] = true
       }
 
       if (this.more) {
         var _this = this
 
-        $.getJSON(Routes.blazer_queries_path(), function (data) {
+        $.getJSON(Routes.queries_path(), function (data) {
           var i, j, newValues, val, size = 500;
 
           var newValues = []
@@ -139,9 +144,9 @@
     methods: {
       itemPath: function (item) {
         if (item.dashboard) {
-          return Routes.blazer_dashboard_path(item.to_param)
+          return Routes.dashboard_path(item.to_param)
         } else {
-          return Routes.blazer_query_path(item.to_param)
+          return Routes.query_path(item.to_param)
         }
       }
     }

@@ -30,7 +30,7 @@ function runNext() {
 
 function runQueryHelper(query) {
   var xhr = $.ajax({
-    url: Routes.blazer_run_queries_path(),
+    url: Routes.run_queries_path(),
     method: "POST",
     data: query.data,
     dataType: "html"
@@ -89,7 +89,7 @@ function cancelQuery(query) {
   }
 
   // tell server
-  var path = Routes.blazer_cancel_queries_path()
+  var path = Routes.cancel_queries_path()
   var data = {run_id: query.run_id, data_source: query.data_source}
   if (navigator.sendBeacon) {
     navigator.sendBeacon(path, csrfProtect(data))
@@ -103,5 +103,5 @@ function csrfProtect(payload) {
   var param = $("meta[name=csrf-param]").attr("content")
   var token = $("meta[name=csrf-token]").attr("content")
   if (param && token) payload[param] = token
-  return new Blob([JSON.stringify(payload)], {type : "application/json charset=utf-8"})
+  return new Blob([JSON.stringify(payload)], {type : "application/json; charset=utf-8"})
 }

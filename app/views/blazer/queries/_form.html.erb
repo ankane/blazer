@@ -65,8 +65,8 @@
 </div>
 
 <script>
-  var params = <%= raw blazer_json_escape(variable_params.to_json) %>;
-  var previewStatement = <%= raw blazer_json_escape(Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }].to_json) %>;
+  <%= blazer_js_var "params", variable_params %>
+  <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }] %>
 
   var app = new Vue({
     el: "#app",
@@ -79,7 +79,7 @@
     },
     computed: {
       dataSourcePath: function() {
-        return Routes.blazer_schema_queries_path({data_source: this.dataSource})
+        return Routes.schema_queries_path({data_source: this.dataSource})
       }
     },
     methods: {
@@ -114,14 +114,18 @@
       },
       updateDataSource: function(dataSource) {
         this.dataSource = dataSource
-        var _this = this
+        var selectize = this.selectize
+        selectize.clearOptions()
 
-        $.getJSON(Routes.blazer_tables_queries_path({data_source: this.dataSource}), function(data) {
+        if (this.tablesXhr) {
+          this.tablesXhr.abort()
+        }
+
+        this.tablesXhr = $.getJSON(Routes.tables_queries_path({data_source: this.dataSource}), function(data) {
           var newOptions = []
           for (var i = 0; i < data.length; i++) {
             newOptions.push({text: data[i], value: data[i]})
           }
-          var selectize = _this.selectize
           selectize.clearOptions()
           selectize.addOption(newOptions)
           selectize.refreshOptions(false)

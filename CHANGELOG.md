@@ -1,6 +1,10 @@
-## 1.7.3 [unreleased]
+## 1.7.3
 
+- Fixed JavaScript errors
+- Fixed query cancel error
+- Return search results for "me" or "mine"
 - Include sample data in email when bad data checks fail
+- Fixed deprecation warnings
 
 ## 1.7.2
 

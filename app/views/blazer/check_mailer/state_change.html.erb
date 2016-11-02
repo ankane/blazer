@@ -6,8 +6,13 @@
     <% if @error %>
       <p><%= @error %></p>
     <% elsif @rows_count > 0 && @check_type == "bad_data" %>
-      <p><%= pluralize(@rows_count, "row") %></p>
-      <p><strong>Sample</strong></p>
+      <p>
+        <% if @rows_count <= 10 %>
+          <%= pluralize(@rows_count, "row") %>
+        <% else %>
+          Showing 10 of <%= @rows_count %> rows
+        <% end %>
+      </p>
       <table style="width: 100%; border-spacing: 0; border-collapse: collapse;">
         <thead>
           <% @columns.first(5).each do |column| %>
@@ -32,6 +37,9 @@
           <% end %>
         </tbody>
       </table>
+      <% if @columns.size > 5 %>
+        <p style="color: #999;">Only first 5 columns shown</p>
+      <% end %>
     <% end %>
   </body>
 </html>

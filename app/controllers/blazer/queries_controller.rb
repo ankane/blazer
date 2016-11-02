@@ -27,18 +27,11 @@ module Blazer
             dashboard: true
           }
         end
-
-      gon.push(
-        dashboards: @dashboards,
-        queries: queries_json(@queries),
-        verified_queries: queries_json(@verified_queries),
-        more: @more
-      )
     end
 
     def index
       set_queries
-      render json: queries_json(@queries)
+      render json: @queries
     end
 
     def new
@@ -293,6 +286,9 @@ module Blazer
       @more = limit && @queries.size >= limit
 
       @queries = (@my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
+
+      @queries = queries_json(@queries)
+      @verified_queries = queries_json(@verified_queries)
     end
 
     def queries_json(queries)

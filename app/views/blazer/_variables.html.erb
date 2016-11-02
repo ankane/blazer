@@ -44,7 +44,7 @@
       </div>
 
       <script>
-        var timeZone = "<%= Blazer.time_zone.tzinfo.name %>";
+        <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>
         var format = "YYYY-MM-DD";
         var now = moment.tz(timeZone);
 

@@ -51,7 +51,7 @@
       <script>
         L.mapbox.accessToken = '<%= ENV["MAPBOX_ACCESS_TOKEN"] %>';
         var map = L.mapbox.map('map', 'ankane.ioo8nki0');
-        var markers = <%= blazer_json_escape(@markers.to_json).html_safe %>;
+        <%= blazer_js_var "markers", @markers %>
         var featureLayer = L.mapbox.featureLayer().addTo(map);
         var geojson = [];
         for (var i = 0; i < markers.length; i++) {

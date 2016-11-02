@@ -151,6 +151,8 @@ input.search:focus {
   cursor: pointer;
   color: #d9534f;
   display: none;
+  float: right;
+  margin-top: 3px;
 }
 
 .list-group li:hover .glyphicon-remove {

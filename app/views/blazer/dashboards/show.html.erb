@@ -41,7 +41,7 @@
       $("#chart-<%= i %>").html(data)
       $("#chart-<%= i %> table").stupidtable()
     }, function (message) {
-      $("#chart-<%= i %>").css("color", "red").html(message)
+      $("#chart-<%= i %>").addClass("query-error").html(message)
     });
   </script>
 <% end %>

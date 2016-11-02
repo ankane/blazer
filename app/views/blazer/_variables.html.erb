@@ -45,23 +45,23 @@
 
       <script>
         <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>
-        var format = "YYYY-MM-DD";
-        var now = moment.tz(timeZone);
+        var format = "YYYY-MM-DD"
+        var now = moment.tz(timeZone)
 
         function dateStr(daysAgo) {
-          return now.clone().subtract(daysAgo || 0, "days").format(format);
+          return now.clone().subtract(daysAgo || 0, "days").format(format)
         }
 
         function toDate(time) {
-          return moment.tz(time.format(format), timeZone);
+          return moment.tz(time.format(format), timeZone)
         }
 
         function setTimeInputs(start, end) {
-          $("#start_time").val(toDate(start).utc().format());
-          $("#end_time").val(toDate(end).endOf("day").utc().format());
+          $("#start_time").val(toDate(start).utc().format())
+          $("#end_time").val(toDate(end).endOf("day").utc().format())
         }
 
-        $('#reportrange').daterangepicker(
+        $("#reportrange").daterangepicker(
           {
             ranges: {
              "Today": [dateStr(), dateStr()],
@@ -76,23 +76,23 @@
             opens: "right"
           },
           function(start, end) {
-            setTimeInputs(start, end);
-            submitIfCompleted($("#start_time").closest("form"));
+            setTimeInputs(start, end)
+            submitIfCompleted($("#start_time").closest("form"))
           }
-        ).on('apply.daterangepicker', function(ev, picker) {
-          setTimeInputs(picker.startDate, picker.endDate);
-          $('#reportrange span').html(toDate(picker.startDate).format('MMMM D, YYYY') + ' - ' + toDate(picker.endDate).format('MMMM D, YYYY'));
+        ).on("apply.daterangepicker", function(ev, picker) {
+          setTimeInputs(picker.startDate, picker.endDate)
+          $("#reportrange span").html(toDate(picker.startDate).format("MMMM D, YYYY") + " - " + toDate(picker.endDate).format("MMMM D, YYYY"))
         })
 
         if ($("#start_time").val().length > 0) {
-          var picker = $("#reportrange").data('daterangepicker');
-          picker.setStartDate(moment.tz($("#start_time").val(), timeZone));
-          picker.setEndDate(moment.tz($("#end_time").val(), timeZone));
-          $("#reportrange").trigger('apply.daterangepicker', picker)
+          var picker = $("#reportrange").data("daterangepicker")
+          picker.setStartDate(moment.tz($("#start_time").val(), timeZone))
+          picker.setEndDate(moment.tz($("#end_time").val(), timeZone))
+          $("#reportrange").trigger("apply.daterangepicker", picker)
         } else {
-          var picker = $("#reportrange").data('daterangepicker');
-          $("#reportrange").trigger('apply.daterangepicker', picker);
-          submitIfCompleted($("#start_time").closest("form"));
+          var picker = $("#reportrange").data("daterangepicker")
+          $("#reportrange").trigger("apply.daterangepicker", picker)
+          submitIfCompleted($("#start_time").closest("form"))
         }
       </script>
     <% end %>

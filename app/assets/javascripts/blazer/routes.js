@@ -6,10 +6,10 @@ var Routes = {
     return rootPath + "queries/cancel"
   },
   schema_queries_path: function(params) {
-    return rootPath + "queries/schema?data_source=" + params.data_source
+    return rootPath + "queries/schema?" + $.param(params)
   },
   tables_queries_path: function(params) {
-    return rootPath + "queries/tables?data_source=" + params.data_source
+    return rootPath + "queries/tables?" + $.param(params)
   },
   queries_path: function() {
     return rootPath + "queries"

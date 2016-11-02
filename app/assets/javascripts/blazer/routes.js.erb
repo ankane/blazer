@@ -1,26 +1,23 @@
-<%#= JsRoutes.generate(engine: Blazer::Engine, prefix: Blazer::Engine.app.url_helpers.root_path) %>
-
-// temp fix
 var Routes = {
   run_queries_path: function() {
-    return gon.root_path + "queries/run"
+    return rootPath + "queries/run"
   },
   cancel_queries_path: function() {
-    return gon.root_path + "queries/cancel"
+    return rootPath + "queries/cancel"
   },
   schema_queries_path: function(params) {
-    return gon.root_path + "queries/schema?data_source=" + params.data_source
+    return rootPath + "queries/schema?data_source=" + params.data_source
   },
   tables_queries_path: function(params) {
-    return gon.root_path + "queries/tables?data_source=" + params.data_source
+    return rootPath + "queries/tables?data_source=" + params.data_source
   },
   queries_path: function() {
-    return gon.root_path + "queries"
+    return rootPath + "queries"
   },
   query_path: function(id) {
-    return gon.root_path + "queries/" + id
+    return rootPath + "queries/" + id
   },
   dashboard_path: function(id) {
-    return gon.root_path + "dashboards/" + id
+    return rootPath + "dashboards/" + id
   }
 }

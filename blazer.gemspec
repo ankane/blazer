@@ -20,8 +20,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "rails"
   spec.add_dependency "chartkick"
   spec.add_dependency "safely_block", ">= 0.1.1"
-  spec.add_dependency "js-routes"
-  spec.add_dependency "gon"
 
   spec.add_development_dependency "bundler", "~> 1.7"
   spec.add_development_dependency "rake", "~> 10.0"

@@ -50,6 +50,10 @@
 </div>
 
 <script>
+  <%= blazer_js_var "dashboards", @dashboards %>
+  <%= blazer_js_var "queries", @queries %>
+  <%= blazer_js_var "more", @more %>
+
   var prepareSearch = function (list) {
     var i, q, searchStr
     for (i = 0; i < list.length; i++) {
@@ -70,17 +74,17 @@
     el: "#queries",
     data: {
       searchTerm: "",
-      more: gon.more,
+      more: more,
       updateCounter: 0
     },
     created: function() {
-      this.listItems = gon.dashboards.concat(gon.queries)
+      this.listItems = dashboards.concat(queries)
 
       prepareSearch(this.listItems)
 
       this.queryIds = {}
-      for (i = 0; i < gon.queries.length; i++) {
-        this.queryIds[gon.queries[i].id] = true
+      for (i = 0; i < queries.length; i++) {
+        this.queryIds[queries[i].id] = true
       }
 
       if (this.more) {

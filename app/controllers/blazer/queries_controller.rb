@@ -26,12 +26,6 @@ module Blazer
             dashboard: true
           }
         end
-
-      gon.push(
-        dashboards: @dashboards,
-        queries: @queries,
-        more: @more
-      )
     end
 
     def index

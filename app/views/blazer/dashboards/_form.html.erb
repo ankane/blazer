@@ -51,7 +51,7 @@
         maxOptions: 100,
         onChange: function(val) {
           if (val) {
-            var option = this.getOption(val)
+            var item = this.getItem(val)
 
             // if duplicate query is added, remove the first one
             for (var i = 0; i < app.queries.length; i++) {
@@ -61,7 +61,7 @@
               }
             }
 
-            app.queries.push({id: val, name: option.text()})
+            app.queries.push({id: val, name: item.text()})
             this.setValue("")
           }
         }

@@ -15,11 +15,13 @@
       </p>
       <table style="width: 100%; border-spacing: 0; border-collapse: collapse;">
         <thead>
-          <% @columns.first(5).each do |column| %>
-            <th style="padding: 8px; line-height: 1.4; text-align: left; vertical-align: bottom; border-bottom: 2px solid #ddd; width: <%= (100 / @columns.size).round(2) %>%;">
-              <%= column %>
-            </th>
-          <% end %>
+          <tr>
+            <% @columns.first(5).each do |column| %>
+              <th style="padding: 8px; line-height: 1.4; text-align: left; vertical-align: bottom; border-bottom: 2px solid #ddd; width: <%= (100 / @columns.size).round(2) %>%;">
+                <%= column %>
+              </th>
+            <% end %>
+          </tr>
         </thead>
         <tbody>
           <% @rows.first(10).each do |row| %>

@@ -78,6 +78,13 @@ module Blazer
       ]
       ds.default = ds.values.first
       ds
+
+      # TODO Blazer 2.0
+      # ds2 = Hash.new { |hash, key| raise Blazer::Error, "Unknown data source: #{key}" }
+      # ds.each do |k, v|
+      #   ds2[k] = v
+      # end
+      # ds2
     end
   end
 

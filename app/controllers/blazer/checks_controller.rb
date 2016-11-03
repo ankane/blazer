@@ -45,12 +45,12 @@ module Blazer
 
     private
 
-    def check_params
-      params.require(:check).permit(:query_id, :emails, :invert, :check_type, :schedule, :notify_on_error, :notify_on_pass)
-    end
+      def check_params
+        params.require(:check).permit(:query_id, :emails, :invert, :check_type, :schedule, :notify_on_error, :notify_on_pass)
+      end
 
-    def set_check
-      @check = Blazer::Check.find(params[:id])
-    end
+      def set_check
+        @check = Blazer::Check.find(params[:id])
+      end
   end
 end

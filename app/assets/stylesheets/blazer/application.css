@@ -196,3 +196,7 @@ input.search:focus {
 .chart-container h4 a {
   color: inherit;
 }
+
+.query-error {
+  color: red;
+}

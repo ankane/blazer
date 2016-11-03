@@ -3,7 +3,7 @@
 <% end %>
 
 <div id="app" v-cloak>
-  <%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params) : queries_path(variable_params)), html: {class: "the_form", autocomplete: "off"} do |f| %>
+  <%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params) : queries_path(variable_params)), html: {autocomplete: "off"} do |f| %>
     <div class="row">
       <div id="statement-box" class="col-xs-8">
         <div class= "form-group">
@@ -60,7 +60,7 @@
 
   <div id="results">
     <p class="text-muted" v-if="running">Loading...</p>
-    <div id="results-html" v-if="!running"></div>
+    <div id="results-html" v-if="!running" :class="{ 'query-error': error }"></div>
   </div>
 </div>
 
@@ -73,6 +73,7 @@
     data: {
       running: false,
       results: "",
+      error: false,
       dataSource: "",
       selectize: null,
       editorHeight: "180px"
@@ -86,6 +87,7 @@
       run: function(e) {
         this.running = true
         this.results = ""
+        this.error = false
         cancelAllQueries()
 
         var data = $.extend({}, params, {statement: this.getSQL(), data_source: $("#query_data_source").val()})
@@ -105,6 +107,7 @@
           }
         }, function (data) {
           _this.running = false
+          _this.error = true
           _this.showResults(data)
         })
       },

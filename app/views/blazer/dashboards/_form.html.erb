@@ -21,7 +21,7 @@
     <%= f.label :query_id, "Add Chart" %>
     <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
   </div>
-  <p>
+  <p style="padding-bottom: 140px;">
     <% if @dashboard.persisted? %>
       <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger"%>
     <% end %>

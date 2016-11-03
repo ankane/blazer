@@ -7,7 +7,7 @@
     <%= f.label :name %>
     <%= f.text_field :name, class: "form-control" %>
   </div>
-  <div class="form-group <%= "hide" if (@queries || @dashboard.queries).empty? %>">
+  <div class="form-group">
     <%= f.label :charts %>
     <ul id="queries" class="list-group">
       <li class="list-group-item" v-for="(query, index) in queries" :key="query.id" v-cloak>
@@ -17,7 +17,7 @@
       </li>
     </ul>
   </div>
-  <div class="form-group">
+  <div class="form-group" v-cloak>
     <%= f.label :query_id, "Add Chart" %>
     <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
   </div>
@@ -52,6 +52,15 @@
         onChange: function(val) {
           if (val) {
             var option = this.getOption(val)
+
+            // if duplicate query is added, remove the first one
+            for (var i = 0; i < app.queries.length; i++) {
+              if (app.queries[i].id == val) {
+                app.queries.splice(i, 1)
+                break
+              }
+            }
+
             app.queries.push({id: val, name: option.text()})
             this.setValue("")
           }

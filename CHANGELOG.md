@@ -1,4 +1,4 @@
-## 1.7.4 [unreleased]
+## 1.7.4
 
 - Removed extra dependencies added in 1.7.1
 - Fixed `send_failing_checks` for default Rails 5 ActiveJob adapter

@@ -7,7 +7,7 @@
     <%= f.label :name %>
     <%= f.text_field :name, class: "form-control" %>
   </div>
-  <div class="form-group">
+  <div class="form-group" v-if="queries.length">
     <%= f.label :charts %>
     <ul id="queries" class="list-group">
       <li class="list-group-item" v-for="(query, index) in queries" :key="query.id" v-cloak>
@@ -21,7 +21,7 @@
     <%= f.label :query_id, "Add Chart" %>
     <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
   </div>
-  <p style="padding-bottom: 140px;">
+  <p style="padding-bottom: 140px;" v-cloak>
     <% if @dashboard.persisted? %>
       <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger"%>
     <% end %>

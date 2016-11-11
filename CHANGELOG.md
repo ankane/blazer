@@ -1,3 +1,7 @@
+## 1.7.5 [unreleased]
+
+- Fixed sorting for new dashboards
+
 ## 1.7.4
 
 - Removed extra dependencies added in 1.7.1

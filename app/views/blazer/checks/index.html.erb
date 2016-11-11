@@ -24,7 +24,7 @@
         </td>
         <td><%= check.schedule if check.respond_to?(:schedule) %></td>
         <td>
-          <ul class="list-unstyled" style="margin-bottom: 0;">
+          <ul class="list-unstyled" style="margin-bottom: 0; word-break: break-all;">
             <% check.split_emails.each do |email| %>
               <li><%= email %></li>
             <% end %>

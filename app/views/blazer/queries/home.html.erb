@@ -40,6 +40,7 @@
         <td>
           <a :href="itemPath(query)" :class="{ dashboard: query.dashboard }">{{ query.name }}</a>
           <span class="vars">{{ query.vars }}</span>
+          <a :href="folderPath(query.folder)" class="folder" v-if="query.folder">{{ query.folder }}</a>
         </td>
         <td class="creator">{{ query.creator }}</td>
       </tr>
@@ -58,7 +59,7 @@
     var i, q, searchStr
     for (i = 0; i < list.length; i++) {
       q = list[i]
-      searchStr = q.name + q.creator
+      searchStr = "" + q.folder + q.name + q.creator
       if (q.creator === "You") {
         searchStr += "mine me"
       }
@@ -146,6 +147,9 @@
         } else {
           return Routes.query_path(item.to_param)
         }
+      },
+      folderPath: function (folder) {
+        return Routes.root_path({folder: folder})
       }
     }
   })

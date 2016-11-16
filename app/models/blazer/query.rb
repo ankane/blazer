@@ -8,7 +8,9 @@ module Blazer
 
     validates :statement, presence: true
 
-    scope :named, -> { where("blazer_queries.name <> ''") }
+    scope :named, -> { where("blazer_queries.name <> '' AND blazer_queries.folder IS NOT NULL") }
+
+    before_save :clean_folder
 
     def to_param
       [id, name].compact.join("-").gsub("'", "").parameterize
@@ -23,5 +25,11 @@ module Blazer
       editable &&= Blazer.query_editable.call(self, user) if Blazer.query_editable
       editable
     end
+
+    private
+
+      def clean_folder
+        self.folder = self.folder.presence
+      end
   end
 end

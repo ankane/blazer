@@ -19,5 +19,8 @@ var Routes = {
   },
   dashboard_path: function(id) {
     return rootPath + "dashboards/" + id
+  },
+  root_path: function(params) {
+    return rootPath + "?" + $.param(params)
   }
 }

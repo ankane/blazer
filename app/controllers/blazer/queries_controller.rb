@@ -9,11 +9,11 @@ module Blazer
         set_queries(1000)
       end
 
-      if params[:filter] && params[:filter] != "dashboards"
-        @dashboards = [] # TODO show my dashboards
-      else
+      if params[:filter] && params[:filter] == "dashboards"
         @dashboards = Blazer::Dashboard.order(:name)
         @dashboards = @dashboards.includes(:creator) if Blazer.user_class
+      else
+        @dashboards = [] # TODO show my dashboards
       end
 
       @dashboards =
@@ -249,13 +249,13 @@ module Blazer
 
       def set_queries(limit = nil)
         @my_queries =
-          if limit && blazer_user && !params[:filter] && Blazer.audit
+          if limit && blazer_user && !params[:filter] && !params[:folder] && Blazer.audit
             queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys)
           else
             []
           end
 
-        @queries = Blazer::Query.named.select(:id, :name, :creator_id, :statement)
+        @queries = Blazer::Query.named.select(:id, :name, :creator_id, :statement, :folder)
         @queries = @queries.includes(:creator) if Blazer.user_class
 
         if blazer_user && params[:filter] == "mine"
@@ -266,6 +266,7 @@ module Blazer
           @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
           @queries = @queries.limit(limit) if limit
           @queries = @queries.order(:name)
+          @queries = @queries.where(folder: params[:folder]) if params[:folder]
         end
         @queries = @queries.to_a
 
@@ -277,10 +278,11 @@ module Blazer
           @queries.map do |q|
             {
               id: q.id,
-              name: q.name,
+              name: q.friendly_name,
               creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
               vars: extract_vars(q.statement).join(", "),
-              to_param: q.to_param
+              to_param: q.to_param,
+              folder: params[:folder] ? nil : q.folder
             }
           end
       end
@@ -297,7 +299,7 @@ module Blazer
       end
 
       def query_params
-        params.require(:query).permit(:name, :description, :statement, :data_source)
+        params.require(:query).permit(:name, :description, :statement, :data_source, :folder)
       end
 
       def blazer_params

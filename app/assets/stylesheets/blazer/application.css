@@ -61,12 +61,8 @@ input.search:focus {
 
 #editor-container {
   background-color: #141414;
-  padding-top: 10px;
-  padding-bottom: 10px;
-}
-
-#editor {
-  height: 160px;
+  padding-top: 16px;
+  padding-bottom: 16px;
 }
 
 .ace_print-margin-layer {
@@ -195,4 +191,13 @@ input.search:focus {
 
 .query-error {
   color: red;
+}
+
+.folder, .folder:hover {
+  font-size: 10px;
+  background: #efefef;
+  padding: 2px 4px;
+  margin-left: 2px;
+  color: #333;
+  text-decoration: none;
 }

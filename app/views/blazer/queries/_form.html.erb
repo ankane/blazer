@@ -32,7 +32,11 @@
         </div>
         <div class="form-group">
           <%= f.label :description %>
-          <%= f.text_area :description, placeholder: "Optional", style: "height: 80px;", class: "form-control" %>
+          <%= f.text_field :description, class: "form-control" %>
+        </div>
+        <div class="form-group">
+          <%= f.label :folder %>
+          <%= f.text_field :folder %>
         </div>
         <div class="text-right">
           <%= f.submit "For Enter Press", class: "hide" %>
@@ -67,6 +71,7 @@
 <script>
   <%= blazer_js_var "params", variable_params %>
   <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, v.preview_statement] }] %>
+  <%= blazer_js_var "folders", Blazer::Query.order(:folder).distinct.pluck(:folder).select(&:present?) %>
 
   var app = new Vue({
     el: "#app",
@@ -76,7 +81,7 @@
       error: false,
       dataSource: "",
       selectize: null,
-      editorHeight: "180px"
+      editorHeight: "200px"
     },
     computed: {
       dataSourcePath: function() {
@@ -176,8 +181,8 @@
         // http://stackoverflow.com/questions/11584061/
         var editor = this.editor
         var lines = editor.getSession().getScreenLength()
-        if (lines < 9) {
-          lines = 9
+        if (lines < 10) {
+          lines = 10
         }
 
         this.editorHeight = ((lines + 1) * 16).toString() + "px"
@@ -232,6 +237,24 @@
       dsSelectize.on("change", function(val) {
         _this.updateDataSource(val)
         dsSelectize.blur()
+      })
+
+      var folderOptions = []
+      for (var i = 0; i < folders.length; i++) {
+        folderOptions.push({text: folders[i], value: folders[i]})
+      }
+
+      var $folderSelect = $("#query_folder").selectize({
+        create: true,
+        createOnBlur: true,
+        maxItems: 1,
+        mode: "multi",
+        placeholder: "Personal",
+        options: folderOptions
+      })
+      var folderSelectize = $folderSelect[0].selectize
+      folderSelectize.on("change", function(val) {
+        folderSelectize.blur()
       })
 
       this.showEditor()

@@ -92,13 +92,6 @@ module Blazer
                   text: "#{ActionController::Base.helpers.pluralize(result.rows.size, "Row")}",
               }]
             }
-            if query.description.present?
-              json[:attachments][0][:fields] = [{
-                title: "Description",
-                value: query.description,
-                short: false
-              }]
-            end
             res = Net::HTTP.post_form(slack_uri, payload: json.to_json)
           end
         end

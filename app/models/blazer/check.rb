@@ -69,7 +69,7 @@ module Blazer
 
         if slack_channels.present?
           slack_uri = URI(Blazer.slack_incoming_webhook_url)
-          url = Blazer::Engine.routes.url_helpers.query_url(query)
+          query_url = Blazer::Engine.routes.url_helpers.query_url(query)
 
           state_color_map = {
             "passing" => "#008000", # green
@@ -82,13 +82,24 @@ module Blazer
           split_slack_channels.each do |slack_channel|
             json = {
               channel: slack_channel,
+              icon_emoji: ":tangerine:",
               username: "Blazer",
-              color: color,
-              pretext: "<#{url}|Check #{state.titleize}: #{query.name}>",
-              text: "#{ActionController::Base.helpers.pluralize(result.rows.size, "Row")}",
-              icon_emoji: ":tangerine:"
-            }.to_json
-            res = Net::HTTP.post_form(slack_uri, payload: json)
+              attachments: [{
+                  fallback: query.name,
+                  color: color,
+                  title: "Check #{state.titleize}: #{query.name}",
+                  title_link: query_url,
+                  text: "#{ActionController::Base.helpers.pluralize(result.rows.size, "Row")}",
+              }]
+            }
+            if query.description.present?
+              json[:attachments][0][:fields] = [{
+                title: "Description",
+                value: query.description,
+                short: false
+              }]
+            end
+            res = Net::HTTP.post_form(slack_uri, payload: json.to_json)
           end
         end
       end

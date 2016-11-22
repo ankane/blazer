@@ -39,6 +39,8 @@ module Blazer
       Blazer.images = Blazer.settings["images"] || false
 
       Blazer.verifier_ids = Blazer.settings["verifier_ids"].to_a.map(&:to_s)
+
+      Blazer.slack_incoming_webhook_url = Blazer.settings["slack_incoming_webhook_url"] if Blazer.settings.key?("slack_incoming_webhook_url")
     end
   end
 end

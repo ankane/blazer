@@ -7,9 +7,14 @@ module Blazer
 
     before_validation :set_state
     before_validation :fix_emails
+    before_validation :fix_slack_channels
 
     def split_emails
       emails.to_s.downcase.split(",").map(&:strip)
+    end
+
+    def split_slack_channels
+      slack_channels.to_s.downcase.split(",").map(&:strip)
     end
 
     def update_state(result)
@@ -59,6 +64,30 @@ module Blazer
       # do not notify on creation, except when not passing
       if notify?
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_later
+
+        uri = URI(Blazer.slack_incoming_webhook_url)
+        host = "#{ActionMailer::Base.default_url_options[:host]}:#{ActionMailer::Base.default_url_options[:port]}"
+        url = Blazer::Engine.routes.url_helpers.query_url(query, host: host)
+
+        state_color_map = {
+          "passing" => "#008000", # green
+          "disabled" => "#000000", # black
+          "failed" => "#ff0000", # red
+          "timed out" => "#ffa500", # orange
+          "error" => "#ff0000" # red
+        }
+        color = state_color_map[state]
+        split_slack_channels.each do |slack_channel|
+          json = {
+            channel: slack_channel,
+            username: "Blazer",
+            color: color,
+            pretext: "<#{url}|Check #{state.titleize}: #{query.name}>",
+            text: "#{ActionController::Base.helpers.pluralize(result.rows.size, "Row")}",
+            icon_emoji: ":tangerine:"
+          }.to_json
+          res = Net::HTTP.post_form(uri, payload: json)
+        end
       end
       save! if changed?
     end
@@ -67,7 +96,7 @@ module Blazer
 
       def notify?
         send_it = true
-        send_it &&= emails.present?
+        send_it &&= (emails.present? || slack_channels.present?)
 
         # Do not notify if the state has not changed
         send_it &&= (state != state_was)
@@ -97,6 +126,12 @@ module Blazer
         # some people like doing ; instead of ,
         # but we know what they mean, so let's fix it
         self.emails = emails.gsub(";", ",") if emails.present?
+      end
+
+      def fix_slack_channels
+        # some people like doing ; instead of ,
+        # but we know what they mean, so let's fix it
+        self.slack_channels = slack_channels.gsub(";", ",") if slack_channels.present?
       end
   end
 end

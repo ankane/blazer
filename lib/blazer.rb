@@ -34,6 +34,7 @@ module Blazer
     attr_accessor :images
     attr_accessor :query_editable
     attr_accessor :verifier_ids
+    attr_accessor :slack_incoming_webhook_url
   end
   self.audit = true
   self.user_name = :name
@@ -142,15 +143,42 @@ module Blazer
 
   def self.send_failing_checks
     emails = {}
+    slack_channels = {}
     Blazer::Check.includes(:query).where(state: ["failing", "error", "timed out", "disabled"]).find_each do |check|
       check.split_emails.each do |email|
         (emails[email] ||= []) << check
+      end
+
+      check.split_slack_channels.each do |slack_channel|
+        (slack_channels[slack_channel] ||= []) << check
       end
     end
 
     emails.each do |email, checks|
       Safely.safely do
         Blazer::CheckMailer.failing_checks(email, checks).deliver_now
+      end
+    end
+
+    uri = URI(Blazer.slack_incoming_webhook_url)
+    host = "#{ActionMailer::Base.default_url_options[:host]}:#{ActionMailer::Base.default_url_options[:port]}"
+    manage_checks_url = Blazer::Engine.routes.url_helpers.checks_url(host: host)
+    slack_channels.each do |slack_channel, checks|
+      Safely.safely do
+        checks_array = checks.map do |check|
+          url = Blazer::Engine.routes.url_helpers.query_url(check.query, host: host)
+          "<#{url}|#{"#{check.query.name}"}> failing"
+        end
+
+        json = {
+          channel: slack_channel,
+          username: "Blazer",
+          color: "#ff0000",
+          pretext: "#{ActionController::Base.helpers.pluralize(checks.size, "Check")} Failing",
+          text: "#{checks_array.join("\n")}\n\n<#{manage_checks_url}|Manage checks>",
+          icon_emoji: ":tangerine:"
+        }.to_json
+        res = Net::HTTP.post_form(uri, payload: json)
       end
     end
   end

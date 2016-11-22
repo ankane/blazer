@@ -1,4 +1,4 @@
-## 1.7.5 [unreleased]
+## 1.7.5
 
 - Fixed issue with check emails sometimes failing for default Rails 5 ActiveJob adapter
 - Fixed sorting for new dashboards

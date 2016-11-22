@@ -68,9 +68,8 @@ module Blazer
         end
 
         if slack_channels.present?
-          uri = URI(Blazer.slack_incoming_webhook_url)
-          host = "#{ActionMailer::Base.default_url_options[:host]}:#{ActionMailer::Base.default_url_options[:port]}"
-          url = Blazer::Engine.routes.url_helpers.query_url(query, host: host)
+          slack_uri = URI(Blazer.slack_incoming_webhook_url)
+          url = Blazer::Engine.routes.url_helpers.query_url(query)
 
           state_color_map = {
             "passing" => "#008000", # green
@@ -89,7 +88,7 @@ module Blazer
               text: "#{ActionController::Base.helpers.pluralize(result.rows.size, "Row")}",
               icon_emoji: ":tangerine:"
             }.to_json
-            res = Net::HTTP.post_form(uri, payload: json)
+            res = Net::HTTP.post_form(slack_uri, payload: json)
           end
         end
       end

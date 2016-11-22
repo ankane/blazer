@@ -160,9 +160,8 @@ module Blazer
       end
     end
 
-    uri = URI(Blazer.slack_incoming_webhook_url)
-    host = "#{ActionMailer::Base.default_url_options[:host]}:#{ActionMailer::Base.default_url_options[:port]}"
-    manage_checks_url = Blazer::Engine.routes.url_helpers.checks_url(host: host)
+    slack_uri = URI(Blazer.slack_incoming_webhook_url)
+    manage_checks_url = Blazer::Engine.routes.url_helpers.checks_url
     slack_channels.each do |slack_channel, checks|
       Safely.safely do
         checks_array = checks.map do |check|
@@ -178,7 +177,7 @@ module Blazer
           text: "#{checks_array.join("\n")}\n\n<#{manage_checks_url}|Manage checks>",
           icon_emoji: ":tangerine:"
         }.to_json
-        res = Net::HTTP.post_form(uri, payload: json)
+        res = Net::HTTP.post_form(slack_uri, payload: json)
       end
     end
   end

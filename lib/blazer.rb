@@ -165,7 +165,7 @@ module Blazer
     slack_channels.each do |slack_channel, checks|
       Safely.safely do
         checks_array = checks.map do |check|
-          url = Blazer::Engine.routes.url_helpers.query_url(check.query, host: host)
+          url = Blazer::Engine.routes.url_helpers.query_url(check.query)
           "<#{url}|#{"#{check.query.name}"}> failing"
         end
 

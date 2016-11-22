@@ -63,30 +63,34 @@ module Blazer
 
       # do not notify on creation, except when not passing
       if notify?
-        Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_later
+        if emails.present?
+          Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_later
+        end
 
-        uri = URI(Blazer.slack_incoming_webhook_url)
-        host = "#{ActionMailer::Base.default_url_options[:host]}:#{ActionMailer::Base.default_url_options[:port]}"
-        url = Blazer::Engine.routes.url_helpers.query_url(query, host: host)
+        if slack_channels.present?
+          uri = URI(Blazer.slack_incoming_webhook_url)
+          host = "#{ActionMailer::Base.default_url_options[:host]}:#{ActionMailer::Base.default_url_options[:port]}"
+          url = Blazer::Engine.routes.url_helpers.query_url(query, host: host)
 
-        state_color_map = {
-          "passing" => "#008000", # green
-          "disabled" => "#000000", # black
-          "failed" => "#ff0000", # red
-          "timed out" => "#ffa500", # orange
-          "error" => "#ff0000" # red
-        }
-        color = state_color_map[state]
-        split_slack_channels.each do |slack_channel|
-          json = {
-            channel: slack_channel,
-            username: "Blazer",
-            color: color,
-            pretext: "<#{url}|Check #{state.titleize}: #{query.name}>",
-            text: "#{ActionController::Base.helpers.pluralize(result.rows.size, "Row")}",
-            icon_emoji: ":tangerine:"
-          }.to_json
-          res = Net::HTTP.post_form(uri, payload: json)
+          state_color_map = {
+            "passing" => "#008000", # green
+            "disabled" => "#000000", # black
+            "failing" => "#ff0000", # red
+            "timed out" => "#ffa500", # orange
+            "error" => "#ff0000" # red
+          }
+          color = state_color_map[state]
+          split_slack_channels.each do |slack_channel|
+            json = {
+              channel: slack_channel,
+              username: "Blazer",
+              color: color,
+              pretext: "<#{url}|Check #{state.titleize}: #{query.name}>",
+              text: "#{ActionController::Base.helpers.pluralize(result.rows.size, "Row")}",
+              icon_emoji: ":tangerine:"
+            }.to_json
+            res = Net::HTTP.post_form(uri, payload: json)
+          end
         end
       end
       save! if changed?

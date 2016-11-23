@@ -141,7 +141,7 @@ ENV["BLAZER_PASSWORD"] = "secret"
 ### Devise
 
 ```ruby
-authenticate :user, lambda { |user| user.admin? } do
+authenticate :user, -> (user) { user.admin? } do
   mount Blazer::Engine, at: "blazer"
 end
 ```

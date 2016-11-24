@@ -1,3 +1,7 @@
+## 1.7.6 [unreleased]
+
+- Fixed preview for table names with certain characters
+
 ## 1.7.5
 
 - Fixed issue with check emails sometimes failing for default Rails 5 ActiveJob adapter

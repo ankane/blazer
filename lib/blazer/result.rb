@@ -73,6 +73,8 @@ module Blazer
           "bar"
         elsif column_types == ["string", "string", "numeric"]
           "bar2"
+        elsif column_types == ["numeric", "numeric"]
+          "scatter"
         end
       end
     end

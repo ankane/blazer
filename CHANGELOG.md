@@ -1,5 +1,6 @@
 ## 1.7.6 [unreleased]
 
+- Added scatter chart
 - Fixed issue with false values showing up blank
 - Fixed preview for table names with certain characters
 

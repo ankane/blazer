@@ -260,6 +260,8 @@ Of course, you can force a refresh at any time.
 
 Blazer will automatically generate charts based on the types of the columns returned in your query.
 
+**Note:** The order of columns matters.
+
 ### Line Chart
 
 There are two ways to generate line charts.
@@ -291,6 +293,14 @@ SELECT gender, COUNT(*) FROM users GROUP BY 1
 
 ```sql
 SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
+```
+
+### Scatter Chart
+
+2 columns - both numeric
+
+```sql
+SELECT x, y FROM table
 ```
 
 ### Maps

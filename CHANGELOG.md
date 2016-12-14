@@ -1,4 +1,4 @@
-## 1.7.6 [unreleased]
+## 1.7.6
 
 - Added scatter chart
 - Fixed issue with false values showing up blank

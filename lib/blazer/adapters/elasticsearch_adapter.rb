@@ -15,14 +15,21 @@ module Blazer
             error = response["error"]
           else
             hits = response["hits"]["hits"]
-            source_keys = hits.flat_map { |r| r["_source"].keys }.uniq
-            hit_keys = (hits.first.try(:keys) || []) - ["_source"]
-            columns = source_keys + hit_keys
-            rows =
-              hits.map do |r|
-                source = r["_source"]
-                source_keys.map { |k| source[k] } + hit_keys.map { |k| r[k] }
-              end
+            if hits.empty? && aggregations = response["aggregations"]
+              key = aggregations.keys.first
+              aggregation = aggregations[key]["buckets"]
+              columns = aggregation.first.keys
+              rows = aggregation.collect { |a| a.values }
+            else
+              source_keys = hits.flat_map { |r| r["_source"].keys }.uniq
+              hit_keys = (hits.first.try(:keys) || []) - ["_source"]
+              columns = source_keys + hit_keys
+              rows =
+                hits.map do |r|
+                  source = r["_source"]
+                  source_keys.map { |k| source[k] } + hit_keys.map { |k| r[k] }
+                end
+            end
           end
         rescue => e
           error = e.message

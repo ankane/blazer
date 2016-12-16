@@ -218,7 +218,7 @@
       var $select = $("#table_names").selectize({})
       var selectize = $select[0].selectize
       selectize.on("change", function(val) {
-        editor.setValue(previewStatement[_this.dataSource].replace("{table}", '"' + val + '"'), 1)
+        editor.setValue(previewStatement[_this.dataSource].replace("{table}", val), 1)
         _this.run()
         selectize.clear(true)
         selectize.blur()

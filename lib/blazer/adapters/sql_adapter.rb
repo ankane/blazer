@@ -51,7 +51,11 @@ module Blazer
       end
 
       def preview_statement
-        "SELECT * FROM {table} LIMIT 10"
+        if postgresql?
+          "SELECT * FROM \"{table}\" LIMIT 10"
+        else
+          "SELECT * FROM {table} LIMIT 10"
+        end
       end
 
       def reconnect

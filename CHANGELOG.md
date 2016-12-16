@@ -1,3 +1,7 @@
+## 1.7.7 [unreleased]
+
+- Fixed preview error with MySQL
+
 ## 1.7.6
 
 - Added scatter chart

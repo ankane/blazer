@@ -16,10 +16,12 @@ module Blazer
           else
             hits = response["hits"]["hits"]
             if hits.empty? && aggregations = response["aggregations"]
-              key = aggregations.keys.first
-              aggregation = aggregations[key]["buckets"]
-              columns = aggregation.first.keys
-              rows = aggregation.collect { |a| a.values }
+              unless aggregations.empty?
+                key = aggregations.keys.first
+                aggregation = aggregations[key]["buckets"]
+                columns = aggregation.first.keys
+                rows = aggregation.collect { |a| a.values }
+              end
             else
               source_keys = hits.flat_map { |r| r["_source"].keys }.uniq
               hit_keys = (hits.first.try(:keys) || []) - ["_source"]

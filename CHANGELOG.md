@@ -1,6 +1,7 @@
-## 1.7.7 [unreleased]
+## 1.7.7
 
-- Fixed preview error with MySQL
+- Fixed preview error for MySQL
+- Fixed error with timeouts for MySQL
 
 ## 1.7.6
 

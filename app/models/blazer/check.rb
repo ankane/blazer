@@ -63,10 +63,7 @@ module Blazer
       # do not notify on creation, except when not passing
       if (state_was != "new" || state != "passing") && state != state_was && emails.present?
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now
-        notifier = Slack::Notifier.new ENV.fetch('WEBHOOK_URL'), channel: '#info-production',
-                                                                 username: 'Blazer Notifier'
-
-        notifier.ping "A new user has been granted admin access. @etavenn @skatkov @channel"
+        Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size)
       end
       save! if changed?
     end

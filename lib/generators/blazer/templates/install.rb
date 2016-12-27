@@ -38,6 +38,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
       t.text :emails
       t.string :check_type
       t.text :message
+      t.text :slack_channel
       t.timestamp :last_run_at
       t.timestamps null: false
     end

@@ -155,6 +155,7 @@ module Blazer
     emails.each do |email, checks|
       Safely.safely do
         Blazer::CheckMailer.failing_checks(email, checks).deliver_now
+        Blazer::SlackNotifier.failing_checks(checks)
       end
     end
   end

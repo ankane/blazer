@@ -32,7 +32,7 @@ module Blazer
       notifier = Slack::Notifier.new ENV.fetch('WEBHOOK_URL'), channel: '#info-production',
                                                                username: 'Blazer Notifier'
 
-      notifier.ping "Check #{name} failing. @etavenn @skatkov @channel"
+      notifier.ping "Check #{name} failing. http://107.170.251.230/queries/52-unrecognized-priviliged-user @etavenn @skatkov @channel"
     end
   end
 end

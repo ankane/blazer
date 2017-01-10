@@ -663,7 +663,10 @@ audit: true
 # class name of the user model
 # user_class: User
 
-# method name for the user model
+# method name for the current user
+# user_method: current_user
+
+# method name for the display name
 # user_name: name
 
 # email to send checks from

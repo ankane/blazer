@@ -1,3 +1,7 @@
+## 1.7.8 [unreleased]
+
+- Fixed bug with scatter charts on dashboards
+
 ## 1.7.7
 
 - Fixed preview error for MySQL

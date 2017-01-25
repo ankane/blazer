@@ -115,7 +115,8 @@ module Blazer
       end
 
       def adapter_name
-        connection_model.connection.adapter_name
+        # prevent bad data source from taking down queries/new
+        connection_model.connection.adapter_name rescue nil
       end
 
       def schemas

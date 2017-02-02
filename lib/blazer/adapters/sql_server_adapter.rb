@@ -49,12 +49,11 @@ module Blazer
               INNER JOIN sys.dm_os_waiting_tasks AS B
               ON A.lock_owner_address = B.resource_address) C
           ON A.Session_ID = C.SPID OUTER APPLY sys.dm_exec_sql_text(sql_handle) D
-          WHERE ISNULL(B.status,A.status) = 'running'
-            AND query like ',run_id:#{run_id}%'
+          WHERE D.text like '%,run_id:#{run_id}%'
         SQL
         ).first
         if first_row
-          select_all("kill #{first_row["pid"].to_id}")
+          select_all("kill #{first_row["pid"].to_i}")
         end
       end
 

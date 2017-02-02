@@ -31,7 +31,8 @@ module Blazer
 
       # Kills a query.
       # Custom query to find a pid for a specific query text
-      # UNTESTED, not sure how to test beyond running the query in SSMS and saying "Okay."
+      # Getting a pid works, but actually KILLING the query is UNTESTED,
+      #   not sure how to test beyond running the query in SSMS and saying "Okay."
       def cancel(run_id)
         first_row = select_all( <<-SQL
           SELECT

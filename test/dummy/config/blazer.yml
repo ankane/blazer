@@ -2,7 +2,8 @@
 
 data_sources:
   mssqlserver:
-    url: sqlserver://rails:railspassword@localhost/logdb
+    # Edit this for an actual connection string.
+    url: <%= ENV['BLAZER_DATABASE_URL'] || 'sqlserver://rails:railspassword@localhost/master' %>
 
     # statement timeout, in seconds
     # none by default

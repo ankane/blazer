@@ -53,6 +53,8 @@ module Blazer
       def preview_statement
         if postgresql?
           "SELECT * FROM \"{table}\" LIMIT 10"
+        elsif sqlserver?
+          "SELECT TOP (10) * FROM {table}"
         else
           "SELECT * FROM {table} LIMIT 10"
         end
@@ -64,13 +66,25 @@ module Blazer
 
       def cost(statement)
         result = explain(statement)
-        match = /cost=\d+\.\d+..(\d+\.\d+) /.match(result)
-        match[1] if match
+        if sqlserver?
+          result["TotalSubtreeCost"].to_s
+        else
+          match = /cost=\d+\.\d+..(\d+\.\d+) /.match(result)
+          match[1] if match
+        end
       end
 
       def explain(statement)
         if postgresql? || redshift?
           select_all("EXPLAIN #{statement}").rows.first.first
+        elsif sqlserver?
+          begin
+            execute("SET SHOWPLAN_ALL ON")
+            result = select_all(statement).each.first
+          ensure
+            execute("SET SHOWPLAN_ALL OFF")
+          end
+          result
         end
       rescue
         nil
@@ -114,13 +128,23 @@ module Blazer
         ["MySQL", "Mysql2", "Mysql2Spatial"].include?(adapter_name)
       end
 
+      def sqlserver?
+        ["SQLServer", "tinytds", "mssql"].include?(adapter_name)
+      end
+
       def adapter_name
         # prevent bad data source from taking down queries/new
         connection_model.connection.adapter_name rescue nil
       end
 
       def schemas
-        default_schema = (postgresql? || redshift?) ? "public" : connection_model.connection_config[:database]
+        if postgresql? || redshift?
+          default_schema = "public"
+        elsif sqlserver?
+          default_schema = "dbo"
+        else
+          default_schema = connection_model.connection_config[:database]
+        end
         settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
       end
 

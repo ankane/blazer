@@ -426,7 +426,13 @@ data_sources:
 
 ### SQL Server
 
-Use [activerecord-sqlserver-adapter](https://github.com/rails-sqlserver/activerecord-sqlserver-adapter).
+Add [tiny_tds](https://github.com/rails-sqlserver/tiny_tds) and [activerecord-sqlserver-adapter](https://github.com/rails-sqlserver/activerecord-sqlserver-adapter) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: sqlserver://user:password@hostname:1433/database
+```
 
 ### Oracle
 

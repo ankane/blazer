@@ -26,6 +26,8 @@ module Blazer
           Blazer::Adapters::PrestoAdapter.new(self)
         when "sql"
           Blazer::Adapters::SqlAdapter.new(self)
+        when "sqlserver"
+          Blazer::Adapters::SqlServerAdapter.new(self)
         else
           raise Blazer::Error, "Unknown adapter"
         end
@@ -190,7 +192,7 @@ module Blazer
     def detect_adapter
       schema = settings["url"].to_s.split("://").first
       case schema
-      when "mongodb", "presto"
+      when "mongodb", "presto", "sqlserver"
         schema
       else
         "sql"

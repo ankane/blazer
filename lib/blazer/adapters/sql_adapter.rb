@@ -114,6 +114,10 @@ module Blazer
         ["MySQL", "Mysql2", "Mysql2Spatial"].include?(adapter_name)
       end
 
+      def sqlserver?
+        ["sqlserver", "tinytds", "mssql"].include?(adapter_name)
+      end
+
       def adapter_name
         # prevent bad data source from taking down queries/new
         connection_model.connection.adapter_name rescue nil

@@ -11,6 +11,7 @@ require "blazer/adapters/elasticsearch_adapter"
 require "blazer/adapters/mongodb_adapter"
 require "blazer/adapters/presto_adapter"
 require "blazer/adapters/sql_adapter"
+require "blazer/adapters/sql_server_adapter"
 require "blazer/engine"
 
 module Blazer

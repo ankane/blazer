@@ -138,14 +138,17 @@ module Blazer
       end
 
       def schemas
-        if postgresql? || redshift?
-          default_schema = "public"
-        elsif sqlserver?
-          default_schema = "dbo"
-        else
-          default_schema = connection_model.connection_config[:database]
-        end
         settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
+      end
+
+      def default_schema
+        if postgresql? || redshift?
+          "public"
+        elsif sqlserver?
+          "dbo"
+        else
+          connection_model.connection_config[:database]
+        end
       end
 
       def set_timeout(timeout)

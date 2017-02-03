@@ -67,7 +67,7 @@ module Blazer
       def cost(statement)
         result = explain(statement)
         if sqlserver?
-          result["TotalSubtreeCost"].to_s
+          result["TotalSubtreeCost"]
         else
           match = /cost=\d+\.\d+..(\d+\.\d+) /.match(result)
           match[1] if match

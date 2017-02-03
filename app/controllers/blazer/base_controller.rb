@@ -101,5 +101,10 @@ module Blazer
         action = resource.persisted? ? :edit : :new
         render action, status: :unprocessable_entity
       end
+
+      # do not inherit from ApplicationController - #120
+      def default_url_options
+        {}
+      end
   end
 end

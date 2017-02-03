@@ -47,7 +47,7 @@ And mount the dashboard in your `config/routes.rb`:
 mount Blazer::Engine, at: "blazer"
 ```
 
-For production, specify your database:
+In development, blazer will fall back to using your app's primary database, so you can get it up in running quickly. To be sure you're aware of what database user it's using in production, you'll need to specify your database:
 
 ```ruby
 ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database"

@@ -148,4 +148,17 @@ module Blazer
       end
     end
   end
+
+  def self.adapters
+    @adapters ||= {}
+  end
+
+  def self.register_adapter(name, adapter)
+    adapters[name] = adapter
+  end
 end
+
+Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter
+Blazer.register_adapter "mongodb", Blazer::Adapters::MongodbAdapter
+Blazer.register_adapter "presto", Blazer::Adapters::PrestoAdapter
+Blazer.register_adapter "sql", Blazer::Adapters::SqlAdapter

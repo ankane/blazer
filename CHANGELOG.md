@@ -1,5 +1,6 @@
 ## 1.7.8 [unreleased]
 
+- Added support for custom adapters
 - Fixed bug with scatter charts on dashboards
 - Fixed table preview for SQL Server
 - Fixed issue when `default_url_options` set

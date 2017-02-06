@@ -17,15 +17,8 @@ module Blazer
       end
 
       @adapter_instance =
-        case adapter
-        when "elasticsearch"
-          Blazer::Adapters::ElasticsearchAdapter.new(self)
-        when "mongodb"
-          Blazer::Adapters::MongodbAdapter.new(self)
-        when "presto"
-          Blazer::Adapters::PrestoAdapter.new(self)
-        when "sql"
-          Blazer::Adapters::SqlAdapter.new(self)
+        if Blazer.adapters[adapter]
+          Blazer.adapters[adapter].new(self)
         else
           raise Blazer::Error, "Unknown adapter"
         end

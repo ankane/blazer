@@ -497,7 +497,7 @@ data_sources:
 
 Create an adapter for any data store with:
 
-```
+```ruby
 class FooAdapter < Blazer::Adapters::BaseAdapter
   # code goes here
 end
@@ -505,7 +505,7 @@ end
 Blazer.register_adapter "foo", FooAdapter
 ```
 
-See the [Presto adapter](https://github.com/ankane/blazer/blob/master/lib/blazer/adapters/presto_adapter.rb) for a good example.
+See the [Presto adapter](https://github.com/ankane/blazer/blob/master/lib/blazer/adapters/presto_adapter.rb) for a good example. Then use:
 
 ```yml
 data_sources:

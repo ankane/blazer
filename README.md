@@ -394,7 +394,7 @@ data_sources:
 - [MongoDB](#mongodb-1) [beta]
 - [Elasticsearch](#elasticsearch) [beta]
 
-You can also create an adapter for any other data store.
+You can also [create an adapter](#creating-an-adapter-master) for any other data store.
 
 **Note:** In the examples below, we recommend using environment variables for urls.
 
@@ -490,6 +490,27 @@ Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) to your Gemfi
 data_sources:
   my_source:
     adapter: elasticsearch
+    url: http://user:password@hostname:9200/
+```
+
+## Creating an Adapter [master]
+
+Create an adapter for any data store with:
+
+```
+class FooAdapter < Blazer::Adapters::BaseAdapter
+  # code goes here
+end
+
+Blazer.register_adapter "foo", FooAdapter
+```
+
+See the [Presto adapter](https://github.com/ankane/blazer/blob/master/lib/blazer/adapters/presto_adapter.rb) for a good example.
+
+```yml
+data_sources:
+  my_source:
+    adapter: foo
     url: http://user:password@hostname:9200/
 ```
 

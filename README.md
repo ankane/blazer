@@ -394,7 +394,7 @@ data_sources:
 - [MongoDB](#mongodb-1) [beta]
 - [Elasticsearch](#elasticsearch) [beta]
 
-You can also [create an adapter](#creating-an-adapter-master) for any other data store.
+You can also [create an adapter](#creating-an-adapter) for any other data store.
 
 **Note:** In the examples below, we recommend using environment variables for urls.
 
@@ -493,7 +493,7 @@ data_sources:
     url: http://user:password@hostname:9200/
 ```
 
-## Creating an Adapter [master]
+## Creating an Adapter
 
 Create an adapter for any data store with:
 

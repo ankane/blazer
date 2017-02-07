@@ -1,4 +1,4 @@
-## 1.7.8 [unreleased]
+## 1.7.8
 
 - Added support for custom adapters
 - Fixed bug with scatter charts on dashboards

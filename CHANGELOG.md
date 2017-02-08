@@ -1,3 +1,7 @@
+## 1.7.9 [unreleased]
+
+- Added beta support for Apache Drill
+
 ## 1.7.8
 
 - Added support for custom adapters

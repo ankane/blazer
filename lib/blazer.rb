@@ -7,6 +7,7 @@ require "blazer/data_source"
 require "blazer/result"
 require "blazer/run_statement"
 require "blazer/adapters/base_adapter"
+require "blazer/adapters/drill_adapter"
 require "blazer/adapters/elasticsearch_adapter"
 require "blazer/adapters/mongodb_adapter"
 require "blazer/adapters/presto_adapter"
@@ -158,6 +159,7 @@ module Blazer
   end
 end
 
+Blazer.register_adapter "drill", Blazer::Adapters::DrillAdapter
 Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter
 Blazer.register_adapter "mongodb", Blazer::Adapters::MongodbAdapter
 Blazer.register_adapter "presto", Blazer::Adapters::PrestoAdapter

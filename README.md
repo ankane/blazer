@@ -393,6 +393,7 @@ data_sources:
 - [Presto](#presto)
 - [MongoDB](#mongodb-1) [beta]
 - [Elasticsearch](#elasticsearch) [beta]
+- [Apache Drill](#apache-drill-master)[beta]
 
 You can also [create an adapter](#creating-an-adapter) for any other data store.
 
@@ -491,6 +492,17 @@ data_sources:
   my_source:
     adapter: elasticsearch
     url: http://user:password@hostname:9200/
+```
+
+### Apache Drill [master]
+
+Set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: drill
+    url: http://hostname:8047
 ```
 
 ## Creating an Adapter

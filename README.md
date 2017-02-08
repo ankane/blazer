@@ -393,7 +393,7 @@ data_sources:
 - [Presto](#presto)
 - [MongoDB](#mongodb-1) [beta]
 - [Elasticsearch](#elasticsearch) [beta]
-- [Apache Drill](#apache-drill-master)[beta]
+- [Apache Drill](#apache-drill-master) [beta]
 
 You can also [create an adapter](#creating-an-adapter) for any other data store.
 

@@ -17,8 +17,12 @@ module Blazer
 
         begin
           response = JSON.parse(http.post(uri.request_uri, data.to_json, header).body)
-          columns = response["columns"]
-          rows = response["rows"].map { |r| r.values }
+          if response["errorMessage"]
+            error = response["errorMessage"]
+          else
+            columns = response["columns"]
+            rows = response["rows"].map { |r| r.values }
+          end
         rescue => e
           error = e.message
         end

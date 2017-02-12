@@ -1,6 +1,7 @@
 ## 1.7.9 [unreleased]
 
 - Added beta support for Apache Drill
+- Updated Chart.js to 2.5.0
 
 ## 1.7.8
 

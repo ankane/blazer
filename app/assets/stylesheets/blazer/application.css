@@ -47,6 +47,15 @@ input.search:focus {
   outline: none;
 }
 
+.btn-group .button_to .btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-group .button_to + .dropdown-toggle {
+  position: absolute;
+}
+
 .form-inline .selectize-control, .text-right .selectize-control {
   display: inline-block;
   vertical-align: middle;

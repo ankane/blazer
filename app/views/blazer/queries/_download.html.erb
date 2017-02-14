@@ -1,0 +1,12 @@
+<div class="btn-group" style="vertical-align: top; margin-right: 5px;">
+  <%= button_to "Download csv", run_queries_path(query_id: @query.id, format: 'csv'), params: {statement: @statement}, class: "btn btn-primary" %>
+  <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="caret"></span>
+    <span class="sr-only">Toggle Dropdown</span>
+  </button>
+  <ul class="dropdown-menu">
+    <% Blazer.query_adapters.each do |adapter| %>
+      <li><%= link_to "Download #{adapter.format}", run_queries_path(query_id: @query.id, format: adapter.format), params: {statement: @statement} %></li>
+    <% end %>
+  </ul>
+</div>

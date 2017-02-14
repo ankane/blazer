@@ -238,11 +238,13 @@ module Blazer
         end
 
         respond_to do |format|
-          format.html do
-            render layout: false
-          end
-          format.csv do
-            send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
+          Blazer.query_adapters.each do |query_adapter|
+            adapter = query_adapter.new(@query, @columns, @rows, @data_source)
+
+            format.send(adapter.format) do
+              send(adapter.render_method, *adapter.render_params)
+            end
+
           end
         end
       end
@@ -302,15 +304,6 @@ module Blazer
 
       def blazer_params
         params[:blazer] || {}
-      end
-
-      def csv_data(columns, rows, data_source)
-        CSV.generate do |csv|
-          csv << columns
-          rows.each do |row|
-            csv << row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(data_source, columns[i], v) : v }
-          end
-        end
       end
 
       def blazer_time_value(data_source, k, v)

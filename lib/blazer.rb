@@ -32,6 +32,7 @@ module Blazer
     attr_accessor :anomaly_checks
     attr_accessor :async
     attr_accessor :images
+    attr_accessor :query_adapters
     attr_accessor :query_editable
   end
   self.audit = true
@@ -65,6 +66,16 @@ module Blazer
       else
         {}
       end
+    end
+  end
+
+  def self.query_adapters
+    @query_adapters = begin
+      settings['query_adapters'].map do |adapter_name|
+        adapter_name.constantize
+      end
+    rescue => e
+      nil
     end
   end
 

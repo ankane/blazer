@@ -3,18 +3,19 @@
 <div class="topbar">
   <div class="container">
     <div class="row" style="padding-top: 13px;">
-      <div class="col-sm-9">
+      <div class="col-sm-8">
         <%= render partial: "blazer/nav" %>
         <h3 style="margin: 0; line-height: 34px; display: inline;">
           <%= @query.name %>
         </h3>
       </div>
-      <div class="col-sm-3 text-right">
+      <div class="col-sm-2 text-right">
         <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
         <%= link_to "Fork", new_query_path(variable_params.merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
-
+      </div>
+      <div class="col-sm-2">
         <% if !@error && @success %>
-          <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv"), params: {statement: @statement}, class: "btn btn-primary" %>
+          <%= render partial: 'blazer/queries/download' %>
         <% end %>
       </div>
     </div>

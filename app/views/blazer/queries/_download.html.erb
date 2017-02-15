@@ -6,7 +6,7 @@
   </button>
   <ul class="dropdown-menu">
     <% Blazer.query_adapters.each do |adapter| %>
-      <li><%= link_to "Download #{adapter.format}", run_queries_path(query_id: @query.id, format: adapter.format), params: {statement: @statement} %></li>
+      <li><%= button_to "Download #{adapter.format}", run_queries_path(query_id: @query.id, format: adapter.format), params: {statement: @statement} %></li>
     <% end %>
   </ul>
 </div>

@@ -1,6 +1,6 @@
 class ApplicationAdapter
 
-  attr_accessor :format, :render_method
+  attr_reader :format, :render_method
 
   def initialize(query, columns, rows, data_source)
     @query = query
@@ -8,6 +8,12 @@ class ApplicationAdapter
     @rows = rows
     @data_source = data_source
     @format = self.class.format
+  end
+
+  class << self
+    def format
+      'undefined'
+    end
   end
 
 end

@@ -33,7 +33,7 @@ module Blazer
     end
 
     def blazer_js_var(name, value)
-      "var #{name} = #{blazer_json_escape(value.to_json)}".html_safe
+      "var #{name} = #{blazer_json_escape(value.to_json(root: false))};".html_safe
     end
 
     JSON_ESCAPE = { '&' => '\u0026', '>' => '\u003e', '<' => '\u003c', "\u2028" => '\u2028', "\u2029" => '\u2029' }

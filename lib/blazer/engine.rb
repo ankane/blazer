@@ -37,6 +37,7 @@ module Blazer
       end
 
       Blazer.images = Blazer.settings["images"] || false
+      Blazer.output_smart_columns_in_csv = Blazer.settings["output_smart_columns_in_csv"] || false
     end
   end
 end

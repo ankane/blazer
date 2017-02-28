@@ -306,12 +306,14 @@ module Blazer
 
       def csv_data(columns, rows, data_source, boom)
         CSV.generate do |csv|
-          csv << columns.flat_map { |column| boom[column] ? [column, column =~ /_id$/ ? column.gsub(/_id$/, '') : "#{column}_map"] : column }
+          csv << columns.flat_map do |column|
+            (Blazer.output_smart_columns_in_csv && boom[column]) ? [column, column =~ /_id$/ ? column.gsub(/_id$/, '') : "#{column}_label"] : column
+          end
           rows.each_with_index do |row|
             csv << row.each_with_index.flat_map do |v, i|
               column = columns[i]
               value = v.is_a?(Time) ? blazer_time_value(data_source, column, v) : v
-              boom[column] ? [value, (boom[column] || {})[value]] : value
+              (Blazer.output_smart_columns_in_csv && boom[column]) ? [value, (boom[column] || {})[value]] : value
             end
           end
         end

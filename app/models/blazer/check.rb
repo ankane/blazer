@@ -4,6 +4,7 @@ module Blazer
     belongs_to :query
 
     validates :query_id, presence: true
+    validate :validate_emails
 
     before_validation :set_state
     before_validation :fix_emails
@@ -73,6 +74,12 @@ module Blazer
         # some people like doing ; instead of ,
         # but we know what they mean, so let's fix it
         self.emails = emails.gsub(";", ",") if emails.present?
+      end
+
+      def validate_emails
+        unless split_emails.all? { |e| e =~ /\A.+@.+\..+\z/ }
+          errors.add(:base, "Invalid emails")
+        end
       end
   end
 end

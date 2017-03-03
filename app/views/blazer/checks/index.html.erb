@@ -19,7 +19,7 @@
         <td><%= link_to check.query.name, check.query %> <span class="text-muted"><%= check.try(:check_type).to_s.gsub("_", " ") %></span></td>
         <td>
           <% if check.state %>
-            <small class="check-state <%= check.state.parameterize("_") %>"><%= check.state.upcase %></small>
+            <small class="check-state <%= check.state.parameterize.gsub("-", "_") %>"><%= check.state.upcase %></small>
           <% end %>
         </td>
         <td><%= check.schedule if check.respond_to?(:schedule) %></td>

@@ -95,7 +95,7 @@
       return parseInt(a.replace(/,/g, ''), 10) - parseInt(b.replace(/,/g, ''), 10);
     },
     "float": function(a, b) {
-      return parseFloat(a) - parseFloat(b);
+      return (parseFloat(a) || 0) - (parseFloat(b) || 0);
     },
     "string": function(a, b) {
       if (a < b) return -1;

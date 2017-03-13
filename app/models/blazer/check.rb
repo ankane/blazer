@@ -77,7 +77,7 @@ module Blazer
       end
 
       def validate_emails
-        unless split_emails.all? { |e| e =~ /\A.+@.+\..+\z/ }
+        unless split_emails.all? { |e| e =~ /\A\S+@\S+\.\S+\z/ }
           errors.add(:base, "Invalid emails")
         end
       end

@@ -75,7 +75,7 @@ module Blazer
         # but we know what they mean, so let's fix it
         # also, some people like to use whitespace
         if emails.present?
-          self.emails = emails.gsub(/[;\s]/, ",").gsub(/,+/, ", ")
+          self.emails = emails.strip.gsub(/[;\s]/, ",").gsub(/,+/, ", ")
         end
       end
 

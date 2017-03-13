@@ -73,7 +73,10 @@ module Blazer
       def fix_emails
         # some people like doing ; instead of ,
         # but we know what they mean, so let's fix it
-        self.emails = emails.gsub(";", ",") if emails.present?
+        # also, some people like to use whitespace
+        if emails.present?
+          self.emails = emails.gsub(/[;\s]/, ",").gsub(/,+/, ", ")
+        end
       end
 
       def validate_emails

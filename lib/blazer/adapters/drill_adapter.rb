@@ -9,8 +9,8 @@ module Blazer
         begin
           # remove trailing semicolon
           response = drill.query(statement.sub(/;\s*\z/, ""))
-          rows = response.map { |r| r.values }
-          columns = rows.any? ? response.first.keys : []
+          columns = response["columns"]
+          rows = response["rows"].map { |r| columns.map { |c| r[c] } }
         rescue => e
           error = e.message
         end

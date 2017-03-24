@@ -391,9 +391,9 @@ data_sources:
 - [SQLite](#sqlite)
 - [Redshift](#redshift)
 - [Presto](#presto)
-- [MongoDB](#mongodb-1) [beta]
+- [Apache Drill](#apache-drill)
+- [MongoDB](#mongodb-1)
 - [Elasticsearch](#elasticsearch) [beta]
-- [Apache Drill](#apache-drill) [beta]
 
 You can also [create an adapter](#creating-an-adapter) for any other data store.
 
@@ -473,6 +473,17 @@ data_sources:
     url: presto://user@hostname:8080/catalog
 ```
 
+### Apache Drill
+
+Add [drill-sergeant](https://github.com/ankane/drill-sergeant) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: drill
+    url: http://hostname:8047
+```
+
 ### MongoDB
 
 Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:
@@ -492,17 +503,6 @@ data_sources:
   my_source:
     adapter: elasticsearch
     url: http://user:password@hostname:9200
-```
-
-### Apache Drill
-
-Add [drill-sergeant](https://github.com/ankane/drill-sergeant) to your Gemfile and set:
-
-```yml
-data_sources:
-  my_source:
-    adapter: drill
-    url: http://hostname:8047
 ```
 
 ## Creating an Adapter

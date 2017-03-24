@@ -8,7 +8,8 @@ module Blazer
 
         drill = ::Drill.new(url: settings["url"])
         begin
-          response = drill.query(statement)
+          # remove trailing semicolon
+          response = drill.query(statement.sub(/;\s*\z/, ""))
           rows = response.map { |r| r.values }
           columns = rows.any? ? response.first.keys : []
         rescue => e

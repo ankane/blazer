@@ -6,7 +6,6 @@ module Blazer
         rows = []
         error = nil
 
-        drill = ::Drill.new(url: settings["url"])
         begin
           # remove trailing semicolon
           response = drill.query(statement.sub(/;\s*\z/, ""))
@@ -17,6 +16,12 @@ module Blazer
         end
 
         [columns, rows, error]
+      end
+
+      private
+
+      def drill
+        @drill ||= ::Drill.new(url: settings["url"])
       end
     end
   end

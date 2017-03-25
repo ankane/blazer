@@ -7,9 +7,15 @@ module Blazer
         error = nil
 
         begin
-          results = bigquery.query(statement, timeout: 30000) # ms
-          columns = results.first.keys.map(&:to_s) if results.size > 0
-          rows = results.map(&:values)
+          options = {}
+          options[:timeout] = data_source.timeout.to_i * 1000 if data_source.timeout
+          results = bigquery.query(statement, options) # ms
+          if results.complete?
+            columns = results.first.keys.map(&:to_s) if results.size > 0
+            rows = results.map(&:values)
+          else
+            error = "Timed out"
+          end
         rescue => e
           error = e.message
         end

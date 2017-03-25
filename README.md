@@ -392,6 +392,7 @@ data_sources:
 - [Redshift](#redshift)
 - [Presto](#presto)
 - [Apache Drill](#apache-drill)
+- [Google BigQuery](#google-bigquery)
 - [MongoDB](#mongodb-1)
 - [Elasticsearch](#elasticsearch) [beta]
 
@@ -482,6 +483,19 @@ data_sources:
   my_source:
     adapter: drill
     url: http://hostname:8047
+```
+
+### Google BigQuery
+
+Add [google-cloud-bigquery](https://github.com/GoogleCloudPlatform/google-cloud-ruby/tree/master/google-cloud-bigquery) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: bigquery
+    url: "" # required for blazer
+    project: "your_project"
+    keyfile: "json credentials file"
 ```
 
 ### MongoDB

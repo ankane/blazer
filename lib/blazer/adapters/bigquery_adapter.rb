@@ -7,7 +7,7 @@ module Blazer
         error = nil
         begin
           results = bigquery.query(statement, timeout: timeout_ms)
-          columns = results.first.keys.map(&:to_s)
+          columns = results.first.keys.map(&:to_s) if results.size > 0
           rows = results.map(&:values)
         rescue StandardError => e
           error = e.message

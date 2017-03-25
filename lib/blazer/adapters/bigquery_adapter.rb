@@ -14,7 +14,7 @@ module Blazer
             columns = results.first.keys.map(&:to_s) if results.size > 0
             rows = results.map(&:values)
           else
-            error = "Timed out"
+            error = Blazer::TIMEOUT_MESSAGE
           end
         rescue => e
           error = e.message

@@ -12,7 +12,7 @@ module Blazer
       @id = id
       @settings = settings
 
-      unless settings["url"] || Rails.env.development?
+      unless settings["url"] || Rails.env.development? || settings["adapter"] == "bigquery"
         raise Blazer::Error, "Empty url for data source: #{id}"
       end
 

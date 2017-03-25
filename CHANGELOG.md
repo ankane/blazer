@@ -1,3 +1,7 @@
+## 1.7.10 [unreleased]
+
+- Added support for Google BigQuery
+
 ## 1.7.9
 
 - Added beta support for Apache Drill

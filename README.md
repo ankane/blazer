@@ -392,7 +392,7 @@ data_sources:
 - [Redshift](#redshift)
 - [Presto](#presto)
 - [Apache Drill](#apache-drill)
-- [Google BigQuery](#google-bigquery)
+- [Google BigQuery](#google-bigquery-master)
 - [MongoDB](#mongodb-1)
 - [Elasticsearch](#elasticsearch) [beta]
 
@@ -485,7 +485,7 @@ data_sources:
     url: http://hostname:8047
 ```
 
-### Google BigQuery
+### Google BigQuery [master]
 
 Add [google-cloud-bigquery](https://github.com/GoogleCloudPlatform/google-cloud-ruby/tree/master/google-cloud-bigquery) to your Gemfile and set:
 
@@ -493,9 +493,8 @@ Add [google-cloud-bigquery](https://github.com/GoogleCloudPlatform/google-cloud-
 data_sources:
   my_source:
     adapter: bigquery
-    url: "" # required for blazer
-    project: "your_project"
-    keyfile: "json credentials file"
+    project: your-project
+    keyfile: path/to/keyfile.json
 ```
 
 ### MongoDB

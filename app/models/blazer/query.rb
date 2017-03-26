@@ -23,5 +23,9 @@ module Blazer
       editable &&= Blazer.query_editable.call(self, user) if Blazer.query_editable
       editable
     end
+
+    def variables
+      Blazer.extract_vars(statement)
+    end
   end
 end

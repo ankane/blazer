@@ -25,7 +25,7 @@ module Blazer
     private
 
       def process_vars(statement, data_source)
-        (@bind_vars ||= []).concat(extract_vars(statement)).uniq!
+        (@bind_vars ||= []).concat(Blazer.extract_vars(statement)).uniq!
         @bind_vars.each do |var|
           params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
         end
@@ -78,13 +78,6 @@ module Blazer
 
         [smart_var, error]
       end
-
-      def extract_vars(statement)
-        # strip commented out lines
-        # and regex {1} or {1,2}
-        statement.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{\w*?\}/i).map { |v| v[1...-1] }.reject { |v| /\A\d+(\,\d+)?\z/.match(v) || v.empty? }.uniq
-      end
-      helper_method :extract_vars
 
       def variable_params
         params.except(:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id, :blazer, :run_id).permit!

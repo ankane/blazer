@@ -279,7 +279,7 @@ module Blazer
               id: q.id,
               name: q.name,
               creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
-              vars: extract_vars(q.statement).join(", "),
+              vars: q.variables.join(", "),
               to_param: q.to_param
             }
           end

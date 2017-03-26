@@ -5,6 +5,7 @@ module Blazer
 
     validates :query_id, presence: true
     validate :validate_emails
+    validate :validate_variables, if: -> { query_id_changed? }
 
     before_validation :set_state
     before_validation :fix_emails
@@ -82,6 +83,12 @@ module Blazer
       def validate_emails
         unless split_emails.all? { |e| e =~ /\A\S+@\S+\.\S+\z/ }
           errors.add(:base, "Invalid emails")
+        end
+      end
+
+      def validate_variables
+        if query.variables.any?
+          errors.add(:base, "Query can't have variables")
         end
       end
   end

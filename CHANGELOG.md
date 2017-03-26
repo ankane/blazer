@@ -1,6 +1,7 @@
 ## 1.7.10 [unreleased]
 
 - Added support for Google BigQuery
+- Better handling of checks with variables
 
 ## 1.7.9
 

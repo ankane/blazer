@@ -1,7 +1,7 @@
 module Blazer
   class BaseController < ApplicationController
 
-    PRESERVE_FILTERS = []
+    PRESERVE_FILTERS = [:activate_authlogic]
 
     # skip filters
     filters = _process_action_callbacks.reject do |callback|

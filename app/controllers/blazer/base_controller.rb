@@ -1,7 +1,13 @@
 module Blazer
   class BaseController < ApplicationController
-    # skip all filters
-    filters = _process_action_callbacks.map(&:filter)
+
+    PRESERVE_FILTERS = []
+
+    # skip filters
+    filters = _process_action_callbacks.reject do |callback|
+      PRESERVE_FILTERS.include?(callback.filter)
+    end.collect(&:filter)
+
     if Rails::VERSION::MAJOR >= 5
       skip_before_action(*filters, raise: false)
       skip_after_action(*filters, raise: false)

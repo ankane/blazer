@@ -8,27 +8,29 @@
     <% end %>
 
     <% @bind_vars.each_with_index do |var, i| %>
-      <%= label_tag var, var %>
-      <% if (data = @smart_vars[var]) %>
-        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), style: "margin-right: 20px; width: 200px; display: none;", multiple: true %>
-        <script>
-          $("#<%= var %>").selectize({
-            create: true
-          });
-        </script>
-      <% else %>
-        <%= text_field_tag var, params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !params[var], class: "form-control" %>
-        <% if var.end_with?("_at") %>
+      <div class="form-group">
+        <%= label_tag var, var %>
+        <% if (data = @smart_vars[var]) %>
+          <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), style: "margin-right: 20px; width: 200px; display: none;", multiple: true %>
           <script>
-            $("#<%= var %>").daterangepicker({singleDatePicker: true, locale: {format: "YYYY-MM-DD"}, autoUpdateInput: false});
-            // hack to start with empty date
-            $("#<%= var %>").on("apply.daterangepicker", function(ev, picker) {
-              $(this).val(picker.startDate.format("YYYY-MM-DD"));
-              $(this).change();
+            $("#<%= var %>").selectize({
+              create: true
             });
           </script>
+        <% else %>
+          <%= text_field_tag var, params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !params[var], class: "form-control" %>
+          <% if var.end_with?("_at") %>
+            <script>
+              $("#<%= var %>").daterangepicker({singleDatePicker: true, locale: {format: "YYYY-MM-DD"}, autoUpdateInput: false});
+              // hack to start with empty date
+              $("#<%= var %>").on("apply.daterangepicker", function(ev, picker) {
+                $(this).val(picker.startDate.format("YYYY-MM-DD"));
+                $(this).change();
+              });
+            </script>
+          <% end %>
         <% end %>
-      <% end %>
+      </div>
     <% end %>
 
     <% if date_vars %>

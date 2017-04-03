@@ -2707,7 +2707,7 @@
           label = self.options[self.items[i]][self.settings.labelField] || '';
           options.push('<option value="' + escape_html(self.items[i]) + '" selected="selected">' + escape_html(label) + '</option>');
         }
-        if (!options.length && !this.$input.attr('multiple')) {
+        if (!options.length) {
           options.push('<option value="" selected="selected"></option>');
         }
         self.$input.html(options.join(''));

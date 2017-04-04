@@ -1,6 +1,7 @@
-## 1.7.10 [unreleased]
+## 1.7.10
 
 - Added support for Google BigQuery
+- Require `drill-sergeant` gem for Apache Drill
 - Better handling of checks with variables
 
 ## 1.7.9

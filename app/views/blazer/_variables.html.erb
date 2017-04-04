@@ -79,7 +79,6 @@
           },
           function(start, end) {
             setTimeInputs(start, end)
-            submitIfCompleted($("#start_time").closest("form"))
           }
         ).on("apply.daterangepicker", function(ev, picker) {
           setTimeInputs(picker.startDate, picker.endDate)
@@ -94,7 +93,6 @@
         } else {
           var picker = $("#reportrange").data("daterangepicker")
           $("#reportrange").trigger("apply.daterangepicker", picker)
-          submitIfCompleted($("#start_time").closest("form"))
         }
       </script>
     <% end %>

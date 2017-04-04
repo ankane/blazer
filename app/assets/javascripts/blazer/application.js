@@ -23,25 +23,9 @@ $(document).on('mouseenter', '.dropdown-toggle', function () {
   $(this).parent().addClass('open')
 })
 
-$(document).on("change", "#bind input, #bind select", function () {
-  submitIfCompleted($(this).closest("form"))
-})
-
 $(document).on("click", "#code", function () {
   $(this).addClass("expanded")
 })
-
-function submitIfCompleted($form) {
-  var completed = true
-  $form.find("input[name], select").each( function () {
-    if ($(this).val() == "") {
-      completed = false
-    }
-  })
-  if (completed) {
-    $form.submit()
-  }
-}
 
 // Prevent backspace from navigating backwards.
 // Adapted from Biff MaGriff: http://stackoverflow.com/a/7895814/1196499

@@ -43,6 +43,10 @@ module Blazer
         true # optional
       end
 
+      def quote(value)
+        ActiveRecord::Base.connection.quote(value)
+      end
+
       protected
 
       def settings

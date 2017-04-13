@@ -25,9 +25,10 @@ module Blazer
     private
 
       def process_vars(statement, data_source)
+        data_source = Blazer.data_sources[data_source]
         (@bind_vars ||= []).concat(Blazer.extract_vars(statement)).uniq!
         @bind_vars.each do |var|
-          params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
+          params[var] ||= data_source.variable_defaults[var]
         end
         @success = @bind_vars.all? { |v| params[v] }
 
@@ -53,7 +54,7 @@ module Blazer
                 value = value.to_f
               end
             end
-            statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
+            statement.gsub!("{#{var}}", data_source.adapter_instance.quote(value))
           end
         end
       end

@@ -93,6 +93,8 @@
       <%= column_chart first_20.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.sort_by { |r2| labels.index(r2[0]) }.map { |v2| v3 = v2[0]; [(@boom[@columns[0]] || {})[v3.to_s] || v3, v2[2]] }} }, id: chart_id %>
     <% elsif chart_type == "scatter" %>
       <%= scatter_chart @rows, xtitle: @columns[0], ytitle: @columns[1], id: chart_id %>
+    <% elsif chart_type == "pie" %>
+      <%= pie_chart @rows, id: chart_id %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
         <% v = @rows.first.first %>

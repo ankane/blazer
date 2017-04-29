@@ -49,5 +49,9 @@ module Blazer
         json_escape(s)
       end
     end
+
+    def blazer_series_name(k)
+      k.nil? ? "null" : k.to_s
+    end
   end
 end

@@ -1,3 +1,7 @@
+## 1.8.0 [unreleased]
+
+- Added support for Rails 5.1
+
 ## 1.7.10
 
 - Added support for Google BigQuery

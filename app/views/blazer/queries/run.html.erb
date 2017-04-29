@@ -76,11 +76,11 @@
         map.fitBounds(featureLayer.getBounds());
       </script>
     <% elsif chart_type == "line" %>
-      <%= line_chart @columns[1..-1].each_with_index.map{ |k, i| {name: k, data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} }, chart_options %>
+      <%= line_chart @columns[1..-1].each_with_index.map{ |k, i| {name: k.to_s, data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} }, chart_options %>
     <% elsif chart_type == "line2" %>
-      <%= line_chart @rows.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} }, chart_options %>
+      <%= line_chart @rows.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name.to_s, data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} }, chart_options %>
     <% elsif chart_type == "bar" %>
-      <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1]; {name: name, data: @rows.first(20).map { |r| [(@boom[@columns[0]] || {})[r[0].to_s] || r[0], r[i + 1]] } } }, id: chart_id %>
+      <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1]; {name: name.to_s, data: @rows.first(20).map { |r| [(@boom[@columns[0]] || {})[r[0].to_s] || r[0], r[i + 1]] } } }, id: chart_id %>
     <% elsif chart_type == "bar2" %>
       <% first_20 = @rows.group_by { |r| r[0] }.values.first(20).flatten(1) %>
       <% labels = first_20.map { |r| r[0] }.uniq %>
@@ -90,7 +90,7 @@
           <% first_20 << [l, s, 0] unless first_20.find { |r| r[0] == l && r[1] == s } %>
         <% end %>
       <% end %>
-      <%= column_chart first_20.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name, data: v.sort_by { |r2| labels.index(r2[0]) }.map { |v2| v3 = v2[0]; [(@boom[@columns[0]] || {})[v3.to_s] || v3, v2[2]] }} }, id: chart_id %>
+      <%= column_chart first_20.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: name.to_s, data: v.sort_by { |r2| labels.index(r2[0]) }.map { |v2| v3 = v2[0]; [(@boom[@columns[0]] || {})[v3.to_s] || v3, v2[2]] }} }, id: chart_id %>
     <% elsif chart_type == "scatter" %>
       <%= scatter_chart @rows, xtitle: @columns[0], ytitle: @columns[1], id: chart_id %>
     <% elsif @only_chart %>

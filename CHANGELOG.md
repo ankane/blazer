@@ -1,4 +1,4 @@
-## 1.8.0 [unreleased]
+## 1.8.0
 
 - Added support for Rails 5.1
 

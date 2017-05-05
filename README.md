@@ -37,6 +37,7 @@ gem 'blazer'
 Run:
 
 ```sh
+rails bundle install
 rails g blazer:install
 rake db:migrate
 ```

@@ -24,10 +24,10 @@ module Blazer
         boom = {}
         columns.each_with_index do |key, i|
           smart_columns_data_source =
-            ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_columns[key] }
+            ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_columns[key.to_s] }
 
           if smart_columns_data_source
-            query = smart_columns_data_source.smart_columns[key]
+            query = smart_columns_data_source.smart_columns[key.to_s]
             res =
               if query.is_a?(Hash)
                 query

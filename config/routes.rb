@@ -12,5 +12,8 @@ Blazer::Engine.routes.draw do
   resources :dashboards do
     post :refresh, on: :member
   end
+
+  get 'exports/:pid', to: 'exports#show', as: 'exports'
+
   root to: "queries#home"
 end

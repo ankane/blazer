@@ -1,3 +1,5 @@
+require 'securerandom'
+
 module Blazer
   class Query < ActiveRecord::Base
     belongs_to :creator, Blazer::BELONGS_TO_OPTIONAL.merge(class_name: Blazer.user_class.to_s) if Blazer.user_class
@@ -5,6 +7,8 @@ module Blazer
     has_many :dashboard_queries, dependent: :destroy
     has_many :dashboards, through: :dashboard_queries
     has_many :audits
+
+    after_create :generate_uuid
 
     validates :statement, presence: true
 
@@ -26,6 +30,10 @@ module Blazer
 
     def variables
       Blazer.extract_vars(statement)
+    end
+
+    def generate_uuid
+      update_attribute(:pid, SecureRandom.uuid)
     end
   end
 end

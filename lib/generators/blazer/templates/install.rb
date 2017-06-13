@@ -6,6 +6,8 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
       t.text :description
       t.text :statement
       t.string :data_source
+      t.boolean :public, default: false
+      t.uuid :pid
       t.timestamps null: false
     end
 

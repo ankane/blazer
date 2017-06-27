@@ -255,7 +255,7 @@ module Blazer
             []
           end
 
-        @queries = Blazer::Query.named.select(:id, :name, :creator_id, :statement)
+        @queries = Blazer::Query.named.select([:id, :name, :creator_id, :statement])
         @queries = @queries.includes(:creator) if Blazer.user_class
 
         if blazer_user && params[:filter] == "mine"

@@ -2,9 +2,12 @@ module Blazer
   class ExportsController < BaseController
     before_action :set_query
 
+    include ::Blazer::QueryRunner
+
     def show
       return head :forbidden unless @query.public
-      redirect_to queries_path(query_id: @query.id, format: "csv"), params: {statement: @query.statement}
+
+      run_command(@query.statement)
     end
 
     private

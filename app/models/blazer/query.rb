@@ -8,7 +8,7 @@ module Blazer
     has_many :dashboards, through: :dashboard_queries
     has_many :audits
 
-    after_create :generate_uuid
+    before_create :generate_uuid
 
     validates :statement, presence: true
 
@@ -33,7 +33,7 @@ module Blazer
     end
 
     def generate_uuid
-      update_attribute(:pid, SecureRandom.uuid)
+      self.pid = SecureRandom.uuid
     end
   end
 end

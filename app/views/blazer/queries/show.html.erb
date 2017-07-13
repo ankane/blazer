@@ -16,7 +16,7 @@
         <% if !@error && @success %>
           <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv"), params: {statement: @statement}, class: "btn btn-primary" %>
           <% if @query.public %>
-            <%= link_to "Share", exports_path(pid: @query.pid), class: "btn btn-primary" %>
+            <%= link_to "Share", exports_path(pid: @query.pid, format: "csv"), class: "btn btn-primary" %>
           <% end %>
         <% end %>
       </div>

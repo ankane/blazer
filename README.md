@@ -235,6 +235,13 @@ smart_columns:
   status: {0: "Active", 1: "Archived"}
 ```
 
+You can add smart column labels to your CSV exports - this is a global setting.
+
+```yml
+output_smart_columns_in_csv: true
+
+```
+
 ### Caching
 
 Blazer can automatically cache results to improve speed. It can cache slow queries:

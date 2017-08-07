@@ -242,7 +242,7 @@ module Blazer
             render layout: false
           end
           format.csv do
-            send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
+            send_data csv_data(@columns, @rows, @data_source, @boom), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
           end
         end
       end
@@ -304,11 +304,17 @@ module Blazer
         params[:blazer] || {}
       end
 
-      def csv_data(columns, rows, data_source)
+      def csv_data(columns, rows, data_source, boom)
         CSV.generate do |csv|
-          csv << columns
-          rows.each do |row|
-            csv << row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(data_source, columns[i], v) : v }
+          csv << columns.flat_map do |column|
+            (Blazer.output_smart_columns_in_csv && boom[column]) ? [column, column =~ /_id$/ ? column.gsub(/_id$/, '') : "#{column}_label"] : column
+          end
+          rows.each_with_index do |row|
+            csv << row.each_with_index.flat_map do |v, i|
+              column = columns[i]
+              value = v.is_a?(Time) ? blazer_time_value(data_source, column, v) : v
+              (Blazer.output_smart_columns_in_csv && boom[column]) ? [value, (boom[column] || {})[value]] : value
+            end
           end
         end
       end

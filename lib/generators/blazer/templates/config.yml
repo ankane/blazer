@@ -53,6 +53,9 @@ audit: true
 # email to send checks from
 # from_email: blazer@example.org
 
+# optional labels field output in CSV
+# output_smart_columns_in_csv: false
+
 check_schedules:
   - "1 day"
   - "1 hour"

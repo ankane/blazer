@@ -389,12 +389,13 @@ data_sources:
 - [Oracle](#oracle)
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [SQLite](#sqlite)
-- [Redshift](#redshift)
+- [Amazon Redshift](#amazon-redshift)
+- [Amazon Athena](#amazon-athena-master) [master]
 - [Presto](#presto)
 - [Apache Drill](#apache-drill)
 - [Google BigQuery](#google-bigquery)
 - [MongoDB](#mongodb-1)
-- [Elasticsearch](#elasticsearch) [beta]
+- [Elasticsearch](#elasticsearch-beta) [beta]
 
 You can also [create an adapter](#creating-an-adapter) for any other data store.
 
@@ -454,7 +455,7 @@ data_sources:
     url: sqlite3:path/to/database.sqlite3
 ```
 
-### Redshift
+### Amazon Redshift
 
 Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) or [activerecord5-redshift-adapter](https://github.com/ConsultingMD/activerecord5-redshift-adapter) to your Gemfile and set:
 
@@ -462,6 +463,18 @@ Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-red
 data_sources:
   my_source:
     url: redshift://user:password@hostname:5439/database
+```
+
+### Amazon Athena [master]
+
+Add [aws-sdk](https://github.com/aws/aws-sdk-ruby) `~> 2` to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: athena
+    database: database
+    output_location: s3://some-bucket/
 ```
 
 ### Presto
@@ -507,7 +520,7 @@ data_sources:
     url: mongodb://user:password@hostname:27017/database
 ```
 
-### Elasticsearch
+### Elasticsearch [beta]
 
 Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) to your Gemfile and set:
 

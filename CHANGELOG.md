@@ -1,3 +1,7 @@
+## 1.8.1 [unreleased]
+
+- Added support for Amazon Athena
+
 ## 1.8.0
 
 - Added support for Rails 5.1

@@ -153,6 +153,7 @@ Specify a `before_action` method to run in `blazer.yml`.
 ```yml
 before_action: require_admin
 ```
+
 Then define the custom authentication method in your `application_controller.rb`.
 
 ```ruby

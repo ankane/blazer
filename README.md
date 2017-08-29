@@ -747,6 +747,12 @@ audit: true
 # from_email: blazer@example.org
 ```
 
+## Tests
+
+```
+bundle exec rake test
+```
+
 ## TODO
 
 - advanced permissions

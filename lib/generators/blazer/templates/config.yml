@@ -57,3 +57,7 @@ check_schedules:
   - "1 day"
   - "1 hour"
   - "5 minutes"
+
+query_adapters:
+  - "::Query::HtmlAdapter"
+  - "::Query::CsvAdapter"

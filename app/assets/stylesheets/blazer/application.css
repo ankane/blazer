@@ -47,6 +47,38 @@ input.search:focus {
   outline: none;
 }
 
+.btn-group .button_to .btn {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.btn-group .button_to + .dropdown-toggle {
+  position: absolute;
+  top: 0px;
+  right: -34px;
+}
+
+.dropdown-menu > li > form {
+    display: block;
+    padding: 3px 20px;
+    clear: both;
+    font-weight: normal;
+    line-height: 1.42857143;
+    color: #333;
+    white-space: nowrap;
+}
+
+.dropdown-menu > li > form > input[type="submit"] {
+  border: none;
+  background: transparent;
+}
+
+.dropdown-menu > li > form:hover {
+  color: #262626;
+  text-decoration: none;
+  background-color: #f5f5f5;
+}
+
 .form-inline .selectize-control, .text-right .selectize-control {
   display: inline-block;
   vertical-align: middle;

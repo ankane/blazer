@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "rails"
+  spec.add_dependency "mocha"
   spec.add_dependency "chartkick"
   spec.add_dependency "safely_block", ">= 0.1.1"
 

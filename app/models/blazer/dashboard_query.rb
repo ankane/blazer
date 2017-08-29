@@ -1,5 +1,5 @@
 module Blazer
-  class DashboardQuery < ActiveRecord::Base
+  class DashboardQuery < Record
     belongs_to :dashboard
     belongs_to :query
 

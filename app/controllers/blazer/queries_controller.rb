@@ -242,7 +242,8 @@ module Blazer
             render layout: false
           end
           format.csv do
-            send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
+            encoded = ERB::Util.url_encode(ActiveSupport::Multibyte::Unicode.normalize("#{@query.file_basename}.csv", :c))
+            send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename*=UTF-8''#{encoded}"
           end
         end
       end

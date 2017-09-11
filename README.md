@@ -2,9 +2,9 @@
 
 Explore your data with SQL. Easily create charts and dashboards, and share them with your team.
 
-[Try it out](https://blazerme.herokuapp.com)
+[Try it out](https://blazer.dokkuapp.com)
 
-[![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-6ca3115a518b488026e48be83ba0d4c9.png)](https://blazerme.herokuapp.com)
+[![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-6ca3115a518b488026e48be83ba0d4c9.png)](https://blazer.dokkuapp.com)
 
 :envelope: [Get notified of updates](http://eepurl.com/cbUwsD)
 

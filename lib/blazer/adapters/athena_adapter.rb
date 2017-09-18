@@ -41,7 +41,7 @@ module Blazer
             end
           end
 
-          if resp
+          if resp && resp.result_set
             column_info = resp.result_set.result_set_metadata.column_info
             columns = column_info.map(&:name)
             column_types = column_info.map(&:type)
@@ -77,6 +77,12 @@ module Blazer
                 end
               end
             end
+          elsif resp
+            # failed, get message
+            resp2 = client.get_query_execution(
+              query_execution_id: query_execution_id
+            )
+            error = resp2.query_execution.status.state_change_reason
           else
             error = Blazer::TIMEOUT_MESSAGE
           end

@@ -63,6 +63,10 @@ module Blazer
                 rows.each do |row|
                   row[i] = utc.parse(row[i])
                 end
+              when "date"
+                rows.each do |row|
+                  row[i] = Date.parse(row[i])
+                end
               when "bigint"
                 rows.each do |row|
                   row[i] = row[i].to_i

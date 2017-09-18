@@ -15,7 +15,7 @@ module Blazer
               # use token so we fetch cached results after query is run
               client_request_token: Digest::MD5.hexdigest(statement),
               query_execution_context: {
-                database: settings["database"] || "default",
+                database: database,
               },
               result_configuration: {
                 output_location: settings["output_location"]
@@ -93,10 +93,30 @@ module Blazer
         [columns, rows, error]
       end
 
+      def tables
+        glue.get_tables(database_name: database).table_list.map(&:name).sort
+      end
+
+      def schema
+        glue.get_tables(database_name: database).table_list.map { |t| {table: t.name, columns: t.storage_descriptor.columns.map { |c| {name: c.name, data_type: c.type} }} }
+      end
+
+      def preview_statement
+        "SELECT * FROM {table} LIMIT 10"
+      end
+
       private
+
+      def database
+        @database ||= settings["database"] || "default"
+      end
 
       def client
         @client ||= Aws::Athena::Client.new
+      end
+
+      def glue
+        @glue ||= Aws::Glue::Client.new
       end
     end
   end

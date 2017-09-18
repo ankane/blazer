@@ -78,16 +78,15 @@ module Blazer
               end
             end
           elsif resp
-            # failed, get message
-            resp2 = client.get_query_execution(
-              query_execution_id: query_execution_id
-            )
-            error = resp2.query_execution.status.state_change_reason
+            error = fetch_error(query_execution_id)
           else
             error = Blazer::TIMEOUT_MESSAGE
           end
         rescue Aws::Athena::Errors::InvalidRequestException => e
           error = e.message
+          if error == "Query did not finish successfully. Final query state: FAILED"
+            error = fetch_error(query_execution_id)
+          end
         end
 
         [columns, rows, error]
@@ -109,6 +108,12 @@ module Blazer
 
       def database
         @database ||= settings["database"] || "default"
+      end
+
+      def fetch_error(query_execution_id)
+        client.get_query_execution(
+          query_execution_id: query_execution_id
+        ).query_execution.status.state_change_reason
       end
 
       def client

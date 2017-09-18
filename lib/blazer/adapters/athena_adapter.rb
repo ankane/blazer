@@ -15,7 +15,7 @@ module Blazer
               # use token so we fetch cached results after query is run
               client_request_token: Digest::MD5.hexdigest(statement),
               query_execution_context: {
-                database: settings["database"],
+                database: settings["database"] || "default",
               },
               result_configuration: {
                 output_location: settings["output_location"]
@@ -47,11 +47,32 @@ module Blazer
             column_types = column_info.map(&:type)
 
             untyped_rows = []
+
+            # paginated
             resp.each do |page|
               untyped_rows.concat page.result_set.rows.map { |r| r.data.map(&:var_char_value) }
             end
 
-            rows = untyped_rows[1..-1] # TODO use column_types
+            utc = ActiveSupport::TimeZone['Etc/UTC']
+
+            rows = untyped_rows[1..-1]
+            column_types.each_with_index do |ct, i|
+              # TODO more column_types
+              case ct
+              when "timestamp"
+                rows.each do |row|
+                  row[i] = utc.parse(row[i])
+                end
+              when "bigint"
+                rows.each do |row|
+                  row[i] = row[i].to_i
+                end
+              when "double"
+                rows.each do |row|
+                  row[i] = row[i].to_f
+                end
+              end
+            end
           else
             error = Blazer::TIMEOUT_MESSAGE
           end

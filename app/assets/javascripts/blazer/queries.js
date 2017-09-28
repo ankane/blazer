@@ -52,6 +52,9 @@ function runQueryHelper(query) {
   }).fail( function(jqXHR, textStatus, errorThrown) {
     if (!query.canceled) {
       var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message
+      if (!message) {
+        message = "An error occurred"
+      }
       query.error(message)
     }
     queryComplete(query)

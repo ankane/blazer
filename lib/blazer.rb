@@ -155,7 +155,7 @@ module Blazer
       slack_checks << check if check.notify_slack
     end
 
-    Blazer::SlackNotifier.failing_checks(slack_checks)
+    Blazer::SlackNotifier.failing_checks(slack_checks) unless slack_checks.empty?
 
     emails.each do |email, checks|
       Safely.safely do

@@ -7,7 +7,7 @@ module Blazer
       notify_slack(message)
     end
 
-    def self.failing_checks(checks, channel)
+    def self.failing_checks(checks)
       message = "Checks failing.\n"
       checks.each { |c| message << "#{c.query.name} (#{c.state})\n" }
       notify_slack(message)

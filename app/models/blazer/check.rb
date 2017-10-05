@@ -1,5 +1,3 @@
-require 'slack-notifier'
-
 module Blazer
   class Check < Record
     belongs_to :creator, Blazer::BELONGS_TO_OPTIONAL.merge(class_name: Blazer.user_class.to_s) if Blazer.user_class

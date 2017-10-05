@@ -38,7 +38,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
       t.text :emails
       t.string :check_type
       t.text :message
-      t.string :slack_channel
+      t.boolean :notify_slack, default: false
       t.timestamp :last_run_at
       t.timestamps null: false
     end

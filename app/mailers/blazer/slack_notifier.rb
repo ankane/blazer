@@ -2,8 +2,6 @@ require 'net/http'
 
 module Blazer
   class SlackNotifier
-    include Rails.application.routes.url_helpers
-
     def self.state_change(check, state, state_was, rows_count)
       message = "#{check.query.name} check changed status from #{state_was} to #{state}. It now returns #{rows} rows."
       notify_slack(message)

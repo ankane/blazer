@@ -1,25 +1,35 @@
-require 'slack-notifier'
+require 'net/http'
 
 module Blazer
   class SlackNotifier
-    def state_change(check, state, state_was, rows_count)
-      message = "#{check.query.name} check changed status from #{state_was} to #{state}. It now returns #{rows} rows. #{query_url(check.query_id)}"
+    include Rails.application.routes.url_helpers
+
+    def self.state_change(check, state, state_was, rows_count)
+      message = "#{check.query.name} check changed status from #{state_was} to #{state}. It now returns #{rows} rows."
       notify_slack(message, check.slack_channel)
     end
 
-    def failing_checks(checks)
-      message = "#{pluralize(checks.size, "Check")} failing.\n"
-      checks.each { |c| message << "#{query_url(check.query_id)} (#{check.state})\n" }
-      notify_slack(message, checks.first.slack_channel)
+    def self.failing_checks(checks, channel)
+      message = "Checks failing.\n"
+      checks.each { |c| message << "#{c.query.name} (#{c.state})\n" }
+      notify_slack(message, channel)
     end
 
-    def notify_slack(message, channel)
-      notifier(channel).ping(message)
-    end
+    def self.notify_slack(message, channel)
+      slack_url = ENV.fetch('SLACK_WEBHOOK_URL')
 
-    def notifier(channel)
-      Slack::Notifier.new ENV.fetch('WEBHOOK_URL'), channel: channel,
-                                                    username: 'Blazer Notifier'
+      params = {
+        text: message,
+        channel: channel
+      }
+
+      uri = URI.parse(slack_url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+
+      request = Net::HTTP::Post.new(uri.request_uri)
+      request.body = params.to_json
+      http.request(request)
     end
   end
 end

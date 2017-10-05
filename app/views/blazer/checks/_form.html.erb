@@ -60,13 +60,13 @@
     <%= f.label :emails %>
     <%= f.text_field :emails, placeholder: "Optional, comma separated", class: "form-control" %>
   </div>
-  <p class="text-muted">Emails are sent when a check starts failing, and when it starts passing again.
 
   <div class="form-group">
     <%= f.label :slack_channel %>
     <%= f.text_field :slack_channel, placeholder: "Optional, formatted as #slack-channel", class: "form-control" %>
   </div>
-  <p class="text-muted">Slack notifications are sent when a check starts failing, and when it starts passing again.
+
+  <p class="text-muted">Email and Slack notifications are sent when a check starts failing, and when it starts passing again.
   <p>
     <% if @check.persisted? %>
       <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>

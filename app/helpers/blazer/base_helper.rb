@@ -28,8 +28,12 @@ module Blazer
       end
     end
 
-    def build_column_link(template, value)
-      template.gsub("{value}", url_encode(value.to_s))
+    def build_column_link(template, value, row, columns)
+      replaced = template.dup
+      columns.each_with_index do |col, i|
+        replaced.gsub!("{#{col}}", url_encode(row[i].to_s))
+      end
+      replaced.gsub("{value}", url_encode(value.to_s))
     end
 
     def blazer_maps?

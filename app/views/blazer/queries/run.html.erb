@@ -139,7 +139,7 @@
                         <% if v.is_a?(String) && v == "" %>
                           <div class="text-muted">empty string</div>
                         <% elsif @linked_columns[k] %>
-                          <%= link_to blazer_format_value(k, v), build_column_link(@linked_columns[k], v), target: "_blank" %>
+                          <%= link_to blazer_format_value(k, v), build_column_link(@linked_columns[k], v, row, @columns), target: "_blank" %>
                         <% else %>
                           <%= blazer_format_value(k, v) %>
                         <% end %>

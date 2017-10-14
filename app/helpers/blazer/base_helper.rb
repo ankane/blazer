@@ -28,6 +28,10 @@ module Blazer
       end
     end
 
+    def build_column_link(template, value)
+      template.gsub("{value}", url_encode(value.to_s))
+    end
+
     def blazer_maps?
       ENV["MAPBOX_ACCESS_TOKEN"].present?
     end

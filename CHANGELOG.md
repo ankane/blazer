@@ -1,6 +1,7 @@
 ## 1.8.1 [unreleased]
 
 - Added support for Amazon Athena
+- Fixed query cancellation
 
 ## 1.8.0
 

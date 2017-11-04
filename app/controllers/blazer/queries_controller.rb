@@ -183,7 +183,7 @@ module Blazer
 
     def cancel
       Blazer.data_sources[params[:data_source]].cancel(blazer_run_id)
-      render json: {}
+      head :ok
     end
 
     private

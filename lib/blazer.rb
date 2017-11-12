@@ -61,7 +61,7 @@ module Blazer
 
   def self.user_class
     if !defined?(@user_class)
-      @user_class = settings.key?("user_class") ? settings["user_class"] : (User rescue nil)
+      @user_class = settings.key?("user_class") ? settings["user_class"] : (User.name rescue nil)
     end
     @user_class
   end

@@ -61,16 +61,16 @@ module Blazer
 
   def self.user_class
     if !defined?(@user_class)
-      @user_class = Blazer.settings.key?("user_class") ? Blazer.settings["user_class"] : (User rescue nil)
+      @user_class = settings.key?("user_class") ? settings["user_class"] : (User rescue nil)
     end
     @user_class
   end
 
   def self.user_method
     if !defined?(@user_method)
-      @user_method ||= Blazer.settings["user_method"]
+      @user_method ||= settings["user_method"]
       if user_class
-        @user_method ||= "current_#{Blazer.user_class.to_s.downcase.singularize}"
+        @user_method ||= "current_#{user_class.to_s.downcase.singularize}"
       end
     end
     @user_method

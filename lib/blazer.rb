@@ -68,7 +68,7 @@ module Blazer
 
   def self.user_method
     if !defined?(@user_method)
-      @user_method ||= settings["user_method"]
+      @user_method = settings["user_method"]
       if user_class
         @user_method ||= "current_#{user_class.to_s.downcase.singularize}"
       end

@@ -130,8 +130,14 @@ module Blazer
           break
         end
       end
-      check.reload # in case state has changed since job started
-      check.update_state(result)
+
+      begin
+        check.reload # in case state has changed since job started
+        check.update_state(result)
+      rescue ActiveRecord::RecordNotFound
+        # check deleted
+      end
+
       # TODO use proper logfmt
       Rails.logger.info "[blazer check] query=#{check.query.name} state=#{check.state} rows=#{result.rows.try(:size)} error=#{result.error}"
 

@@ -1,6 +1,8 @@
 module Blazer
   module Adapters
     class DruidAdapter < BaseAdapter
+      TIMESTAMP_REGEX = /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\z/
+
       def run_statement(statement, comment)
         columns = []
         rows = []
@@ -29,6 +31,16 @@ module Blazer
           else
             columns = response.first.keys || []
             rows = response.map { |r| r.values }
+
+            # Druid doesn't return column types
+            # and no timestamp type in JSON
+            rows.each do |row|
+              row.each_with_index do |v, i|
+                if v.is_a?(String) && TIMESTAMP_REGEX.match(v)
+                  row[i] = Time.parse(v)
+                end
+              end
+            end
           end
          rescue => e
            error = e.message

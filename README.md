@@ -532,7 +532,7 @@ data_sources:
 
 ### Druid
 
-First, [enable SQL support](http://druid.io/docs/latest/querying/sql.html) on the broker.
+First, [enable SQL support](http://druid.io/docs/latest/querying/sql.html#configuration) on the broker.
 
 Set:
 

@@ -1,6 +1,7 @@
 ## 1.8.1 [unreleased]
 
 - Added support for Amazon Athena
+- Added support for Druid
 - Fixed query cancellation
 
 ## 1.8.0

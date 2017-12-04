@@ -111,6 +111,8 @@
       <div class="results-container">
         <% if @columns == ["QUERY PLAN"] %>
           <pre><code><%= @rows.map { |r| r[0] }.join("\n") %></code></pre>
+        <% elsif @columns == ["PLAN"] && @data_source.adapter == "druid" %>
+          <pre><code><%= @rows[0][0] %></code></pre>
         <% else %>
           <table class="table results-table" style="margin-bottom: 0;">
             <thead>

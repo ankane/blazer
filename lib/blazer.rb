@@ -10,6 +10,7 @@ require "blazer/adapters/base_adapter"
 require "blazer/adapters/athena_adapter"
 require "blazer/adapters/bigquery_adapter"
 require "blazer/adapters/drill_adapter"
+require "blazer/adapters/druid_adapter"
 require "blazer/adapters/elasticsearch_adapter"
 require "blazer/adapters/mongodb_adapter"
 require "blazer/adapters/presto_adapter"
@@ -174,10 +175,11 @@ module Blazer
   end
 end
 
-Blazer.register_adapter "drill", Blazer::Adapters::DrillAdapter
-Blazer.register_adapter "bigquery", Blazer::Adapters::BigQueryAdapter
 Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter
+Blazer.register_adapter "bigquery", Blazer::Adapters::BigQueryAdapter
+Blazer.register_adapter "drill", Blazer::Adapters::DrillAdapter
+Blazer.register_adapter "druid", Blazer::Adapters::DruidAdapter
 Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter
-Blazer.register_adapter "mongodb", Blazer::Adapters::MongodbAdapter
 Blazer.register_adapter "presto", Blazer::Adapters::PrestoAdapter
+Blazer.register_adapter "mongodb", Blazer::Adapters::MongodbAdapter
 Blazer.register_adapter "sql", Blazer::Adapters::SqlAdapter

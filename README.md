@@ -404,6 +404,7 @@ data_sources:
 - [Apache Drill](#apache-drill)
 - [Google BigQuery](#google-bigquery)
 - [MongoDB](#mongodb-1)
+- [Druid](#druid) [master]
 - [Elasticsearch](#elasticsearch-beta) [beta]
 
 You can also [create an adapter](#creating-an-adapter) for any other data store.
@@ -527,6 +528,19 @@ Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and se
 data_sources:
   my_source:
     url: mongodb://user:password@hostname:27017/database
+```
+
+### Druid
+
+First, [enable SQL support](http://druid.io/docs/latest/querying/sql.html) on the broker.
+
+Set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: druid
+    url: http://hostname:8082
 ```
 
 ### Elasticsearch [beta]

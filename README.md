@@ -399,12 +399,12 @@ data_sources:
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [SQLite](#sqlite)
 - [Amazon Redshift](#amazon-redshift)
-- [Amazon Athena](#amazon-athena-master) [master]
+- [Amazon Athena](#amazon-athena)
 - [Presto](#presto)
 - [Apache Drill](#apache-drill)
 - [Google BigQuery](#google-bigquery)
 - [MongoDB](#mongodb-1)
-- [Druid](#druid) [master]
+- [Druid](#druid)
 - [Elasticsearch](#elasticsearch-beta) [beta]
 
 You can also [create an adapter](#creating-an-adapter) for any other data store.
@@ -475,7 +475,7 @@ data_sources:
     url: redshift://user:password@hostname:5439/database
 ```
 
-### Amazon Athena [master]
+### Amazon Athena
 
 Add [aws-sdk](https://github.com/aws/aws-sdk-ruby) `~> 2` to your Gemfile and set:
 

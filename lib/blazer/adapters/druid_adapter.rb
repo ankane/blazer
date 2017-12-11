@@ -9,7 +9,6 @@ module Blazer
         error = nil
 
         header = {"Content-Type" => "application/json", "Accept" => "application/json"}
-        context = {}
         timeout = data_source.timeout ? data_source.timeout.to_i : 300
         data = {
           query: statement,

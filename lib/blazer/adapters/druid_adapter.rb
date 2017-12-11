@@ -30,7 +30,7 @@ module Blazer
               error = Blazer::TIMEOUT_MESSAGE
             end
           else
-            columns = response.first.keys || []
+            columns = (response.first || {}).keys
             rows = response.map { |r| r.values }
 
             # Druid doesn't return column types

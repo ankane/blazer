@@ -14,7 +14,7 @@ module Blazer
         data = {
           query: statement,
           context: {
-            timeout: timeout
+            timeout: timeout * 1000
           }
         }
 

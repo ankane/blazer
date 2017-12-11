@@ -1,3 +1,7 @@
+## 1.8.2 [unreleased]
+
+- Fixes for Druid
+
 ## 1.8.1
 
 - Added support for Amazon Athena

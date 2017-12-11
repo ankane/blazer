@@ -10,21 +10,22 @@ module Blazer
 
         header = {"Content-Type" => "application/json", "Accept" => "application/json"}
         context = {}
-        if data_source.timeout
-          context = data_source.timeout.to_i * 1000
-        end
+        timeout = data_source.timeout ? data_source.timeout.to_i : 300
         data = {
           query: statement,
-          context: context
+          context: {
+            timeout: timeout
+          }
         }
 
         uri = URI.parse("#{settings["url"]}/druid/v2/sql/")
         http = Net::HTTP.new(uri.host, uri.port)
+        http.read_timeout = timeout
 
         begin
           response = JSON.parse(http.post(uri.request_uri, data.to_json, header).body)
           if response.is_a?(Hash)
-            error = response["errorMessage"]
+            error = response["errorMessage"] || "Unknown error: #{response.inspect}"
             if error.include?("timed out")
               error = Blazer::TIMEOUT_MESSAGE
             end

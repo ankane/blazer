@@ -67,6 +67,7 @@
 <script>
   <%= blazer_js_var "params", variable_params %>
   <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, (v.preview_statement rescue "")] }] %>
+  var new_record = <%= @query.new_record? %>;
 
   var app = new Vue({
     el: "#app",
@@ -98,9 +99,7 @@
           _this.running = false
           _this.showResults(data)
 
-          <% if @query.new_record? %>
-            DraftStore.saveDraft(_this.getSQL())
-          <% end %>
+          if (new_record) { DraftStore.saveDraft(_this.getSQL()) }
 
           errorLine = _this.getErrorLine()
           if (errorLine) {
@@ -169,10 +168,10 @@
 
         this.editor = editor
 
-        <% if @query.new_record? %>
+        if (new_record) {
           var draftSQL = DraftStore.restoreDraft()
           if (draftSQL) { editor.setValue(draftSQL) }
-        <% end %>
+        }
 
         editor.getSession().on("change", function () {
           $("#query_statement").val(editor.getValue())

@@ -98,7 +98,9 @@
           _this.running = false
           _this.showResults(data)
 
-          DraftStore.saveDraft(_this.getSQL())
+          <% if @query.new_record? %>
+            DraftStore.saveDraft(_this.getSQL())
+          <% end %>
 
           errorLine = _this.getErrorLine()
           if (errorLine) {
@@ -167,8 +169,10 @@
 
         this.editor = editor
 
-        var draftSQL = DraftStore.restoreDraft()
-        if (draftSQL) { editor.setValue(draftSQL) }
+        <% if @query.new_record? %>
+          var draftSQL = DraftStore.restoreDraft()
+          if (draftSQL) { editor.setValue(draftSQL) }
+        <% end %>
 
         editor.getSession().on("change", function () {
           $("#query_statement").val(editor.getValue())

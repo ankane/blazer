@@ -98,6 +98,8 @@
           _this.running = false
           _this.showResults(data)
 
+          DraftStore.saveDraft(_this.getSQL())
+
           errorLine = _this.getErrorLine()
           if (errorLine) {
             editor.getSession().addGutterDecoration(errorLine - 1, "error")
@@ -164,6 +166,9 @@
         editor.commands.removeCommands(["gotoline", "find"])
 
         this.editor = editor
+
+        var draftSQL = DraftStore.restoreDraft()
+        if (draftSQL) { editor.setValue(draftSQL) }
 
         editor.getSession().on("change", function () {
           $("#query_statement").val(editor.getValue())

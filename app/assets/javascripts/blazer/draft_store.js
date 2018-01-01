@@ -4,20 +4,24 @@ var DraftStore = {
   },
 
   tabID: function() {
-    return sessionStorage.tabID ? sessionStorage.tabID : sessionStorage.tabID = Math.random()
+    return sessionStorage.tabID ? sessionStorage.tabID : sessionStorage.tabID = this._generateTabID()
   },
 
   saveDraft: function(value) {
     if (!this.isSessionStorageSupported()) {
       return
     }
-    sessionStorage.setItem("blazer-query-" + this.tabID(), value)
+    sessionStorage.setItem(this.tabID(), value)
   },
 
   restoreDraft: function() {
     if (!this.isSessionStorageSupported()) {
       return
     }
-    return sessionStorage.getItem("blazer-query-" + this.tabID())
+    return sessionStorage.getItem(this.tabID())
+  },
+
+  _generateTabID: function() {
+    return "blazer-query-" + Math.random()
   }
 }

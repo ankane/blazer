@@ -4,7 +4,7 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 [Try it out](https://blazer.dokkuapp.com)
 
-[![Screenshot](https://blazerme.herokuapp.com/assets/screenshot-6ca3115a518b488026e48be83ba0d4c9.png)](https://blazer.dokkuapp.com)
+[![Screenshot](https://blazer.dokkuapp.com/assets/screenshot-6ca3115a518b488026e48be83ba0d4c9.png)](https://blazer.dokkuapp.com)
 
 :envelope: [Get notified of updates](http://eepurl.com/cbUwsD)
 
@@ -60,7 +60,7 @@ Blazer tries to protect against queries which modify data (by running each query
 Be sure to set a host in `config/environments/production.rb` for emails to work.
 
 ```ruby
-config.action_mailer.default_url_options = {host: "blazerme.herokuapp.com"}
+config.action_mailer.default_url_options = {host: "blazer.dokkuapp.com"}
 ```
 
 Schedule checks to run (with cron, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc). The default options are every 5 minutes, 1 hour, or 1 day, which you can customize. For each of these options, set up a task to run.
@@ -173,7 +173,7 @@ Create queries with variables.
 SELECT * FROM users WHERE gender = {gender}
 ```
 
-Use `{start_time}` and `{end_time}` for time ranges. [Example](https://blazerme.herokuapp.com/queries/9-time-range-selector?start_time=1997-10-03T05%3A00%3A00%2B00%3A00&end_time=1997-10-04T04%3A59%3A59%2B00%3A00)
+Use `{start_time}` and `{end_time}` for time ranges. [Example](https://blazer.dokkuapp.com/queries/9-time-range-selector?start_time=1997-10-03T05%3A00%3A00%2B00%3A00&end_time=1997-10-04T04%3A59%3A59%2B00%3A00)
 
 ```sql
 SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
@@ -181,7 +181,7 @@ SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
 
 ### Smart Variables
 
-[Example](https://blazerme.herokuapp.com/queries/1-smart-variable)
+[Example](https://blazer.dokkuapp.com/queries/1-smart-variable)
 
 Suppose you have the query:
 
@@ -210,7 +210,7 @@ smart_variables:
 
 ### Linked Columns
 
-[Example](https://blazerme.herokuapp.com/queries/3-linked-column) - title column
+[Example](https://blazer.dokkuapp.com/queries/3-linked-column) - title column
 
 Link results to other pages in your apps or around the web. Specify a column name and where it should link to. You can use the value of the result with `{value}`.
 
@@ -222,7 +222,7 @@ linked_columns:
 
 ### Smart Columns
 
-[Example](https://blazerme.herokuapp.com/queries/2-smart-column) - occupation_id column
+[Example](https://blazer.dokkuapp.com/queries/2-smart-column) - occupation_id column
 
 Suppose you have the query:
 
@@ -275,13 +275,13 @@ Blazer will automatically generate charts based on the types of the columns retu
 
 There are two ways to generate line charts.
 
-2+ columns - timestamp, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/4-line-chart-format-1)
+2+ columns - timestamp, numeric(s) - [Example](https://blazer.dokkuapp.com/queries/4-line-chart-format-1)
 
 ```sql
 SELECT date_trunc('week', created_at), COUNT(*) FROM users GROUP BY 1
 ```
 
-3 columns - timestamp, string, numeric - [Example](https://blazerme.herokuapp.com/queries/5-line-chart-format-2)
+3 columns - timestamp, string, numeric - [Example](https://blazer.dokkuapp.com/queries/5-line-chart-format-2)
 
 
 ```sql
@@ -292,13 +292,13 @@ SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 
 There are also two ways to generate column charts.
 
-2+ columns - string, numeric(s) - [Example](https://blazerme.herokuapp.com/queries/6-column-chart-format-1)
+2+ columns - string, numeric(s) - [Example](https://blazer.dokkuapp.com/queries/6-column-chart-format-1)
 
 ```sql
 SELECT gender, COUNT(*) FROM users GROUP BY 1
 ```
 
-3 columns - string, string, numeric - [Example](https://blazerme.herokuapp.com/queries/7-column-chart-format-2)
+3 columns - string, string, numeric - [Example](https://blazer.dokkuapp.com/queries/7-column-chart-format-2)
 
 ```sql
 SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
@@ -314,7 +314,7 @@ SELECT x, y FROM table
 
 ### Maps
 
-Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` - [Example](https://blazerme.herokuapp.com/queries/15-map)
+Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` - [Example](https://blazer.dokkuapp.com/queries/15-map)
 
 ```sql
 SELECT name, latitude, longitude FROM cities
@@ -324,7 +324,7 @@ To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `E
 
 ### Targets
 
-Use the column name `target` to draw a line for goals. [Example](https://blazerme.herokuapp.com/queries/8-target-line)
+Use the column name `target` to draw a line for goals. [Example](https://blazer.dokkuapp.com/queries/8-target-line)
 
 ```sql
 SELECT date_trunc('week', created_at), COUNT(*) AS new_users, 100000 AS target FROM users GROUP BY 1
@@ -332,7 +332,7 @@ SELECT date_trunc('week', created_at), COUNT(*) AS new_users, 100000 AS target F
 
 ## Dashboards
 
-Create a dashboard with multiple queries. [Example](https://blazerme.herokuapp.com/dashboards/1-dashboard-demo)
+Create a dashboard with multiple queries. [Example](https://blazer.dokkuapp.com/dashboards/1-dashboard-demo)
 
 If the query has a chart, the chart is shown. Otherwise, you’ll see a table.
 
@@ -340,7 +340,7 @@ If any queries have variables, they will show up on the dashboard.
 
 ## Checks
 
-Checks give you a centralized place to see the health of your data. [Example](https://blazerme.herokuapp.com/checks)
+Checks give you a centralized place to see the health of your data. [Example](https://blazer.dokkuapp.com/checks)
 
 Create a query to identify bad rows.
 

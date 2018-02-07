@@ -404,6 +404,7 @@ data_sources:
 - [Apache Drill](#apache-drill)
 - [Google BigQuery](#google-bigquery)
 - [MongoDB](#mongodb-1)
+- [Cassandra](#cassandra) [master]
 - [Druid](#druid)
 - [Elasticsearch](#elasticsearch-beta) [beta]
 
@@ -528,6 +529,16 @@ Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and se
 data_sources:
   my_source:
     url: mongodb://user:password@hostname:27017/database
+```
+
+### Cassandra
+
+Add [cassandra-driver](https://github.com/datastax/ruby-driver) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: cassandra://user:password@hostname:9042/keyspace
 ```
 
 ### Druid

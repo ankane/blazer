@@ -186,7 +186,7 @@ module Blazer
     def detect_adapter
       schema = settings["url"].to_s.split("://").first
       case schema
-      when "mongodb", "presto"
+      when "mongodb", "presto", "cassandra"
         schema
       else
         "sql"

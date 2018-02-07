@@ -9,6 +9,7 @@ require "blazer/run_statement"
 require "blazer/adapters/base_adapter"
 require "blazer/adapters/athena_adapter"
 require "blazer/adapters/bigquery_adapter"
+require "blazer/adapters/cassandra_adapter"
 require "blazer/adapters/drill_adapter"
 require "blazer/adapters/druid_adapter"
 require "blazer/adapters/elasticsearch_adapter"
@@ -177,6 +178,7 @@ end
 
 Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter
 Blazer.register_adapter "bigquery", Blazer::Adapters::BigQueryAdapter
+Blazer.register_adapter "cassandra", Blazer::Adapters::CassandraAdapter
 Blazer.register_adapter "drill", Blazer::Adapters::DrillAdapter
 Blazer.register_adapter "druid", Blazer::Adapters::DruidAdapter
 Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter

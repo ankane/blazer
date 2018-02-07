@@ -49,31 +49,9 @@
     <% if blazer_maps? && @markers.any? %>
       <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
       <script>
-        L.mapbox.accessToken = '<%= ENV["MAPBOX_ACCESS_TOKEN"] %>';
-        var map = L.mapbox.map('map', 'ankane.ioo8nki0');
+        mapboxgl.accessToken = '<%= ENV["MAPBOX_ACCESS_TOKEN"] %>';
         <%= blazer_js_var "markers", @markers %>
-        var featureLayer = L.mapbox.featureLayer().addTo(map);
-        var geojson = [];
-        for (var i = 0; i < markers.length; i++) {
-          var marker = markers[i];
-          geojson.push({
-            type: 'Feature',
-            geometry: {
-              type: 'Point',
-              coordinates: [
-                marker.longitude,
-                marker.latitude
-              ]
-            },
-            properties: {
-              description: marker.title,
-              'marker-color': '#f86767',
-              'marker-size': 'medium'
-            }
-          });
-        }
-        featureLayer.setGeoJSON(geojson);
-        map.fitBounds(featureLayer.getBounds());
+        new Mapkick.Map('map', markers, {replay: false, route: {limit: 10}});
       </script>
     <% elsif chart_type == "line" %>
       <%= line_chart @columns[1..-1].each_with_index.map{ |k, i| {name: blazer_series_name(k), data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} }, chart_options %>

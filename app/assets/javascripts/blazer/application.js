@@ -16,6 +16,7 @@
 //= require ./routes
 //= require ./queries
 //= require ./fuzzysearch
+//= require ./mapkick
 
 Vue.config.devtools = false
 

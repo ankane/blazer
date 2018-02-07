@@ -229,9 +229,10 @@ module Blazer
                 r[lat_index] && r[lon_index]
               end.map do |r|
                 {
-                  title: r.each_with_index.map{ |v, i| i == lat_index || i == lon_index ? nil : "<strong>#{@columns[i]}:</strong> #{v}" }.compact.join("<br />").truncate(140),
+                  tooltip: r.each_with_index.map{ |v, i| i == lat_index || i == lon_index ? nil : "<strong>#{@columns[i]}:</strong> #{v}" }.compact.join("<br />").truncate(140),
                   latitude: r[lat_index],
-                  longitude: r[lon_index]
+                  longitude: r[lon_index],
+                  time: r[@columns.index("time")]
                 }
               end
           end

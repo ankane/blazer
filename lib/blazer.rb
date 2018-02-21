@@ -26,8 +26,8 @@ module Blazer
     attr_accessor :audit
     attr_reader :time_zone
     attr_accessor :user_name
-    attr_accessor :user_class
-    attr_accessor :user_method
+    attr_writer :user_class
+    attr_writer :user_method
     attr_accessor :before_action
     attr_accessor :from_email
     attr_accessor :cache
@@ -59,6 +59,23 @@ module Blazer
 
   def self.time_zone=(time_zone)
     @time_zone = time_zone.is_a?(ActiveSupport::TimeZone) ? time_zone : ActiveSupport::TimeZone[time_zone.to_s]
+  end
+
+  def self.user_class
+    if !defined?(@user_class)
+      @user_class = settings.key?("user_class") ? settings["user_class"] : (User.name rescue nil)
+    end
+    @user_class
+  end
+
+  def self.user_method
+    if !defined?(@user_method)
+      @user_method = settings["user_method"]
+      if user_class
+        @user_method ||= "current_#{user_class.to_s.downcase.singularize}"
+      end
+    end
+    @user_method
   end
 
   def self.settings

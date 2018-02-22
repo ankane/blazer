@@ -1,4 +1,4 @@
-## 1.8.2 [unreleased]
+## 1.8.2
 
 - Added support for Cassandra
 - Fixes for Druid

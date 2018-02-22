@@ -404,7 +404,7 @@ data_sources:
 - [Apache Drill](#apache-drill)
 - [Google BigQuery](#google-bigquery)
 - [MongoDB](#mongodb-1)
-- [Cassandra](#cassandra) [master]
+- [Cassandra](#cassandra)
 - [Druid](#druid)
 - [Elasticsearch](#elasticsearch-beta) [beta]
 

@@ -13,6 +13,14 @@ module Blazer
             end
             establish_connection(data_source.settings["url"]) if data_source.settings["url"]
           end
+
+        setup_schemas
+      end
+
+      def setup_schemas
+        return if !postgresql? || schemas.empty?
+        schema_sql = 'SET search_path TO ' + schemas.join(',')
+        execute(schema_sql)
       end
 
       def run_statement(statement, comment)

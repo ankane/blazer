@@ -21,7 +21,10 @@ Think you’ve discovered an issue?
 gem "blazer", github: "ankane/blazer"
 ```
 
-If the above steps don’t help, create an issue. Include the complete backtrace for exceptions.
+If the above steps don’t help, create an issue. Include:
+
+- Detailed steps to reproduce
+- Complete backtraces for exceptions
 
 ## Pull Requests
 

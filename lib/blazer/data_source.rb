@@ -161,6 +161,7 @@ module Blazer
       start_time = Time.now
       columns, rows, error = adapter_instance.run_statement(statement, comment)
       duration = Time.now - start_time
+      lag = adapter_instance.lag
 
       cache_data = nil
       cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
@@ -180,7 +181,7 @@ module Blazer
         Blazer.cache.write(run_cache_key(run_id), cache_data, expires_in: 30.seconds)
       end
 
-      Blazer::Result.new(self, columns, rows, error, nil, cache && !cache_data.nil?)
+      Blazer::Result.new(self, columns, rows, error, nil, cache && !cache_data.nil?, lag)
     end
 
     def detect_adapter

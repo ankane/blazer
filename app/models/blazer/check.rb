@@ -27,7 +27,9 @@ module Blazer
       message = result.error
 
       self.state =
-        if result.timed_out?
+        if result.too_much_lag?
+          "replica lag"
+        elsif result.timed_out?
           "timed out"
         elsif result.error
           "error"

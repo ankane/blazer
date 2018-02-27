@@ -1,14 +1,16 @@
 module Blazer
   class Result
     attr_reader :data_source, :columns, :rows, :error, :cached_at, :just_cached
+    TOO_MUCH_LAG = 100
 
-    def initialize(data_source, columns, rows, error, cached_at, just_cached)
+    def initialize(data_source, columns, rows, error, cached_at, just_cached, lag)
       @data_source = data_source
       @columns = columns
       @rows = rows
       @error = error
       @cached_at = cached_at
       @just_cached = just_cached
+      @lag = lag
     end
 
     def timed_out?
@@ -17,6 +19,10 @@ module Blazer
 
     def cached?
       cached_at.present?
+    end
+
+    def too_much_lag?
+      lag > TOO_MUCH_LAG
     end
 
     def boom

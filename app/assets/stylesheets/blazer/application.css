@@ -133,6 +133,10 @@ input.search:focus {
   color: orange;
 }
 
+.check-state.replica_lag {
+  color: orange;
+}
+
 .check-state.disabled {
   color: #000;
 }

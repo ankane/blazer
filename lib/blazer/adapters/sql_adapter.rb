@@ -109,7 +109,7 @@ module Blazer
         if postgresql?
           # cache the version number
           @server_version_num ||= {}
-          cache_key = connection_model.pool.object_id
+          cache_key = connection_model.connection.pool.object_id
           @server_version_num[cache_key] ||= connection_model.connection.execute("SHOW server_version_num").first["server_version_num"].to_i
 
           lag_condition =

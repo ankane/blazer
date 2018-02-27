@@ -22,7 +22,7 @@ module Blazer
     end
 
     def too_much_lag?
-      lag > TOO_MUCH_LAG
+      @lag > TOO_MUCH_LAG
     end
 
     def boom

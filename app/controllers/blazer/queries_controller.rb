@@ -248,13 +248,6 @@ module Blazer
       end
 
       def set_queries(limit = nil)
-        @my_queries =
-          if limit && blazer_user && !params[:filter] && Blazer.audit
-            queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).where("created_at > ?", 30.days.ago).where("query_id IS NOT NULL").group(:query_id).order("count_all desc").count.keys)
-          else
-            []
-          end
-
         @queries = Blazer::Query.named.select(:id, :name, :creator_id, :statement)
         @queries = @queries.includes(:creator) if Blazer.user_class
 
@@ -263,7 +256,6 @@ module Blazer
         elsif blazer_user && params[:filter] == "viewed" && Blazer.audit
           @queries = queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).order(created_at: :desc).limit(500).pluck(:query_id).uniq)
         else
-          @queries = @queries.where("id NOT IN (?)", @my_queries.map(&:id)) if @my_queries.any?
           @queries = @queries.limit(limit) if limit
           @queries = @queries.order(:name)
         end
@@ -271,7 +263,7 @@ module Blazer
 
         @more = limit && @queries.size >= limit
 
-        @queries = (@my_queries + @queries).select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
+        @queries = @queries.select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
 
         @queries =
           @queries.map do |q|

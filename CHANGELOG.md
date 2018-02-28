@@ -1,3 +1,7 @@
+## 1.8.3 [unreleased]
+
+- Better ordering on home page
+
 ## 1.8.2
 
 - Added support for Cassandra

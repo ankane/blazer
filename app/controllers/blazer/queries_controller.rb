@@ -39,7 +39,9 @@ module Blazer
         name: params[:name]
       )
       if params[:fork_query_id]
-        @query.statement ||= Blazer::Query.find(params[:fork_query_id]).try(:statement)
+        query = Blazer::Query.find_by(id: params[:fork_query_id])
+        @query.statement ||= query.try(:statement)
+        @query.name = "Forked: #{query.try(:name)}"
       end
     end
 

@@ -36,6 +36,7 @@ module Blazer
     attr_accessor :anomaly_checks
     attr_accessor :async
     attr_accessor :images
+    attr_accessor :query_viewable
     attr_accessor :query_editable
   end
   self.audit = true

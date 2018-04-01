@@ -1,6 +1,7 @@
 module Blazer
   class QueriesController < BaseController
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
+    before_action :set_data_source, only: [:tables, :schema, :cancel]
 
     def home
       if params[:filter] == "dashboards"
@@ -83,7 +84,10 @@ module Blazer
       data_source = @query.data_source if @query && @query.data_source
       @data_source = Blazer.data_sources[data_source]
 
-      if @run_id
+      # ensure viewable
+      if !(@query || Query.new(data_source: @data_source.id)).viewable?(blazer_user)
+        render_forbidden
+      elsif @run_id
         @timestamp = blazer_params[:timestamp].to_i
 
         @result = @data_source.run_results(@run_id)
@@ -174,19 +178,27 @@ module Blazer
     end
 
     def tables
-      render json: Blazer.data_sources[params[:data_source]].tables
+      render json: @data_source.tables
     end
 
     def schema
-      @schema = Blazer.data_sources[params[:data_source]].schema
+      @schema = @data_source.schema
     end
 
     def cancel
-      Blazer.data_sources[params[:data_source]].cancel(blazer_run_id)
+      @data_source.cancel(blazer_run_id)
       head :ok
     end
 
     private
+
+      def set_data_source
+        @data_source = Blazer.data_sources[params[:data_source]]
+
+        unless Query.new(data_source: @data_source.id).editable?(blazer_user)
+          render_forbidden
+        end
+      end
 
       def continue_run
         render json: {run_id: @run_id, timestamp: @timestamp}, status: :accepted
@@ -286,6 +298,14 @@ module Blazer
 
       def set_query
         @query = Blazer::Query.find(params[:id].to_s.split("-").first)
+
+        unless @query.viewable?(blazer_user)
+          render_forbidden
+        end
+      end
+
+      def render_forbidden
+        render plain: "Access denied", status: :forbidden
       end
 
       def query_params

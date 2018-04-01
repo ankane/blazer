@@ -18,8 +18,17 @@ module Blazer
       name.to_s.sub(/\A[#\*]/, "").gsub(/\[.+\]/, "").strip
     end
 
+    def viewable?(user)
+      if Blazer.query_viewable
+        Blazer.query_viewable.call(self, user)
+      else
+        true
+      end
+    end
+
     def editable?(user)
       editable = !persisted? || (name.present? && name.first != "*" && name.first != "#") || user == try(:creator)
+      editable &&= viewable?(user)
       editable &&= Blazer.query_editable.call(self, user) if Blazer.query_editable
       editable
     end

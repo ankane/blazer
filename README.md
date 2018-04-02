@@ -123,7 +123,7 @@ Also, make sure authorization is enabled when you start the server.
 
 ### Sensitive Data
 
-To protect sensitive info like password hashes and access tokens, use views. Documentation coming soon.
+Check out [Hypershield](https://github.com/ankane/hypershield) to shield sensitive data.
 
 ## Authentication
 

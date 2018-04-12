@@ -392,22 +392,22 @@ data_sources:
 
 ### Full List
 
-- [PostgreSQL](#postgresql-1)
-- [MySQL](#mysql-1)
-- [SQL Server](#sql-server)
-- [Oracle](#oracle)
-- [IBM DB2 and Informix](#ibm-db2-and-informix)
-- [SQLite](#sqlite)
-- [Amazon Redshift](#amazon-redshift)
 - [Amazon Athena](#amazon-athena)
-- [Presto](#presto)
+- [Amazon Redshift](#amazon-redshift)
 - [Apache Drill](#apache-drill)
-- [Google BigQuery](#google-bigquery)
-- [MongoDB](#mongodb-1)
 - [Cassandra](#cassandra)
 - [Druid](#druid)
+- [Elasticsearch](#elasticsearch) [beta]
+- [Google BigQuery](#google-bigquery)
+- [IBM DB2 and Informix](#ibm-db2-and-informix)
+- [MongoDB](#mongodb-1)
+- [MySQL](#mysql-1)
+- [Oracle](#oracle)
+- [PostgreSQL](#postgresql-1)
+- [Presto](#presto)
 - [Snowflake](#snowflake) [master]
-- [Elasticsearch](#elasticsearch-beta) [beta]
+- [SQLite](#sqlite)
+- [SQL Server](#sql-server)
 
 You can also [create an adapter](#creating-an-adapter) for any other data store.
 
@@ -417,64 +417,6 @@ You can also [create an adapter](#creating-an-adapter) for any other data store.
 data_sources:
   my_source:
     url: <%= ENV["BLAZER_MY_SOURCE_URL"] %>
-```
-
-### PostgreSQL
-
-Add [pg](https://bitbucket.org/ged/ruby-pg/wiki/Home) to your Gemfile (if it’s not there) and set:
-
-```yml
-data_sources:
-  my_source:
-    url: postgres://user:password@hostname:5432/database
-```
-
-### MySQL
-
-Add [mysql2](https://github.com/brianmario/mysql2) to your Gemfile (if it’s not there) and set:
-
-```yml
-data_sources:
-  my_source:
-    url: mysql2://user:password@hostname:3306/database
-```
-
-### SQL Server
-
-Add [tiny_tds](https://github.com/rails-sqlserver/tiny_tds) and [activerecord-sqlserver-adapter](https://github.com/rails-sqlserver/activerecord-sqlserver-adapter) to your Gemfile and set:
-
-```yml
-data_sources:
-  my_source:
-    url: sqlserver://user:password@hostname:1433/database
-```
-
-### Oracle
-
-Use [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced).
-
-### IBM DB2 and Informix
-
-Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).
-
-### SQLite
-
-Add [sqlite3](https://github.com/sparklemotion/sqlite3-ruby) to your Gemfile and set:
-
-```yml
-data_sources:
-  my_source:
-    url: sqlite3:path/to/database.sqlite3
-```
-
-### Amazon Redshift
-
-Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) or [activerecord5-redshift-adapter](https://github.com/ConsultingMD/activerecord5-redshift-adapter) to your Gemfile and set:
-
-```yml
-data_sources:
-  my_source:
-    url: redshift://user:password@hostname:5439/database
 ```
 
 ### Amazon Athena
@@ -489,14 +431,14 @@ data_sources:
     output_location: s3://some-bucket/
 ```
 
-### Presto
+### Amazon Redshift
 
-Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
+Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) or [activerecord5-redshift-adapter](https://github.com/ConsultingMD/activerecord5-redshift-adapter) to your Gemfile and set:
 
 ```yml
 data_sources:
   my_source:
-    url: presto://user@hostname:8080/catalog
+    url: redshift://user:password@hostname:5439/database
 ```
 
 ### Apache Drill
@@ -508,28 +450,6 @@ data_sources:
   my_source:
     adapter: drill
     url: http://hostname:8047
-```
-
-### Google BigQuery
-
-Add [google-cloud-bigquery](https://github.com/GoogleCloudPlatform/google-cloud-ruby/tree/master/google-cloud-bigquery) to your Gemfile and set:
-
-```yml
-data_sources:
-  my_source:
-    adapter: bigquery
-    project: your-project
-    keyfile: path/to/keyfile.json
-```
-
-### MongoDB
-
-Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:
-
-```yml
-data_sources:
-  my_source:
-    url: mongodb://user:password@hostname:27017/database
 ```
 
 ### Cassandra
@@ -555,6 +475,77 @@ data_sources:
     url: http://hostname:8082
 ```
 
+### Elasticsearch
+
+Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: elasticsearch
+    url: http://user:password@hostname:9200
+```
+
+### Google BigQuery
+
+Add [google-cloud-bigquery](https://github.com/GoogleCloudPlatform/google-cloud-ruby/tree/master/google-cloud-bigquery) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: bigquery
+    project: your-project
+    keyfile: path/to/keyfile.json
+```
+
+### IBM DB2 and Informix
+
+Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).
+
+### MongoDB
+
+Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: mongodb://user:password@hostname:27017/database
+```
+
+### MySQL
+
+Add [mysql2](https://github.com/brianmario/mysql2) to your Gemfile (if it’s not there) and set:
+
+```yml
+data_sources:
+  my_source:
+    url: mysql2://user:password@hostname:3306/database
+```
+
+### Oracle
+
+Use [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced).
+
+### PostgreSQL
+
+Add [pg](https://bitbucket.org/ged/ruby-pg/wiki/Home) to your Gemfile (if it’s not there) and set:
+
+```yml
+data_sources:
+  my_source:
+    url: postgres://user:password@hostname:5432/database
+```
+
+### Presto
+
+Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: presto://user@hostname:8080/catalog
+```
+
 ### Snowflake
 
 First, install the [ODBC driver](https://docs.snowflake.net/manuals/user-guide/odbc.html). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
@@ -566,15 +557,24 @@ data_sources:
     dsn: ProductionSnowflake
 ```
 
-### Elasticsearch [beta]
+### SQLite
 
-Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) to your Gemfile and set:
+Add [sqlite3](https://github.com/sparklemotion/sqlite3-ruby) to your Gemfile and set:
 
 ```yml
 data_sources:
   my_source:
-    adapter: elasticsearch
-    url: http://user:password@hostname:9200
+    url: sqlite3:path/to/database.sqlite3
+```
+
+### SQL Server
+
+Add [tiny_tds](https://github.com/rails-sqlserver/tiny_tds) and [activerecord-sqlserver-adapter](https://github.com/rails-sqlserver/activerecord-sqlserver-adapter) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: sqlserver://user:password@hostname:1433/database
 ```
 
 ## Creating an Adapter

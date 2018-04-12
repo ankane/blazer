@@ -1,6 +1,7 @@
 ## 1.8.3 [unreleased]
 
 - Better ordering on home page
+- Added support for Snowflake
 
 ## 1.8.2
 

@@ -406,6 +406,7 @@ data_sources:
 - [MongoDB](#mongodb-1)
 - [Cassandra](#cassandra)
 - [Druid](#druid)
+- [Snowflake](#snowflake) [master]
 - [Elasticsearch](#elasticsearch-beta) [beta]
 
 You can also [create an adapter](#creating-an-adapter) for any other data store.
@@ -552,6 +553,17 @@ data_sources:
   my_source:
     adapter: druid
     url: http://hostname:8082
+```
+
+### Snowflake
+
+First, install the [ODBC driver](https://docs.snowflake.net/manuals/user-guide/odbc.html). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: snowflake
+    dsn: ProductionSnowflake
 ```
 
 ### Elasticsearch [beta]

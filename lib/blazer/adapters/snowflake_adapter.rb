@@ -29,10 +29,17 @@ module Blazer
                 int_column[i] = c.type == 3 && c.scale == 0
               end
 
+              float_column = {}
+              columns.each_with_index do |c, i|
+                float_column[i] = c.type == 3 && c.scale != 0
+              end
+
               values.each do |row|
                 row.each_index do |idx|
                   if int_column[idx]
                     row[idx] = row[idx].to_i
+                  elsif float_column[idx]
+                    row[idx] = row[idx].to_f
                   elsif row[idx].is_a?(String)
                     row[idx] = row[idx].force_encoding("UTF-8")
                   end

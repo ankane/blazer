@@ -36,5 +36,13 @@ module Blazer
     def variables
       Blazer.extract_vars(statement)
     end
+
+    def file_basename
+      basename = name.tr("\\", "/") # work-around for IE
+      basename = basename.gsub(/[^[:word:]\.\-\+]/, "_")
+      basename = "_#{basename}" if basename =~ /\A\.+\z/
+      basename = "query" if basename.size == 0
+      basename.mb_chars.to_s
+    end
   end
 end

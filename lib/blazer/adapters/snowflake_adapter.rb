@@ -36,12 +36,15 @@ module Blazer
 
               values.each do |row|
                 row.each_index do |idx|
-                  if int_column[idx]
-                    row[idx] = row[idx].to_i
-                  elsif float_column[idx]
-                    row[idx] = row[idx].to_f
-                  elsif row[idx].is_a?(String)
-                    row[idx] = row[idx].force_encoding("UTF-8")
+                  val = row[idx]
+                  if val
+                    if int_column[idx]
+                      row[idx] = val.to_i
+                    elsif float_column[idx]
+                      row[idx] = val.to_f
+                    elsif val.is_a?(String)
+                      row[idx] = val.force_encoding('UTF-8')
+                    end
                   end
                 end
               end

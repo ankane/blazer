@@ -154,7 +154,7 @@ Specify a `before_action` method to run in `blazer.yml`.
 before_action: require_admin
 ```
 
-You can define the method in your `ApplicationController`.
+You can define this method in your `ApplicationController`.
 
 ```ruby
 def require_admin
@@ -162,6 +162,8 @@ def require_admin
   redirect_to root_path unless current_user && current_user.admin?
 end
 ```
+
+Be sure to render or redirect for unauthorized users.
 
 ## Queries
 

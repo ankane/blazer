@@ -141,7 +141,7 @@ ENV["BLAZER_PASSWORD"] = "secret"
 ### Devise
 
 ```ruby
-authenticate :user, -> (user) { user.admin? } do
+authenticate :user, ->(user) { user.admin? } do
   mount Blazer::Engine, at: "blazer"
 end
 ```
@@ -154,11 +154,11 @@ Specify a `before_action` method to run in `blazer.yml`.
 before_action: require_admin
 ```
 
-Then define the custom authentication method in your `application_controller.rb`.
+You can define the method in your `ApplicationController`.
 
 ```ruby
 def require_admin
-  # depending on your auth, maybe something like...
+  # depending on your auth, something like...
   redirect_to root_path unless current_user && current_user.admin?
 end
 ```

@@ -9,6 +9,7 @@ module Blazer
       @error = error
       @cached_at = cached_at
       @just_cached = just_cached
+      convert_enum_values
     end
 
     def timed_out?
@@ -164,6 +165,21 @@ module Blazer
           timestamps << row["index"].to_i
         end
         timestamps.include?(series.length)
+      end
+    end
+
+    # replaces row integer values with correspending string keys
+    # if the column name has the form of class_enum_field for example
+    # user_enum_state
+    def convert_enum_values
+      columns.each_with_index do |c, i|
+        klass, field = c.match(/\A(.+)_enum_(.+)\z/).try(:captures)
+        next unless klass && field
+        enums_hash = klass.camelize.constantize.send(field.pluralize) rescue nil
+        next if enums_hash.nil?
+        rows.each do |row|
+          row[i] = enums_hash.key row[i]
+        end
       end
     end
   end

@@ -1,27 +1,24 @@
 var DraftStore = {
-  isSessionStorageSupported: function() {
-    return typeof(Storage) !== "undefined"
+  isSessionStorageSupported: function () {
+    return typeof (Storage) !== "undefined"
   },
 
-  tabID: function() {
-    return sessionStorage.tabID ? sessionStorage.tabID : sessionStorage.tabID = this._generateTabID()
+  saveDraft: function (value) {
+    if (!this.isSessionStorageSupported()) { return }
+    sessionStorage.setItem(this._tabID(), value)
   },
 
-  saveDraft: function(value) {
-    if (!this.isSessionStorageSupported()) {
-      return
-    }
-    sessionStorage.setItem(this.tabID(), value)
+  restoreDraft: function () {
+    if (!this.isSessionStorageSupported()) { return }
+    return sessionStorage.getItem(this._tabID())
   },
 
-  restoreDraft: function() {
-    if (!this.isSessionStorageSupported()) {
-      return
-    }
-    return sessionStorage.getItem(this.tabID())
+  removeDraft: function () {
+    if (!this.isSessionStorageSupported()) { return }
+    return sessionStorage.removeItem(this._tabID())
   },
 
-  _generateTabID: function() {
-    return "blazer-query-" + Math.random()
+  _tabID: function () {
+    return sessionStorage._tabID ? sessionStorage._tabID : sessionStorage._tabID = ("blazer-query-" + Math.random())
   }
 }

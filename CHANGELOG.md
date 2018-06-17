@@ -1,4 +1,4 @@
-## 1.9.0 [unreleased]
+## 1.9.0
 
 - Prompt developers to check custom `before_action`
 - Better ordering on home page

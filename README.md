@@ -407,7 +407,7 @@ data_sources:
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
-- [Snowflake](#snowflake) [master]
+- [Snowflake](#snowflake)
 - [SQLite](#sqlite)
 - [SQL Server](#sql-server)
 

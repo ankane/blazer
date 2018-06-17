@@ -11,7 +11,7 @@ module Blazer
       Blazer.audit = Blazer.settings.key?("audit") ? Blazer.settings["audit"] : true
       Blazer.user_name = Blazer.settings["user_name"] if Blazer.settings["user_name"]
       Blazer.from_email = Blazer.settings["from_email"] if Blazer.settings["from_email"]
-      Blazer.before_action = Blazer.settings["before_action"] if Blazer.settings["before_action"]
+      Blazer.before_action = Blazer.settings["before_action_method"] if Blazer.settings["before_action_method"]
       Blazer.check_schedules = Blazer.settings["check_schedules"] if Blazer.settings.key?("check_schedules")
       Blazer.cache ||= Rails.cache
 

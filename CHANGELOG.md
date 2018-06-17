@@ -1,5 +1,6 @@
-## 1.8.3 [unreleased]
+## 1.9.0 [unreleased]
 
+- Prompt developers to check custom `before_action`
 - Better ordering on home page
 - Added support for Snowflake
 

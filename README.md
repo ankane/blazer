@@ -151,7 +151,7 @@ end
 Specify a `before_action` method to run in `blazer.yml`.
 
 ```yml
-before_action: require_admin
+before_action_method: require_admin
 ```
 
 You can define this method in your `ApplicationController`.

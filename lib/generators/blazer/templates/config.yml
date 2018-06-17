@@ -47,8 +47,8 @@ audit: true
 # method name for the display name
 # user_name: name
 
-# optional auth method to use as a before_action (default: nil)
-# before_action: require_admin
+# custom before_action to use for auth
+# before_action_method: require_admin
 
 # email to send checks from
 # from_email: blazer@example.org

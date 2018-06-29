@@ -16,6 +16,7 @@
 //= require ./routes
 //= require ./queries
 //= require ./fuzzysearch
+//= require ./draft_store
 
 Vue.config.devtools = false
 
@@ -76,4 +77,3 @@ function preventBackspaceNav() {
 }
 
 preventBackspaceNav()
-

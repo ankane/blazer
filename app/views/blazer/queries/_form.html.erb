@@ -67,7 +67,6 @@
 <script>
   <%= blazer_js_var "params", variable_params %>
   <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, (v.preview_statement rescue "")] }] %>
-  var new_record = <%= @query.new_record? && @query.statement.blank? %>;
 
   var app = new Vue({
     el: "#app",
@@ -166,16 +165,7 @@
 
         this.editor = editor
 
-        if (new_record) {
-          var draftSQL = DraftStore.restoreDraft()
-          if (draftSQL) {
-            editor.setValue(draftSQL)
-            $("#query_statement").val(draftSQL)
-          }
-        }
-
         editor.getSession().on("change", function () {
-          if (new_record) { DraftStore.saveDraft(editor.getValue()) }
           $("#query_statement").val(editor.getValue())
           _this.adjustHeight()
         })
@@ -247,5 +237,4 @@
       this.showEditor()
     }
   })
-  $("form").submit(function() { DraftStore.removeDraft() })
 </script>

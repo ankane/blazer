@@ -37,8 +37,8 @@ gem 'blazer'
 Run:
 
 ```sh
-rails g blazer:install
-rake db:migrate
+rails generate blazer:install
+rails db:migrate
 ```
 
 And mount the dashboard in your `config/routes.rb`:
@@ -731,7 +731,7 @@ end
 And run:
 
 ```sh
-rake db:migrate
+rails db:migrate
 ```
 
 Update `config/blazer.yml` with:

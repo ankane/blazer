@@ -6,7 +6,7 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 [![Screenshot](https://blazer.dokkuapp.com/assets/screenshot-6ca3115a518b488026e48be83ba0d4c9.png)](https://blazer.dokkuapp.com)
 
-:envelope: [Get notified of updates](http://eepurl.com/cbUwsD)
+:envelope: [Get notified of updates](https://eepurl.com/cbUwsD)
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
@@ -219,7 +219,7 @@ Link results to other pages in your apps or around the web. Specify a column nam
 ```yml
 linked_columns:
   user_id: "/admin/users/{value}"
-  ip_address: "http://www.infosniper.net/index.php?ip_address={value}"
+  ip_address: "https://www.infosniper.net/index.php?ip_address={value}"
 ```
 
 ### Smart Columns
@@ -800,7 +800,7 @@ View the [changelog](https://github.com/ankane/blazer/blob/master/CHANGELOG.md)
 
 Blazer uses a number of awesome open source projects, including [Rails](https://github.com/rails/rails/), [Vue.js](https://github.com/vuejs/vue), [jQuery](https://github.com/jquery/jquery), [Bootstrap](https://github.com/twbs/bootstrap), [Selectize](https://github.com/brianreavis/selectize.js), [StickyTableHeaders](https://github.com/jmosbech/StickyTableHeaders), [Stupid jQuery Table Sort](https://github.com/joequery/Stupid-Table-Plugin), and [Date Range Picker](https://github.com/dangrossman/bootstrap-daterangepicker).
 
-Demo data from [MovieLens](http://grouplens.org/datasets/movielens/).
+Demo data from [MovieLens](https://grouplens.org/datasets/movielens/).
 
 ## Want to Make Blazer Better?
 

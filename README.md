@@ -423,7 +423,7 @@ data_sources:
 
 ### Amazon Athena
 
-Add [aws-sdk](https://github.com/aws/aws-sdk-ruby) `~> 2` to your Gemfile and set:
+Add [aws-sdk-athena](https://github.com/aws/aws-sdk-ruby) and [aws-sdk-glue](https://github.com/aws/aws-sdk-ruby) to your Gemfile and set:
 
 ```yml
 data_sources:

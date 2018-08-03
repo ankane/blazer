@@ -39,6 +39,7 @@ module Blazer
     attr_accessor :images
     attr_accessor :query_viewable
     attr_accessor :query_editable
+    attr_accessor :override_csp
   end
   self.audit = true
   self.user_name = :name
@@ -46,6 +47,7 @@ module Blazer
   self.anomaly_checks = false
   self.async = false
   self.images = false
+  self.override_csp = false
 
   TIMEOUT_MESSAGE = "Query timed out :("
   TIMEOUT_ERRORS = [

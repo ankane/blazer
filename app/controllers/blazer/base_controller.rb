@@ -7,7 +7,7 @@ module Blazer
       skip_after_action(*filters, raise: false)
       skip_around_action(*filters, raise: false)
     else
-      skip_action_callback *filters
+      skip_action_callback(*filters)
     end
 
     protect_from_forgery with: :exception

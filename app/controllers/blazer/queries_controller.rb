@@ -210,7 +210,7 @@ module Blazer
         @first_row = @rows.first || []
         @column_types = []
         if @rows.any?
-          @columns.each_with_index do |column, i|
+          @columns.each_with_index do |_, i|
             @column_types << (
               case @first_row[i]
               when Integer

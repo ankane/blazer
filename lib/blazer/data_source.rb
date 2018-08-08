@@ -90,7 +90,6 @@ module Blazer
     end
 
     def run_statement(statement, options = {})
-      run_id = options[:run_id]
       async = options[:async]
       result = nil
       if cache_mode != "off"

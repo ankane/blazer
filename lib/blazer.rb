@@ -126,8 +126,6 @@ module Blazer
   end
 
   def self.run_check(check)
-    rows = nil
-    error = nil
     tries = 1
 
     ActiveSupport::Notifications.instrument("run_check.blazer", check_id: check.id, query_id: check.query.id, state_was: check.state) do |instrument|

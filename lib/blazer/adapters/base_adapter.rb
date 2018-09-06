@@ -43,6 +43,10 @@ module Blazer
         true # optional
       end
 
+      def lag
+        0.0
+      end
+
       protected
 
       def settings

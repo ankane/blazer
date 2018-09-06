@@ -105,6 +105,34 @@ module Blazer
         !%w[CREATE ALTER UPDATE INSERT DELETE].include?(statement.split.first.to_s.upcase)
       end
 
+      def lag
+        if postgresql?
+          # cache the version number
+          @server_version_num ||= {}
+          cache_key = connection_model.connection.pool.object_id
+          @server_version_num[cache_key] ||= connection_model.connection.execute("SHOW server_version_num").first["server_version_num"].to_i
+
+          lag_condition =
+            if @server_version_num[cache_key] >= 100000
+              "pg_last_wal_receive_lsn() = pg_last_wal_replay_lsn()"
+            else
+              "pg_last_xlog_receive_location() = pg_last_xlog_replay_location()"
+            end
+
+          connection_model.connection.execute(
+            "SELECT CASE
+              WHEN NOT pg_is_in_recovery() OR #{lag_condition} THEN 0
+              ELSE EXTRACT (EPOCH FROM NOW() - pg_last_xact_replay_timestamp())
+            END AS lag".squish
+          ).first["lag"].to_f
+        elsif mysql?
+          status = connection_model.connection.exec_query("SHOW SLAVE STATUS").to_hash.first
+          status ? status["Seconds_Behind_Master"].to_f : 0.0
+        else
+          0.0
+        end
+      end
+
       protected
 
       def select_all(statement)

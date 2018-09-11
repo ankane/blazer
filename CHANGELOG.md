@@ -1,3 +1,7 @@
+## 1.9.1 [unreleased]
+
+- Fixed error with latest `google-cloud-bigquery`
+
 ## 1.9.0
 
 - Prompt developers to check custom `before_action`

@@ -7,11 +7,11 @@ module Blazer
         error = nil
 
         begin
-          options = {}
-          options[:timeout] = data_source.timeout.to_i * 1000 if data_source.timeout
-          results = bigquery.query(statement, options) # ms
+          results = bigquery.query(statement)
 
-          if results.present?
+          # complete? was removed in google-cloud-bigquery 0.29.0
+          # code is for backward compatibility
+          if !results.respond_to?(:complete?) || results.complete?
             columns = results.first.keys.map(&:to_s) if results.size > 0
             rows = results.map(&:values)
           else

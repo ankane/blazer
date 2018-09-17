@@ -4,6 +4,7 @@ module Blazer
     before_action :set_data_source, only: [:tables, :schema, :cancel]
 
     def home
+      flash.now[:alert] = "Do not create queries that output data for customers including email, name and address. Violates PII"
       if params[:filter] == "dashboards"
         @queries = []
       else

@@ -7,7 +7,7 @@ module Blazer
         error = nil
 
         begin
-          documents = db.command({:$eval => "#{statement.strip}.toArray()"}).documents.first["retval"]
+          documents = db.command({:$eval => "#{statement.strip}.toArray()", nolock: true}).documents.first["retval"]
           columns = documents.flat_map { |r| r.keys }.uniq
           rows = documents.map { |r| columns.map { |c| r[c] } }
         rescue => e

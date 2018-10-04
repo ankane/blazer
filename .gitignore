@@ -13,3 +13,4 @@
 *.a
 mkmf.log
 .idea
+node_modules

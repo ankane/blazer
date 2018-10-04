@@ -17,9 +17,6 @@
 //= require ./queries
 //= require ./fuzzysearch
 
-import Highcharts from "highcharts";
-Chartkick.addAdapter(Highcharts);
-
 Vue.config.devtools = false
 
 $(document).on('mouseenter', '.dropdown-toggle', function () {

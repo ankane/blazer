@@ -7,7 +7,7 @@ module Blazer
         error = nil
 
         begin
-          response = client.xpack.sql.query(body: {query: statement})
+          response = client.xpack.sql.query(body: {query: "#{statement} /*#{comment}*/"})
           columns = response["columns"].map { |v| v["name"] }
           # Elasticsearch does not differentiate between dates and times
           date_indexes = response["columns"].each_index.select { |i| response["columns"][i]["type"] == "date" }

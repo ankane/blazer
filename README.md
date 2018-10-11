@@ -479,7 +479,7 @@ data_sources:
 
 ### Elasticsearch
 
-Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) to your Gemfile and set:
+Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) and [elasticsearch-xpack](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-xpack) to your Gemfile and set:
 
 ```yml
 data_sources:

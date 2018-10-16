@@ -65,7 +65,7 @@ module Blazer
           Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now
         end
         # notify via slack
-        if notify_slack = true
+        if notify_slack
           Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size)
         end
       end

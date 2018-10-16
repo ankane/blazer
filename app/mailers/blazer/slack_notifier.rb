@@ -3,7 +3,7 @@ require 'net/http'
 module Blazer
   class SlackNotifier
     def self.state_change(check, state, state_was, rows_count)
-      message = "#{check.query.name} check changed status from #{state_was} to #{state}. It now returns #{rows} rows."
+      message = "#{check.query.name} check changed status from #{state_was} to #{state}. It now returns #{rows_count} rows."
       notify_slack(message)
     end
 

@@ -1,5 +1,6 @@
 ## 1.9.1 [unreleased]
 
+- Use SQL for Elasticsearch
 - Fixed error with latest `google-cloud-bigquery`
 
 ## 1.9.0

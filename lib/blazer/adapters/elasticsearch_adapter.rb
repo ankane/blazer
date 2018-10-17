@@ -7,22 +7,17 @@ module Blazer
         error = nil
 
         begin
-          header, body = statement.gsub(/\/\/.+/, "").strip.split("\n", 2)
-          body = JSON.parse(body)
-          body["timeout"] ||= data_source.timeout if data_source.timeout
-          response = client.msearch(body: [JSON.parse(header), body])["responses"].first
-          if response["error"]
-            error = response["error"]
-          else
-            hits = response["hits"]["hits"]
-            source_keys = hits.flat_map { |r| r["_source"].keys }.uniq
-            hit_keys = (hits.first.try(:keys) || []) - ["_source"]
-            columns = source_keys + hit_keys
-            rows =
-              hits.map do |r|
-                source = r["_source"]
-                source_keys.map { |k| source[k] } + hit_keys.map { |k| r[k] }
+          response = client.xpack.sql.query(body: {query: "#{statement} /*#{comment}*/"})
+          columns = response["columns"].map { |v| v["name"] }
+          # Elasticsearch does not differentiate between dates and times
+          date_indexes = response["columns"].each_index.select { |i| response["columns"][i]["type"] == "date" }
+          if columns.any?
+            rows = response["rows"]
+            date_indexes.each do |i|
+              rows.each do |row|
+                row[i] = Time.parse(row[i])
               end
+            end
           end
         rescue => e
           error = e.message
@@ -32,11 +27,13 @@ module Blazer
       end
 
       def tables
-        client.indices.get_aliases(name: "*").map { |k, v| [k, v["aliases"].keys] }.flatten.uniq.sort
+        indices = client.cat.indices(format: "json").map { |v| v["index"] }
+        aliases = client.cat.aliases(format: "json").map { |v| v["alias"] }
+        (indices + aliases).uniq.sort
       end
 
       def preview_statement
-        %!// header\n{"index": "{table}"}\n\n// body\n{"query": {"match_all": {}}, "size": 10}!
+        "SELECT * FROM \"{table}\" LIMIT 10"
       end
 
       protected

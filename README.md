@@ -644,7 +644,11 @@ Commit and deploy away. The first deploy may take a few minutes.
 
 ## Content Security Policy
 
-If Blazer views are stuck with "Loading..." message there might be a problem with strict CSP settings in your app. This can be easily checked with Firefox or Chrome dev tools. If this is the case you can tell Blazer to override these settings for it's controllers with `override_csp: true` in `blazer.yml`.
+If views are stuck with a `Loading...` message, there might be a problem with strict CSP settings in your app. This can be checked with Firefox or Chrome dev tools. You can allow Blazer to override these settings for its controllers with:
+
+```yml
+override_csp: true
+```
 
 ## Upgrading
 

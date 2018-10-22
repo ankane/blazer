@@ -58,5 +58,5 @@ check_schedules:
   - "1 hour"
   - "5 minutes"
 
-# override app-wide csp for Blazer controllers
-override_csp: false
+# override app-wide CSP for Blazer controllers
+# override_csp: true

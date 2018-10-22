@@ -642,6 +642,10 @@ if (!"AnomalyDetection" %in% installed.packages()) {
 
 Commit and deploy away. The first deploy may take a few minutes.
 
+## Content Security Policy
+
+If Blazer views are stuck with "Loading..." message there might be a problem with strict CSP settings in your app. This can be easily checked with Firefox or Chrome dev tools. If this is the case you can tell Blazer to override these settings for it's controllers with `override_csp: true` in `blazer.yml`.
+
 ## Upgrading
 
 ### 1.5

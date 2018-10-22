@@ -22,6 +22,7 @@ module Blazer
       end
 
       Blazer.images = Blazer.settings["images"] || false
+      Blazer.override_csp = Blazer.settings["override_csp"] || false
     end
   end
 end

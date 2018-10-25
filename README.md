@@ -324,6 +324,24 @@ SELECT name, latitude, longitude FROM cities
 
 To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `ENV["MAPBOX_ACCESS_TOKEN"]`.
 
+### Timeline
+
+3 columns - string, timestamp, timestamp
+
+```sql
+SELECT name, start_time, end_time
+FROM table
+```
+
+#### Grouped Timeline
+
+4 columns - string, timestamp, timestamp, string
+
+```sql
+SELECT name, start_time, end_time, group_name
+FROM table
+```
+
 ### Targets
 
 Use the column name `target` to draw a line for goals. [Example](https://blazer.dokkuapp.com/queries/8-target-line)

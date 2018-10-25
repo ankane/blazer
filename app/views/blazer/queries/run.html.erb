@@ -94,44 +94,8 @@
       <%= column_chart first_20.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| { name: blazer_series_name(name), data: v.sort_by { |r2| labels.index(r2[0]) }.map { |v2| v3 = v2[0]; [(@boom[@columns[0]] || {})[v3.to_s] || v3, v2[2]] } } }, id: chart_id %>
     <% elsif chart_type == "scatter" %>
       <%= scatter_chart @rows, xtitle: @columns[0], ytitle: @columns[1], id: chart_id %>
-    <% elsif chart_type == "timeline" %>
-      <% values = @rows.map.with_index(1) { |array, index| { id: index, content: array[0], start: array[1], end: array[2] } } %>
-      <div id="visualization"></div>
-
-      <script type="text/javascript">
-          // DOM element where the Timeline will be attached
-          var container = document.getElementById('visualization');
-
-          // Create a DataSet (allows two way data-binding)
-          var items = new vis.DataSet(JSON.parse('<%= values.to_json.html_safe %>'));
-
-          // Configuration for the Timeline
-          var options = {};
-
-          // Create a Timeline
-          new vis.Timeline(container, items, options);
-      </script>
-    <% elsif chart_type == "timeline2" %>
-      <% values = @rows.map.with_index(1) { |array, index| { id: index, content: array[0], start: array[1], end: array[2], group: array[3] } } %>
-      <% groups = @rows.map { |array| array[3] }.uniq.map { |group_name| { id: group_name, content: group_name } } %>
-      <div id="visualization"></div>
-
-      <script type="text/javascript">
-          // DOM element where the Timeline will be attached
-          var container = document.getElementById('visualization');
-          console.log('values: <%= values.to_json.html_safe %>');
-          console.log('groups: <%= groups.to_json.html_safe %>');
-
-          // Create a DataSet (allows two way data-binding)
-          var items = new vis.DataSet(JSON.parse('<%= values.to_json.html_safe %>'));
-          var groups = new vis.DataSet(JSON.parse('<%= groups.to_json.html_safe %>'));
-
-          // Configuration for the Timeline
-          var options = {};
-
-          // Create a Timeline
-          new vis.Timeline(container, items, groups, options);
-      </script>
+    <% elsif chart_type == "timeline" || "timeline2" %>
+      <%= vis_timeline(chart_id, @rows).html_safe %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
         <% v = @rows.first.first %>

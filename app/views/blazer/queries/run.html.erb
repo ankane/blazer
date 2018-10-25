@@ -113,6 +113,7 @@
       </script>
     <% elsif chart_type == "timeline2" %>
       <% values = @rows.map.with_index(1) { |array, index| { id: index, content: array[0], start: array[1], end: array[2], group: array[3] } } %>
+      <% groups = @rows.map { |array| array[3] }.uniq.sort.with_index(1) { |group_name, index| { id: index, content: group_name } } %>
       <div id="visualization"></div>
 
       <script type="text/javascript">
@@ -121,12 +122,13 @@
 
           // Create a DataSet (allows two way data-binding)
           var items = new vis.DataSet(JSON.parse('<%= values.to_json.html_safe %>'));
+          var groups = JSON.parse('<%= groups.to_json.html_safe %>');
 
           // Configuration for the Timeline
           var options = {};
 
           // Create a Timeline
-          new vis.Timeline(container, items, options);
+          new vis.Timeline(container, items, groups, options);
       </script>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>

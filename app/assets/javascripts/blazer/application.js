@@ -7,7 +7,7 @@
 //= require ./moment
 //= require ./moment-timezone
 //= require ./daterangepicker
-//= require ./highcharts
+//= require ./Chart.js
 //= require ./chartkick
 //= require ./ace
 //= require ./Sortable

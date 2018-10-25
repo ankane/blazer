@@ -96,12 +96,9 @@
       <%= scatter_chart @rows, xtitle: @columns[0], ytitle: @columns[1], id: chart_id %>
     <% elsif chart_type == "timeline" %>
       <% values = @rows.map.with_index(1) { |array, index| { id: index, content: array[0], start: array[1], end: array[2] } } %>
-      <% logger.debug { "Mapped values: #{values.to_json}" } %>
       <div id="visualization"></div>
 
       <script type="text/javascript">
-          console.log(`Values: ${JSON.parse('<%= values.to_json.html_safe %>')}`);
-
           // DOM element where the Timeline will be attached
           var container = document.getElementById('visualization');
 

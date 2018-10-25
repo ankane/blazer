@@ -1,3 +1,7 @@
+## 1.10.1 [unreleased]
+
+- Added vis.js for timeline and grouped timeline charts
+
 ## 1.9.1 [unreleased]
 
 - Added `override_csp` option

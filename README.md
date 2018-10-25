@@ -660,6 +660,14 @@ if (!"AnomalyDetection" %in% installed.packages()) {
 
 Commit and deploy away. The first deploy may take a few minutes.
 
+## Content Security Policy [master]
+
+If views are stuck with a `Loading...` message, there might be a problem with strict CSP settings in your app. This can be checked with Firefox or Chrome dev tools. You can allow Blazer to override these settings for its controllers with:
+
+```yml
+override_csp: true
+```
+
 ## Upgrading
 
 ### 1.5

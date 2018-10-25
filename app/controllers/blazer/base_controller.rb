@@ -24,6 +24,12 @@ module Blazer
       before_action Blazer.before_action.to_sym
     end
 
+    if Blazer.override_csp
+      after_action do
+        response.headers['Content-Security-Policy'] = "default-src 'self' https: 'unsafe-inline' 'unsafe-eval' data:"
+      end
+    end
+
     layout "blazer/application"
 
     private

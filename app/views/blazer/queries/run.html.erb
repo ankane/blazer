@@ -111,6 +111,23 @@
           // Create a Timeline
           new vis.Timeline(container, items, options);
       </script>
+    <% elsif chart_type == "timeline2" %>
+      <% values = @rows.map.with_index(1) { |array, index| { id: index, content: array[0], start: array[1], end: array[2], group: array[3] } } %>
+      <div id="visualization"></div>
+
+      <script type="text/javascript">
+          // DOM element where the Timeline will be attached
+          var container = document.getElementById('visualization');
+
+          // Create a DataSet (allows two way data-binding)
+          var items = new vis.DataSet(JSON.parse('<%= values.to_json.html_safe %>'));
+
+          // Configuration for the Timeline
+          var options = {};
+
+          // Create a Timeline
+          new vis.Timeline(container, items, options);
+      </script>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
         <% v = @rows.first.first %>

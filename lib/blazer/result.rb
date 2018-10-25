@@ -77,6 +77,8 @@ module Blazer
           "scatter"
         elsif column_types == ["string", "time", "time"]
           "timeline"
+        elsif column_types == ["string", "time", "time", "string"]
+          "timeline2"
         end
       end
     end

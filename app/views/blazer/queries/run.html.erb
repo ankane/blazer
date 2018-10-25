@@ -113,7 +113,7 @@
       </script>
     <% elsif chart_type == "timeline2" %>
       <% values = @rows.map.with_index(1) { |array, index| { id: index, content: array[0], start: array[1], end: array[2], group: array[3] } } %>
-      <% groups = @rows.map { |array| array[3] }.uniq.each { |group_name| { id: group_name, content: group_name } } %>
+      <% groups = @rows.map { |array| array[3] }.uniq.map { |group_name| { id: group_name, content: group_name } } %>
       <div id="visualization"></div>
 
       <script type="text/javascript">

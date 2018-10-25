@@ -95,11 +95,14 @@
     <% elsif chart_type == "scatter" %>
       <%= scatter_chart @rows, xtitle: @columns[0], ytitle: @columns[1], id: chart_id %>
     <% elsif chart_type == "timeline" %>
-      <% logger.debug {"Columns: #{@columns.to_json}"} %>
-      <% logger.debug {"Rows: #{@rows.to_json}"} %>
+      <% Rails.logger.debug { "Columns: #{@columns.to_json}" } %>
+      <% Rails.logger.debug { "Rows: #{@rows.to_json}" } %>
       <div id="visualization"></div>
 
       <script type="text/javascript">
+          console.log("Columns: <%= @columns.to_json %>");
+          console.log("Rows: <%= @rows.to_json %>");
+
           // DOM element where the Timeline will be attached
           var container = document.getElementById('visualization');
 

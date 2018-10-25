@@ -335,6 +335,8 @@ FROM table
 
 #### Grouped Timeline
 
+Displays timeline with items separated into rows based on their group.
+
 4 columns - string, timestamp, timestamp, string
 
 ```sql

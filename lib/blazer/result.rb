@@ -24,18 +24,18 @@ module Blazer
         boom = {}
         columns.each_with_index do |key, i|
           smart_columns_data_source =
-            ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_columns[key] }
+              ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_columns[key] }
 
           if smart_columns_data_source
             query = smart_columns_data_source.smart_columns[key]
             res =
-              if query.is_a?(Hash)
-                query
-              else
-                values = rows.map { |r| r[i] }.compact.uniq
-                result = smart_columns_data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
-                result.rows
-              end
+                if query.is_a?(Hash)
+                  query
+                else
+                  values = rows.map { |r| r[i] }.compact.uniq
+                  result = smart_columns_data_source.run_statement(ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{value}", "(?)"), values]))
+                  result.rows
+                end
 
             boom[key] = Hash[res.map { |k, v| [k.nil? ? k : k.to_s, v] }]
           end
@@ -75,6 +75,8 @@ module Blazer
           "bar2"
         elsif column_types == ["numeric", "numeric"]
           "scatter"
+        elsif column_types == ["string", "time", "time"]
+          "timeline"
         end
       end
     end
@@ -91,11 +93,11 @@ module Blazer
 
           if chart_type == "line"
             columns[1..-1].each_with_index.each do |k, i|
-              series << {name: k, data: rows.map{ |r| [r[0], r[i + 1]] }}
+              series << { name: k, data: rows.map { |r| [r[0], r[i + 1]] } }
             end
           else
             rows.group_by { |r| v = r[1]; (boom[columns[1]] || {})[v.to_s] || v }.each_with_index.map do |(name, v), i|
-              series << {name: name, data: v.map { |v2| [v2[0], v2[2]] }}
+              series << { name: name, data: v.map { |v2| [v2[0], v2[2]] } }
             end
           end
 
@@ -132,12 +134,12 @@ module Blazer
       series = series.reject { |v| v[0].nil? }.sort_by { |v| v[0] }
 
       csv_str =
-        CSV.generate do |csv|
-          csv << ["timestamp", "count"]
-          series.each do |row|
-            csv << row
+          CSV.generate do |csv|
+            csv << ["timestamp", "count"]
+            series.each do |row|
+              csv << row
+            end
           end
-        end
 
       r_script = %x[which Rscript].chomp
       type = series.any? && series.last.first.to_time - series.first.first.to_time >= 2.weeks ? "ts" : "vec"

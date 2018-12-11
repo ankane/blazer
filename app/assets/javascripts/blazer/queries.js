@@ -83,7 +83,7 @@ function cancelAllQueries() {
   }
 }
 
-$(window).unload(cancelAllQueries)
+$(window).on("unload", cancelAllQueries)
 
 function cancelQuery(query) {
   query.canceled = true

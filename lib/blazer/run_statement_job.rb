@@ -1,11 +1,9 @@
-require "sucker_punch"
-
 module Blazer
-  class RunStatementJob
-    include SuckerPunch::Job
-    workers 4
+  class RunStatementJob < ActiveJob::Base
+    self.queue_adapter = :async
 
-    def perform(result, data_source, statement, options)
+    def perform(result, data_source_id, statement, options)
+      data_source = Blazer.data_sources[data_source_id]
       begin
         ActiveRecord::Base.connection_pool.with_connection do
           result << Blazer::RunStatement.new.perform(data_source, statement, options)

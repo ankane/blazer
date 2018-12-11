@@ -118,7 +118,7 @@ module Blazer
         options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id, async: Blazer.async}
         if Blazer.async && request.format.symbol != :csv
           result = []
-          Blazer::RunStatementJob.perform_async(result, @data_source, @statement, options)
+          Blazer::RunStatementJob.perform_later(result, @data_source.id, @statement, options)
           wait_start = Time.now
           loop do
             sleep(0.02)

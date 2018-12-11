@@ -629,6 +629,20 @@ For an easy way to group by day, week, month, and more with correct time zones, 
 
 Looking for a standalone version? Check out [Ghost Blazer](https://github.com/buren/ghost_blazer).
 
+## Performance
+
+By default, queries take up a request while they are running. To run queries asynchronously, add to your config:
+
+```yml
+async: true
+```
+
+**Note:** Requires Rails 5+ and caching to be enabled. If you have multiple web processes, your app must use a centralized cache store like Memcached or Redis.
+
+```ruby
+config.cache_store = :mem_cache_store
+```
+
 ## Anomaly Detection on Heroku
 
 Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.

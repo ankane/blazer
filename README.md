@@ -6,8 +6,6 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 [![Screenshot](https://blazer.dokkuapp.com/assets/screenshot-6ca3115a518b488026e48be83ba0d4c9.png)](https://blazer.dokkuapp.com)
 
-:envelope: [Get notified of updates](https://eepurl.com/cbUwsD)
-
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
 ## Features

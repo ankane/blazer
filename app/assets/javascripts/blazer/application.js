@@ -5,7 +5,7 @@
 //= require ./selectize
 //= require ./highlight.min
 //= require ./moment
-//= require ./moment-timezone
+//= require ./moment-timezone-with-data
 //= require ./daterangepicker
 //= require ./Chart.js
 //= require ./chartkick

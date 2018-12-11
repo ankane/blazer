@@ -96,20 +96,11 @@ module Blazer
 
   def self.data_sources
     @data_sources ||= begin
-      ds = Hash[
-        settings["data_sources"].map do |id, s|
-          [id, Blazer::DataSource.new(id, s)]
-        end
-      ]
-      ds.default = ds.values.first
+      ds = Hash.new { |hash, key| raise Blazer::Error, "Unknown data source: #{key}" }
+      settings["data_sources"].each do |id, s|
+        ds[id] = Blazer::DataSource.new(id, s)
+      end
       ds
-
-      # TODO Blazer 2.0
-      # ds2 = Hash.new { |hash, key| raise Blazer::Error, "Unknown data source: #{key}" }
-      # ds.each do |k, v|
-      #   ds2[k] = v
-      # end
-      # ds2
     end
   end
 

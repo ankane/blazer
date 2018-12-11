@@ -1,4 +1,4 @@
-## 1.9.1 [unreleased]
+## 2.0.0
 
 - Added support for Slack
 - Added `override_csp` option

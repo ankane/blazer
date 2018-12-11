@@ -1,5 +1,6 @@
 ## 1.9.1 [unreleased]
 
+- Added support for Slack
 - Added `override_csp` option
 - Use SQL for Elasticsearch
 - Fixed error with latest `google-cloud-bigquery`

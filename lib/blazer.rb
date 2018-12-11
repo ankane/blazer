@@ -40,6 +40,7 @@ module Blazer
     attr_accessor :query_viewable
     attr_accessor :query_editable
     attr_accessor :override_csp
+    attr_accessor :slack_webhook_url
   end
   self.audit = true
   self.user_name = :name
@@ -173,9 +174,14 @@ module Blazer
 
   def self.send_failing_checks
     emails = {}
+    slack_channels = {}
+
     Blazer::Check.includes(:query).where(state: ["failing", "error", "timed out", "disabled"]).find_each do |check|
       check.split_emails.each do |email|
         (emails[email] ||= []) << check
+      end
+      check.split_slack_channels.each do |channel|
+        (slack_channels[channel] ||= []) << check
       end
     end
 
@@ -184,6 +190,16 @@ module Blazer
         Blazer::CheckMailer.failing_checks(email, checks).deliver_now
       end
     end
+
+    slack_channels.each do |channel, checks|
+      Safely.safely do
+        Blazer::SlackNotifier.failing_checks(channel, checks)
+      end
+    end
+  end
+
+  def self.slack?
+    slack_webhook_url.present?
   end
 
   def self.adapters

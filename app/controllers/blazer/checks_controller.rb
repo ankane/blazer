@@ -46,7 +46,7 @@ module Blazer
     private
 
       def check_params
-        params.require(:check).permit(:query_id, :emails, :invert, :check_type, :schedule)
+        params.require(:check).permit(:query_id, :emails, :slack_channels, :invert, :check_type, :schedule)
       end
 
       def set_check

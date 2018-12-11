@@ -9,7 +9,7 @@
       <th>Query</th>
       <th style="width: 10%;">State</th>
       <th style="width: 10%;">Run</th>
-      <th style="width: 20%;">Emails</th>
+      <th style="width: 20%;">Notify</th>
       <th style="width: 15%;"></th>
     </tr>
   </thead>
@@ -27,6 +27,9 @@
           <ul class="list-unstyled" style="margin-bottom: 0; word-break: break-all;">
             <% check.split_emails.each do |email| %>
               <li><%= email %></li>
+            <% end %>
+            <% check.split_slack_channels.each do |channel| %>
+              <li><%= channel %></li>
             <% end %>
           </ul>
         </td>

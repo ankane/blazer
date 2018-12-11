@@ -14,6 +14,14 @@ module Blazer
       emails.to_s.downcase.split(",").map(&:strip)
     end
 
+    def split_slack_channels
+      if Blazer.slack?
+        slack_channels.to_s.downcase.split(",").map(&:strip)
+      else
+        []
+      end
+    end
+
     def update_state(result)
       check_type =
         if respond_to?(:check_type)
@@ -61,6 +69,7 @@ module Blazer
       # do not notify on creation, except when not passing
       if (state_was != "new" || state != "passing") && state != state_was && emails.present?
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now
+        Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size, message, check_type)
       end
       save! if changed?
     end

@@ -53,7 +53,7 @@ For production, specify your database:
 ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database"
 ```
 
-Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user.  [See how to create one](#permissions).
+Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user. [See how to create one](#permissions).
 
 #### Checks (optional)
 
@@ -85,6 +85,14 @@ Here’s what it looks like with cron.
 30  7 * * * rake blazer:run_checks SCHEDULE="1 day"
 0   8 * * * rake blazer:send_failing_checks
 ```
+
+For Slack notifications, create an [incoming webhook](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) and set: [master]
+
+```sh
+BLAZER_SLACK_WEBHOOK_URL=https://hooks.slack.com/...
+```
+
+Name the webhook “Blazer” and add a cool icon.
 
 ## Permissions
 
@@ -652,6 +660,20 @@ override_csp: true
 
 ## Upgrading
 
+### 1.9.1 [master]
+
+To use Slack notifications, create a migration
+
+```sh
+rails g migration add_slack_channels_to_blazer_checks
+```
+
+with:
+
+```ruby
+add_column :blazer_checks, :slack_channels, :text
+```
+
 ### 1.5
 
 To take advantage of the anomaly detection, create a migration
@@ -663,8 +685,8 @@ rails g migration upgrade_blazer_to_1_5
 with:
 
 ```ruby
-add_column(:blazer_checks, :check_type, :string)
-add_column(:blazer_checks, :message, :text)
+add_column :blazer_checks, :check_type, :string
+add_column :blazer_checks, :message, :text
 commit_db_transaction
 
 Blazer::Check.reset_column_information

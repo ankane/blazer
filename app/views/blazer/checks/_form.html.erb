@@ -60,7 +60,15 @@
     <%= f.label :emails %>
     <%= f.text_field :emails, placeholder: "Optional, comma separated", class: "form-control" %>
   </div>
-  <p class="text-muted">Emails are sent when a check starts failing, and when it starts passing again.
+
+  <% if Blazer.slack? %>
+    <div class="form-group">
+      <%= f.label :slack_channels %>
+      <%= f.text_field :slack_channels, placeholder: "Optional, comma separated", class: "form-control" %>
+    </div>
+  <% end %>
+
+  <p class="text-muted">Emails <%= Blazer.slack? ? "and Slack notifications " : nil %>are sent when a check starts failing, and when it starts passing again.
   <p>
     <% if @check.persisted? %>
       <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>

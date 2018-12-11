@@ -5,6 +5,10 @@
 - Use SQL for Elasticsearch
 - Fixed error with latest `google-cloud-bigquery`
 
+Breaking changes
+
+- Dropped support for Rails < 4.2
+
 ## 1.9.0
 
 - Prompt developers to check custom `before_action`

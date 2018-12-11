@@ -53,6 +53,9 @@ audit: true
 # email to send checks from
 # from_email: blazer@example.org
 
+# webhook for Slack
+# slack_webhook_url: <%%= ENV["BLAZER_SLACK_WEBHOOK_URL"] %>
+
 check_schedules:
   - "1 day"
   - "1 hour"

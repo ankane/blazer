@@ -23,7 +23,7 @@ module Blazer
 
       Blazer.images = Blazer.settings["images"] || false
       Blazer.override_csp = Blazer.settings["override_csp"] || false
-      Blazer.slack_webhook_url = ENV["BLAZER_SLACK_WEBHOOK_URL"]
+      Blazer.slack_webhook_url = Blazer.settings["slack_webhook_url"] || ENV["BLAZER_SLACK_WEBHOOK_URL"]
     end
   end
 end

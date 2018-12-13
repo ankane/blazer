@@ -39,11 +39,20 @@ rails generate blazer:install
 rails db:migrate
 ```
 
-And mount the dashboard in your `config/routes.rb`:
+Then mount the dashboard in your `config/routes.rb`:
 
 ```ruby
 mount Blazer::Engine, at: "blazer"
 ```
+
+If you want to limit access to only administrators you can nest Blazer inside an authentication check. Here is an example using Devise:
+
+```ruby
+  authenticated :user, -> user { user.admin? || Rails.env.development? }  do
+    mount Blazer::Engine, at: "/blazer"
+  end
+```
+
 
 For production, specify your database:
 

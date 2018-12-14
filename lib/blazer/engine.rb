@@ -6,6 +6,7 @@ module Blazer
       # use a proc instead of a string
       app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/application\.(js|css)\z/ }
       app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/.+\.(eot|svg|ttf|woff)\z/ }
+      app.config.assets.prefix = Blazer.settings["assets_prefix"] || "/assets"
 
       Blazer.time_zone ||= Blazer.settings["time_zone"] || Time.zone
       Blazer.audit = Blazer.settings.key?("audit") ? Blazer.settings["audit"] : true

@@ -656,6 +656,13 @@ If views are stuck with a `Loading...` message, there might be a problem with st
 override_csp: true
 ```
 
+## Assets Config
+You can change assets path with following config:
+
+```yml
+assets_prefix: "/my/custome/path"
+```
+
 ## Upgrading
 
 ### 1.9.1 [master]

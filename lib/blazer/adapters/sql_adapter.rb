@@ -128,6 +128,12 @@ module Blazer
         ["MySQL", "Mysql2", "Mysql2Spatial"].include?(adapter_name)
       end
 
+      def mariadb?
+        return false unless mysql? # maria uses the same adapter as mysql
+        version = execute("SELECT VERSION()").to_a[0][0].downcase
+        version.include?('mariadb')
+      end
+
       def sqlserver?
         ["SQLServer", "tinytds", "mssql"].include?(adapter_name)
       end
@@ -155,7 +161,15 @@ module Blazer
         if postgresql? || redshift?
           execute("SET #{use_transaction? ? "LOCAL " : ""}statement_timeout = #{timeout.to_i * 1000}")
         elsif mysql?
-          execute("SET max_execution_time = #{timeout.to_i * 1000}")
+          begin
+            execute("SET max_execution_time = #{timeout.to_i * 1000}")
+          rescue ActiveRecord::StatementInvalid => e
+            if e.cause&.message&.downcase&.include?("unknown system variable") && mariadb?
+              execute("SET max_statement_time = #{timeout.to_i * 1000}")
+            else
+              raise
+            end
+          end
         else
           raise Blazer::TimeoutNotSupported, "Timeout not supported for #{adapter_name} adapter"
         end

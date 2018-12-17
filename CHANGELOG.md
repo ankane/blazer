@@ -1,6 +1,7 @@
 ## 2.0.0
 
 - Added support for Slack
+- Added `async` option
 - Added `override_csp` option
 - Use SQL for Elasticsearch
 - Fixed error with latest `google-cloud-bigquery`

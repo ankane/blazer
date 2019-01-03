@@ -169,9 +169,9 @@ db.createUser({user: "blazer", pwd: "password", roles: ["read"]})
 
 Also, make sure authorization is enabled when you start the server.
 
-### Sensitive Data
+## Sensitive Data
 
-Check out [Hypershield](https://github.com/ankane/hypershield) to shield sensitive data.
+If your database contains sensitive or personal data, check out [Hypershield](https://github.com/ankane/hypershield) to shield it.
 
 ## Queries
 

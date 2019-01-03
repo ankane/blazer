@@ -134,6 +134,8 @@ Be sure to render or redirect for unauthorized users.
 
 ## Permissions
 
+Blazer runs each query in a transaction and rolls it back to prevent queries from modifying data. As an additional line of defense, we recommend using a read only user.
+
 ### PostgreSQL
 
 Create a user with read only permissions:

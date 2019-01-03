@@ -832,12 +832,6 @@ audit: true
 # from_email: blazer@example.org
 ```
 
-## TODO
-
-- advanced permissions
-- standalone version
-- better navigation
-
 ## History
 
 View the [changelog](https://github.com/ankane/blazer/blob/master/CHANGELOG.md)

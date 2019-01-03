@@ -50,8 +50,8 @@
               input.val(toDate(picker.startDate).utc().format())
               submitIfCompleted($("#<%= var %>").closest("form"))
             });
-            var picker = datePicker.data("daterangepicker")
             if (input.val().length > 0) {
+              var picker = datePicker.data("daterangepicker")
               datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
             }
           })()

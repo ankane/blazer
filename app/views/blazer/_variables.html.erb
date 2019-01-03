@@ -1,4 +1,13 @@
 <% if @bind_vars.any? %>
+  <script>
+    <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>
+    var now = moment.tz(timeZone)
+    var format = "YYYY-MM-DD"
+
+    function toDate(time) {
+      return moment.tz(time.format(format), timeZone)
+    }
+  </script>
   <form id="bind" method="get" action="<%= action %>" class="form-inline" style="margin-bottom: 10px;">
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
@@ -16,18 +25,37 @@
             create: true
           });
         </script>
+      <% elsif var.end_with?("_at") || var == "start_time" || var == "end_time" %>
+        <%= hidden_field_tag var, params[var] %>
+
+        <div class="selectize-control single" style="width: 200px;">
+          <div id="<%= var %>-select" class="selectize-input" style="display: inline-block;">
+            <span>Select a date</span>
+          </div>
+        </div>
+
+        <script>
+          (function() {
+            var input = $("#<%= var %>")
+            var datePicker = $("#<%= var %>-select")
+            datePicker.daterangepicker({
+              singleDatePicker: true,
+              locale: {format: format},
+              autoUpdateInput: false,
+              startDate: input.val().length > 0 ? moment.tz(input.val(), timeZone) : now
+            })
+            // hack to start with empty date
+            datePicker.on("apply.daterangepicker", function(ev, picker) {
+              datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+              input.val(toDate(picker.startDate).utc().format())
+              submitIfCompleted($("#<%= var %>").closest("form"))
+            });
+            var picker = datePicker.data("daterangepicker")
+            datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+          })()
+        </script>
       <% else %>
         <%= text_field_tag var, params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !params[var], class: "form-control" %>
-        <% if var.end_with?("_at") %>
-          <script>
-            $("#<%= var %>").daterangepicker({singleDatePicker: true, locale: {format: "YYYY-MM-DD"}, autoUpdateInput: false});
-            // hack to start with empty date
-            $("#<%= var %>").on("apply.daterangepicker", function(ev, picker) {
-              $(this).val(picker.startDate.format("YYYY-MM-DD"));
-              $(this).change();
-            });
-          </script>
-        <% end %>
       <% end %>
     <% end %>
 
@@ -44,16 +72,8 @@
       </div>
 
       <script>
-        <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>
-        var format = "YYYY-MM-DD"
-        var now = moment.tz(timeZone)
-
         function dateStr(daysAgo) {
           return now.clone().subtract(daysAgo || 0, "days").format(format)
-        }
-
-        function toDate(time) {
-          return moment.tz(time.format(format), timeZone)
         }
 
         function setTimeInputs(start, end) {

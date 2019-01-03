@@ -1,7 +1,7 @@
 module Blazer
   class QueriesController < BaseController
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
-    before_action :set_data_source, only: [:tables, :schema, :cancel]
+    before_action :set_data_source, only: [:tables, :docs, :cancel]
 
     def home
       if params[:filter] == "dashboards"
@@ -117,14 +117,13 @@ module Blazer
 
         options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id, async: Blazer.async}
         if Blazer.async && request.format.symbol != :csv
-          result = []
-          Blazer::RunStatementJob.perform_async(result, @data_source, @statement, options)
+          Blazer::RunStatementJob.perform_later(@data_source.id, @statement, options)
           wait_start = Time.now
           loop do
-            sleep(0.02)
-            break if result.any? || Time.now - wait_start > 3
+            sleep(0.1)
+            @result = @data_source.run_results(@run_id)
+            break if @result || Time.now - wait_start > 3
           end
-          @result = result.first
         else
           @result = Blazer::RunStatement.new.perform(@data_source, @statement, options)
         end
@@ -181,7 +180,7 @@ module Blazer
       render json: @data_source.tables
     end
 
-    def schema
+    def docs
       @schema = @data_source.schema
     end
 

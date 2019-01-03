@@ -2,7 +2,7 @@
  *= require ./bootstrap
  *= require ./selectize.default
  *= require ./github
- *= require ./daterangepicker-bs3
+ *= require ./daterangepicker
  *= require_self
  */
 
@@ -67,6 +67,10 @@ input.search:focus {
 
 #editor {
   height: 160px;
+}
+
+.ace-twilight .ace_gutter {
+  background: transparent;
 }
 
 .ace_print-margin-layer {
@@ -195,4 +199,12 @@ input.search:focus {
 
 .query-error {
   color: red;
+}
+
+h1 {
+  font-size: 32px;
+}
+
+h2 {
+  font-size: 24px;
 }

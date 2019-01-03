@@ -51,7 +51,9 @@
               submitIfCompleted($("#<%= var %>").closest("form"))
             });
             var picker = datePicker.data("daterangepicker")
-            datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+            if (input.val().length > 0) {
+              datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+            }
           })()
         </script>
       <% else %>

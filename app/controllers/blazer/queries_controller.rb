@@ -1,7 +1,7 @@
 module Blazer
   class QueriesController < BaseController
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
-    before_action :set_data_source, only: [:tables, :schema, :cancel]
+    before_action :set_data_source, only: [:tables, :docs, :cancel]
 
     def home
       if params[:filter] == "dashboards"
@@ -180,7 +180,7 @@ module Blazer
       render json: @data_source.tables
     end
 
-    def schema
+    def docs
       @schema = @data_source.schema
     end
 

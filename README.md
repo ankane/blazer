@@ -45,6 +45,8 @@ And mount the dashboard in your `config/routes.rb`:
 mount Blazer::Engine, at: "blazer"
 ```
 
+Be sure to [protect the dashboard](#authentication).
+
 For production, specify your database:
 
 ```ruby

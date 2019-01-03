@@ -182,6 +182,9 @@ module Blazer
 
     def docs
       @schema = @data_source.schema
+      @smart_variables = @data_source.smart_variables
+      @linked_columns = @data_source.linked_columns
+      @smart_columns = @data_source.smart_columns
     end
 
     def cancel

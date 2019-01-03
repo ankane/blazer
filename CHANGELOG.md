@@ -3,6 +3,7 @@
 - Added support for Slack
 - Added `async` option
 - Added `override_csp` option
+- Added smart variables, linked columns smart columns, and charts to inline docs
 - Use SQL for Elasticsearch
 - Fixed error with latest `google-cloud-bigquery`
 

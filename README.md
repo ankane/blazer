@@ -45,8 +45,6 @@ And mount the dashboard in your `config/routes.rb`:
 mount Blazer::Engine, at: "blazer"
 ```
 
-Be sure to [protect the dashboard](#authentication).
-
 For production, specify your database:
 
 ```ruby
@@ -94,45 +92,6 @@ BLAZER_SLACK_WEBHOOK_URL=https://hooks.slack.com/...
 
 Name the webhook “Blazer” and add a cool icon.
 
-## Permissions
-
-### PostgreSQL
-
-Create a user with read only permissions:
-
-```sql
-BEGIN;
-CREATE ROLE blazer LOGIN PASSWORD 'secret123';
-GRANT CONNECT ON DATABASE database_name TO blazer;
-GRANT USAGE ON SCHEMA public TO blazer;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
-COMMIT;
-```
-
-### MySQL
-
-Create a user with read only permissions:
-
-```sql
-GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
-FLUSH PRIVILEGES;
-```
-
-### MongoDB
-
-Create a user with read only permissions:
-
-```
-db.createUser({user: "blazer", pwd: "password", roles: ["read"]})
-```
-
-Also, make sure authorization is enabled when you start the server.
-
-### Sensitive Data
-
-Check out [Hypershield](https://github.com/ankane/hypershield) to shield sensitive data.
-
 ## Authentication
 
 Don’t forget to protect the dashboard in production.
@@ -172,6 +131,45 @@ end
 ```
 
 Be sure to render or redirect for unauthorized users.
+
+## Permissions
+
+### PostgreSQL
+
+Create a user with read only permissions:
+
+```sql
+BEGIN;
+CREATE ROLE blazer LOGIN PASSWORD 'secret123';
+GRANT CONNECT ON DATABASE database_name TO blazer;
+GRANT USAGE ON SCHEMA public TO blazer;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
+COMMIT;
+```
+
+### MySQL
+
+Create a user with read only permissions:
+
+```sql
+GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
+FLUSH PRIVILEGES;
+```
+
+### MongoDB
+
+Create a user with read only permissions:
+
+```
+db.createUser({user: "blazer", pwd: "password", roles: ["read"]})
+```
+
+Also, make sure authorization is enabled when you start the server.
+
+### Sensitive Data
+
+Check out [Hypershield](https://github.com/ankane/hypershield) to shield sensitive data.
 
 ## Queries
 

@@ -33,6 +33,7 @@ module Blazer
     attr_accessor :from_email
     attr_accessor :cache
     attr_accessor :transform_statement
+    attr_accessor :transform_variable
     attr_accessor :check_schedules
     attr_accessor :anomaly_checks
     attr_accessor :async

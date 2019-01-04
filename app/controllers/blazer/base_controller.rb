@@ -63,6 +63,7 @@ module Blazer
                 value = value.to_f
               end
             end
+            value = Blazer.transform_variable.call(var, value) if Blazer.transform_variable
             statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
           end
         end

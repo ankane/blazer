@@ -1,3 +1,7 @@
+## 2.0.1 [unreleased]
+
+- Added support for variable transformation for blind indexing
+
 ## 2.0.0
 
 - Added support for Slack

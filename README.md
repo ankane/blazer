@@ -364,7 +364,27 @@ Then create check with optional emails if you want to be notified. Emails are se
 
 ## Anomaly Detection
 
-Anomaly detection is supported thanks to Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
+Blazer supports two different approaches to anomaly detection.
+
+### Trend [master]
+
+[Trend](https://trendapi.org/) is easiest to set up but uses an external service.
+
+Add [trend](https://github.com/ankane/trend) to your Gemfile:
+
+```ruby
+gem 'trend'
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+anomaly_checks: trend
+```
+
+### R
+
+R is harder to set up but doesn’t use an external service. It uses Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
 
 First, [install R](https://cloud.r-project.org/). Then, run:
 

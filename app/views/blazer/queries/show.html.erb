@@ -56,7 +56,7 @@
       $("#results").addClass("query-error").html(message)
     }
 
-    <%= blazer_js_var "data", variable_params.merge(statement: @statement, query_id: @query.id) %>
+    <%= blazer_js_var "data", variable_params.merge(statement: @statement, query_id: @query.id, data_source: @query.data_source) %>
 
     runQuery(data, showRun, showError)
   </script>

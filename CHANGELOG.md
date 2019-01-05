@@ -2,6 +2,7 @@
 
 - Added favicon
 - Improved docs for new installs
+- Fixed error with canceling queries
 
 ## 2.0.0
 

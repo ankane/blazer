@@ -1,3 +1,8 @@
+## 2.0.1 [unreleased]
+
+- Added favicon
+- Improved docs for new installs
+
 ## 2.0.0
 
 - Added support for Slack

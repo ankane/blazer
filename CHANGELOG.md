@@ -1,6 +1,7 @@
 ## 2.0.1 [unreleased]
 
 - Added favicon
+- Added navbar
 - Improved docs for new installs
 
 ## 2.0.0

@@ -396,7 +396,7 @@ devtools::install_github("twitter/AnomalyDetection")
 And add to `config/blazer.yml`:
 
 ```yml
-anomaly_checks: true
+anomaly_checks: r
 ```
 
 If upgrading from version 1.4 or below, also follow the [upgrade instructions](#15).

@@ -2,10 +2,11 @@
 
 - Added navbar
 - Added favicon
+- Added search for checks and schema
 - Added pie charts
 - Added Trend anomaly detection
 - Added forecasting
-- Added search for checks and schema
+- Improved tooltips
 - Improved docs for new installs
 - Fixed error with canceling queries
 

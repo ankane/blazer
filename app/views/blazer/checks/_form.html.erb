@@ -1,4 +1,4 @@
-<% unless @check.respond_to?(:invert) %>
+<% unless @check.respond_to?(:check_type) || @check.respond_to?(:invert) %>
   <p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
 <% end %>
 

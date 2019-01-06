@@ -1,7 +1,7 @@
 <div id="queries">
   <div id="header" style="margin-bottom: 20px;">
     <div class="pull-right" style="line-height: 34px;">
-      <% if blazer_user && params[:type] != "dashboard" %>
+      <% if blazer_user && request.path != "/dashboards" %>
         <% filter_path = request.path == "/" ? :root_path : :queries_path %>
         <%= link_to "All", send(filter_path), class: !params[:filter] ? "active" : nil, style: "margin-right: 40px;" %>
 

@@ -52,7 +52,9 @@
     <% if ["line", "line2"].include?(chart_type) %>
       <% chart_options.merge!(min: nil) %>
     <% end %>
-    <% if !["scatter", "pie"].include?(chart_type) %>
+    <% if chart_type == "scatter" %>
+      <% chart_options.merge!(library: {tooltips: {mode: "nearest", intersect: false, position: "nearest"}}) %>
+    <% elsif chart_type != "pie" %>
       <% chart_options.merge!(library: {tooltips: {mode: "index", intersect: false, position: "nearest"}}) %>
     <% end %>
     <% series_library = {} %>

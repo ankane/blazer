@@ -4,16 +4,13 @@ module Blazer
     before_action :set_data_source, only: [:tables, :docs, :cancel]
 
     def home
-      params[:type] = "dashboard" if request.path == "/dashboards"
-      params[:type] = "query" if request.path == "/queries"
-
-      if params[:type] == "dashboard"
+      if request.path == "/dashboards"
         @queries = []
       else
         set_queries(1000)
       end
 
-      if params[:filter] || params[:type] == "query"
+      if params[:filter] || request.path == "/queries"
         @dashboards = [] # TODO show my dashboards
       else
         @dashboards = Blazer::Dashboard.order(:name)

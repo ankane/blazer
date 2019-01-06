@@ -62,9 +62,9 @@ check_schedules:
   - "5 minutes"
 
 # enable anomaly detection
-# note: with trend, time series are sent to an external service
+# note: with trend, time series are sent to https://trendapi.org
 # anomaly_checks: trend / r
 
 # enable forecasting
-# note: with trend, time series are sent to an external service
+# note: with trend, time series are sent to https://trendapi.org
 # forecasting: trend

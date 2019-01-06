@@ -53,7 +53,7 @@
       <% chart_options.merge!(min: nil) %>
     <% end %>
     <% if chart_type == "scatter" %>
-      <% chart_options.merge!(library: {tooltips: {mode: "nearest", intersect: false, position: "nearest"}}) %>
+      <% chart_options.merge!(library: {tooltips: {mode: "nearest", intersect: false}}) %>
     <% elsif chart_type != "pie" %>
       <% chart_options.merge!(library: {tooltips: {mode: "index", intersect: false, position: "nearest"}}) %>
     <% end %>

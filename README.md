@@ -318,7 +318,7 @@ SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
 
 ### Scatter Chart
 
-2 columns - both numeric
+2 columns - both numeric - [Example](https://blazer.dokkuapp.com/queries/16-scatter-chart)
 
 ```sql
 SELECT x, y FROM table
@@ -326,7 +326,7 @@ SELECT x, y FROM table
 
 ### Pie Chart [master]
 
-2 columns - string, numeric - and last column named `pie`
+2 columns - string, numeric - and last column named `pie` - [Example](https://blazer.dokkuapp.com/queries/17-pie-chart)
 
 ```sql
 SELECT gender, COUNT(*) AS pie FROM users GROUP BY 1

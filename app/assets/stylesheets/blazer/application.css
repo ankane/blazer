@@ -206,11 +206,11 @@ h1, h2, h3, p, hr, .table, .navbar, #header, .alert, .form-group {
 }
 
 h1 {
-  font-size: 32px;
+  font-size: 24px;
 }
 
 h2 {
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .schema-table {

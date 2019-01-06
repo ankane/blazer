@@ -12,7 +12,7 @@ var Routes = {
     return rootPath + "queries/tables?" + $.param(params)
   },
   queries_path: function() {
-    return rootPath + "queries/more"
+    return rootPath + "queries"
   },
   query_path: function(id) {
     return rootPath + "queries/" + id

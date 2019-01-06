@@ -1,18 +1,17 @@
 <div id="queries">
   <div id="header" style="margin-bottom: 20px;">
     <div class="pull-right" style="line-height: 34px;">
-      <% if blazer_user && !request.path.end_with?("/dashboards") %>
-        <% filter_path = request.path.end_with?("/queries") ? :queries_path : :root_path %>
-        <%= link_to "All", send(filter_path), class: !params[:filter] ? "active" : nil, style: "margin-right: 40px;" %>
+      <% if blazer_user %>
+        <%= link_to "All", root_path, class: !params[:filter] ? "active" : nil, style: "margin-right: 40px;" %>
 
         <% if Blazer.audit %>
-          <%= link_to "Viewed", send(filter_path, filter: "viewed"), class: params[:filter] == "viewed" ? "active" : nil, style: "margin-right: 40px;" %>
+          <%= link_to "Viewed", root_path(filter: "viewed"), class: params[:filter] == "viewed" ? "active" : nil, style: "margin-right: 40px;" %>
         <% end %>
 
-        <%= link_to "Mine", send(filter_path, filter: "mine"), class: params[:filter] == "mine" ? "active" : nil %>
+        <%= link_to "Mine", root_path(filter: "mine"), class: params[:filter] == "mine" ? "active" : nil %>
       <% end %>
     </div>
-    <input type="text" v-model="searchTerm" placeholder="Start typing a <%= request.path.end_with?("/dashboards") ? "dashboard" : "query" %> or person" style="width: 300px; display: inline-block;" v-focus class="search form-control" />
+    <input type="text" v-model="searchTerm" placeholder="Start typing a query, dashboard, or person" style="width: 300px; display: inline-block;" v-focus class="search form-control" />
   </div>
 
   <table class="table">

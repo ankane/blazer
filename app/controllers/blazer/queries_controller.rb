@@ -4,13 +4,9 @@ module Blazer
     before_action :set_data_source, only: [:tables, :docs, :cancel]
 
     def home
-      if request.path.end_with?("/dashboards")
-        @queries = []
-      else
-        set_queries(1000)
-      end
+      set_queries(1000)
 
-      if params[:filter] || request.path.end_with?("/queries")
+      if params[:filter]
         @dashboards = [] # TODO show my dashboards
       else
         @dashboards = Blazer::Dashboard.order(:name)
@@ -29,7 +25,7 @@ module Blazer
         end
     end
 
-    def more
+    def index
       set_queries
       render json: @queries
     end

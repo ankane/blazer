@@ -60,3 +60,11 @@ check_schedules:
   - "1 day"
   - "1 hour"
   - "5 minutes"
+
+# enable anomaly detection
+# note: with trend, time series are sent to an external service
+# anomaly_checks: trend / r
+
+# enable forecasting
+# note: with trend, time series are sent to an external service
+# forecasting: trend

@@ -403,6 +403,22 @@ If upgrading from version 1.4 or below, also follow the [upgrade instructions](#
 
 If you’re on Heroku, follow [these additional instructions](#anomaly-detection-on-heroku).
 
+## Forecasting [master]
+
+Blazer supports forecasting through [Trend](https://trendapi.org/).
+
+Add [trend](https://github.com/ankane/trend) to your Gemfile:
+
+```ruby
+gem 'trend'
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+forecasting: trend
+```
+
 ## Data Sources
 
 Blazer supports multiple data sources :tada:

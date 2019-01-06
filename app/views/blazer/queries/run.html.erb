@@ -33,7 +33,15 @@
           &middot; <%= check.message %>
         <% end %>
       <% end %>
+
+      <% if @query && @result.forecastable? && !params[:forecast] %>
+        &middot;
+        <%= link_to "Forecast", query_path(@query, {forecast: "t"}.merge(variable_params)) %>
+      <% end %>
     </p>
+  <% end %>
+  <% if @forecast_error %>
+    <div class="alert alert-danger"><%= @forecast_error %></div>
   <% end %>
   <% if @rows.any? %>
     <% values = @rows.first %>
@@ -51,6 +59,10 @@
     <% target_index = @columns.index { |k| k.downcase == "target" } %>
     <% if target_index %>
       <% series_library[target_index - 1] = {pointStyle: "line", hitRadius: 5, borderColor: "#109618", pointBackgroundColor: "#109618", backgroundColor: "#109618"} %>
+    <% end %>
+    <% if @forecast %>
+      <% color = "#54a3ee" %>
+      <% series_library[1] = {borderDash: [8], borderColor: color, pointBackgroundColor: color, backgroundColor: color, pointHoverBackgroundColor: color} %>
     <% end %>
     <% if blazer_maps? && @markers.any? %>
       <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
@@ -82,7 +94,11 @@
         map.fitBounds(featureLayer.getBounds());
       </script>
     <% elsif chart_type == "line" %>
-      <%= line_chart @columns[1..-1].each_with_index.map{ |k, i| {name: blazer_series_name(k), data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} }, chart_options %>
+      <% chart_data = @columns[1..-1].each_with_index.map{ |k, i| {name: blazer_series_name(k), data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} } %>
+      <% if @forecast %>
+        <% chart_data[1][:data] << chart_data[0][:data].select { |v| v[1] }.max_by { |v| v[0] } %>
+      <% end %>
+      <%= line_chart chart_data, chart_options %>
     <% elsif chart_type == "line2" %>
       <%= line_chart @rows.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: blazer_series_name(name), data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} }, chart_options %>
     <% elsif chart_type == "bar" %>

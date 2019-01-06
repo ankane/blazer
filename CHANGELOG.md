@@ -3,6 +3,7 @@
 - Added navbar
 - Added favicon
 - Added Trend anomaly detection
+- Added forecasting
 - Added search for checks and schema
 - Improved docs for new installs
 - Fixed error with canceling queries

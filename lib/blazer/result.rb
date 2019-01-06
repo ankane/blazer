@@ -1,6 +1,6 @@
 module Blazer
   class Result
-    attr_reader :data_source, :columns, :rows, :error, :cached_at, :just_cached
+    attr_reader :data_source, :columns, :rows, :error, :cached_at, :just_cached, :forecast_error
 
     def initialize(data_source, columns, rows, error, cached_at, just_cached)
       @data_source = data_source
@@ -77,6 +77,30 @@ module Blazer
           "scatter"
         end
       end
+    end
+
+    def forecastable?
+      @forecastable ||= Blazer.forecasting && column_types == ["time", "numeric"] && @rows.size >= 10
+    end
+
+    def forecast
+      # TODO cache it?
+      forecast = Trend.forecast(Hash[@rows], count: 30)
+      @rows.each do |row|
+        row[2] = nil
+      end
+      @rows.unshift(*forecast.map { |k, v| [k, nil, v] })
+      @columns << "forecast"
+
+      # reset cache
+      @column_types = nil
+      @chart_type = nil
+
+      forecast
+    rescue => e
+      @forecast_error = String.new("Error generating forecast")
+      @forecast_error << ": #{e.message.sub("Invalid parameter: ", "")}"
+      nil
     end
 
     def detect_anomaly

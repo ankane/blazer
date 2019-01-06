@@ -35,6 +35,7 @@ module Blazer
     attr_accessor :transform_statement
     attr_accessor :check_schedules
     attr_accessor :anomaly_checks
+    attr_accessor :forecasting
     attr_accessor :async
     attr_accessor :images
     attr_accessor :query_viewable
@@ -46,6 +47,7 @@ module Blazer
   self.user_name = :name
   self.check_schedules = ["5 minutes", "1 hour", "1 day"]
   self.anomaly_checks = false
+  self.forecasting = false
   self.async = false
   self.images = false
   self.override_csp = false

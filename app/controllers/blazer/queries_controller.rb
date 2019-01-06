@@ -133,6 +133,13 @@ module Blazer
           @cached_at = @result.cached_at
           @just_cached = @result.just_cached
 
+          @forecast = @query && @result.forecastable? && params[:forecast]
+          if @forecast
+            @result.forecast
+            @forecast_error = @result.forecast_error
+            @forecast = @forecast_error.nil?
+          end
+
           render_run
         else
           @timestamp = Time.now.to_i

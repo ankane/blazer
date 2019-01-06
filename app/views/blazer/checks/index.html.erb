@@ -45,7 +45,7 @@
 
 <script>
   $("#search").on("keyup", function() {
-    var value = $(this).val().toLowerCase();
+    var value = $(this).val().toLowerCase()
     $("#checks tbody tr").filter( function() {
       $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
     })

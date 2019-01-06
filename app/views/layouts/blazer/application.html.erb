@@ -29,7 +29,7 @@
           <li class="navbar-text" style="font-weight: bold; padding-left: 15px;">Create</li>
           <li><%= link_to "Query", new_query_path %></li>
           <li><%= link_to "Dashboard", new_dashboard_path %></li>
-          <li><%= link_to "Check", new_check_path %></li>
+          <li><%= link_to "Check", new_check_path(query_id: @query.try(:id)) %></li>
         </ul>
       </div>
     </nav>

@@ -4,6 +4,9 @@ module Blazer
     before_action :set_data_source, only: [:tables, :docs, :cancel]
 
     def home
+      params[:type] = "dashboard" if request.path == "/dashboards"
+      params[:type] = "query" if request.path == "/queries"
+
       if params[:type] == "dashboard"
         @queries = []
       else
@@ -29,7 +32,7 @@ module Blazer
         end
     end
 
-    def index
+    def more
       set_queries
       render json: @queries
     end

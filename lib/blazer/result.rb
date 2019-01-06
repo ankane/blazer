@@ -69,6 +69,8 @@ module Blazer
           "line"
         elsif column_types == ["time", "string", "numeric"]
           "line2"
+        elsif column_types == ["string", "numeric"] && @columns.last == "pie"
+          "pie"
         elsif column_types.compact.size >= 2 && column_types == ["string"] + (column_types.compact.size - 1).times.map { "numeric" }
           "bar"
         elsif column_types == ["string", "string", "numeric"]

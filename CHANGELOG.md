@@ -2,6 +2,7 @@
 
 - Added navbar
 - Added favicon
+- Added pie charts
 - Added Trend anomaly detection
 - Added forecasting
 - Added search for checks and schema

@@ -324,6 +324,14 @@ SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
 SELECT x, y FROM table
 ```
 
+### Pie Chart [master]
+
+2 columns - string, numeric - and last column named `pie`
+
+```sql
+SELECT gender, COUNT(*) AS pie FROM users GROUP BY 1
+```
+
 ### Maps
 
 Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` - [Example](https://blazer.dokkuapp.com/queries/15-map)

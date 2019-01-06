@@ -427,6 +427,8 @@ And add to `config/blazer.yml`:
 forecasting: trend
 ```
 
+A forecast link will appear for queries that return 2 columns with types timestamp and numeric.
+
 ## Data Sources
 
 Blazer supports multiple data sources :tada:

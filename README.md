@@ -413,7 +413,9 @@ If you’re on Heroku, follow [these additional instructions](#anomaly-detection
 
 ## Forecasting [master]
 
-Blazer supports forecasting through [Trend](https://trendapi.org/). [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
+Blazer supports forecasting through [Trend](https://trendapi.org/).
+
+[Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
 
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 

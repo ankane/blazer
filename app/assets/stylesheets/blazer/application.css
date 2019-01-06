@@ -12,7 +12,6 @@ pre {
 }
 
 body {
-  padding-top: 20px;
   padding-bottom: 20px;
 }
 
@@ -141,14 +140,8 @@ input.search:focus {
   color: #000;
 }
 
-.topbar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background-color: whitesmoke;
-  height: 60px;
-  z-index: 1001;
+.navbar-default {
+  border: none;
 }
 
 .glyphicon-remove {
@@ -201,10 +194,25 @@ input.search:focus {
   color: red;
 }
 
+.small-form {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 400px;
+}
+
+h1, h2, h3, p, hr, .table, .navbar, #header, .alert, .form-group {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
 h1 {
   font-size: 32px;
 }
 
 h2 {
   font-size: 24px;
+}
+
+.schema-table {
+  max-width: 500px;
 }

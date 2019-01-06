@@ -1,16 +1,12 @@
 module Blazer
   class QueriesController < BaseController
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
-    before_action :set_data_source, only: [:tables, :docs, :cancel]
+    before_action :set_data_source, only: [:tables, :docs, :schema, :cancel]
 
     def home
-      if params[:filter] == "dashboards"
-        @queries = []
-      else
-        set_queries(1000)
-      end
+      set_queries(1000)
 
-      if params[:filter] && params[:filter] != "dashboards"
+      if params[:filter]
         @dashboards = [] # TODO show my dashboards
       else
         @dashboards = Blazer::Dashboard.order(:name)
@@ -181,10 +177,13 @@ module Blazer
     end
 
     def docs
-      @schema = @data_source.schema
       @smart_variables = @data_source.smart_variables
       @linked_columns = @data_source.linked_columns
       @smart_columns = @data_source.smart_columns
+    end
+
+    def schema
+      @schema = @data_source.schema
     end
 
     def cancel

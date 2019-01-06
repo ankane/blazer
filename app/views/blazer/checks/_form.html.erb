@@ -1,12 +1,12 @@
-<% unless @check.respond_to?(:check_type) || @check.respond_to?(:invert) %>
-  <p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
-<% end %>
+<%= form_for @check, html: {class: "small-form"} do |f| %>
+  <% unless @check.respond_to?(:check_type) || @check.respond_to?(:invert) %>
+    <p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
+  <% end %>
 
-<% if @check.errors.any? %>
-  <div class="alert alert-danger"><%= @check.errors.full_messages.first %></div>
-<% end %>
+  <% if @check.errors.any? %>
+    <div class="alert alert-danger"><%= @check.errors.full_messages.first %></div>
+  <% end %>
 
-<%= form_for @check do |f| %>
   <div class="form-group">
     <%= f.label :query_id, "Query" %>
     <div class="hide">
@@ -74,6 +74,5 @@
       <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
     <% end %>
     <%= f.submit "Save", class: "btn btn-success" %>
-    <%= link_to "Back", :back, class: "btn btn-link" %>
   </p>
 <% end %>

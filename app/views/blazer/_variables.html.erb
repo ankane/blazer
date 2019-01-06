@@ -8,7 +8,7 @@
       return moment.tz(time.format(format), timeZone)
     }
   </script>
-  <form id="bind" method="get" action="<%= action %>" class="form-inline" style="margin-bottom: 10px;">
+  <form id="bind" method="get" action="<%= action %>" class="form-inline" style="margin-bottom: 15px;">
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
       <% @bind_vars = @bind_vars - date_vars %>

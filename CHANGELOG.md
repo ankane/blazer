@@ -1,7 +1,9 @@
 ## 2.0.1 [unreleased]
 
+- Added navbar
 - Added favicon
 - Added Trend anomaly detection
+- Added search for checks and schema
 - Improved docs for new installs
 - Fixed error with canceling queries
 

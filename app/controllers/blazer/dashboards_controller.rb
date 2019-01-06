@@ -3,7 +3,7 @@ module Blazer
     before_action :set_dashboard, only: [:show, :edit, :update, :destroy, :refresh]
 
     def index
-      redirect_to root_path(filter: "dashboards")
+      redirect_to root_path(type: "dashboard")
     end
 
     def new

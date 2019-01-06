@@ -1,14 +1,14 @@
 <div id="queries">
   <div id="header" style="margin-bottom: 20px;">
     <div class="pull-right">
-      <% if blazer_user && params[:filter] != "dashboards" %>
-        <%= link_to "All", root_path, class: !params[:filter] ? "active" : nil, style: "margin-right: 40px;" %>
+      <% if blazer_user && params[:type] != "dashboard" %>
+        <%= link_to "All", root_path(type: params[:type]), class: !params[:filter] ? "active" : nil, style: "margin-right: 40px;" %>
 
         <% if Blazer.audit %>
-          <%= link_to "Viewed", root_path(filter: "viewed"), class: params[:filter] == "viewed" ? "active" : nil, style: "margin-right: 40px;" %>
+          <%= link_to "Viewed", root_path(filter: "viewed", type: params[:type]), class: params[:filter] == "viewed" ? "active" : nil, style: "margin-right: 40px;" %>
         <% end %>
 
-        <%= link_to "Mine", root_path(filter: "mine"), class: params[:filter] == "mine" ? "active" : nil %>
+        <%= link_to "Mine", root_path(filter: "mine", type: params[:type]), class: params[:filter] == "mine" ? "active" : nil %>
       <% end %>
     </div>
     <input type="text" v-model="searchTerm" placeholder="Start typing a query or person" style="width: 300px; display: inline-block;" v-focus class="search form-control" />

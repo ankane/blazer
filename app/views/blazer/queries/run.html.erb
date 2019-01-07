@@ -53,7 +53,7 @@
       <% chart_options.merge!(min: nil) %>
     <% end %>
     <% if chart_type == "scatter" %>
-      <% chart_options.merge!(library: {tooltips: {intersect: false}, layout: {padding: {top: @only_chart ? 0 : 20}}}) %>
+      <% chart_options.merge!(library: {tooltips: {intersect: false}}) %>
     <% elsif ["bar", "bar2"].include?(chart_type) %>
       <% chart_options.merge!(library: {tooltips: {intersect: false, axis: 'x'}}) %>
     <% elsif chart_type != "pie" %>
@@ -122,6 +122,9 @@
       <% end %>
       <%= column_chart first_20.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: blazer_series_name(name), data: v.sort_by { |r2| labels.index(r2[0]) }.map { |v2| v3 = v2[0]; [(@boom[@columns[0]] || {})[v3.to_s] || v3, v2[2]] }} }, chart_options %>
     <% elsif chart_type == "scatter" %>
+      <% unless @only_chart %>
+        <div style="margin-bottom: 10px;"></div>
+      <% end %>
       <%= scatter_chart @rows, xtitle: @columns[0], ytitle: @columns[1], **chart_options %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>

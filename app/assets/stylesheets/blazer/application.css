@@ -178,7 +178,6 @@ input.search:focus {
 }
 
 .chart-container {
-  padding-top: 10px;
   clear: both;
 }
 
@@ -200,9 +199,13 @@ input.search:focus {
   max-width: 400px;
 }
 
-h1, h2, h3, p, hr, .table, .navbar, #header, .alert, .form-group {
+h1, h2, h3, h4, p, hr, .table, .navbar, #header, .alert, .form-group {
   margin-top: 0;
   margin-bottom: 15px;
+}
+
+.double-margin, .chart-container {
+  margin-bottom: 30px;
 }
 
 h1 {

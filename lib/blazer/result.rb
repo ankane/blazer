@@ -87,6 +87,8 @@ module Blazer
 
     def forecast
       # TODO cache it?
+      # don't want to put result data (even hashed version)
+      # into cache without developer opt-in
       forecast = Trend.forecast(Hash[@rows], count: 30)
       @rows.each do |row|
         row[2] = nil

@@ -24,9 +24,7 @@
         <% end %>
       </p>
     <% end %>
-    <% margin_bottom = 0 %>
-    <% margin_bottom = 15 if @rows.any? && (@result.chart_type == "scatter" || (blazer_maps? && @markers.any?)) %>
-    <p class="text-muted" style="margin-bottom: <%= margin_bottom %>px;">
+    <p class="text-muted" style="margin-bottom: 0;">
       <%= pluralize(@rows.size, "row") %>
 
       <% @checks.select(&:state).each do |check| %>
@@ -55,7 +53,7 @@
       <% chart_options.merge!(min: nil) %>
     <% end %>
     <% if chart_type == "scatter" %>
-      <% chart_options.merge!(library: {tooltips: {intersect: false}}) %>
+      <% chart_options.merge!(library: {tooltips: {intersect: false}, layout: {padding: {top: @only_chart ? 0 : 20}}}) %>
     <% elsif ["bar", "bar2"].include?(chart_type) %>
       <% chart_options.merge!(library: {tooltips: {intersect: false, axis: 'x'}}) %>
     <% elsif chart_type != "pie" %>
@@ -76,7 +74,7 @@
       <% series_library[1] = {borderDash: [8], borderColor: color, pointBackgroundColor: color, backgroundColor: color, pointHoverBackgroundColor: color} %>
     <% end %>
     <% if blazer_maps? && @markers.any? %>
-      <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
+      <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px; margin-top: <%= @only_chart ? 0 : 10 %>px;"></div>
       <script>
         L.mapbox.accessToken = '<%= ENV["MAPBOX_ACCESS_TOKEN"] %>';
         var map = L.mapbox.map('map', 'ankane.ioo8nki0');

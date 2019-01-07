@@ -34,7 +34,7 @@
           <%= f.label :description %>
           <%= f.text_area :description, placeholder: "Optional", style: "height: 80px;", class: "form-control" %>
         </div>
-        <div class="text-right">
+        <div class="form-group text-right">
           <%= f.submit "For Enter Press", class: "hide" %>
           <% if @query.persisted? %>
             <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
@@ -49,7 +49,7 @@
           <% words << pluralize(dashboards_count, "dashboard") if dashboards_count > 0 %>
           <% words << pluralize(checks_count, "check") if checks_count > 0 %>
           <% if words.any? %>
-            <div class="alert alert-info" style="margin-top: 10px; padding: 8px 12px;">
+            <div class="alert alert-info" style="margin-bottom: 0;">
               Part of <%= words.to_sentence %>. Be careful when editing.
             </div>
           <% end %>

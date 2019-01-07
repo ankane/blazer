@@ -199,6 +199,11 @@ input.search:focus {
   max-width: 400px;
 }
 
+.alert {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
 h1, h2, h3, h4, p, hr, .table, .navbar, #header, .alert, .form-group {
   margin-top: 0;
   margin-bottom: 15px;

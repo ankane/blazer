@@ -24,7 +24,7 @@
         <% end %>
       </p>
     <% end %>
-    <p class="text-muted" style="margin-bottom: 0;">
+    <p class="text-muted" style="margin-bottom: 10px;">
       <%= pluralize(@rows.size, "row") %>
 
       <% @checks.select(&:state).each do |check| %>
@@ -74,7 +74,7 @@
       <% series_library[1] = {borderDash: [8], borderColor: color, pointBackgroundColor: color, backgroundColor: color, pointHoverBackgroundColor: color} %>
     <% end %>
     <% if blazer_maps? && @markers.any? %>
-      <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px; margin-top: <%= @only_chart ? 0 : 10 %>px;"></div>
+      <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
       <script>
         L.mapbox.accessToken = '<%= ENV["MAPBOX_ACCESS_TOKEN"] %>';
         var map = L.mapbox.map('map', 'ankane.ioo8nki0');
@@ -122,9 +122,6 @@
       <% end %>
       <%= column_chart first_20.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: blazer_series_name(name), data: v.sort_by { |r2| labels.index(r2[0]) }.map { |v2| v3 = v2[0]; [(@boom[@columns[0]] || {})[v3.to_s] || v3, v2[2]] }} }, chart_options %>
     <% elsif chart_type == "scatter" %>
-      <% unless @only_chart %>
-        <div style="margin-bottom: 10px;"></div>
-      <% end %>
       <%= scatter_chart @rows, xtitle: @columns[0], ytitle: @columns[1], **chart_options %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>

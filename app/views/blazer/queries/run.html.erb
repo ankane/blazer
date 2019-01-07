@@ -24,7 +24,7 @@
         <% end %>
       </p>
     <% end %>
-    <p class="text-muted">
+    <p class="text-muted" style="margin-bottom: 0;">
       <%= pluralize(@rows.size, "row") %>
 
       <% @checks.select(&:state).each do |check| %>

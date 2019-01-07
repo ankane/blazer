@@ -57,7 +57,7 @@
     <% elsif ["bar", "bar2"].include?(chart_type) %>
       <% chart_options.merge!(library: {tooltips: {intersect: false, axis: 'x'}}) %>
     <% elsif chart_type != "pie" %>
-      <% if column_types.size == 2 %>
+      <% if column_types.size == 2 || @forecast %>
         <% chart_options.merge!(library: {tooltips: {intersect: false, axis: 'x'}}) %>
       <% else %>
         <%# chartjs axis: 'x' has poor behavior with multiple series %>

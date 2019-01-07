@@ -53,9 +53,16 @@
       <% chart_options.merge!(min: nil) %>
     <% end %>
     <% if chart_type == "scatter" %>
-      <% chart_options.merge!(library: {tooltips: {mode: "nearest", intersect: false}}) %>
+      <% chart_options.merge!(library: {tooltips: {intersect: false}}) %>
+    <% elsif ["bar", "bar2"].include?(chart_type) %>
+      <% chart_options.merge!(library: {tooltips: {intersect: false, axis: 'x'}}) %>
     <% elsif chart_type != "pie" %>
-      <% chart_options.merge!(library: {tooltips: {mode: "index", intersect: false, position: "nearest"}}) %>
+      <% if column_types.size == 2 %>
+        <% chart_options.merge!(library: {tooltips: {intersect: false, axis: 'x'}}) %>
+      <% else %>
+        <%# chartjs axis: 'x' has poor behavior with multiple series %>
+        <% chart_options.merge!(library: {tooltips: {intersect: false}}) %>
+      <% end %>
     <% end %>
     <% series_library = {} %>
     <% target_index = @columns.index { |k| k.downcase == "target" } %>

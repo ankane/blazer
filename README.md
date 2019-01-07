@@ -411,7 +411,7 @@ If upgrading from version 1.4 or below, also follow the [upgrade instructions](#
 
 If you’re on Heroku, follow [these additional instructions](#anomaly-detection-on-heroku).
 
-## Forecasting [master]
+## Forecasting [master, experimental]
 
 Blazer supports forecasting through [Trend](https://trendapi.org/).
 

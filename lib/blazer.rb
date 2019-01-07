@@ -1,11 +1,16 @@
+# dependencies
 require "csv"
 require "yaml"
 require "chartkick"
 require "safely/core"
+
+# modules
 require "blazer/version"
 require "blazer/data_source"
 require "blazer/result"
 require "blazer/run_statement"
+
+# adapters
 require "blazer/adapters/base_adapter"
 require "blazer/adapters/athena_adapter"
 require "blazer/adapters/bigquery_adapter"
@@ -17,6 +22,8 @@ require "blazer/adapters/mongodb_adapter"
 require "blazer/adapters/presto_adapter"
 require "blazer/adapters/sql_adapter"
 require "blazer/adapters/snowflake_adapter"
+
+# engine
 require "blazer/engine"
 
 module Blazer

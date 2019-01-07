@@ -24,7 +24,9 @@
         <% end %>
       </p>
     <% end %>
-    <p class="text-muted" style="margin-bottom: 0;">
+    <% margin_bottom = 0 %>
+    <% margin_bottom = 15 if @rows.any? && (@result.chart_type == "scatter" || (blazer_maps? && @markers.any?)) %>
+    <p class="text-muted" style="margin-bottom: <%= margin_bottom %>px;">
       <%= pluralize(@rows.size, "row") %>
 
       <% @checks.select(&:state).each do |check| %>

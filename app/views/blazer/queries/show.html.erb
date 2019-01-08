@@ -1,18 +1,27 @@
 <% blazer_title @query.name %>
 
-<div class="row">
-  <div class="col-sm-9">
-    <h1 style="line-height: 34px;"><%= @query.name %></h1>
-  </div>
-  <div class="col-sm-3 text-right">
-    <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
-    <%= link_to "Fork", new_query_path(variable_params.merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
+<div class="topbar">
+  <div class="container">
+    <div class="row" style="padding-top: 13px;">
+      <div class="col-sm-9">
+        <%= render partial: "blazer/nav" %>
+        <h3 style="line-height: 34px; display: inline; margin-left: 5px;">
+          <%= @query.name %>
+        </h3>
+      </div>
+      <div class="col-sm-3 text-right">
+        <%= link_to "Edit", edit_query_path(@query, variable_params), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
+        <%= link_to "Fork", new_query_path(variable_params.merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
 
-    <% if !@error && @success %>
-      <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv", forecast: params[:forecast]), params: {statement: @statement}, class: "btn btn-primary" %>
-    <% end %>
+        <% if !@error && @success %>
+          <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv", forecast: params[:forecast]), params: {statement: @statement}, class: "btn btn-primary" %>
+        <% end %>
+      </div>
+    </div>
   </div>
 </div>
+
+<div style="margin-bottom: 60px;"></div>
 
 <% if @sql_errors.any? %>
   <div class="alert alert-danger">
@@ -28,10 +37,6 @@
   <p><%= @query.description %></p>
 <% end %>
 
-<% if @bind_vars.any? %>
-  <hr />
-<% end %>
-
 <%= render partial: "blazer/variables", locals: {action: query_path(@query)} %>
 
 <pre id="code"><code><%= @statement %></code></pre>
@@ -44,7 +49,7 @@
   <script>
     function showRun(data) {
       $("#results").html(data)
-      $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 0})
+      $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60})
     }
 
     function showError(message) {

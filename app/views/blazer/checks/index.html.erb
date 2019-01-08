@@ -1,6 +1,22 @@
 <% blazer_title "Checks" %>
 
 <div id="header">
+  <div class="pull-right" style="line-height: 34px;">
+    <div class="btn-group">
+      <%= link_to "New Check", new_check_path, class: "btn btn-info" %>
+      <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span class="caret"></span>
+        <span class="sr-only">Toggle Dropdown</span>
+      </button>
+      <ul class="dropdown-menu">
+        <li><%= link_to "Home", root_path %></li>
+        <li role="separator" class="divider"></li>
+        <li><%= link_to "New Query", new_query_path %></li>
+        <li><%= link_to "New Dashboard", new_dashboard_path %></li>
+      </ul>
+    </div>
+  </div>
+
   <input id="search" type="text" placeholder="Start typing a query or state" style="width: 300px; display: inline-block;" class="search form-control" />
 </div>
 

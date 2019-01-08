@@ -8,8 +8,22 @@
           <%= link_to "Viewed", root_path(filter: "viewed"), class: params[:filter] == "viewed" ? "active" : nil, style: "margin-right: 40px;" %>
         <% end %>
 
-        <%= link_to "Mine", root_path(filter: "mine"), class: params[:filter] == "mine" ? "active" : nil %>
+        <%= link_to "Mine", root_path(filter: "mine"), class: params[:filter] == "mine" ? "active" : nil, style: "margin-right: 40px;" %>
       <% end %>
+
+      <div class="btn-group">
+        <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
+        <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <span class="caret"></span>
+          <span class="sr-only">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu">
+          <li><%= link_to "Checks", checks_path %></li>
+          <li role="separator" class="divider"></li>
+          <li><%= link_to "New Dashboard", new_dashboard_path %></li>
+          <li><%= link_to "New Check", new_check_path %></li>
+        </ul>
+      </div>
     </div>
     <input type="text" v-model="searchTerm" placeholder="Start typing a query, dashboard, or person" style="width: 300px; display: inline-block;" v-focus class="search form-control" />
   </div>

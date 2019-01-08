@@ -1,6 +1,5 @@
 ## 2.0.1 [unreleased]
 
-- Added navbar
 - Added favicon
 - Added search for checks and schema
 - Added pie charts

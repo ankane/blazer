@@ -397,8 +397,8 @@ R is harder to set up but doesn’t use an external service. It uses Twitter’s
 First, [install R](https://cloud.r-project.org/). Then, run:
 
 ```R
-install.packages("devtools")
-devtools::install_github("twitter/AnomalyDetection")
+install.packages("remotes")
+remotes::install_github("twitter/AnomalyDetection")
 ```
 
 And add to `config/blazer.yml`:

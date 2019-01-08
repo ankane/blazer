@@ -324,7 +324,7 @@ SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
 SELECT x, y FROM table
 ```
 
-### Pie Chart [master]
+### Pie Chart
 
 2 columns - string, numeric - and last column named `pie` - [Example](https://blazer.dokkuapp.com/queries/17-pie-chart)
 
@@ -374,7 +374,7 @@ Then create check with optional emails if you want to be notified. Emails are se
 
 Blazer supports two different approaches to anomaly detection.
 
-### Trend [master]
+### Trend
 
 [Trend](https://trendapi.org/) is easiest to set up but uses an external service.
 
@@ -411,9 +411,9 @@ If upgrading from version 1.4 or below, also follow the [upgrade instructions](#
 
 If you’re on Heroku, follow [these additional instructions](#anomaly-detection-on-heroku).
 
-## Forecasting [master, experimental]
+## Forecasting
 
-Blazer supports forecasting through [Trend](https://trendapi.org/).
+Blazer has experimental support for forecasting through [Trend](https://trendapi.org/).
 
 [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
 

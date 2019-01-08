@@ -1,4 +1,4 @@
-## 2.0.1 [unreleased]
+## 2.0.1
 
 - Added favicon
 - Added search for checks and schema

@@ -15,8 +15,8 @@
         <div class="form-group text-right" style="margin-bottom: 8px;">
           <div class="pull-left" style="margin-top: 8px;">
             <%= link_to "Back", :back %>
-            <a :href="docsPath" target="_blank" style="margin-left: 20px;">Docs</a>
-            <a :href="schemaPath" target="_blank" style="margin-left: 20px;">Schema</a>
+            <a :href="docsPath" target="_blank" style="margin-left: 40px;">Docs</a>
+            <a :href="schemaPath" target="_blank" style="margin-left: 40px;">Schema</a>
           </div>
 
           <%= f.select :data_source, Blazer.data_sources.values.select { |ds| q = @query.dup; q.data_source = ds.id; q.editable?(blazer_user) }.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size <= 1), style: "width: 140px;" %>

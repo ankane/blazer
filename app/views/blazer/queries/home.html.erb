@@ -27,22 +27,26 @@
     </div>
     <input type="text" v-model="searchTerm" placeholder="Start typing a query or person" style="width: 300px; display: inline-block;" autofocus=true class="search form-control" />
   </div>
-
   <table class="table">
     <thead>
       <tr>
         <th>Name</th>
-        <th style="width: 20%; text-align: right;">Mastermind</th>
+        <th style="width: 20%; text-align: right;">Data Source</th>
       </tr>
     </thead>
     <tbody class="list" v-cloak>
-      <tr v-for="query in visibleItems">
-        <td>
-          <a :href="itemPath(query)" :class="{ dashboard: query.dashboard }">{{ query.name }}</a>
-          <span class="vars">{{ query.vars }}</span>
-        </td>
-        <td class="creator">{{ query.creator }}</td>
-      </tr>
+      <template v-for="queries, group in visibleItems">
+        <tr>
+          <td colspan="2"><h4>{{group}}</h4></td>
+        </tr>
+        <tr v-for="(query, index) in queries">
+          <td>
+            <a :href="itemPath(query)" :class="{ dashboard: query.dashboard }">{{ query.name }}</a>
+            <span class="vars">{{ query.vars }}</span>
+          </td>
+          <td class="creator">{{ query.data_source }}</td>
+        </tr>
+      </template>
     </tbody>
   </table>
 
@@ -133,9 +137,15 @@
               fuzzyItems.push(q)
             }
           }
-          return items.concat(fuzzyItems).slice(0, pageSize)
+          return items.concat(fuzzyItems).slice(0, pageSize).reduce((acc, query) => {
+              (acc[query.group || 'General'] = acc[query.group] || []).push(query)
+              return acc
+            }, {})
         } else {
-          return this.listItems.slice(0, pageSize)
+          return this.listItems.slice(0, pageSize).reduce((acc, query) => {
+              (acc[query.group || 'General'] = acc[query.group] || []).push(query)
+              return acc
+            }, {})
         }
       }
     },

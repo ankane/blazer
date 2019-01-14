@@ -119,9 +119,9 @@
               <tr>
                 <% @columns.each_with_index do |key, i| %>
                   <% type = @column_types[i] %>
-                  <th style="width: <%= header_width %>%;" data-sort="<%= type %>">
-                    <div style="min-width: <%= @min_width_types.include?(i) ? 180 : 60 %>px;">
-                      <%= key %>
+                  <th data-sort="<%= type %>">
+                    <div >
+                      <span><%= key.gsub('_', ' ').titleize %></span>
                     </div>
                   </th>
                 <% end %>

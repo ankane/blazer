@@ -260,7 +260,7 @@ module Blazer
       end
 
       def set_queries(limit = nil)
-        @queries = Blazer::Query.named.select(:id, :name, :creator_id, :statement)
+        @queries = Blazer::Query.named.select(:id, :name, :creator_id, :statement, :data_source)
         @queries = @queries.includes(:creator) if Blazer.user_class
 
         if blazer_user && params[:filter] == "mine"
@@ -281,7 +281,9 @@ module Blazer
           @queries.map do |q|
             {
               id: q.id,
-              name: q.name,
+              name: q.name.split(":").last,
+              group: q.name.split(":").length > 1 ? q.name.split(':').first : "-",
+              data_source: q.data_source,
               creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
               vars: q.variables.join(", "),
               to_param: q.to_param

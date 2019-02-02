@@ -175,6 +175,19 @@ Also, make sure authorization is enabled when you start the server.
 
 If your database contains sensitive or personal data, check out [Hypershield](https://github.com/ankane/hypershield) to shield it.
 
+## Encrypted Data
+
+If you need to search encrypted data, use [blind indexing](https://github.com/ankane/blind_index).
+
+You can have Blazer transform specific variables with: [master]
+
+```ruby
+Blazer.transform_variable = lambda do |name, value|
+  value = User.compute_email_bidx(value) if name == "email_bidx"
+  value
+end
+```
+
 ## Queries
 
 ### Variables

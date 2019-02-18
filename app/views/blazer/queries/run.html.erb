@@ -108,7 +108,7 @@
     <% elsif chart_type == "line2" %>
       <%= line_chart @rows.group_by { |r| v = r[1]; (@boom[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: blazer_series_name(name), data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} }, chart_options %>
     <% elsif chart_type == "pie" %>
-      <%= pie_chart @rows.map { |r| [(@boom[@columns[0]] || {})[r[0].to_s] || r[0], r[1]] }, chart_options %>
+      <%= pie_chart @rows.map { |r| [(@boom[@columns[0]] || {})[r[0].to_s] || r[0], r[1]] }, chart_options.merge!(colors: @rows.map { "#" + "%06x" % (rand * 0xffffff)}) %>
     <% elsif chart_type == "bar" %>
       <%= column_chart (values.size - 1).times.map { |i| name = @columns[i + 1]; {name: blazer_series_name(name), data: @rows.first(20).map { |r| [(@boom[@columns[0]] || {})[r[0].to_s] || r[0], r[i + 1]] } } }, chart_options %>
     <% elsif chart_type == "bar2" %>

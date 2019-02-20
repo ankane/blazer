@@ -34,45 +34,46 @@ module Blazer
 
     private
 
-      def process_vars(statement, data_source)
-        (@bind_vars ||= []).concat(Blazer.extract_vars(statement)).uniq!
-        @bind_vars.each do |var|
-          params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
+      def fix_var_value(var, value)
+        if ["start_time", "end_time"].include?(var)
+          value = value.to_s.gsub(" ", "+") # fix for Quip bug
         end
-        @success = @bind_vars.all? { |v| params[v] }
-
-        if @success
-          @bind_vars.each do |var|
-            value = params[var].presence
-            if value
-              if ["start_time", "end_time"].include?(var)
-                value = value.to_s.gsub(" ", "+") # fix for Quip bug
-              end
-
-              if var.end_with?("_at")
-                begin
-                  value = Blazer.time_zone.parse(value)
-                rescue
-                  # do nothing
-                end
-              end
-
-              if value =~ /\A\d+\z/
-                value = value.to_i
-              elsif value =~ /\A\d+\.\d+\z/
-                value = value.to_f
-              end
-            end
-            value = Blazer.transform_variable.call(var, value) if Blazer.transform_variable
-            statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
+        if var.end_with?("_at")
+          begin
+            value = Blazer.time_zone.parse(value)
+          rescue
+            # do nothing
           end
         end
+        if value =~ /\A\d+\z/
+          value = value.to_i
+        elsif value =~ /\A\d+\.\d+\z/
+          value = value.to_f
+        end
+        value = Blazer.transform_variable.call(var, value) if Blazer.transform_variable
+        ActiveRecord::Base.connection.quote(value)
+      end
+
+      def variables_values(data_source)
+        variables_values = @bind_vars.map do |var|
+          value = params[var]
+          value ||= Blazer.data_sources[data_source].variable_defaults[var]
+          [var, fix_var_value(var, value)]
+        end
+        Hash[variables_values]
+      end
+
+      def process_vars(statement, data_source)
+        (@bind_vars ||= []).concat(Blazer.extract_vars(statement)).uniq!
+        template = Liquid::Template.parse(statement)
+        statement = template.render(variables_values(data_source))
+        @success = true
+        statement
       end
 
       def parse_smart_variables(var, data_source)
         smart_var_data_source =
           ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_variables[var] }
-
         if smart_var_data_source
           query = smart_var_data_source.smart_variables[var]
 

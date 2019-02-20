@@ -22,6 +22,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency "activerecord", ">= 4.2"
   spec.add_dependency "chartkick"
   spec.add_dependency "safely_block", ">= 0.1.1"
+  spec.add_dependency "liquid"
 
   spec.add_development_dependency "bundler"
   spec.add_development_dependency "rake"

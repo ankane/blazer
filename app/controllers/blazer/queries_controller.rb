@@ -53,7 +53,7 @@ module Blazer
 
     def show
       @statement = @query.statement.dup
-      process_vars(@statement, @query.data_source)
+      @statement = process_vars(@statement, @query.data_source)
 
       @smart_vars = {}
       @sql_errors = []
@@ -68,12 +68,13 @@ module Blazer
     end
 
     def edit
+      @statement = params[:statement]
     end
 
     def run
       @statement = params[:statement]
       data_source = params[:data_source]
-      process_vars(@statement, data_source)
+      @statement = process_vars(@statement, data_source)
       @only_chart = params[:only_chart]
       @run_id = blazer_params[:run_id]
       @query = Query.find_by(id: params[:query_id]) if params[:query_id]
@@ -153,7 +154,7 @@ module Blazer
     def refresh
       data_source = Blazer.data_sources[@query.data_source]
       @statement = @query.statement.dup
-      process_vars(@statement, @query.data_source)
+      @statement = process_vars(@statement, @query.data_source)
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
       data_source.clear_cache(@statement)
       redirect_to query_path(@query, variable_params)

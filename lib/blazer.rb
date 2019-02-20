@@ -3,6 +3,7 @@ require "csv"
 require "yaml"
 require "chartkick"
 require "safely/core"
+require "liquid"
 
 # modules
 require "blazer/version"
@@ -115,9 +116,11 @@ module Blazer
   end
 
   def self.extract_vars(statement)
-    # strip commented out lines
-    # and regex {1} or {1,2}
-    statement.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{\w*?\}/i).map { |v| v[1...-1] }.reject { |v| /\A\d+(\,\d+)?\z/.match(v) || v.empty? }.uniq
+    template = Liquid::Template.parse(statement)
+    vars = template.root.nodelist.map do |node|
+      node.name.name if node.is_a? Liquid::Variable
+    end
+    vars.compact.uniq
   end
 
   def self.run_checks(schedule: nil)

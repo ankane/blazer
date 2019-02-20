@@ -22,7 +22,7 @@ module Blazer
     def show
       @queries = @dashboard.dashboard_queries.order(:position).preload(:query).map(&:query)
       @queries.each do |query|
-        process_vars(query.statement, query.data_source)
+        query.statement = process_vars(query.statement, query.data_source)
       end
       @bind_vars ||= []
 
@@ -58,7 +58,7 @@ module Blazer
       @dashboard.queries.each do |query|
         data_source = Blazer.data_sources[query.data_source]
         statement = query.statement.dup
-        process_vars(statement, query.data_source)
+        statement = process_vars(statement, query.data_source)
         Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
         data_source.clear_cache(statement)
       end

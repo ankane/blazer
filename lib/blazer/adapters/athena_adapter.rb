@@ -13,7 +13,7 @@ module Blazer
             client.start_query_execution(
               query_string: statement,
               # use token so we fetch cached results after query is run
-              client_request_token: Digest::MD5.hexdigest(statement),
+              client_request_token: Digest::MD5.hexdigest([statement,data_source.id].join("/")),
               query_execution_context: {
                 database: database,
               },

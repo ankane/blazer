@@ -32,10 +32,10 @@
   $.fn.stupidtable.dir = {ASC: "asc", DESC: "desc"};
   $.fn.stupidtable.default_sort_fns = {
     "int": function(a, b) {
-      return parseInt(removeCommas(a), 10) - parseInt(removeCommas(b), 10);
+      return parseInt(a, 10) - parseInt(b, 10);
     },
     "float": function(a, b) {
-      return parseFloat(removeCommas(a)) - parseFloat(removeCommas(b));
+      return parseFloat(a) - parseFloat(b);
     },
     "string": function(a, b) {
       return a.toString().localeCompare(b.toString());
@@ -277,10 +277,5 @@
     });
     return th_index;
   };
-
-  // Remove commas from strings - used for parseInt and parseFloat when sorting
-  var removeCommas = function(string) {
-    return string.replace(/,/g, "")
-  }
 
 })(jQuery);

@@ -49,7 +49,7 @@
   <script>
     function showRun(data) {
       $("#results").html(data)
-      $("#results table").stupidtable().stickyTableHeaders({fixedOffset: 60})
+      $("#results table").stupidtable(stupidtableCustomSettings).stickyTableHeaders({fixedOffset: 60})
     }
 
     function showError(message) {

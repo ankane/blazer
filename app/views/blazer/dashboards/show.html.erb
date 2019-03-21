@@ -43,7 +43,7 @@
 
     runQuery(data, function (data) {
       $("#chart-<%= i %>").html(data)
-      $("#chart-<%= i %> table").stupidtable()
+      $("#chart-<%= i %> table").stupidtable(stupidtableCustomSettings)
     }, function (message) {
       $("#chart-<%= i %>").addClass("query-error").html(message)
     });

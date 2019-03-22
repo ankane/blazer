@@ -96,7 +96,7 @@ module Blazer
       helper_method :variable_params
 
       def blazer_user
-        send(Blazer.user_method) if Blazer.user_method && respond_to?(Blazer.user_method)
+        send(Blazer.user_method) if Blazer.user_method && respond_to?(Blazer.user_method, true)
       end
       helper_method :blazer_user
 

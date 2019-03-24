@@ -59,24 +59,7 @@
       </div>
     </div>
   <% end %>
-  <%= form_tag(add_to_dashboards_query_path, method: 'patch') do %>
-      <div class="modal-body">
-          <div class="row">
-            <% Blazer::Dashboard.order(:name).each do |dashboard| %>
-              <div class="toggle lg col-md-4">
-                <label>
-                  <%= check_box_tag "query[dashboard_ids][]", dashboard.id, dashboard.query_ids.include?(@query.id) %>
-                  <span class="button-indecator"><%= dashboard.name %></span>
-                </label>
-              </div>
-            <% end %>
-          </div>
-        </div>
-      <div class="modal-footer">
-        <%= submit_tag 'Add Query to Dashboards', :class => 'btn btn-primary'  %>
-      </div>
-    <% end %>
-
+  
   <div id="results">
     <p class="text-muted" v-if="running">Loading...</p>
     <div id="results-html" v-if="!running" :class="{ 'query-error': error }"></div>

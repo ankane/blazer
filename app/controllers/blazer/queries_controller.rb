@@ -1,6 +1,7 @@
 module Blazer
   class QueriesController < BaseController
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh, :add_to_dashboards]
+    before_action :set_dashboards, only: [:show]
     before_action :set_data_source, only: [:tables, :docs, :schema, :cancel]
 
     def home
@@ -322,10 +323,14 @@ module Blazer
 
       def set_query
         @query = Blazer::Query.find(params[:id].to_s.split("-").first)
-        @query_dashboards = Blazer::Dashboard.where.not(:queries => @query).order(:name)
+
         unless @query.viewable?(blazer_user)
           render_forbidden
         end
+      end
+
+      def set_dashboards
+        @dashboards = Blazer::Dashboard.order(:name)
       end
 
       def render_forbidden
@@ -334,10 +339,6 @@ module Blazer
 
       def query_params
         params.require(:query).permit(:name, :description, :statement, :data_source)
-      end
-
-      def dashboard_query_params
-        params.fetch(:query).permit(:dashboard_ids => [])
       end
 
       def blazer_params

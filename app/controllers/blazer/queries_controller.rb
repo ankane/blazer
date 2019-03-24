@@ -200,17 +200,15 @@ module Blazer
     end
 
     def add_to_dashboards
-      dashboard_ids = params[:query][:dashboard_ids]
-      if dashboard_ids
+      dashboard_ids = params[:query] ? params[:query][:dashboard_ids] : []
+      if dashboard_ids && @query.persisted?
         dashboard_ids.each_with_index do |dashboard_id|
           @query.dashboard_queries.where(dashboard_id: dashboard_id).first_or_initialize do |dashboard_query|
             dashboard_query.position = Blazer::Dashboard.find(dashboard_id).query_ids.length
             dashboard_query.save!
           end
         end
-        if @query.persisted?
-          @query.dashboard_queries.where.not(dashboard_id: dashboard_ids).destroy_all
-        end
+        @query.dashboard_queries.where.not(dashboard_id: dashboard_ids).destroy_all
       end
       redirect_to query_path(@query)
     end

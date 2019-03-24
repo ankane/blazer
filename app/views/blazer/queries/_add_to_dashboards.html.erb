@@ -8,7 +8,7 @@
         <h4 class="modal-title" id="addToDashboardsLabel">Add <%= query.name %> to Dashboards</h4>
       </div>
       <div class="modal-body">
-        <%= form_tag(add_to_dashboards_query_path, method: 'patch', :class => 'form-group') do %>
+        <%= form_tag(add_to_dashboards_query_path, method: 'post', :class => 'form-group') do %>
           <div class="modal-body">
             <div class="list-group">
             <% dashboards.each do |dashboard| %>

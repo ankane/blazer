@@ -1,6 +1,6 @@
 module Blazer
   class QueriesController < BaseController
-    before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
+    before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh, :add_to_dashboards]
     before_action :set_data_source, only: [:tables, :docs, :schema, :cancel]
 
     def home
@@ -198,6 +198,22 @@ module Blazer
       head :ok
     end
 
+    def add_to_dashboards
+      dashboard_ids = params[:query][:dashboard_ids]
+      if dashboard_ids
+        dashboard_ids.each_with_index do |dashboard_id|
+          @query.dashboard_queries.where(dashboard_id: dashboard_id).first_or_initialize do |dashboard_query|
+            dashboard_query.position = Blazer::Dashboard.find(dashboard_id).query_ids.length
+            dashboard_query.save!
+          end
+        end
+        if @query.persisted?
+          @query.dashboard_queries.where.not(dashboard_id: dashboard_ids).destroy_all
+        end
+      end
+      redirect_to query_path(@query)
+    end
+
     private
 
       def set_data_source
@@ -306,7 +322,7 @@ module Blazer
 
       def set_query
         @query = Blazer::Query.find(params[:id].to_s.split("-").first)
-
+        @query_dashboards = Blazer::Dashboard.where.not(:queries => @query).order(:name)
         unless @query.viewable?(blazer_user)
           render_forbidden
         end
@@ -318,6 +334,10 @@ module Blazer
 
       def query_params
         params.require(:query).permit(:name, :description, :statement, :data_source)
+      end
+
+      def dashboard_query_params
+        params.fetch(:query).permit(:dashboard_ids => [])
       end
 
       def blazer_params

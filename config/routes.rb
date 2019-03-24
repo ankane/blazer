@@ -3,6 +3,7 @@ Blazer::Engine.routes.draw do
     post :run, on: :collection # err on the side of caution
     post :cancel, on: :collection
     post :refresh, on: :member
+    patch :add_to_dashboards, on: :member
     get :tables, on: :collection
     get :schema, on: :collection
     get :docs, on: :collection

@@ -202,13 +202,26 @@ module Blazer
     def add_to_dashboards
       dashboard_ids = params[:query] ? params[:query][:dashboard_ids] : []
       if dashboard_ids && @query.persisted?
-        dashboard_ids.each_with_index do |dashboard_id|
+        # Remove Dashboard Queries where dashboard ID was not selected
+        destroyed_dashboard_queries =  @query.dashboard_queries.where.not(dashboard_id: dashboard_ids).destroy_all
+
+        # Fix/Reset dashboard_query positions after removal of queries
+        destroyed_dashboard_queries.each do |destroyed_dashboard_query|
+          dashboard_id = destroyed_dashboard_query.dashboard_id
+          Blazer::Dashboard.find(dashboard_id).dashboard_queries.order(:position).each_with_index do |dashboard_query, i|
+            dashboard_query.position = i 
+            dashboard_query.save!
+          end
+        end
+
+        # Add query to selected dashboards
+        dashboard_ids.each do |dashboard_id|
+          # only modifies new dashboard queries
           @query.dashboard_queries.where(dashboard_id: dashboard_id).first_or_initialize do |dashboard_query|
             dashboard_query.position = Blazer::Dashboard.find(dashboard_id).query_ids.length
             dashboard_query.save!
           end
         end
-        @query.dashboard_queries.where.not(dashboard_id: dashboard_ids).destroy_all
       end
       redirect_to query_path(@query)
     end

@@ -12,6 +12,9 @@ module Blazer
         # regex not perfect, but should be good enough
         statement = statement.gsub(/\/\*.+\*\//, "")
 
+        # remove trailing semicolon
+        statement = statement.sub(/;\s*\z/, "")
+
         begin
           response = client.query(statement)
           rows = response.map { |r| r.to_hash.except("attributes").values }

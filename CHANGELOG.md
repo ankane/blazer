@@ -1,6 +1,7 @@
 ## 2.0.2 [unreleased]
 
 - Added support for variable transformation for blind indexing
+- Added experimental support for Salesforce
 - Fixed JavaScript sorting for numbers with commas
 
 ## 2.0.1

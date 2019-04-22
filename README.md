@@ -478,6 +478,7 @@ data_sources:
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
+- [Salesforce](#salesforce-experimental-master) [experimental, master]
 - [Snowflake](#snowflake)
 - [SQLite](#sqlite)
 - [SQL Server](#sql-server)
@@ -618,6 +619,29 @@ data_sources:
   my_source:
     url: presto://user@hostname:8080/catalog
 ```
+
+### Salesforce [experimental, master]
+
+Add [restforce](https://github.com/restforce/restforce) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: salesforce
+```
+
+And set the appropriate environment variables:
+
+```sh
+SALESFORCE_USERNAME="username"
+SALESFORCE_PASSWORD="password"
+SALESFORCE_SECURITY_TOKEN="security token"
+SALESFORCE_CLIENT_ID="client id"
+SALESFORCE_CLIENT_SECRET="client secret"
+SALESFORCE_API_VERSION="41.0"
+```
+
+Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm)
 
 ### Snowflake
 

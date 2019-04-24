@@ -479,6 +479,7 @@ data_sources:
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
 - [Salesforce](#salesforce-experimental-master) [experimental, master]
+- [Socrata Open Data API (SODA)](#socrata-open-data-api-soda-experimental-master) [experimental, master]
 - [Snowflake](#snowflake)
 - [SQLite](#sqlite)
 - [SQL Server](#sql-server)
@@ -642,6 +643,18 @@ SALESFORCE_API_VERSION="41.0"
 ```
 
 Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm)
+
+### Socrata Open Data API (SODA) [experimental, master]
+
+Add [soda-ruby](https://github.com/socrata/soda-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: soda
+    url: https://soda.demo.socrata.com/resource/4tka-6guv.json
+    app_token: ...
+```
 
 ### Snowflake
 

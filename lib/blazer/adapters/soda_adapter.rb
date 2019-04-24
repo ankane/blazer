@@ -7,13 +7,16 @@ module Blazer
         error = nil
 
         # remove comments manually
-        # statement = statement.gsub(/--.+/, "")
+        statement = statement.gsub(/--.+/, "")
         # only supports single line /* */ comments
         # regex not perfect, but should be good enough
-        # statement = statement.gsub(/\/\*.+\*\//, "")
+        statement = statement.gsub(/\/\*.+\*\//, "")
 
         # remove trailing semicolon
-        # statement = statement.sub(/;\s*\z/, "")
+        statement = statement.sub(/;\s*\z/, "")
+
+        # remove whitespace
+        statement = statement.squish
 
         begin
           response = client.get(settings["url"], "$query" => statement).body

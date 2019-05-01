@@ -475,6 +475,7 @@ data_sources:
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
+- [Neo4j](#neo4j-master)
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
@@ -594,6 +595,17 @@ Add [mysql2](https://github.com/brianmario/mysql2) to your Gemfile (if it’s no
 data_sources:
   my_source:
     url: mysql2://user:password@hostname:3306/database
+```
+
+### Neo4j [master]
+
+Add [neo4j-core](https://github.com/neo4jrb/neo4j-core) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: neo4j
+    url: http://user:password@hostname:7474
 ```
 
 ### Oracle

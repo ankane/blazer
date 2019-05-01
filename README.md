@@ -475,7 +475,7 @@ data_sources:
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
-- [Neo4j](#neo4j-master)
+- [Neo4j](#neo4j-experimental-master)
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
@@ -597,7 +597,7 @@ data_sources:
     url: mysql2://user:password@hostname:3306/database
 ```
 
-### Neo4j [master]
+### Neo4j [experimental, master]
 
 Add [neo4j-core](https://github.com/neo4jrb/neo4j-core) to your Gemfile and set:
 

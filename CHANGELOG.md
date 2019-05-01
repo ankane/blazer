@@ -1,7 +1,7 @@
 ## 2.0.2 [unreleased]
 
 - Added support for variable transformation for blind indexing
-- Added support for Neo4j
+- Added experimental support for Neo4j
 - Added experimental support for Salesforce
 - Fixed JavaScript sorting for numbers with commas
 

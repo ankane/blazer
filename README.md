@@ -479,7 +479,7 @@ data_sources:
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
-- [Salesforce](#salesforce-experimental-master) [experimental, master]
+- [Salesforce](#salesforce-experimental-master)
 - [Snowflake](#snowflake)
 - [SQLite](#sqlite)
 - [SQL Server](#sql-server)
@@ -724,7 +724,7 @@ Have team members who want to learn SQL? Here are a few great, free resources.
 
 ## Useful Tools
 
-For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).
+For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate.sql](https://github.com/ankane/groupdate.sql).
 
 ## Standalone Version
 

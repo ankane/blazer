@@ -13,7 +13,7 @@
     <thead>
       <tr>
         <th colspan="2">
-          <%= table[:label] || table[:table] %>
+          <% if table[:schema] != "public" %><%= table[:schema] %>.<% end %><%= table[:table] %>
         </th>
       </tr>
     </thead>

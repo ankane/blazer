@@ -66,7 +66,7 @@ module Blazer
       def schema
         sql = add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
         result = data_source.run_statement(sql)
-        result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], label: k[0] == default_schema ? k[1] : "#{k[0]}.#{k[1]}", columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }.sort_by { |t| t[:schema] == default_schema ? "" : t[:schema] }
+        result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }.sort_by { |t| t[:schema] == default_schema ? "" : t[:schema] }
       end
 
       def preview_statement

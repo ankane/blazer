@@ -41,19 +41,36 @@ module Blazer
       end
 
       def tables
-        result = data_source.run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_name FROM information_schema.tables WHERE table_schema IN (?) ORDER BY table_name", schemas]), refresh_cache: true)
-        result.rows.map(&:first)
+        sql = add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
+
+        result = data_source.run_statement(sql, refresh_cache: true)
+        if postgresql? || redshift?
+          result.rows.sort_by { |r| [r[0] == default_schema ? "" : r[1]] }.map do |row|
+            label =
+              if row[0] == default_schema
+                row[1]
+              else
+                "#{row[0]}.#{row[1]}"
+              end
+
+            {
+              label: label,
+              value: connection_model.connection.quote_table_name(label)
+            }
+          end
+        else
+          result.rows.map(&:second).sort
+        end
       end
 
       def schema
-        result = data_source.run_statement(connection_model.send(:sanitize_sql_array, ["SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns WHERE table_schema IN (?) ORDER BY 1, 2", schemas]))
-        result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }
+        sql = add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
+        result = data_source.run_statement(sql)
+        result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], label: k[0] == default_schema ? k[1] : "#{k[0]}.#{k[1]}", columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }.sort_by { |t| t[:schema] == default_schema ? "" : t[:schema] }
       end
 
       def preview_statement
-        if postgresql?
-          "SELECT * FROM \"{table}\" LIMIT 10"
-        elsif sqlserver?
+        if sqlserver?
           "SELECT TOP (10) * FROM {table}"
         else
           "SELECT * FROM {table} LIMIT 10"
@@ -137,18 +154,28 @@ module Blazer
         connection_model.connection.adapter_name rescue nil
       end
 
-      def schemas
-        settings["schemas"] || [connection_model.connection_config[:schema] || default_schema]
+      def default_schema
+        @default_schema ||= begin
+          if postgresql? || redshift?
+            "public"
+          elsif sqlserver?
+            "dbo"
+          else
+            connection_model.connection_config[:database]
+          end
+        end
       end
 
-      def default_schema
-        if postgresql? || redshift?
-          "public"
-        elsif sqlserver?
-          "dbo"
+      def add_schemas(query)
+        if settings["schemas"]
+          where = "table_schema IN (?)"
+          schemas = settings["schemas"]
         else
-          connection_model.connection_config[:database]
+          where = "table_schema NOT IN (?)"
+          schemas = ["information_schema"]
+          schemas << "pg_catalog" if postgresql? || redshift?
         end
+        connection_model.send(:sanitize_sql_array, ["#{query} WHERE #{where}", schemas])
       end
 
       def set_timeout(timeout)

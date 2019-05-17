@@ -46,7 +46,7 @@ module Blazer
         result = data_source.run_statement(sql, refresh_cache: true)
         if postgresql? || redshift?
           result.rows.sort_by { |r| [r[0] == default_schema ? "" : r[1]] }.map do |row|
-            label =
+            table =
               if row[0] == default_schema
                 row[1]
               else
@@ -54,8 +54,8 @@ module Blazer
               end
 
             {
-              label: label,
-              value: connection_model.connection.quote_table_name(label)
+              table: table,
+              value: connection_model.connection.quote_table_name(table)
             }
           end
         else

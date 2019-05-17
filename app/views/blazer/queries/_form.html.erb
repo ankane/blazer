@@ -134,7 +134,7 @@
           for (var i = 0; i < data.length; i++) {
             var table = data[i]
             if (typeof table === "object") {
-              newOptions.push({text: table.label, value: table.value})
+              newOptions.push({text: table.table, value: table.value})
             } else {
               newOptions.push({text: table, value: table})
             }

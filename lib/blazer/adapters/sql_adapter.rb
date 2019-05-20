@@ -45,7 +45,7 @@ module Blazer
 
         result = data_source.run_statement(sql, refresh_cache: true)
         if postgresql? || redshift?
-          result.rows.sort_by { |r| [r[0] == default_schema ? "" : r[1]] }.map do |row|
+          result.rows.sort_by { |r| [r[0] == default_schema ? "" : r[0], r[1]] }.map do |row|
             table =
               if row[0] == default_schema
                 row[1]
@@ -66,7 +66,7 @@ module Blazer
       def schema
         sql = add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
         result = data_source.run_statement(sql)
-        result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }.sort_by { |t| t[:schema] == default_schema ? "" : t[:schema] }
+        result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }.sort_by { |t| [t[:schema] == default_schema ? "" : t[:schema], t[:table]] }
       end
 
       def preview_statement

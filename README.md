@@ -179,7 +179,7 @@ If your database contains sensitive or personal data, check out [Hypershield](ht
 
 If you need to search encrypted data, use [blind indexing](https://github.com/ankane/blind_index).
 
-You can have Blazer transform specific variables with: [master]
+You can have Blazer transform specific variables with:
 
 ```ruby
 Blazer.transform_variable = lambda do |name, value|
@@ -475,11 +475,11 @@ data_sources:
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
-- [Neo4j](#neo4j-experimental-master)
+- [Neo4j](#neo4j-experimental)
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
-- [Salesforce](#salesforce-experimental-master)
+- [Salesforce](#salesforce-experimental)
 - [Snowflake](#snowflake)
 - [SQLite](#sqlite)
 - [SQL Server](#sql-server)
@@ -597,7 +597,7 @@ data_sources:
     url: mysql2://user:password@hostname:3306/database
 ```
 
-### Neo4j [experimental, master]
+### Neo4j [experimental]
 
 Add [neo4j-core](https://github.com/neo4jrb/neo4j-core) to your Gemfile and set:
 
@@ -632,7 +632,7 @@ data_sources:
     url: presto://user@hostname:8080/catalog
 ```
 
-### Salesforce [experimental, master]
+### Salesforce [experimental]
 
 Add [restforce](https://github.com/restforce/restforce) to your Gemfile and set:
 

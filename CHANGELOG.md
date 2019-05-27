@@ -1,4 +1,4 @@
-## 2.0.2 [unreleased]
+## 2.0.2
 
 - Added support for variable transformation for blind indexing
 - Added experimental support for Neo4j

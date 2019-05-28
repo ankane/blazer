@@ -29,7 +29,7 @@ module Blazer
     end
 
     def blazer_maps?
-      ENV["MAPBOX_ACCESS_TOKEN"].present?
+      Blazer.mapbox_access_token.present?
     end
 
     def blazer_js_var(name, value)

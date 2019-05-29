@@ -32,7 +32,9 @@
     <thead>
       <tr>
         <th>Name</th>
-        <th style="width: 20%; text-align: right;">Mastermind</th>
+        <% if Blazer.user_class %>
+          <th style="width: 20%; text-align: right;">Mastermind</th>
+        <% end%>
       </tr>
     </thead>
     <tbody class="list" v-cloak>
@@ -41,7 +43,9 @@
           <a :href="itemPath(query)" :class="{ dashboard: query.dashboard }">{{ query.name }}</a>
           <span class="vars">{{ query.vars }}</span>
         </td>
-        <td class="creator">{{ query.creator }}</td>
+        <% if Blazer.user_class %>
+          <td class="creator">{{ query.creator }}</td>
+        <% end %>
       </tr>
     </tbody>
   </table>

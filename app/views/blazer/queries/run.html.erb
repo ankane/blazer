@@ -76,7 +76,7 @@
     <% if blazer_maps? && @markers.any? %>
       <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
       <script>
-        L.mapbox.accessToken = '<%= ENV["MAPBOX_ACCESS_TOKEN"] %>';
+        L.mapbox.accessToken = '<%= Blazer.mapbox_access_token %>';
         var map = L.mapbox.map('map', 'ankane.ioo8nki0');
         <%= blazer_js_var "markers", @markers %>
         var featureLayer = L.mapbox.featureLayer().addTo(map);

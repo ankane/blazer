@@ -76,9 +76,10 @@
     <% if blazer_maps? && @markers.any? %>
       <div id="map" style="height: <%= @only_chart ? 300 : 500 %>px;"></div>
       <script>
-        L.mapbox.accessToken = '<%= Blazer.mapbox_access_token %>';
-        var map = L.mapbox.map('map', 'ankane.ioo8nki0');
+        <%= blazer_js_var "mapboxAccessToken", Blazer.mapbox_access_token %>
         <%= blazer_js_var "markers", @markers %>
+        L.mapbox.accessToken = mapboxAccessToken;
+        var map = L.mapbox.map('map', 'ankane.ioo8nki0');
         var featureLayer = L.mapbox.featureLayer().addTo(map);
         var geojson = [];
         for (var i = 0; i < markers.length; i++) {

@@ -1,6 +1,6 @@
 ## 2.1.0
 
-- Fixed XSS vulnerability due to Chartkick - see [#245](https://github.com/ankane/blazer/issues/245)
+- Require latest Chartkick to prevent possible XSS - see [#245](https://github.com/ankane/blazer/issues/245)
 
 ## 2.0.2
 

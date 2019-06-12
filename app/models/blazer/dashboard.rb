@@ -1,6 +1,6 @@
 module Blazer
   class Dashboard < Record
-    belongs_to :creator, Blazer::BELONGS_TO_OPTIONAL.merge(class_name: Blazer.user_class.to_s) if Blazer.user_class
+    belongs_to :creator, optional: true, class_name: Blazer.user_class.to_s if Blazer.user_class
     has_many :dashboard_queries, dependent: :destroy
     has_many :queries, through: :dashboard_queries
 

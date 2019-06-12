@@ -72,8 +72,6 @@ module Blazer
     "system requested abort", # redshift
     "maximum statement execution time exceeded" # mysql
   ]
-  BELONGS_TO_OPTIONAL = {}
-  BELONGS_TO_OPTIONAL[:optional] = true if Rails::VERSION::MAJOR >= 5
 
   def self.time_zone=(time_zone)
     @time_zone = time_zone.is_a?(ActiveSupport::TimeZone) ? time_zone : ActiveSupport::TimeZone[time_zone.to_s]

@@ -1,3 +1,7 @@
+## 2.2.0 [unreleased]
+
+- Dropped support for Rails 4.2
+
 ## 2.1.0
 
 - Require latest Chartkick to prevent possible XSS - see [#245](https://github.com/ankane/blazer/issues/245)

@@ -41,6 +41,8 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
       t.text :message
       t.timestamp :last_run_at
       t.timestamps null: false
+      t.string :failed_table
+      t.string :failed_ts
     end
   end
 end

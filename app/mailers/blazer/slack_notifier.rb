@@ -2,6 +2,24 @@ require "net/http"
 
 module Blazer
   class SlackNotifier
+
+    class << self
+      attr_accessor :postMessageUrl
+      attr_accessor :updateUrl
+      attr_accessor :token
+      attr_accessor :username
+      attr_accessor :channelUrl
+      attr_accessor :groupUrl
+    end
+    self.postMessageUrl ='https://slack.com/api/chat.postMessage'
+    self.updateUrl ='https://slack.com/api/chat.update'
+    self.token = Blazer.slack_app_token
+    self.username = 'Blazer'
+    #get actual channels id
+    self.channelUrl = "https://slack.com/api/channels.list?token=#{token}&exclude_archived=true"
+    self.groupUrl = "https://slack.com/api/groups.list?token=#{token}&exclude_archived=true"
+
+
     def self.state_change(check, state, state_was, rows_count, error, check_type)
       check.split_slack_channels.each do |channel|
         text =
@@ -9,8 +27,12 @@ module Blazer
             error
           elsif rows_count > 0 && check_type == "bad_data"
             pluralize(rows_count, "row")
+          elsif state == "passing" && token
+            "Check first failed #{Time.at(check[:failed_ts].to_f)} and passed on #{Time.now}"
+          else
+            ''
           end
-
+        text+= "\n```\n#{check.failed_table}\n```" if check.failed_table
         payload = {
           channel: channel,
           attachments: [
@@ -23,7 +45,22 @@ module Blazer
           ]
         }
 
-        post(Blazer.slack_webhook_url, payload)
+
+        if !token #old way
+          post(Blazer.slack_webhook_url, payload)
+        elsif state == "passing" && token
+          payload[:channel]=find_channel_id(channel)
+          update_post(payload,check[:failed_ts])
+          check.update(failed_ts: nil)
+          check.update(failed_table: nil)
+        else
+          results = JSON.parse(update_post(payload).body)
+
+
+          check.update(failed_ts: results['message']['ts'] || results['ts'] )
+        end
+
+
       end
     end
 
@@ -65,12 +102,34 @@ module Blazer
     end
 
     def self.post(url, payload)
+      payload = payload.to_json if payload
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       http.open_timeout = 3
       http.read_timeout = 5
-      http.post(uri.request_uri, payload.to_json)
+      http.post(uri.request_uri, payload)
+    end
+
+    def self.update_post(payload,ts=nil)
+      url = ts ? updateUrl : postMessageUrl
+      url += '?token='+token
+      url += '&username='+username
+      url += '&channel='+ payload[:channel]
+      url += '&ts='+ ts if ts
+      url += '&attachments='+payload[:attachments].to_json
+      post(url, nil)
+    end
+    def self.channel_list
+      Blazer.cache.fetch("blazer_channel_list", :expires_in => 1.hour) do
+        channels = JSON.parse(post(channelUrl,nil).body)["channels"]
+        groups = JSON.parse(post(groupUrl,nil).body)["groups"]
+        channels.concat(groups)
+      end
+    end
+
+    def self.find_channel_id(channel)
+      channel_list.find {|c| c['name']==channel}['id']
     end
   end
 end

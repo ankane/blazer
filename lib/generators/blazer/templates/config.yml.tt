@@ -56,6 +56,9 @@ audit: true
 # webhook for Slack
 # slack_webhook_url: <%%= ENV["BLAZER_SLACK_WEBHOOK_URL"] %>
 
+# Alternative for slack webhook which requires a slack app. allow for message editing when passing and display partial results in slack
+# slack_app_token: <%%= ENV['BLAZER_SLACK_APP_TOKEN'] %>
+
 check_schedules:
   - "1 day"
   - "1 hour"

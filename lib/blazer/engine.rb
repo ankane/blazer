@@ -26,6 +26,7 @@ module Blazer
       Blazer.images = Blazer.settings["images"] || false
       Blazer.override_csp = Blazer.settings["override_csp"] || false
       Blazer.slack_webhook_url = Blazer.settings["slack_webhook_url"] || ENV["BLAZER_SLACK_WEBHOOK_URL"]
+      Blazer.slack_app_token = Blazer.settings["slack_app_token"] || ENV["BLAZER_SLACK_APP_TOKEN"]
       Blazer.mapbox_access_token = Blazer.settings["mapbox_access_token"] || ENV["MAPBOX_ACCESS_TOKEN"]
     end
   end

@@ -1,3 +1,4 @@
+require 'tty-table' if Blazer.slack_app_token
 module Blazer
   class Check < Record
     belongs_to :creator, optional: true, class_name: Blazer.user_class.to_s if Blazer.user_class
@@ -9,6 +10,8 @@ module Blazer
 
     before_validation :set_state
     before_validation :fix_emails
+
+    SQL_CHAR_LIMIT = 3000
 
     def split_emails
       emails.to_s.downcase.split(",").map(&:strip)
@@ -65,7 +68,19 @@ module Blazer
           self.timeouts = 0
         end
       end
-
+      if state!='passing' && Blazer.slack_app_token
+        column_limit= 8
+        display_rows=[]
+        result.rows.each {|x|  display_rows<< x.try(:first,column_limit)}
+        display_columns = result.columns.try(:first,column_limit)
+        width = (73.0 - display_columns.size)/display_columns.size
+        width_array = [width]*display_columns.size
+        begin
+          self.failed_table = (TTY::Table.new header: display_columns, rows: display_rows).render(:ascii, column_widths: width_array,multiline: true)[0,SQL_CHAR_LIMIT] #4000 include all slack string limitation
+        rescue => e
+          self.failed_table = "Failed to render Table: #{e}"
+        end
+      end
       # do not notify on creation, except when not passing
       if (state_was != "new" || state != "passing") && state != state_was && emails.present?
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now

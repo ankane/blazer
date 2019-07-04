@@ -1,5 +1,6 @@
 ## 2.2.0 [unreleased]
 
+- Fixed bug with Slack notifications not sending
 - Dropped support for Rails 4.2
 
 ## 2.1.0

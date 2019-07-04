@@ -132,7 +132,12 @@
         this.tablesXhr = $.getJSON(Routes.tables_queries_path({data_source: this.dataSource}), function(data) {
           var newOptions = []
           for (var i = 0; i < data.length; i++) {
-            newOptions.push({text: data[i], value: data[i]})
+            var table = data[i]
+            if (typeof table === "object") {
+              newOptions.push({text: table.table, value: table.value})
+            } else {
+              newOptions.push({text: table, value: table})
+            }
           }
           selectize.clearOptions()
           selectize.addOption(newOptions)

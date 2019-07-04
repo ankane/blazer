@@ -1,5 +1,6 @@
 ## 2.2.0 [unreleased]
 
+- Added schema to table preview for Postgres and Redshift
 - Fixed bug with Slack notifications not sending
 - Dropped support for Rails 4.2
 

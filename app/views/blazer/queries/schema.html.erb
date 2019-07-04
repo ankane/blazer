@@ -13,10 +13,7 @@
     <thead>
       <tr>
         <th colspan="2">
-          <%= table[:table] %>
-          <% if table[:schema] != "public" %>
-            <span class="text-muted" style="font-weight: normal;"><%= table[:schema] %></span>
-          <% end %>
+          <% if table[:schema] != "public" %><%= table[:schema] %>.<% end %><%= table[:table] %>
         </th>
       </tr>
     </thead>

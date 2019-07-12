@@ -1,4 +1,4 @@
-## 2.2.0 [unreleased]
+## 2.2.0
 
 - Added schema to table preview for Postgres and Redshift
 - Fixed bug with Slack notifications not sending

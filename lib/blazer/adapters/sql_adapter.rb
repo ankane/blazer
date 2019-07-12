@@ -107,9 +107,9 @@ module Blazer
 
       def cancel(run_id)
         if postgresql?
-          select_all("SELECT pg_cancel_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND query LIKE '%,run_id:#{run_id}%'")
+          select_all("SELECT pg_cancel_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND query LIKE ?", ["%,run_id:#{run_id}%"])
         elsif redshift?
-          first_row = select_all("SELECT pid FROM stv_recents WHERE status = 'Running' AND query LIKE '%,run_id:#{run_id}%'").first
+          first_row = select_all("SELECT pid FROM stv_recents WHERE status = 'Running' AND query LIKE ?", ["%,run_id:#{run_id}%"]).first
           if first_row
             select_all("CANCEL #{first_row["pid"].to_i}")
           end
@@ -122,7 +122,8 @@ module Blazer
 
       protected
 
-      def select_all(statement)
+      def select_all(statement, params = [])
+        statement = connection_model.send(:sanitize_sql_array, [statement] + params) if params.any?
         connection_model.connection.select_all(statement)
       end
 

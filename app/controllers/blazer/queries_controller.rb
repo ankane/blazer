@@ -232,7 +232,6 @@ module Blazer
           end
         end
 
-        @filename = @query.name.parameterize if @query
         @min_width_types = @columns.each_with_index.select { |c, i| @first_row[i].is_a?(Time) || @first_row[i].is_a?(String) || @data_source.smart_columns[c] }.map(&:last)
 
         @boom = @result.boom if @result
@@ -262,9 +261,15 @@ module Blazer
             render layout: false
           end
           format.csv do
-            send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
+            send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=#{filename(@query, params[:query_params])}"
           end
         end
+      end
+
+      def filename(query, query_params)
+        base_name = query.try(:name).try(:parameterize).presence || 'query'
+
+        "#{base_name}-#{query_params}".parameterize + ".csv"
       end
 
       def set_queries(limit = nil)

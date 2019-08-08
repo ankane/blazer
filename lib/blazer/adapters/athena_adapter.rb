@@ -8,12 +8,18 @@ module Blazer
         rows = []
         error = nil
 
+        digest_inputs = [
+          statement,
+          data_source.id,
+          utc.now.change(expiration_config)
+        ]
+
         begin
           resp =
             client.start_query_execution(
               query_string: statement,
               # use token so we fetch cached results after query is run
-              client_request_token: Digest::MD5.hexdigest([statement,data_source.id].join("/")),
+              client_request_token: Digest::MD5.hexdigest(digest_inputs.join("/")),
               query_execution_context: {
                 database: database,
               },
@@ -52,8 +58,6 @@ module Blazer
             resp.each do |page|
               untyped_rows.concat page.result_set.rows.map { |r| r.data.map(&:var_char_value) }
             end
-
-            utc = ActiveSupport::TimeZone['Etc/UTC']
 
             rows = untyped_rows[1..-1] || []
             column_types.each_with_index do |ct, i|
@@ -105,6 +109,14 @@ module Blazer
       end
 
       private
+
+      def utc
+        @utc ||= ActiveSupport::TimeZone['Etc/UTC']
+      end
+
+      def expiration_config
+        @expiration_config ||= settings.dig("client_request_token", "expiration_config").try(:reduce, {}, :merge) || {min: 0}
+      end
 
       def database
         @database ||= settings["database"] || "default"

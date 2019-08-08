@@ -504,7 +504,12 @@ data_sources:
     adapter: athena
     database: database
     output_location: s3://some-bucket/
+    client_request_token:
+      expiration_config:
+        - !ruby/sym sec: 0
 ```
+See [Time#change](https://apidock.com/rails/Time/change) for details on configuring an expiration window for [Athena's `client_request_token`](https://docs.aws.amazon.com/athena/latest/APIReference/API_StartQueryExecution.html#API_StartQueryExecution_RequestSyntax
+).
 
 ### Amazon Redshift
 

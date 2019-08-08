@@ -1,3 +1,4 @@
+
 # Blazer
 
 Explore your data with SQL. Easily create charts and dashboards, and share them with your team.
@@ -539,9 +540,7 @@ data_sources:
 
 ### Druid
 
-First, [enable SQL support](http://druid.io/docs/latest/querying/sql.html#configuration) on the broker.
-
-Set:
+Enable [SQL support](http://druid.io/docs/latest/querying/sql.html#configuration) on the broker and set:
 
 ```yml
 data_sources:

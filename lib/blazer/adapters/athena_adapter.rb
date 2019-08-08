@@ -32,7 +32,7 @@ module Blazer
               query_execution_id: query_execution_id
             )
           rescue Aws::Athena::Errors::InvalidRequestException => e
-            if e.message != "Query has not yet finished. Current state: RUNNING"
+            unless e.message =~ /Query has not yet finished. Current state: (RUNNING|QUEUED)/
               raise e
             end
             if Time.now < stop_at

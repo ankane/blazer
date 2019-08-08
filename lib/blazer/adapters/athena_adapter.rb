@@ -56,6 +56,7 @@ module Blazer
             utc = ActiveSupport::TimeZone['Etc/UTC']
 
             rows = untyped_rows[1..-1] || []
+            rows = untyped_rows[0..-1] unless column_info.present?
             column_types.each_with_index do |ct, i|
               # TODO more column_types
               case ct

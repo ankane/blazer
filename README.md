@@ -674,7 +674,7 @@ Then, install the [Snowflake ODBC driver](https://docs.snowflake.net/manuals/use
 data_sources:
   my_source:
     adapter: snowflake
-    conn_str: Driver=/path/to/lib/libSnowflake.so;uid=username;pwd=password;server=host.snowflakecomputing.com
+    conn_str: Driver=/path/to/libSnowflake.so;uid=user;pwd=password;server=host.snowflakecomputing.com
 ```
 
 ### SQLite

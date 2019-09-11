@@ -656,13 +656,25 @@ Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta
 
 ### Snowflake
 
-First, install the [ODBC driver](https://docs.snowflake.net/manuals/user-guide/odbc.html). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
+First, install ODBC. For Homebrew, use:
+
+```sh
+brew install unixodbc
+```
+
+For Ubuntu, use:
+
+```sh
+sudo apt-get install unixodbc
+```
+
+Then, install the [Snowflake ODBC driver](https://docs.snowflake.net/manuals/user-guide/odbc.html). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
 
 ```yml
 data_sources:
   my_source:
     adapter: snowflake
-    dsn: ProductionSnowflake
+    conn_str: Driver=/path/to/lib/libSnowflake.so;uid=username;pwd=password;server=host.snowflakecomputing.com
 ```
 
 ### SQLite

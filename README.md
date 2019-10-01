@@ -668,7 +668,7 @@ For Ubuntu, use:
 sudo apt-get install unixodbc-dev
 ```
 
-For Heroku, use the [Apt buildpack](https://github.com/heroku/heroku-buildpack-apt).
+For Heroku, use the [Apt buildpack](https://github.com/heroku/heroku-buildpack-apt) with `unixodbc-dev`.
 
 Then, install the [Snowflake ODBC driver](https://docs.snowflake.net/manuals/user-guide/odbc.html). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
 

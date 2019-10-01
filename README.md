@@ -665,7 +665,7 @@ brew install unixodbc
 For Ubuntu, use:
 
 ```sh
-sudo apt-get install unixodbc
+sudo apt-get install unixodbc-dev
 ```
 
 For Heroku, use the [Apt buildpack](https://github.com/heroku/heroku-buildpack-apt).

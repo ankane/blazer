@@ -1,5 +1,6 @@
 ## 2.2.1 [unreleased]
 
+- Improved Snowflake table preview
 - Fixed bug with refresh link not showing
 
 ## 2.2.0

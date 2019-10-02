@@ -1,3 +1,7 @@
+## 2.2.1 [unreleased]
+
+- Fixed bug with refresh link not showing
+
 ## 2.2.0
 
 - Added schema to table preview for Postgres and Redshift

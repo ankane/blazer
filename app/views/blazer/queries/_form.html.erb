@@ -51,7 +51,7 @@
           <% words << pluralize(dashboards_count, "dashboard") if dashboards_count > 0 %>
           <% words << pluralize(checks_count, "check") if checks_count > 0 %>
           <% if words.any? %>
-            <div class="alert alert-info" style="margin-bottom: 0;">
+            <div class="alert alert-info">
               Part of <%= words.to_sentence %>. Be careful when editing.
             </div>
           <% end %>

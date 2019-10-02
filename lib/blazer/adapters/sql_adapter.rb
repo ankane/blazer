@@ -42,7 +42,7 @@ module Blazer
       def tables
         sql = add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
         result = data_source.run_statement(sql, refresh_cache: true)
-        if postgresql? || redshift?
+        if postgresql? || redshift? || snowflake?
           result.rows.sort_by { |r| [r[0] == default_schema ? "" : r[0], r[1]] }.map do |row|
             table =
               if row[0] == default_schema
@@ -50,6 +50,8 @@ module Blazer
               else
                 "#{row[0]}.#{row[1]}"
               end
+
+            table = table.downcase if snowflake?
 
             {
               table: table,
@@ -148,6 +150,10 @@ module Blazer
         ["SQLServer", "tinytds", "mssql"].include?(adapter_name)
       end
 
+      def snowflake?
+        data_source.adapter == "snowflake"
+      end
+
       def adapter_name
         # prevent bad data source from taking down queries/new
         connection_model.connection.adapter_name rescue nil
@@ -172,6 +178,7 @@ module Blazer
         else
           where = "table_schema NOT IN (?)"
           schemas = ["information_schema"]
+          schemas.map!(&:upcase) if snowflake?
           schemas << "pg_catalog" if postgresql? || redshift?
         end
         connection_model.send(:sanitize_sql_array, ["#{query} WHERE #{where}", schemas])

@@ -12,14 +12,14 @@
       <p class="text-muted" style="float: right;">
         <% if @cached_at %>
           Cached <%= time_ago_in_words(@cached_at, include_seconds: true) %> ago
-        <% elsif !params[:data_source] %>
+        <% elsif params[:query_id] %>
           Cached just now
           <% if @data_source.cache_mode == "slow" %>
             (over <%= "%g" % @data_source.cache_slow_threshold %>s)
           <% end %>
         <% end %>
 
-        <% if @query && !params[:data_source] %>
+        <% if @query && params[:query_id] %>
           <%= link_to "Refresh", refresh_query_path(@query, variable_params), method: :post %>
         <% end %>
       </p>

@@ -67,7 +67,8 @@
     <% series_library = {} %>
     <% target_index = @columns.index { |k| k.downcase == "target" } %>
     <% if target_index %>
-      <% series_library[target_index - 1] = {pointStyle: "line", hitRadius: 5, borderColor: "#109618", pointBackgroundColor: "#109618", backgroundColor: "#109618"} %>
+      <% color = "#109618" %>
+      <% series_library[target_index - 1] = {pointStyle: "line", hitRadius: 5, borderColor: color, pointBackgroundColor: color, backgroundColor: color, pointHoverBackgroundColor: color} %>
     <% end %>
     <% if @forecast %>
       <% color = "#54a3ee" %>

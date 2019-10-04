@@ -1,4 +1,3 @@
-
 # Blazer
 
 Explore your data with SQL. Easily create charts and dashboards, and share them with your team.
@@ -739,8 +738,8 @@ Blazer supports a basic permissions model.
 
 Have team members who want to learn SQL? Here are a few great, free resources.
 
-- [Khan Academy](https://www.khanacademy.org/computing/computer-programming/sql)
-- [Codecademy](https://www.codecademy.com/learn/learn-sql)
+- [The Data School](https://dataschool.com/learn-sql/)
+- [SQLBolt](https://sqlbolt.com/)
 
 ## Useful Tools
 

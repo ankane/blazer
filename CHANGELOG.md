@@ -1,4 +1,4 @@
-## 2.2.1 [unreleased]
+## 2.2.1
 
 - Added support for Sprockets 4
 - Improved Snowflake table preview

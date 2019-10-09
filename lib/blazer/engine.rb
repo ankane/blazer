@@ -2,7 +2,7 @@ module Blazer
   class Engine < ::Rails::Engine
     isolate_namespace Blazer
 
-    initializer "blazer", group: :all do |app|
+    initializer "blazer" do |app|
       if defined?(Sprockets) && Sprockets::VERSION >= "4"
         app.config.assets.precompile << "blazer/application.js"
         app.config.assets.precompile << "blazer/application.css"

@@ -1,6 +1,6 @@
 /*
  *= require ./bootstrap
- *= require ./selectize.default
+ *= require ./selectize
  *= require ./github
  *= require ./daterangepicker
  *= require_self

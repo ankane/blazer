@@ -2,11 +2,22 @@ module Blazer
   class Engine < ::Rails::Engine
     isolate_namespace Blazer
 
-    initializer "blazer" do |app|
-      # use a proc instead of a string
-      app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/application\.(js|css)\z/ }
-      app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/.+\.(eot|svg|ttf|woff)\z/ }
-      app.config.assets.precompile << proc { |path| path == "blazer/favicon.png" }
+    initializer "blazer", group: :all do |app|
+      if defined?(Sprockets) && Sprockets::VERSION >= "4"
+        app.config.assets.precompile << "blazer/application.js"
+        app.config.assets.precompile << "blazer/application.css"
+        app.config.assets.precompile << "blazer/glyphicons-halflings-regular.eot"
+        app.config.assets.precompile << "blazer/glyphicons-halflings-regular.svg"
+        app.config.assets.precompile << "blazer/glyphicons-halflings-regular.ttf"
+        app.config.assets.precompile << "blazer/glyphicons-halflings-regular.woff"
+        app.config.assets.precompile << "blazer/glyphicons-halflings-regular.woff2"
+        app.config.assets.precompile << "blazer/favicon.png"
+      else
+        # use a proc instead of a string
+        app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/application\.(js|css)\z/ }
+        app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/.+\.(eot|svg|ttf|woff|woff2)\z/ }
+        app.config.assets.precompile << proc { |path| path == "blazer/favicon.png" }
+      end
 
       Blazer.time_zone ||= Blazer.settings["time_zone"] || Time.zone
       Blazer.audit = Blazer.settings.key?("audit") ? Blazer.settings["audit"] : true

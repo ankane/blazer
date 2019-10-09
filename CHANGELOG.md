@@ -1,5 +1,6 @@
 ## 2.2.1 [unreleased]
 
+- Added support for Sprockets 4
 - Improved Snowflake table preview
 - Fixed bug with refresh link not showing
 

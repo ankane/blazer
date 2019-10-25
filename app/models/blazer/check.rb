@@ -50,7 +50,7 @@ module Blazer
       self.nbr_of_failures =
         if result.timed_out? || result.error
           -1
-        elsif result.rows.any?
+        else
           result.rows.size
         end
 

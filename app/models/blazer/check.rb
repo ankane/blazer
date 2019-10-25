@@ -8,6 +8,7 @@ module Blazer
     validate :validate_variables, if: -> { query_id_changed? }
 
     before_validation :set_state
+    before_validation :set_nbr_of_failures
     before_validation :fix_emails
 
     def split_emails
@@ -46,6 +47,13 @@ module Blazer
           check_type == "missing_data" ? "failing" : "passing"
         end
 
+      self.nbr_of_failures =
+        if result.timed_out? || result.error
+          -1
+        else
+          result.rows.size
+        end
+
       self.last_run_at = Time.now if respond_to?(:last_run_at=)
       self.message = message if respond_to?(:message=)
 
@@ -59,14 +67,14 @@ module Blazer
       end
 
       # do not notify on creation, except when not passing
-      if (state_was != 'new' || state != 'passing') && state != state_was
+      if (state_was != 'new' || state != 'passing') && (state != state_was || nbr_of_failures != nbr_of_failures_was)
         # notify via email
         if emails.present?
-          Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now
+          Blazer::CheckMailer.state_change(self, state, "#{state_was} (#{nbr_of_failures_was} failures)", nbr_of_failures, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now
         end
         # notify via slack
         if notify_slack
-          Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size)
+          Blazer::SlackNotifier.state_change(self, state, "#{state_was} (#{nbr_of_failures_was} failures)", nbr_of_failures)
         end
       end
       save! if changed?
@@ -76,6 +84,10 @@ module Blazer
 
       def set_state
         self.state ||= "new"
+      end
+
+      def set_nbr_of_failures
+        self.nbr_of_failures ||= -1
       end
 
       def fix_emails

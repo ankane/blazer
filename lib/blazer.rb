@@ -128,7 +128,7 @@ module Blazer
   def self.run_check(check)
     tries = 1
 
-    ActiveSupport::Notifications.instrument("run_check.blazer", check_id: check.id, query_id: check.query.id, state_was: check.state) do |instrument|
+    ActiveSupport::Notifications.instrument("run_check.blazer", check_id: check.id, query_id: check.query.id, state_was: check.state, nbr_of_failures_was: check.nbr_of_failures) do |instrument|
       # try 3 times on timeout errors
       data_source = data_sources[check.query.data_source]
       statement = check.query.statement

@@ -1,0 +1,35 @@
+
+.chart-container {
+  clear: both;
+}
+
+.chart-container h4 {
+  text-align: center;
+}
+
+.chart-container h4 a {
+  color: inherit;
+}
+
+.query-error {
+  color: red;
+}
+
+.chart-container {
+  margin-bottom: 30px;
+}
+
+.chart {
+  height: 300px;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+}
+
+.chart > .results-container {
+  height: 300px;
+  border: solid 1px #ddd;
+  overflow: scroll;
+  text-align: left;
+}

@@ -1,0 +1,24 @@
+<% unless defined?(@blazer_query_assets_loaded) && @blazer_query_assets_loaded %>
+  <%= stylesheet_link_tag "blazer/chart" %>
+  <%= javascript_include_tag "blazer/application" %>
+  <% @blazer_query_assets_loaded = true %>
+<% end %>
+
+<div class="chart-container">
+  <h4><%= link_to query.friendly_name, blazer.query_path(query, local_assigns[:params] || {}), target: "_blank" %></h4>
+  <div id="chart-<%= query.id %>" class="chart">
+    <p class="text-muted">Loading...</p>
+  </div>
+</div>
+
+<script>
+  <%= blazer_js_var "rootPath", blazer.root_path %>
+  <%= blazer_js_var "data", {statement: query.statement, query_id: query.id, data_source: query.data_source, only_chart: true} %>
+
+  runQuery(data, function (data) {
+    $("#chart-<%= query.id %>").html(data)
+    $("#chart-<%= query.id %> table").stupidtable(stupidtableCustomSettings)
+  }, function (message) {
+    $("#chart-<%= query.id %>").addClass("query-error").html(message)
+  });
+</script>

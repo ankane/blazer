@@ -363,6 +363,20 @@ Use the column name `target` to draw a line for goals. [Example](https://blazer.
 SELECT date_trunc('week', created_at), COUNT(*) AS new_users, 100000 AS target FROM users GROUP BY 1
 ```
 
+### Embedding a Chart outside of the Blazer Rails Engine
+
+Queries can be found using the ActiveRecord API. E.g. `Blazer::Query.find(5)`
+
+Once you have a query, you can render a chart in any view:
+```erb
+<%= render "blazer/queries/query", query: query %>
+```
+
+If your chart has options for variables, you can pass those in using the `params` keyword:
+```erb
+<%= render "blazer/queries/query", query: query, params: { ... } %>
+```
+
 ## Dashboards
 
 Create a dashboard with multiple queries. [Example](https://blazer.dokkuapp.com/dashboards/1-dashboard-demo)

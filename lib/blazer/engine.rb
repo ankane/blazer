@@ -3,9 +3,14 @@ module Blazer
     isolate_namespace Blazer
 
     initializer "blazer" do |app|
+      ActiveSupport.on_load :action_view do
+        include Blazer::BaseHelper
+      end
+
       if defined?(Sprockets) && Sprockets::VERSION >= "4"
         app.config.assets.precompile << "blazer/application.js"
         app.config.assets.precompile << "blazer/application.css"
+        app.config.assets.precompile << "blazer/chart.css"
         app.config.assets.precompile << "blazer/glyphicons-halflings-regular.eot"
         app.config.assets.precompile << "blazer/glyphicons-halflings-regular.svg"
         app.config.assets.precompile << "blazer/glyphicons-halflings-regular.ttf"
@@ -15,6 +20,7 @@ module Blazer
       else
         # use a proc instead of a string
         app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/application\.(js|css)\z/ }
+        app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/chart\.css\z/ }
         app.config.assets.precompile << proc { |path| path =~ /\Ablazer\/.+\.(eot|svg|ttf|woff|woff2)\z/ }
         app.config.assets.precompile << proc { |path| path == "blazer/favicon.png" }
       end

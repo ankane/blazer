@@ -3,6 +3,7 @@
  *= require ./selectize
  *= require ./github
  *= require ./daterangepicker
+ *= require ./chart
  *= require_self
  */
 
@@ -79,21 +80,6 @@ input.search:focus {
 
 .ace_gutter-cell.error {
   background-color: red;
-}
-
-.chart {
-  height: 300px;
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-}
-
-.chart > .results-container {
-  height: 300px;
-  border: solid 1px #ddd;
-  overflow: scroll;
-  text-align: left;
 }
 
 .dashboard {
@@ -185,22 +171,6 @@ input.search:focus {
   display: none;
 }
 
-.chart-container {
-  clear: both;
-}
-
-.chart-container h4 {
-  text-align: center;
-}
-
-.chart-container h4 a {
-  color: inherit;
-}
-
-.query-error {
-  color: red;
-}
-
 .small-form {
   margin-right: auto;
   margin-left: auto;
@@ -215,10 +185,6 @@ input.search:focus {
 h1, h2, h3, h4, p, hr, .table, .navbar, #header, .alert, .form-group {
   margin-top: 0;
   margin-bottom: 15px;
-}
-
-.double-margin, .chart-container {
-  margin-bottom: 30px;
 }
 
 h1 {

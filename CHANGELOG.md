@@ -55,12 +55,11 @@ Breaking changes
 
 - Added support for Cassandra
 - Fixes for Druid
-
-## 1.8.1
-
 - Added support for Amazon Athena
 - Added support for Druid
 - Fixed query cancellation
+
+There was no 1.8.1 release.
 
 ## 1.8.0 (2017-05-01)
 

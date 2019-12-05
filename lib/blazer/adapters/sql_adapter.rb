@@ -11,7 +11,16 @@ module Blazer
             def self.name
               "Blazer::Connection::Adapter#{object_id}"
             end
-            establish_connection(data_source.settings["url"]) if data_source.settings["url"]
+            # If a URL is provided, it is ultimately parsed by URI::Generic which will raise
+            # a URI::InvalidURIError if URL includes special character (e.g. in a password)
+            # regardless if the special characters are properly escaped. In these situations
+            # the explicit hash configuration for the ActiveRecord adapter should be used
+            # instead as this method of configuration does properly handle special characters.
+            if data_source.settings["url"]
+              establish_connection(data_source.settings["url"])
+            elsif data_source.settings["active-record-config"]
+              establish_connection(data_source.settings["active-record-config"])
+            end
           end
       end
 

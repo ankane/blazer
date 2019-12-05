@@ -506,6 +506,18 @@ data_sources:
     output_location: s3://some-bucket/
 ```
 
+The AWS Access Key ID and Secret Access Key can optionally be set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: athena
+    database: database
+    output_location: s3://some-bucket/
+    access_key_id: my-access-key-id
+    secret_access_key: my-secret-access-key
+```
+
 ### Amazon Redshift
 
 Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) or [activerecord5-redshift-adapter](https://github.com/ConsultingMD/activerecord5-redshift-adapter) to your Gemfile and set:

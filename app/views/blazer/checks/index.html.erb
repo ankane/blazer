@@ -10,6 +10,8 @@
       <th style="width: 10%;">State</th>
       <th style="width: 10%;">Run</th>
       <th style="width: 20%;">Emails</th>
+      <th style="width: 5%;">Rows</th>
+      <th style="width: 5%;">Slack?</th>
       <th style="width: 15%;"></th>
     </tr>
   </thead>
@@ -29,6 +31,12 @@
               <li><%= email %></li>
             <% end %>
           </ul>
+        </td>
+        <td style="text-align: right; padding: 1px;">
+          <%= check.nbr_of_failures %>
+        </td>
+        <td style="text-align: center; padding: 1px;">
+          <%= check.notify_slack %>
         </td>
         <td style="text-align: right; padding: 1px;">
           <%= link_to "Edit", edit_check_path(check), class: "btn btn-info" %>

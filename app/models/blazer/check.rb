@@ -67,14 +67,19 @@ module Blazer
       end
 
       # do not notify on creation, except when not passing
-      if (state_was != 'new' || state != 'passing') && (state != state_was || nbr_of_failures != nbr_of_failures_was)
+      if (state_was != 'new' || state != 'passing') && (state != state_was || nbr_of_failures != nbr_of_failures_was) && (not result.error)
         # notify via email
         if emails.present?
           Blazer::CheckMailer.state_change(self, state, "#{state_was} (#{nbr_of_failures_was} failures)", nbr_of_failures, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now
         end
         # notify via slack
         if notify_slack
-          Blazer::SlackNotifier.state_change(self, state, "#{state_was} (#{nbr_of_failures_was} failures)", nbr_of_failures)
+          if nbr_of_failures != nbr_of_failures_was && state == state_was
+            Blazer::SlackNotifier.notify_count_change(self, state, nbr_of_failures_was, nbr_of_failures)
+          end
+          if state != state_was
+            Blazer::SlackNotifier.state_change(self, state, "#{state_was} (#{nbr_of_failures_was} failures)", nbr_of_failures)
+          end
         end
       end
       save! if changed?
@@ -87,7 +92,7 @@ module Blazer
       end
 
       def set_nbr_of_failures
-        self.nbr_of_failures ||= -1
+        self.nbr_of_failures ||= 0
       end
 
       def fix_emails

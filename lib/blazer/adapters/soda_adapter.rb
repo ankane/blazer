@@ -47,10 +47,17 @@ module Blazer
             rows = body.map { |r| columns.map { |c| r[c] } }
 
             columns.each_with_index do |column, i|
-              if column_types[column] == "number"
+              # nothing to do for boolean
+              case column_types[column]
+              when "number"
                 rows.each do |row|
                   v = row[i].to_f
                   row[i] = v == v.to_i ? v.to_i : v
+                end
+              when "floating_timestamp"
+                utc = ActiveSupport::TimeZone["Etc/UTC"]
+                rows.each do |row|
+                  row[i] = utc.parse(row[i])
                 end
               end
             end

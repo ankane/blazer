@@ -672,7 +672,7 @@ data_sources:
     app_token: ...
 ```
 
-Supports [SoSQL](https://dev.socrata.com/docs/functions/)
+Supports [SoQL](https://dev.socrata.com/docs/functions/)
 
 ### Snowflake
 

@@ -475,12 +475,12 @@ data_sources:
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
-- [Neo4j](#neo4j-experimental)
+- [Neo4j](#neo4j)
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
-- [Salesforce](#salesforce-experimental)
-- [Socrata Open Data API (SODA)](#socrata-open-data-api-soda-experimental-master) [experimental, master]
+- [Salesforce](#salesforce)
+- [Socrata Open Data API (SODA)](#socrata-open-data-api-soda)
 - [Snowflake](#snowflake)
 - [SQLite](#sqlite)
 - [SQL Server](#sql-server)
@@ -596,7 +596,9 @@ data_sources:
     url: mysql2://user:password@hostname:3306/database
 ```
 
-### Neo4j [experimental]
+### Neo4j
+
+*Experimental*
 
 Add [neo4j-core](https://github.com/neo4jrb/neo4j-core) to your Gemfile and set:
 
@@ -631,7 +633,9 @@ data_sources:
     url: presto://user@hostname:8080/catalog
 ```
 
-### Salesforce [experimental]
+### Salesforce
+
+*Experimental*
 
 Add [restforce](https://github.com/restforce/restforce) to your Gemfile and set:
 
@@ -654,7 +658,9 @@ SALESFORCE_API_VERSION="41.0"
 
 Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm)
 
-### Socrata Open Data API (SODA) [experimental, master]
+### Socrata Open Data API (SODA)
+
+*Experimental [master]*
 
 Set:
 
@@ -665,6 +671,8 @@ data_sources:
     url: https://soda.demo.socrata.com/resource/4tka-6guv.json
     app_token: ...
 ```
+
+Supports [SoSQL](https://dev.socrata.com/docs/functions/)
 
 ### Snowflake
 

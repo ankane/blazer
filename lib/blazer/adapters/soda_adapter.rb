@@ -50,14 +50,27 @@ module Blazer
               # nothing to do for boolean
               case column_types[column]
               when "number"
-                rows.each do |row|
-                  v = row[i].to_f
-                  row[i] = v == v.to_i ? v.to_i : v
+                # check if likely an integer column
+                if rows.all? { |r| r[i].to_i == r[i].to_f }
+                  rows.each do |row|
+                    row[i] = row[i].to_i
+                  end
+                else
+                  rows.each do |row|
+                    row[i] = row[i].to_f
+                  end
                 end
               when "floating_timestamp"
-                utc = ActiveSupport::TimeZone["Etc/UTC"]
-                rows.each do |row|
-                  row[i] = utc.parse(row[i])
+                # check if likely a date column
+                if rows.all? { |r| r[i].end_with?("T00:00:00.000") }
+                  rows.each do |row|
+                    row[i] = Date.parse(row[i])
+                  end
+                else
+                  utc = ActiveSupport::TimeZone["Etc/UTC"]
+                  rows.each do |row|
+                    row[i] = utc.parse(row[i])
+                  end
                 end
               end
             end

@@ -1,7 +1,8 @@
 module Blazer
   class ChecksController < BaseController
     before_action :set_check, only: [:edit, :update, :destroy, :run]
-
+    def edit
+    end
     def index
       state_order = [nil, "disabled", "error", "timed out", "failing", "passing"]
       @checks = Blazer::Check.joins(:query).includes(:query).order("blazer_queries.name, blazer_checks.id").to_a.sort_by { |q| state_order.index(q.state) || 99 }

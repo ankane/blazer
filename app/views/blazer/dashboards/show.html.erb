@@ -30,22 +30,35 @@
 <% else %>
   <div style="padding-bottom: 15px;"></div>
 <% end %>
-
-<% @queries.each_with_index do |query, i| %>
-  <div class="chart-container">
-    <h4><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank" %></h4>
-    <div id="chart-<%= i %>" class="chart">
-      <p class="text-muted">Loading...</p>
+<div style="display: none">
+  <% @queries.each_with_index do |query, i| %>
+    <div class="chart-container" id="query-<%= query.id %>">
+      <h4><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank" %></h4>
+      <div id="chart-<%= i %>" class="chart">
+        <p class="text-muted">Loading...</p>
+      </div>
     </div>
+  <% end %>
+</div>
+
+<div class="container-fluid">
+  <div class="gs-wrapper">
+    <div class="grid-stack"></div>
   </div>
-  <script>
+</div>
+
+<script>
+    <% @queries.each_with_index do |query, i| %>
     <%= blazer_js_var "data", {statement: query.statement, query_id: query.id, data_source: query.data_source, only_chart: true} %>
 
-    runQuery(data, function (data) {
-      $("#chart-<%= i %>").html(data)
-      $("#chart-<%= i %> table").stupidtable(stupidtableCustomSettings)
-    }, function (message) {
-      $("#chart-<%= i %>").addClass("query-error").html(message)
-    });
-  </script>
-<% end %>
+  runQuery(data, function (data) {
+    $("#chart-<%= i %>").html(data)
+    $("#chart-<%= i %> table").stupidtable(stupidtableCustomSettings)
+  }, function (message) {
+    $("#chart-<%= i %>").addClass("query-error").html(message)
+  });
+  <% end %>
+  const savePositionURL = '<%= dashboard_path(@dashboard, variable_params, format: :json) %>';
+let serializedData = <%= @dashboard_positions.html_safe %>;
+gsDashboards(serializedData, savePositionURL);
+</script>

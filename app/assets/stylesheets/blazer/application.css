@@ -3,6 +3,9 @@
  *= require ./selectize
  *= require ./github
  *= require ./daterangepicker
+ *= require ./gridstack
+ *= require ./gridstack-extra
+ *= require ./gs_dashboards
  *= require_self
  */
 

@@ -1,4 +1,6 @@
 //= require ./jquery
+//= require ./gridstack.all
+//= require ./gs_dashboards
 //= require ./jquery-ujs
 //= require ./stupidtable
 //= require ./stupidtable-custom-settings

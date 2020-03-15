@@ -180,7 +180,7 @@ module Blazer
     end
 
     def tables
-      render json: @data_source.tables
+      render json: @data_source.schema.map { |x| x[:schema] + '.' + x[:table] }
     end
 
     def docs

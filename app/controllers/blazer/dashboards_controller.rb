@@ -36,16 +36,35 @@ module Blazer
           @sql_errors << error if error
         end
       end
+      @dashboard_positions = JSON.load(@dashboard.positions) || []
+      if @queries.size > @dashboard_positions.size
+        ids = @dashboard_positions.map { |x| x['id'].to_i }
+        new_queries = @queries.reject { |q| ids.include? q.id }
+        new_queries.each do |q|
+          @dashboard_positions.push({x: 0, y:0, width: 2, height: 2, 'id' => q.id});
+        end
+      end
+      queries_ids = @queries.map(&:id)
+      @dashboard_positions.select! { |pos| queries_ids.include?(pos['id'].to_i) }
+      @dashboard_positions = @dashboard_positions.to_json
     end
 
     def edit
     end
 
     def update
-      if update_dashboard(@dashboard)
-        redirect_to dashboard_path(@dashboard, variable_params)
-      else
-        render_errors @dashboard
+      update_dashboard(@dashboard)
+      respond_to do |format|
+        format.html do
+          if @dashboard.errors.blank? 
+            redirect_to dashboard_path(@dashboard, variable_params)
+          else
+            render_errors @dashboard
+          end
+        end
+        format.json do
+          render json: {success: @dashboard.errors.blank?, errors: @dashboard.errors}
+        end
       end
     end
 
@@ -67,35 +86,35 @@ module Blazer
 
     private
 
-      def dashboard_params
-        params.require(:dashboard).permit(:name)
-      end
+    def dashboard_params
+      params.require(:dashboard).permit(:name, :positions)
+    end
 
-      def set_dashboard
-        @dashboard = Blazer::Dashboard.find(params[:id])
-      end
+    def set_dashboard
+      @dashboard = Blazer::Dashboard.find(params[:id])
+    end
 
-      def update_dashboard(dashboard)
-        dashboard.assign_attributes(dashboard_params)
-        Blazer::Dashboard.transaction do
-          if params[:query_ids].is_a?(Array)
-            query_ids = params[:query_ids].map(&:to_i)
-            @queries = Blazer::Query.find(query_ids).sort_by { |q| query_ids.index(q.id) }
-          end
-          if dashboard.save
-            if @queries
-              @queries.each_with_index do |query, i|
-                dashboard_query = dashboard.dashboard_queries.where(query_id: query.id).first_or_initialize
-                dashboard_query.position = i
-                dashboard_query.save!
-              end
-              if dashboard.persisted?
-                dashboard.dashboard_queries.where.not(query_id: query_ids).destroy_all
-              end
+    def update_dashboard(dashboard)
+      dashboard.assign_attributes(dashboard_params)
+      Blazer::Dashboard.transaction do
+        if params[:query_ids].is_a?(Array)
+          query_ids = params[:query_ids].map(&:to_i)
+          @queries = Blazer::Query.find(query_ids).sort_by { |q| query_ids.index(q.id) }
+        end
+        if dashboard.save
+          if @queries
+            @queries.each_with_index do |query, i|
+              dashboard_query = dashboard.dashboard_queries.where(query_id: query.id).first_or_initialize
+              dashboard_query.position = i
+              dashboard_query.save!
             end
-            true
+            if dashboard.persisted?
+              dashboard.dashboard_queries.where.not(query_id: query_ids).destroy_all
+            end
           end
+          true
         end
       end
+    end
   end
 end

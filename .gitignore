@@ -12,3 +12,6 @@
 *.o
 *.a
 mkmf.log
+*~
+*.swp
+*.swo

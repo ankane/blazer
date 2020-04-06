@@ -41,6 +41,7 @@ module Blazer
 
       def tables
         sql = add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
+        sql = sql + " UNION ALL SELECT schemaname AS table_schema, matviewname AS table_name FROM pg_matviews" if postgresql?
         result = data_source.run_statement(sql, refresh_cache: true)
         if postgresql? || redshift? || snowflake?
           result.rows.sort_by { |r| [r[0] == default_schema ? "" : r[0], r[1]] }.map do |row|

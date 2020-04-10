@@ -85,11 +85,38 @@ module Blazer
       @forecastable ||= Blazer.forecasting && column_types == ["time", "numeric"] && @rows.size >= 10
     end
 
+    # TODO cache it?
+    # don't want to put result data (even hashed version)
+    # into cache without developer opt-in
     def forecast
-      # TODO cache it?
-      # don't want to put result data (even hashed version)
-      # into cache without developer opt-in
-      forecast = Trend.forecast(Hash[@rows], count: 30)
+      case Blazer.forecasting
+      when "prophet"
+        require "prophet"
+
+        df =
+          Daru::DataFrame.new(
+            "ds" => @rows.map { |r| r[0] },
+            "y" => @rows.map { |r| r[1] }
+          )
+
+        # TODO determine frequency
+        freq = "W"
+
+        m = Prophet.new
+        m.fit(df)
+        future = m.make_future_dataframe(periods: 30, freq: freq, include_history: false)
+        fcst = m.predict(future)
+        ds = fcst["ds"]
+        if @rows[0][0].is_a?(Date)
+          ds = ds.map { |v| v.to_date }
+        end
+        forecast = ds.zip(fcst["yhat"]).to_h
+      else
+        require "trend"
+
+        forecast = Trend.forecast(Hash[@rows], count: 30)
+      end
+
       @rows.each do |row|
         row[2] = nil
       end

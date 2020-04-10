@@ -100,7 +100,7 @@ module Blazer
           )
 
         # TODO determine frequency
-        freq = "W"
+        freq = "D"
 
         m = Prophet.new
         m.fit(df)
@@ -115,6 +115,11 @@ module Blazer
         require "trend"
 
         forecast = Trend.forecast(Hash[@rows], count: 30)
+      end
+
+      # round integers
+      if @rows[0][1].is_a?(Integer)
+        forecast = forecast.map { |k, v| [k, v.round] }.to_h
       end
 
       @rows.each do |row|

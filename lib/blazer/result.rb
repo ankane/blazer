@@ -89,6 +89,7 @@ module Blazer
     # don't want to put result data (even hashed version)
     # into cache without developer opt-in
     def forecast
+      count = 90
       @forecast_images = []
 
       case Blazer.forecasting
@@ -106,13 +107,13 @@ module Blazer
 
         m = Prophet.new
         m.fit(df)
-        future = m.make_future_dataframe(periods: 30, freq: freq)
+        future = m.make_future_dataframe(periods: count, freq: freq)
         fcst = m.predict(future)
-        ds = fcst["ds"].tail(30)
+        ds = fcst["ds"].tail(count)
         if @rows[0][0].is_a?(Date)
           ds = ds.map { |v| v.to_date }
         end
-        forecast = ds.zip(fcst["yhat"].tail(30)).to_h
+        forecast = ds.zip(fcst["yhat"].tail(count)).to_h
 
         # try to create plots
         if defined?(Matplotlib)
@@ -129,7 +130,7 @@ module Blazer
       else
         require "trend"
 
-        forecast = Trend.forecast(Hash[@rows], count: 30)
+        forecast = Trend.forecast(Hash[@rows], count: count)
       end
 
       # round integers

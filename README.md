@@ -426,9 +426,29 @@ If you’re on Heroku, follow [these additional instructions](#anomaly-detection
 
 ## Forecasting
 
-Blazer has experimental support for forecasting through [Trend](https://trendapi.org/).
+Blazer has experimental support for two different forecasting methods.
+
+A forecast link will appear for queries that return 2 columns with types timestamp and numeric.
 
 [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
+
+## Prophet [master]
+
+Add [prophet](https://github.com/ankane/prophet) to your Gemfile:
+
+```ruby
+gem 'prophet-rb'
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+forecasting: prophet
+```
+
+## Trend
+
+[Trend](https://trendapi.org/) uses an external service.
 
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 
@@ -441,8 +461,6 @@ And add to `config/blazer.yml`:
 ```yml
 forecasting: trend
 ```
-
-A forecast link will appear for queries that return 2 columns with types timestamp and numeric.
 
 ## Data Sources
 

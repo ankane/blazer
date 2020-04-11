@@ -1,6 +1,7 @@
 ## 2.2.2 (unreleased)
 
 - Added experimental support for the Socrata Open Data API (SODA)
+- Added Prophet forecasting
 
 ## 2.2.1 (2019-10-08)
 

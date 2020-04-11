@@ -89,7 +89,7 @@ module Blazer
     # don't want to put result data (even hashed version)
     # into cache without developer opt-in
     def forecast
-      count = 30
+      count = (@rows.size * 0.25).round.clamp(30, 365)
 
       case Blazer.forecasting
       when "prophet"

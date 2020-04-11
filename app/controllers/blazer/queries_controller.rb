@@ -138,6 +138,7 @@ module Blazer
             @result.forecast
             @forecast_error = @result.forecast_error
             @forecast = @forecast_error.nil?
+            @forecast_images = @result.forecast_images
           end
 
           render_run

@@ -139,6 +139,12 @@
     <% end %>
 
     <% unless @only_chart && !@no_chart %>
+      <% if @forecast_images %>
+        <% @forecast_images.each do |image| %>
+          <div style="margin-top: 20px; text-align: center;"><%= image_tag "data:image/png;base64,#{image}" %></div>
+        <% end %>
+      <% end %>
+
       <% header_width = 100 / @columns.size.to_f %>
       <div class="results-container">
         <% if @columns == ["QUERY PLAN"] %>

@@ -1,6 +1,6 @@
 module Blazer
   class Result
-    attr_reader :data_source, :columns, :rows, :error, :cached_at, :just_cached, :forecast_error
+    attr_reader :data_source, :columns, :rows, :error, :cached_at, :just_cached, :forecast_error, :forecast_images
 
     def initialize(data_source, columns, rows, error, cached_at, just_cached)
       @data_source = data_source
@@ -89,6 +89,8 @@ module Blazer
     # don't want to put result data (even hashed version)
     # into cache without developer opt-in
     def forecast
+      @forecast_images = []
+
       case Blazer.forecasting
       when "prophet"
         require "prophet"
@@ -104,13 +106,26 @@ module Blazer
 
         m = Prophet.new
         m.fit(df)
-        future = m.make_future_dataframe(periods: 30, freq: freq, include_history: false)
+        future = m.make_future_dataframe(periods: 30, freq: freq)
         fcst = m.predict(future)
-        ds = fcst["ds"]
+        ds = fcst["ds"].tail(30)
         if @rows[0][0].is_a?(Date)
           ds = ds.map { |v| v.to_date }
         end
-        forecast = ds.zip(fcst["yhat"]).to_h
+        forecast = ds.zip(fcst["yhat"].tail(30)).to_h
+
+        # try to create plots
+        if defined?(Matplotlib)
+          begin
+            # use non-interactive backend
+            Matplotlib.use("agg")
+
+            @forecast_images << forecast_image(m.plot(fcst))
+            @forecast_images << forecast_image(m.plot_components(fcst))
+          rescue => e
+            p e
+          end
+        end
       else
         require "trend"
 
@@ -137,6 +152,13 @@ module Blazer
       @forecast_error = String.new("Error generating forecast")
       @forecast_error << ": #{e.message.sub("Invalid parameter: ", "")}"
       nil
+    end
+
+    def forecast_image(fig)
+      # TODO read in memory
+      file = Tempfile.new(["blazer", ".png"])
+      fig.savefig(file.path)
+      Base64.encode64(File.binread(file.path))
     end
 
     def detect_anomaly

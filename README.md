@@ -432,7 +432,7 @@ A forecast link will appear for queries that return 2 columns with types timesta
 
 [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
 
-## Prophet [master]
+### Prophet [master]
 
 **Note:** Prophet only supports daily forecasts right now.
 
@@ -448,7 +448,7 @@ And add to `config/blazer.yml`:
 forecasting: prophet
 ```
 
-## Trend
+### Trend
 
 [Trend](https://trendapi.org/) uses an external service.
 

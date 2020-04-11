@@ -67,7 +67,7 @@ check_schedules:
 
 # enable forecasting
 # note: with trend, time series are sent to https://trendapi.org
-# forecasting: trend
+# forecasting: trend / prophet
 
 # enable map
 # mapbox_access_token: <%%= ENV["MAPBOX_ACCESS_TOKEN"] %>

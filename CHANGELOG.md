@@ -2,6 +2,7 @@
 
 - Added experimental support for the Socrata Open Data API (SODA)
 - Added Prophet forecasting
+- Fixed query search for non-ASCII characters
 
 ## 2.2.1 (2019-10-08)
 

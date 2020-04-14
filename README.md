@@ -680,7 +680,7 @@ Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta
 
 ### Socrata Open Data API (SODA)
 
-*Experimental [master]*
+*Experimental*
 
 Set:
 

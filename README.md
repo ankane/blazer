@@ -432,7 +432,7 @@ A forecast link will appear for queries that return 2 columns with types timesta
 
 [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
 
-### Prophet [master]
+### Prophet
 
 **Note:** Prophet only supports daily forecasts right now.
 

@@ -38,6 +38,8 @@ module Blazer
       Blazer.override_csp = Blazer.settings["override_csp"] || false
       Blazer.slack_webhook_url = Blazer.settings["slack_webhook_url"] || ENV["BLAZER_SLACK_WEBHOOK_URL"]
       Blazer.mapbox_access_token = Blazer.settings["mapbox_access_token"] || ENV["MAPBOX_ACCESS_TOKEN"]
+      Blazer.sign_out_url ||= Blazer.settings["sign_out_url"]
+      Blazer.sign_out_via ||= Blazer.settings["sign_out_via"]
     end
   end
 end

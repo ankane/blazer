@@ -22,6 +22,10 @@
           <li role="separator" class="divider"></li>
           <li><%= link_to "New Dashboard", new_dashboard_path %></li>
           <li><%= link_to "New Check", new_check_path %></li>
+          <% if Blazer.sign_out_url %>
+            <li role="separator" class="divider"></li>
+            <li><%= link_to "Sign Out", Blazer.sign_out_url, method: Blazer.sign_out_via || :delete %></li>
+          <% end %>
         </ul>
       </div>
     </div>

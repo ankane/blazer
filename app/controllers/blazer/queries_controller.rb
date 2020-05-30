@@ -176,7 +176,7 @@ module Blazer
 
     def destroy
       @query.destroy if @query.editable?(blazer_user)
-      redirect_to root_url
+      redirect_to root_path
     end
 
     def tables

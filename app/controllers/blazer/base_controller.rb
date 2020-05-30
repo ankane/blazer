@@ -90,8 +90,8 @@ module Blazer
       BLACKLISTED_KEYS = [:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id, :blazer, :run_id, :script_name, :original_script_name]
 
       # remove blacklisted keys from both params and permitted keys for better sleep
-      def variable_params(record)
-        permitted_keys = record.variables - BLACKLISTED_KEYS.map(&:to_s)
+      def variable_params(resource)
+        permitted_keys = resource.variables - BLACKLISTED_KEYS.map(&:to_s)
         params.except(*BLACKLISTED_KEYS).permit(*permitted_keys)
       end
       helper_method :variable_params

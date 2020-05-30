@@ -10,7 +10,7 @@
         </h3>
       </div>
       <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_dashboard_path(@dashboard, variable_params), class: "btn btn-info" %>
+        <%= link_to "Edit", edit_dashboard_path(@dashboard, variable_params(@dashboard)), class: "btn btn-info" %>
       </div>
     </div>
   </div>
@@ -21,7 +21,7 @@
 <% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
   <p class="text-muted" style="float: right;">
     Some queries may be cached
-    <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params), method: :post %>
+    <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params(@dashboard)), method: :post %>
   </p>
 <% end %>
 
@@ -33,7 +33,7 @@
 
 <% @queries.each_with_index do |query, i| %>
   <div class="chart-container">
-    <h4><%= link_to query.friendly_name, query_path(query, variable_params), target: "_blank" %></h4>
+    <h4><%= link_to query.friendly_name, query_path(query, variable_params(query)), target: "_blank" %></h4>
     <div id="chart-<%= i %>" class="chart">
       <p class="text-muted">Loading...</p>
     </div>

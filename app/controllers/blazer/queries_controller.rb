@@ -45,7 +45,7 @@ module Blazer
       @query.creator = blazer_user if @query.respond_to?(:creator)
 
       if @query.save
-        redirect_to query_path(@query, variable_params)
+        redirect_to query_path(@query, variable_params(@query))
       else
         render_errors @query
       end
@@ -156,7 +156,7 @@ module Blazer
       process_vars(@statement, @query.data_source)
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
       data_source.clear_cache(@statement)
-      redirect_to query_path(@query, variable_params)
+      redirect_to query_path(@query, variable_params(@query))
     end
 
     def update
@@ -168,7 +168,7 @@ module Blazer
         @query.errors.add(:base, "Sorry, permission denied")
       end
       if @query.errors.empty? && @query.update(query_params)
-        redirect_to query_path(@query, variable_params)
+        redirect_to query_path(@query, variable_params(@query))
       else
         render_errors @query
       end

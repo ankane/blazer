@@ -6,6 +6,10 @@ module Blazer
 
     validates :name, presence: true
 
+    def variables
+      queries.flat_map { |q| q.variables }.uniq
+    end
+
     def to_param
       [id, name.gsub("'", "").parameterize].join("-")
     end

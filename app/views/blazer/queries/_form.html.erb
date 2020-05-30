@@ -3,7 +3,7 @@
 <% end %>
 
 <div id="app" v-cloak>
-  <%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params) : queries_path(variable_params)), html: {autocomplete: "off"} do |f| %>
+  <%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params(@query)) : queries_path(variable_params(@query))), html: {autocomplete: "off"} do |f| %>
     <div class="row">
       <div id="statement-box" class="col-xs-8">
         <div class= "form-group">
@@ -67,7 +67,7 @@
 </div>
 
 <script>
-  <%= blazer_js_var "params", variable_params %>
+  <%= blazer_js_var "params", variable_params(@query) %>
   <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, (v.preview_statement rescue "")] }] %>
 
   var app = new Vue({

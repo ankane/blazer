@@ -87,9 +87,15 @@ module Blazer
       end
 
       # don't pass to url helpers
-      # UPDATE: this may no longer be needed
-      # some are dangerous when passed to url_for (which Blazer doesn't use)
-      # (at least in Rails 6, haven't checked other versions)
+      #
+      # some are dangerous when passed as symbols
+      # root_url({host: "evilsite.com"})
+      #
+      # certain ones (like host) only affect *_url and not *_path
+      #
+      # when permitted parameters are passed in Rails 6,
+      # they appear to be added as GET parameters
+      # root_url(params.permit(:host))
       BLACKLISTED_KEYS = [:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id, :blazer, :run_id, :script_name, :original_script_name]
 
       # remove blacklisted keys from both params and permitted keys for better sleep

@@ -1,4 +1,4 @@
-## 2.2.3 (unreleased)
+## 2.2.3 (2020-05-30)
 
 - Improved query parameter handling
 

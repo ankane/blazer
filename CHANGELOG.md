@@ -1,3 +1,7 @@
+## 2.2.4 (2020-05-30)
+
+- Fixed error with new queries
+
 ## 2.2.3 (2020-05-30)
 
 - Improved query parameter handling

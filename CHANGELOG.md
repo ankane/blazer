@@ -1,3 +1,7 @@
+## 2.2.3 (unreleased)
+
+- Improved query parameter handling
+
 ## 2.2.2 (2020-04-13)
 
 - Added experimental support for the Socrata Open Data API (SODA)

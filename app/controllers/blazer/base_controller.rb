@@ -86,7 +86,10 @@ module Blazer
         [smart_var, error]
       end
 
-      # not permitted to be passed to url helpers
+      # don't pass to url helpers
+      # UPDATE: this may no longer be needed
+      # some are dangerous when passed to url_for (which Blazer doesn't use)
+      # (at least in Rails 6, haven't checked other versions)
       BLACKLISTED_KEYS = [:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id, :blazer, :run_id, :script_name, :original_script_name]
 
       # remove blacklisted keys from both params and permitted keys for better sleep

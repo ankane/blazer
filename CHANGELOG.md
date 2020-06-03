@@ -1,4 +1,4 @@
-## 2.2.5 (unreleased)
+## 2.2.5 (2020-06-03)
 
 - Updated maps to fix deprecation error
 

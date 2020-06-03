@@ -249,7 +249,9 @@ module Blazer
                 r[lat_index] && r[lon_index]
               end.map do |r|
                 {
-                  title: r.each_with_index.map{ |v, i| i == lat_index || i == lon_index ? nil : "<strong>#{@columns[i]}:</strong> #{v}" }.compact.join("<br />").truncate(140),
+                  # Mapbox.js does sanitization with https://github.com/mapbox/sanitize-caja
+                  # but we should do it here as well
+                  title: r.each_with_index.map { |v, i| i == lat_index || i == lon_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br />").truncate(140),
                   latitude: r[lat_index],
                   longitude: r[lon_index]
                 }

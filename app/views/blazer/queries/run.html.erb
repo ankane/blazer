@@ -80,7 +80,8 @@
         <%= blazer_js_var "mapboxAccessToken", Blazer.mapbox_access_token %>
         <%= blazer_js_var "markers", @markers %>
         L.mapbox.accessToken = mapboxAccessToken;
-        var map = L.mapbox.map('map', 'mapbox.streets');
+        var map = L.mapbox.map('map')
+          .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
         var featureLayer = L.mapbox.featureLayer().addTo(map);
         var geojson = [];
         for (var i = 0; i < markers.length; i++) {

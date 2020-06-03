@@ -1,3 +1,7 @@
+## 2.2.5 (unreleased)
+
+- Updated maps to fix deprecation error
+
 ## 2.2.4 (2020-05-30)
 
 - Fixed error with new queries

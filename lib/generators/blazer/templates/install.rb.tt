@@ -19,7 +19,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
 
     create_table :blazer_dashboards do |t|
       t.references :creator
-      t.text :name
+      t.string :name
       t.timestamps null: false
     end
 

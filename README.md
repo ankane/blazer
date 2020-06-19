@@ -594,7 +594,13 @@ data_sources:
 
 ### IBM DB2 and Informix
 
-Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).
+Add [ibm_db](https://github.com/ibmdb/ruby-ibmdb) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: ibm-db://user:password@hostname:50000/database
+```
 
 ### MongoDB
 

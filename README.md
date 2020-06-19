@@ -637,7 +637,7 @@ data_sources:
 
 ### Oracle
 
-Add [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced) to your Gemfile and set:
+Add [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced) and [ruby-oci8](https://github.com/kubo/ruby-oci8) to your Gemfile and set:
 
 ```yml
 data_sources:

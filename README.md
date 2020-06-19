@@ -724,7 +724,7 @@ For Heroku, use the [Apt buildpack](https://github.com/heroku/heroku-buildpack-a
 
 ```text
 unixodbc-dev
-https://sfc-repo.snowflakecomputing.com/odbc/linux/2.19.16/snowflake-odbc-2.19.16.x86_64.deb
+https://sfc-repo.snowflakecomputing.com/odbc/linux/2.21.5/snowflake-odbc-2.21.5.x86_64.deb
 ```
 
 > This installs the driver at `/app/.apt/usr/lib/snowflake/odbc/lib/libSnowflake.so`

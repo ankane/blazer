@@ -631,7 +631,13 @@ data_sources:
 
 ### Oracle
 
-Use [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced).
+Add [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: oracle-enhanced://user:password@hostname:1521/database
+```
 
 ### PostgreSQL
 

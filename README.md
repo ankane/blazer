@@ -647,7 +647,7 @@ data_sources:
 
 ### PostgreSQL
 
-Add [pg](https://bitbucket.org/ged/ruby-pg/wiki/Home) to your Gemfile (if it’s not there) and set:
+Add [pg](https://github.com/ged/ruby-pg) to your Gemfile (if it’s not there) and set:
 
 ```yml
 data_sources:

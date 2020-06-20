@@ -1,3 +1,7 @@
+## 2.2.6 (unreleased)
+
+- Added support for InfluxDB
+
 ## 2.2.5 (2020-06-03)
 
 - Updated maps to fix deprecation error

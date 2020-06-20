@@ -493,6 +493,7 @@ data_sources:
 - [Elasticsearch](#elasticsearch)
 - [Google BigQuery](#google-bigquery)
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
+- [InfluxDB](#influxdb) [unreleased]
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
 - [Neo4j](#neo4j)
@@ -600,6 +601,17 @@ Add [ibm_db](https://github.com/ibmdb/ruby-ibmdb) to your Gemfile and set:
 data_sources:
   my_source:
     url: ibm-db://user:password@hostname:50000/database
+```
+
+### InfluxDB
+
+Add [influxdb](https://github.com/influxdata/influxdb-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: influxdb
+    url: http://user:password@hostname:8086
 ```
 
 ### MongoDB

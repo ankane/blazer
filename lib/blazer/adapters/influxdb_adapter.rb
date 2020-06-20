@@ -7,13 +7,10 @@ module Blazer
         error = nil
 
         begin
-          result = client.query(statement)
-          values = result.first["values"]
-          values.each do |r|
-            r["time"] = Time.parse(r["time"]) if r["time"]
-          end
-          rows = values.map { |r| r.values }
-          columns = values.any? ? values.first.keys : []
+          result = client.query(statement, denormalize: false).first
+          # TODO parse times
+          rows = result["values"]
+          columns = result["columns"]
         rescue => e
           error = e.message
         end

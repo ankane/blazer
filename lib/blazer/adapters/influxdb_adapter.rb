@@ -8,9 +8,15 @@ module Blazer
 
         begin
           result = client.query(statement, denormalize: false).first
-          # TODO parse times
-          rows = result["values"]
           columns = result["columns"]
+          rows = result["values"]
+          # TODO support columns with other names
+          time_index = columns.index("time")
+          if time_index
+            rows.each do |row|
+              row[time_index] = Time.parse(row[time_index]) if row[time_index]
+            end
+          end
         rescue => e
           error = e.message
         end

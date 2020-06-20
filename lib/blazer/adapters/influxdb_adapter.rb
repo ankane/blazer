@@ -12,7 +12,7 @@ module Blazer
           rows = result["values"]
 
           # parse time columns
-          # current approach is not ideal, but result doesn't include types
+          # current approach isn't ideal, but result doesn't include types
           # another approach would be to check the format
           time_index = columns.index("time")
           if time_index

@@ -605,6 +605,8 @@ data_sources:
 
 ### InfluxDB
 
+*Experimental*
+
 Add [influxdb](https://github.com/influxdata/influxdb-ruby) to your Gemfile and set:
 
 ```yml

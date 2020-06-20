@@ -1,6 +1,6 @@
 ## 2.2.6 (unreleased)
 
-- Added support for InfluxDB
+- Added experimental support for InfluxDB
 
 ## 2.2.5 (2020-06-03)
 

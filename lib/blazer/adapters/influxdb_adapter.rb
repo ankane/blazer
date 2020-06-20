@@ -10,7 +10,10 @@ module Blazer
           result = client.query(statement, denormalize: false).first
           columns = result["columns"]
           rows = result["values"]
-          # TODO support columns with other names
+
+          # parse time columns
+          # current approach is not ideal, but result doesn't include types
+          # another approach would be to check the format
           time_index = columns.index("time")
           if time_index
             rows.each do |row|

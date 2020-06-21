@@ -616,6 +616,8 @@ data_sources:
     url: http://user:password@hostname:8086/database
 ```
 
+Supports [InfluxQL](https://docs.influxdata.com/influxdb/v1.8/query_language/explore-data/)
+
 ### MongoDB
 
 Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:

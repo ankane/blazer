@@ -613,7 +613,7 @@ Add [influxdb](https://github.com/influxdata/influxdb-ruby) to your Gemfile and 
 data_sources:
   my_source:
     adapter: influxdb
-    url: http://user:password@hostname:8086
+    url: http://user:password@hostname:8086/database
 ```
 
 ### MongoDB

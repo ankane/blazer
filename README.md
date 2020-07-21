@@ -434,12 +434,10 @@ A forecast link will appear for queries that return 2 columns with types timesta
 
 ### Prophet
 
-**Note:** Prophet only supports daily forecasts right now.
-
 Add [prophet](https://github.com/ankane/prophet) to your Gemfile:
 
 ```ruby
-gem 'prophet-rb'
+gem 'prophet-rb', '>= 0.2.1'
 ```
 
 And add to `config/blazer.yml`:

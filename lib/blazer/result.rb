@@ -94,29 +94,10 @@ module Blazer
       case Blazer.forecasting
       when "prophet"
         require "prophet"
-
-        df =
-          Daru::DataFrame.new(
-            "ds" => @rows.map { |r| r[0] },
-            "y" => @rows.map { |r| r[1] }
-          )
-
-        # TODO determine frequency
-        freq = "D"
-
-        m = Prophet.new
-        m.fit(df)
-        future = m.make_future_dataframe(periods: count, freq: freq, include_history: false)
-        fcst = m.predict(future)
-        ds = fcst["ds"]
-        if @rows[0][0].is_a?(Date)
-          ds = ds.map { |v| v.to_date }
-        end
-        forecast = ds.zip(fcst["yhat"]).to_h
+        forecast = Prophet.forecast(@rows.to_h, count: count)
       else
         require "trend"
-
-        forecast = Trend.forecast(Hash[@rows], count: count)
+        forecast = Trend.forecast(@rows.to_h, count: count)
       end
 
       # round integers

@@ -838,7 +838,7 @@ Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) t
 heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git
 ```
 
-And create an `init.r` with:
+And create an `init.R` with:
 
 ```sh
 if (!"AnomalyDetection" %in% installed.packages()) {

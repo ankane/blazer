@@ -840,7 +840,7 @@ heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buil
 
 And create an `init.R` with:
 
-```sh
+```r
 if (!"AnomalyDetection" %in% installed.packages()) {
   install.packages("remotes")
   remotes::install_github("twitter/AnomalyDetection")

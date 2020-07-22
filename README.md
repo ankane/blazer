@@ -835,7 +835,7 @@ config.cache_store = :mem_cache_store
 Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
 
 ```sh
-heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git\#cedar-14
+heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git
 ```
 
 And create an `init.r` with:

@@ -1,4 +1,4 @@
-## 2.2.6 (unreleased)
+## 2.2.6 (2020-07-21)
 
 - Added experimental support for InfluxDB
 - Added support for forecasting week, month, quarter, and year with Prophet

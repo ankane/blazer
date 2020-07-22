@@ -491,7 +491,7 @@ data_sources:
 - [Elasticsearch](#elasticsearch)
 - [Google BigQuery](#google-bigquery)
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
-- [InfluxDB](#influxdb) [unreleased]
+- [InfluxDB](#influxdb)
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
 - [Neo4j](#neo4j)

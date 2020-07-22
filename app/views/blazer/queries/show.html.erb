@@ -57,7 +57,7 @@
     }
 
     <% data = variable_params(@query).merge(statement: @statement, query_id: @query.id, data_source: @query.data_source) %>
-    <% data.merge!(forecast: params[:forecast]) if params[:forecast] %>
+    <% data.merge!(forecast: "t") if params[:forecast] %>
     <%= blazer_js_var "data", data %>
 
     runQuery(data, showRun, showError)

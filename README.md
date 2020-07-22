@@ -842,8 +842,8 @@ And create an `init.r` with:
 
 ```sh
 if (!"AnomalyDetection" %in% installed.packages()) {
-  install.packages("devtools")
-  devtools::install_github("twitter/AnomalyDetection")
+  install.packages("remotes")
+  remotes::install_github("twitter/AnomalyDetection")
 }
 ```
 

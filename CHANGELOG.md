@@ -1,3 +1,9 @@
+## 2.2.6 (2020-07-21)
+
+- Added experimental support for InfluxDB
+- Added support for forecasting week, month, quarter, and year with Prophet
+- Fixed forecasting link not showing up
+
 ## 2.2.5 (2020-06-03)
 
 - Updated maps to fix deprecation error

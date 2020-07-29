@@ -434,12 +434,10 @@ A forecast link will appear for queries that return 2 columns with types timesta
 
 ### Prophet
 
-**Note:** Prophet only supports daily forecasts right now.
-
 Add [prophet](https://github.com/ankane/prophet) to your Gemfile:
 
 ```ruby
-gem 'prophet-rb'
+gem 'prophet-rb', '>= 0.2.1'
 ```
 
 And add to `config/blazer.yml`:
@@ -493,6 +491,7 @@ data_sources:
 - [Elasticsearch](#elasticsearch)
 - [Google BigQuery](#google-bigquery)
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
+- [InfluxDB](#influxdb)
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
 - [Neo4j](#neo4j)
@@ -529,7 +528,7 @@ data_sources:
 
 ### Amazon Redshift
 
-Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) or [activerecord5-redshift-adapter](https://github.com/ConsultingMD/activerecord5-redshift-adapter) to your Gemfile and set:
+Add [activerecord6-redshift-adapter](https://github.com/kwent/activerecord6-redshift-adapter) or [activerecord5-redshift-adapter](https://github.com/ConsultingMD/activerecord5-redshift-adapter) to your Gemfile and set:
 
 ```yml
 data_sources:
@@ -594,7 +593,28 @@ data_sources:
 
 ### IBM DB2 and Informix
 
-Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).
+Add [ibm_db](https://github.com/ibmdb/ruby-ibmdb) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: ibm-db://user:password@hostname:50000/database
+```
+
+### InfluxDB
+
+*Experimental*
+
+Add [influxdb](https://github.com/influxdata/influxdb-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: influxdb
+    url: http://user:password@hostname:8086/database
+```
+
+Supports [InfluxQL](https://docs.influxdata.com/influxdb/v1.8/query_language/explore-data/)
 
 ### MongoDB
 
@@ -631,11 +651,17 @@ data_sources:
 
 ### Oracle
 
-Use [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced).
+Add [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced) and [ruby-oci8](https://github.com/kubo/ruby-oci8) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: oracle-enhanced://user:password@hostname:1521/database
+```
 
 ### PostgreSQL
 
-Add [pg](https://bitbucket.org/ged/ruby-pg/wiki/Home) to your Gemfile (if it’s not there) and set:
+Add [pg](https://github.com/ged/ruby-pg) to your Gemfile (if it’s not there) and set:
 
 ```yml
 data_sources:
@@ -712,7 +738,7 @@ For Heroku, use the [Apt buildpack](https://github.com/heroku/heroku-buildpack-a
 
 ```text
 unixodbc-dev
-https://sfc-repo.snowflakecomputing.com/odbc/linux/2.19.16/snowflake-odbc-2.19.16.x86_64.deb
+https://sfc-repo.snowflakecomputing.com/odbc/linux/2.21.5/snowflake-odbc-2.21.5.x86_64.deb
 ```
 
 > This installs the driver at `/app/.apt/usr/lib/snowflake/odbc/lib/libSnowflake.so`
@@ -809,15 +835,15 @@ config.cache_store = :mem_cache_store
 Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
 
 ```sh
-heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git\#cedar-14
+heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git
 ```
 
-And create an `init.r` with:
+And create an `init.R` with:
 
-```sh
+```r
 if (!"AnomalyDetection" %in% installed.packages()) {
-  install.packages("devtools")
-  devtools::install_github("twitter/AnomalyDetection")
+  install.packages("remotes")
+  remotes::install_github("twitter/AnomalyDetection")
 }
 ```
 

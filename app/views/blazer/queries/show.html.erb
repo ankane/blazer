@@ -56,7 +56,9 @@
       $("#results").addClass("query-error").html(message)
     }
 
-    <%= blazer_js_var "data", variable_params(@query).merge(statement: @statement, query_id: @query.id, data_source: @query.data_source) %>
+    <% data = variable_params(@query).merge(statement: @statement, query_id: @query.id, data_source: @query.data_source) %>
+    <% data.merge!(forecast: "t") if params[:forecast] %>
+    <%= blazer_js_var "data", data %>
 
     runQuery(data, showRun, showError)
   </script>

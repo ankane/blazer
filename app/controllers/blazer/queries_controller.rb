@@ -270,7 +270,7 @@ module Blazer
       end
 
       def set_queries(limit = nil)
-        @queries = Blazer::Query.named.select(:id, :name, :creator_id, :statement)
+        @queries = Blazer::Query.named.select(:id, :name, :description, :creator_id, :statement)
         @queries = @queries.includes(:creator) if Blazer.user_class
 
         if blazer_user && params[:filter] == "mine"
@@ -292,6 +292,7 @@ module Blazer
             {
               id: q.id,
               name: q.name,
+              description: q.description,
               creator: blazer_user && q.try(:creator) == blazer_user ? "You" : q.try(:creator).try(Blazer.user_name),
               vars: q.variables.join(", "),
               to_param: q.to_param

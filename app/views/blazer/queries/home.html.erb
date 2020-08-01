@@ -32,6 +32,7 @@
     <thead>
       <tr>
         <th>Name</th>
+        <th>Description</th>
         <% if Blazer.user_class %>
           <th style="width: 20%; text-align: right;">Mastermind</th>
         <% end%>
@@ -42,6 +43,9 @@
         <td>
           <a :href="itemPath(query)" :class="{ dashboard: query.dashboard }">{{ query.name }}</a>
           <span class="vars">{{ query.vars }}</span>
+        </td>
+        <td class="text-muted">
+          {{ query.description }}
         </td>
         <% if Blazer.user_class %>
           <td class="creator">{{ query.creator }}</td>

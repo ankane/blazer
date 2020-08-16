@@ -183,7 +183,7 @@ You can have Blazer transform specific variables with:
 
 ```ruby
 Blazer.transform_variable = lambda do |name, value|
-  value = User.compute_email_bidx(value) if name == "email_bidx"
+  value = User.generate_email_bidx(value) if name == "email_bidx"
   value
 end
 ```

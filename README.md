@@ -389,7 +389,7 @@ Blazer supports two different approaches to anomaly detection.
 
 ### Trend
 
-[Trend](https://trendapi.org/) is easiest to set up but uses an external service.
+[Trend](https://trendapi.org/) is easiest to set up. By default, it uses an external service, but you can run it on your own infrastructure as well.
 
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 
@@ -401,6 +401,12 @@ And add to `config/blazer.yml`:
 
 ```yml
 anomaly_checks: trend
+```
+
+For the [self-hosted API](https://github.com/ankane/trend-api), create an initializer with:
+
+```ruby
+Trend.url = "http://localhost:8000"
 ```
 
 ### R

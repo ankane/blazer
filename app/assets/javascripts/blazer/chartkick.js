@@ -2,14 +2,14 @@
  * Chartkick.js
  * Create beautiful charts with one line of JavaScript
  * https://github.com/ankane/chartkick.js
- * v3.0.1
+ * v3.2.1
  * MIT License
  */
 
 (function (global, factory) {
   typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory() :
   typeof define === 'function' && define.amd ? define(factory) :
-  (global.Chartkick = factory());
+  (global = global || self, global.Chartkick = factory());
 }(this, (function () { 'use strict';
 
   function isArray(variable) {
@@ -21,13 +21,17 @@
   }
 
   function isPlainObject(variable) {
-    return !isFunction(variable) && variable instanceof Object;
+    // protect against prototype pollution, defense 2
+    return Object.prototype.toString.call(variable) === "[object Object]" && !isFunction(variable) && variable instanceof Object;
   }
 
   // https://github.com/madrobby/zepto/blob/master/src/zepto.js
   function extend(target, source) {
     var key;
     for (key in source) {
+      // protect against prototype pollution, defense 1
+      if (key === "__proto__") { continue; }
+
       if (isPlainObject(source[key]) || isArray(source[key])) {
         if (isPlainObject(source[key]) && !isPlainObject(target[key])) {
           target[key] = {};
@@ -237,7 +241,9 @@
     return typeof obj === "number";
   }
 
-  function formatValue(pre, value, options) {
+  var byteSuffixes = ["bytes", "KB", "MB", "GB", "TB", "PB", "EB"];
+
+  function formatValue(pre, value, options, axis) {
     pre = pre || "";
     if (options.prefix) {
       if (value < 0) {
@@ -245,6 +251,74 @@
         pre += "-";
       }
       pre += options.prefix;
+    }
+
+    var suffix = options.suffix || "";
+    var precision = options.precision;
+    var round = options.round;
+
+    if (options.byteScale) {
+      var suffixIdx;
+      var baseValue = axis ? options.byteScale : value;
+
+      if (baseValue >= 1152921504606846976) {
+        value /= 1152921504606846976;
+        suffixIdx = 6;
+      } else if (baseValue >= 1125899906842624) {
+        value /= 1125899906842624;
+        suffixIdx = 5;
+      } else if (baseValue >= 1099511627776) {
+        value /= 1099511627776;
+        suffixIdx = 4;
+      } else if (baseValue >= 1073741824) {
+        value /= 1073741824;
+        suffixIdx = 3;
+      } else if (baseValue >= 1048576) {
+        value /= 1048576;
+        suffixIdx = 2;
+      } else if (baseValue >= 1024) {
+        value /= 1024;
+        suffixIdx = 1;
+      } else {
+        suffixIdx = 0;
+      }
+
+      // TODO handle manual precision case
+      if (precision === undefined && round === undefined) {
+        if (value >= 1023.5) {
+          if (suffixIdx < byteSuffixes.length - 1) {
+            value = 1.0;
+            suffixIdx += 1;
+          }
+        }
+        precision = value >= 1000 ? 4 : 3;
+      }
+      suffix = " " + byteSuffixes[suffixIdx];
+    }
+
+    if (precision !== undefined && round !== undefined) {
+      throw Error("Use either round or precision, not both");
+    }
+
+    if (!axis) {
+      if (precision !== undefined) {
+        value = value.toPrecision(precision);
+        if (!options.zeros) {
+          value = parseFloat(value);
+        }
+      }
+
+      if (round !== undefined) {
+        if (round < 0) {
+          var num = Math.pow(10, -1 * round);
+          value = parseInt((1.0 * value / num).toFixed(0)) * num;
+        } else {
+          value = value.toFixed(round);
+          if (!options.zeros) {
+            value = parseFloat(value);
+          }
+        }
+      }
     }
 
     if (options.thousands || options.decimal) {
@@ -259,7 +333,16 @@
       }
     }
 
-    return pre + value + (options.suffix || "");
+    return pre + value + suffix;
+  }
+
+  function seriesOption(chart, series, option) {
+    if (option in series) {
+      return series[option];
+    } else if (option in chart.options) {
+      return chart.options[option];
+    }
+    return null;
   }
 
   function allZeros(data) {
@@ -381,6 +464,12 @@
     return result ? "rgba(" + parseInt(result[1], 16) + ", " + parseInt(result[2], 16) + ", " + parseInt(result[3], 16) + ", " + opacity + ")" : hex;
   };
 
+  // check if not null or undefined
+  // https://stackoverflow.com/a/27757708/1177228
+  var notnull = function(x) {
+    return x != null;
+  };
+
   var setLabelSize = function (chart, data, options) {
     var maxLabelSize = Math.ceil(chart.element.offsetWidth / 4.0 / data.labels.length);
     if (maxLabelSize > 25) {
@@ -405,8 +494,39 @@
       prefix: chart.options.prefix,
       suffix: chart.options.suffix,
       thousands: chart.options.thousands,
-      decimal: chart.options.decimal
+      decimal: chart.options.decimal,
+      precision: chart.options.precision,
+      round: chart.options.round,
+      zeros: chart.options.zeros
     };
+
+    if (chart.options.bytes) {
+      var series = chart.data;
+      if (chartType === "pie") {
+        series = [{data: series}];
+      }
+
+      // calculate max
+      var max = 0;
+      for (var i = 0; i < series.length; i++) {
+        var s = series[i];
+        for (var j = 0; j < s.data.length; j++) {
+          if (s.data[j][1] > max) {
+            max = s.data[j][1];
+          }
+        }
+      }
+
+      // calculate scale
+      var scale = 1;
+      while (max >= 1024) {
+        scale *= 1024;
+        max /= 1024;
+      }
+
+      // set step size
+      formatOptions.byteScale = scale;
+    }
 
     if (chartType !== "pie") {
       var myAxes = options.scales.yAxes;
@@ -414,9 +534,18 @@
         myAxes = options.scales.xAxes;
       }
 
+      if (formatOptions.byteScale) {
+        if (!myAxes[0].ticks.stepSize) {
+          myAxes[0].ticks.stepSize = formatOptions.byteScale / 2;
+        }
+        if (!myAxes[0].ticks.maxTicksLimit) {
+          myAxes[0].ticks.maxTicksLimit = 4;
+        }
+      }
+
       if (!myAxes[0].ticks.callback) {
         myAxes[0].ticks.callback = function (value) {
-          return formatValue("", value, formatOptions);
+          return formatValue("", value, formatOptions, true);
         };
       }
     }
@@ -471,7 +600,7 @@
 
   var jsOptions = jsOptionsFunc(merge(baseOptions, defaultOptions), hideLegend, setTitle, setMin, setMax, setStacked, setXtitle, setYtitle);
 
-  var createDataTable = function (chart, options, chartType) {
+  var createDataTable = function (chart, options, chartType, library) {
     var datasets = [];
     var labels = [];
 
@@ -594,11 +723,13 @@
         dataset.stack = s.stack;
       }
 
-      if (chart.options.curve === false) {
+      var curve = seriesOption(chart, s, "curve");
+      if (curve === false) {
         dataset.lineTension = 0;
       }
 
-      if (chart.options.points === false) {
+      var points = seriesOption(chart, s, "points");
+      if (points === false) {
         dataset.pointRadius = 0;
         dataset.pointHitRadius = 5;
       }
@@ -610,9 +741,49 @@
       datasets.push(dataset);
     }
 
+    var xmin = chart.options.xmin;
+    var xmax = chart.options.xmax;
+
+    if (chart.xtype === "datetime") {
+      // hacky check for Chart.js >= 2.9.0
+      // https://github.com/chartjs/Chart.js/compare/v2.8.0...v2.9.0
+      var gte29 = "math" in library.helpers;
+      var ticksKey = gte29 ? "ticks" : "time";
+      if (notnull(xmin)) {
+        options.scales.xAxes[0][ticksKey].min = toDate(xmin).getTime();
+      }
+      if (notnull(xmax)) {
+        options.scales.xAxes[0][ticksKey].max = toDate(xmax).getTime();
+      }
+    } else if (chart.xtype === "number") {
+      if (notnull(xmin)) {
+        options.scales.xAxes[0].ticks.min = xmin;
+      }
+      if (notnull(xmax)) {
+        options.scales.xAxes[0].ticks.max = xmax;
+      }
+    }
+
+    // for empty datetime chart
+    if (chart.xtype === "datetime" && labels.length === 0) {
+      if (notnull(xmin)) {
+        labels.push(toDate(xmin));
+      }
+      if (notnull(xmax)) {
+        labels.push(toDate(xmax));
+      }
+      day = false;
+      week = false;
+      month = false;
+      year = false;
+      hour = false;
+      minute = false;
+    }
+
     if (chart.xtype === "datetime" && labels.length > 0) {
-      var minTime = labels[0].getTime();
-      var maxTime = labels[0].getTime();
+      var minTime = (notnull(xmin) ? toDate(xmin) : labels[0]).getTime();
+      var maxTime = (notnull(xmax) ? toDate(xmax) : labels[0]).getTime();
+
       for (i = 1; i < labels.length; i++) {
         var value$1 = labels[i].getTime();
         if (value$1 < minTime) {
@@ -689,7 +860,7 @@
     var options = jsOptions(chart, merge(chartOptions, chart.options));
     setFormatOptions(chart, options, chartType);
 
-    var data = createDataTable(chart, options, chartType || "line");
+    var data = createDataTable(chart, options, chartType || "line", this.library);
 
     if (chart.xtype === "number") {
       options.scales.xAxes[0].type = "linear";
@@ -743,12 +914,14 @@
   defaultExport.prototype.renderColumnChart = function renderColumnChart (chart, chartType) {
     var options;
     if (chartType === "bar") {
-      options = jsOptionsFunc(merge(baseOptions, defaultOptions), hideLegend, setTitle, setBarMin, setBarMax, setStacked, setXtitle, setYtitle)(chart, chart.options);
+      var barOptions = merge(baseOptions, defaultOptions);
+      delete barOptions.scales.yAxes[0].ticks.maxTicksLimit;
+      options = jsOptionsFunc(barOptions, hideLegend, setTitle, setBarMin, setBarMax, setStacked, setXtitle, setYtitle)(chart, chart.options);
     } else {
       options = jsOptions(chart, chart.options);
     }
     setFormatOptions(chart, options, chartType);
-    var data = createDataTable(chart, options, "column");
+    var data = createDataTable(chart, options, "column", this.library);
     if (chartType !== "bar") {
       setLabelSize(chart, data, options);
     }
@@ -773,7 +946,7 @@
       options.showLines = false;
     }
 
-    var data = createDataTable(chart, options, chartType);
+    var data = createDataTable(chart, options, chartType, this.library);
 
     options.scales.xAxes[0].type = "linear";
     options.scales.xAxes[0].position = "bottom";
@@ -847,6 +1020,7 @@
     },
     plotOptions: {
       areaspline: {},
+      area: {},
       series: {
         marker: {}
       }
@@ -883,7 +1057,10 @@
   };
 
   var setStacked$1 = function (options, stacked) {
-    options.plotOptions.series.stacking = stacked ? (stacked === true ? "normal" : stacked) : null;
+    var stackedValue = stacked ? (stacked === true ? "normal" : stacked) : null;
+    options.plotOptions.series.stacking = stackedValue;
+    options.plotOptions.area.stacking = stackedValue;
+    options.plotOptions.areaspline.stacking = stackedValue;
   };
 
   var setXtitle$1 = function (options, title) {
@@ -901,7 +1078,10 @@
       prefix: chart.options.prefix,
       suffix: chart.options.suffix,
       thousands: chart.options.thousands,
-      decimal: chart.options.decimal
+      decimal: chart.options.decimal,
+      precision: chart.options.precision,
+      round: chart.options.round,
+      zeros: chart.options.zeros
     };
 
     if (chartType !== "pie" && !options.yAxis.labels.formatter) {
@@ -912,7 +1092,7 @@
 
     if (!options.tooltip.pointFormatter) {
       options.tooltip.pointFormatter = function () {
-        return '<span style="color:' + this.color + '>\u25CF</span> ' + formatValue(this.series.name + ': <b>', this.y, formatOptions) + '</b><br/>';
+        return '<span style="color:' + this.color + '">\u25CF</span> ' + formatValue(this.series.name + ': <b>', this.y, formatOptions) + '</b><br/>';
       };
     }
   };
@@ -1302,7 +1482,7 @@
   defaultExport$2.prototype.renderGeoChart = function renderGeoChart (chart) {
       var this$1 = this;
 
-    this.waitForLoaded(chart, function () {
+    this.waitForLoaded(chart, "geochart", function () {
       var chartOptions = {
         legend: "none",
         colorAxis: {
@@ -1418,7 +1598,7 @@
       if (config.language) {
         loadOptions.language = config.language;
       }
-      if (pack === "corechart" && config.mapsApiKey) {
+      if (pack === "geochart" && config.mapsApiKey) {
         loadOptions.mapsApiKey = config.mapsApiKey;
       }
 
@@ -1427,12 +1607,10 @@
   };
 
   defaultExport$2.prototype.runCallbacks = function runCallbacks () {
-      var this$1 = this;
-
     var cb, call;
     for (var i = 0; i < callbacks.length; i++) {
       cb = callbacks[i];
-      call = this$1.library.visualization && ((cb.pack === "corechart" && this$1.library.visualization.LineChart) || (cb.pack === "timeline" && this$1.library.visualization.Timeline));
+      call = this.library.visualization && ((cb.pack === "corechart" && this.library.visualization.LineChart) || (cb.pack === "timeline" && this.library.visualization.Timeline) || (cb.pack === "geochart" && this.library.visualization.GeoChart));
       if (call) {
         cb.callback();
         callbacks.splice(i, 1);
@@ -1531,7 +1709,7 @@
   function ajaxCall(url, success, error) {
     var $ = window.jQuery || window.Zepto || window.$;
 
-    if ($) {
+    if ($ && $.ajax) {
       $.ajax({
         dataType: "json",
         url: url,
@@ -1568,8 +1746,12 @@
     }
   }
 
-  function chartError(element, message) {
-    setText(element, "Error Loading Chart: " + message);
+  // TODO remove prefix for all messages
+  function chartError(element, message, noPrefix) {
+    if (!noPrefix) {
+      message = "Error Loading Chart: " + message;
+    }
+    setText(element, message);
     element.style.color = "#ff0000";
   }
 
@@ -1590,6 +1772,17 @@
       }, function (message) {
         chartError(chart.element, message);
       });
+    } else if (typeof dataSource === "function") {
+      try {
+        dataSource(function (data) {
+          chart.rawData = data;
+          errorCatcher(chart);
+        }, function (message) {
+          chartError(chart.element, message, true);
+        });
+      } catch (err) {
+        chartError(chart.element, err, true);
+      }
     } else {
       chart.rawData = dataSource;
       errorCatcher(chart);
@@ -1599,7 +1792,15 @@
   function addDownloadButton(chart) {
     var element = chart.element;
     var link = document.createElement("a");
-    link.download = chart.options.download === true ? "chart.png" : chart.options.download; // https://caniuse.com/download
+
+    var download = chart.options.download;
+    if (download === true) {
+      download = {};
+    } else if (typeof download === "string") {
+      download = {filename: download};
+    }
+    link.download = download.filename || "chart.png"; // https://caniuse.com/download
+
     link.style.position = "absolute";
     link.style.top = "20px";
     link.style.right = "20px";
@@ -1622,7 +1823,7 @@
       var related = e.relatedTarget;
       // check download option again to ensure it wasn't changed
       if ((!related || (related !== this && !childOf(this, related))) && chart.options.download) {
-        link.href = chart.toImage();
+        link.href = chart.toImage(download);
         element.appendChild(link);
       }
     });
@@ -1784,8 +1985,14 @@
     return r;
   };
 
-  function detectXType(series, noDatetime) {
-    if (detectXTypeWithFunction(series, isNumber)) {
+  function detectXType(series, noDatetime, options) {
+    if (dataEmpty(series)) {
+      if ((options.xmin || options.xmax) && (!options.xmin || isDate(options.xmin)) && (!options.xmax || isDate(options.xmax))) {
+        return "datetime";
+      } else {
+        return "number";
+      }
+    } else if (detectXTypeWithFunction(series, isNumber)) {
       return "number";
     } else if (!noDatetime && detectXTypeWithFunction(series, isDate)) {
       return "datetime";
@@ -1837,12 +2044,18 @@
       chart.hideLegend = false;
     }
 
-    chart.xtype = keyType ? keyType : (opts.discrete ? "string" : detectXType(series, noDatetime));
-
-    // right format
+    // convert to array
+    // must come before dataEmpty check
     series = copySeries(series);
     for (i = 0; i < series.length; i++) {
-      series[i].data = formatSeriesData(toArr(series[i].data), chart.xtype);
+      series[i].data = toArr(series[i].data);
+    }
+
+    chart.xtype = keyType ? keyType : (opts.discrete ? "string" : detectXType(series, noDatetime, opts));
+
+    // right format
+    for (i = 0; i < series.length; i++) {
+      series[i].data = formatSeriesData(series[i].data, chart.xtype);
     }
 
     return series;
@@ -1927,6 +2140,8 @@
       var sep = this.dataSource.indexOf("?") === -1 ? "?" : "&";
       var url = this.dataSource + sep + "_=" + (new Date()).getTime();
       fetchDataSource(this, url);
+    } else if (typeof this.dataSource === "function") {
+      fetchDataSource(this, this.dataSource);
     }
   };
 
@@ -1934,6 +2149,10 @@
       var this$1 = this;
 
     var refresh = this.options.refresh;
+
+    if (refresh && typeof this.dataSource !== "string" && typeof this.dataSource !== "function") {
+      throw new Error("Data source must be a URL or callback for refresh");
+    }
 
     if (!this.intervalId) {
       if (refresh) {
@@ -1953,10 +2172,26 @@
     }
   };
 
-  Chart.prototype.toImage = function toImage () {
+  Chart.prototype.toImage = function toImage (download) {
     if (this.adapter === "chartjs") {
-      return this.chart.toBase64Image();
+      if (download && download.background && download.background !== "transparent") {
+        // https://stackoverflow.com/questions/30464750/chartjs-line-chart-set-background-color
+        var canvas = this.chart.chart.canvas;
+        var ctx = this.chart.chart.ctx;
+        var tmpCanvas = document.createElement("canvas");
+        var tmpCtx = tmpCanvas.getContext("2d");
+        tmpCanvas.width = ctx.canvas.width;
+        tmpCanvas.height = ctx.canvas.height;
+        tmpCtx.fillStyle = download.background;
+        tmpCtx.fillRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+        tmpCtx.drawImage(canvas, 0, 0);
+        return tmpCanvas.toDataURL("image/png");
+      } else {
+        return this.chart.toBase64Image();
+      }
     } else {
+      // TODO throw error in next major version
+      // throw new Error("Feature only available for Chart.js");
       return null;
     }
   };
@@ -1993,7 +2228,7 @@
     return config;
   };
 
-  var LineChart = (function (Chart) {
+  var LineChart = /*@__PURE__*/(function (Chart) {
     function LineChart () {
       Chart.apply(this, arguments);
     }
@@ -2013,7 +2248,7 @@
     return LineChart;
   }(Chart));
 
-  var PieChart = (function (Chart) {
+  var PieChart = /*@__PURE__*/(function (Chart) {
     function PieChart () {
       Chart.apply(this, arguments);
     }
@@ -2033,7 +2268,7 @@
     return PieChart;
   }(Chart));
 
-  var ColumnChart = (function (Chart) {
+  var ColumnChart = /*@__PURE__*/(function (Chart) {
     function ColumnChart () {
       Chart.apply(this, arguments);
     }
@@ -2053,7 +2288,7 @@
     return ColumnChart;
   }(Chart));
 
-  var BarChart = (function (Chart) {
+  var BarChart = /*@__PURE__*/(function (Chart) {
     function BarChart () {
       Chart.apply(this, arguments);
     }
@@ -2073,7 +2308,7 @@
     return BarChart;
   }(Chart));
 
-  var AreaChart = (function (Chart) {
+  var AreaChart = /*@__PURE__*/(function (Chart) {
     function AreaChart () {
       Chart.apply(this, arguments);
     }
@@ -2093,7 +2328,7 @@
     return AreaChart;
   }(Chart));
 
-  var GeoChart = (function (Chart) {
+  var GeoChart = /*@__PURE__*/(function (Chart) {
     function GeoChart () {
       Chart.apply(this, arguments);
     }
@@ -2113,7 +2348,7 @@
     return GeoChart;
   }(Chart));
 
-  var ScatterChart = (function (Chart) {
+  var ScatterChart = /*@__PURE__*/(function (Chart) {
     function ScatterChart () {
       Chart.apply(this, arguments);
     }
@@ -2133,7 +2368,7 @@
     return ScatterChart;
   }(Chart));
 
-  var BubbleChart = (function (Chart) {
+  var BubbleChart = /*@__PURE__*/(function (Chart) {
     function BubbleChart () {
       Chart.apply(this, arguments);
     }
@@ -2153,7 +2388,7 @@
     return BubbleChart;
   }(Chart));
 
-  var Timeline = (function (Chart) {
+  var Timeline = /*@__PURE__*/(function (Chart) {
     function Timeline () {
       Chart.apply(this, arguments);
     }
@@ -2196,6 +2431,9 @@
         }
       }
     },
+    setDefaultOptions: function (opts) {
+      Chartkick.options = opts;
+    },
     eachChart: function (callback) {
       for (var chartId in Chartkick.charts) {
         if (Chartkick.charts.hasOwnProperty(chartId)) {
@@ -2206,8 +2444,20 @@
     config: config,
     options: {},
     adapters: adapters,
-    addAdapter: addAdapter
+    addAdapter: addAdapter,
+    use: function(adapter) {
+      addAdapter(adapter);
+      return Chartkick;
+    }
   };
+
+  // not ideal, but allows for simpler integration
+  if (typeof window !== "undefined" && !window.Chartkick) {
+    window.Chartkick = Chartkick;
+  }
+
+  // backwards compatibility for esm require
+  Chartkick.default = Chartkick;
 
   return Chartkick;
 

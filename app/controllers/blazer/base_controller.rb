@@ -101,7 +101,7 @@ module Blazer
       # remove blacklisted keys from both params and permitted keys for better sleep
       def variable_params(resource)
         permitted_keys = resource.variables - BLACKLISTED_KEYS.map(&:to_s)
-        params.except(*BLACKLISTED_KEYS).permit(*permitted_keys)
+        params.except(*BLACKLISTED_KEYS).slice(*permitted_keys).permit!
       end
       helper_method :variable_params
 

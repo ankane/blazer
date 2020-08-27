@@ -4,7 +4,7 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 [Try it out](https://blazer.dokkuapp.com)
 
-[![Screenshot](https://blazer.dokkuapp.com/assets/blazer-90fb6ce8ad25614c6f9c3b4619cbfbd66fa3d6567dac34d83df540f6688665f1.png)](https://blazer.dokkuapp.com)
+[![Screenshot](https://blazer.dokkuapp.com/assets/blazer-90bd7acc9fdf1f5fc2bb25bfe5506f746ec8c9d2e0730388debfd697e32f75b8.png)](https://blazer.dokkuapp.com)
 
 Blazer is also available as a [Docker image](https://github.com/ankane/blazer-docker).
 

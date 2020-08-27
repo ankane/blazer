@@ -42,6 +42,7 @@
               singleDatePicker: true,
               locale: {format: format},
               autoUpdateInput: false,
+              autoApply: true,
               startDate: input.val().length > 0 ? moment.tz(input.val(), timeZone) : now
             })
             // hack to start with empty date
@@ -95,7 +96,8 @@
             },
             startDate: dateStr(29),
             endDate: dateStr(),
-            opens: "right"
+            opens: "right",
+            alwaysShowCalendars: true
           },
           function(start, end) {
             setTimeInputs(start, end)

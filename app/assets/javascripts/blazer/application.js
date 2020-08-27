@@ -9,7 +9,7 @@
 //= require ./moment-timezone-with-data
 //= require ./daterangepicker
 //= require ./Chart.js
-//= require ./chartkick
+//= require chartkick
 //= require ./ace
 //= require ./Sortable
 //= require ./bootstrap

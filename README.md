@@ -4,7 +4,7 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 [Try it out](https://blazer.dokkuapp.com)
 
-[![Screenshot](https://blazer.dokkuapp.com/assets/blazer-90fb6ce8ad25614c6f9c3b4619cbfbd66fa3d6567dac34d83df540f6688665f1.png)](https://blazer.dokkuapp.com)
+[![Screenshot](https://blazer.dokkuapp.com/assets/blazer-90bd7acc9fdf1f5fc2bb25bfe5506f746ec8c9d2e0730388debfd697e32f75b8.png)](https://blazer.dokkuapp.com)
 
 Blazer is also available as a [Docker image](https://github.com/ankane/blazer-docker).
 
@@ -389,7 +389,7 @@ Blazer supports two different approaches to anomaly detection.
 
 ### Trend
 
-[Trend](https://trendapi.org/) is easiest to set up but uses an external service.
+[Trend](https://trendapi.org/) is easiest to set up. By default, it uses an external service, but you can run it on your own infrastructure as well.
 
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 
@@ -401,6 +401,12 @@ And add to `config/blazer.yml`:
 
 ```yml
 anomaly_checks: trend
+```
+
+For the [self-hosted API](https://github.com/ankane/trend-api), create an initializer with:
+
+```ruby
+Trend.url = "http://localhost:8000"
 ```
 
 ### R

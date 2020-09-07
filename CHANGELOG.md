@@ -1,5 +1,6 @@
 ## 2.2.7 (unreleased)
 
+- Use `datetime` type in migration
 - Fixed unpermitted parameters on dashboard page
 - Fixed deprecation warnings in Ruby 2.7
 

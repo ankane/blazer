@@ -1,4 +1,4 @@
-## 2.2.7 (unreleased)
+## 2.2.7 (2020-09-07)
 
 - Use `datetime` type in migration
 - Fixed unpermitted parameters on dashboard page

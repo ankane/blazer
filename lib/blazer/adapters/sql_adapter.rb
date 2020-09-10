@@ -27,7 +27,18 @@ module Blazer
             result = select_all("#{statement} /*#{comment}*/")
             columns = result.columns
             result.rows.each do |untyped_row|
-              rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
+              if result.column_types.empty?
+                rows << untyped_row
+                next
+              end
+              
+              rows << columns.each_with_index.map do |col, i|
+                if untyped_row[i].nil? || result.column_types[col].nil?
+                  untyped_row[i]
+                else
+                  result.column_types[col].send(:cast_value, untyped_row[i])
+                end
+              end
             end
           end
         rescue => e

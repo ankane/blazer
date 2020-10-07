@@ -1,3 +1,7 @@
+## 2.2.8 (unreleased)
+
+- Fixed error when deleting dashboard
+
 ## 2.2.7 (2020-09-07)
 
 - Use `datetime` type in migration

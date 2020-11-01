@@ -1,4 +1,4 @@
-## 2.2.8 (unreleased)
+## 2.2.8 (2020-11-01)
 
 - Fixed error when deleting dashboard
 

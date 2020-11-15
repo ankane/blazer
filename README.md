@@ -27,6 +27,7 @@ Blazer is also available as a [Docker image](https://github.com/ankane/blazer-do
 - [Checks](#checks)
 - [Anomaly Detection](#anomaly-detection)
 - [Forecasting](#forecasting)
+- [Uploads](#uploads)
 - [Data Sources](#data-sources)
 - [Query Permissions](#query-permissions)
 

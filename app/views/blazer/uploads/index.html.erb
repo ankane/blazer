@@ -35,7 +35,7 @@
     <% @uploads.each do |upload| %>
       <tr>
         <td><%= link_to upload.table, edit_upload_path(upload) %></td>
-        <td><%= upload.description %></td>
+        <td><%= truncate(upload.description, length: 100, separator: " ") %></td>
         <% if Blazer.user_class %>
           <td class="creator"><%= blazer_user && upload.creator == blazer_user ? "You" : upload.creator.try(Blazer.user_name) %></td>
         <% end %>

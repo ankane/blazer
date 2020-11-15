@@ -486,7 +486,11 @@ uploads:
   data_source: main
 ```
 
-This requires a PostgreSQL database. Create a new schema just for uploads to ensure existing tables aren’t overwritten.
+This feature requires PostgreSQL. Create a new schema just for uploads to ensure existing tables aren’t overwritten.
+
+```sql
+CREATE SCHEMA uploads;
+```
 
 ## Data Sources
 

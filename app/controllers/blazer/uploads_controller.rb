@@ -95,7 +95,7 @@ module Blazer
             if values.all? { |v| v.is_a?(Integer) }
               "bigint"
             elsif values.all? { |v| v.is_a?(Numeric) }
-              "double"
+              "decimal"
             elsif values.all? { |v| v.is_a?(Time) }
               "timestamp"
             elsif values.all? { |v| v.is_a?(Date) }

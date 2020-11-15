@@ -25,6 +25,10 @@ Blazer is also available as a [Docker image](https://github.com/ankane/blazer-do
 - [Charts](#charts)
 - [Dashboards](#dashboards)
 - [Checks](#checks)
+- [Anomaly Detection](#anomaly-detection)
+- [Forecasting](#forecasting)
+- [Data Sources](#data-sources)
+- [Query Permissions](#query-permissions)
 
 ## Installation
 
@@ -428,7 +432,26 @@ anomaly_checks: r
 
 If upgrading from version 1.4 or below, also follow the [upgrade instructions](#15).
 
-If you’re on Heroku, follow [these additional instructions](#anomaly-detection-on-heroku).
+If you’re on Heroku, follow the additional instructions below.
+
+### R on Heroku
+
+Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
+
+```sh
+heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git
+```
+
+And create an `init.R` with:
+
+```r
+if (!"AnomalyDetection" %in% installed.packages()) {
+  install.packages("remotes")
+  remotes::install_github("twitter/AnomalyDetection")
+}
+```
+
+Commit and deploy away. The first deploy may take a few minutes.
 
 ## Forecasting
 
@@ -835,25 +858,6 @@ async: true
 ```ruby
 config.cache_store = :mem_cache_store
 ```
-
-## Anomaly Detection on Heroku
-
-Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
-
-```sh
-heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git
-```
-
-And create an `init.R` with:
-
-```r
-if (!"AnomalyDetection" %in% installed.packages()) {
-  install.packages("remotes")
-  remotes::install_github("twitter/AnomalyDetection")
-}
-```
-
-Commit and deploy away. The first deploy may take a few minutes.
 
 ## Content Security Policy
 

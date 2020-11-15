@@ -1,0 +1,21 @@
+<%= form_for @upload, html: {class: "small-form"} do |f| %>
+  <% if @upload.errors.any? %>
+    <div class="alert alert-danger"><%= @upload.errors.full_messages.first %></div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name %>
+    <%= f.text_field :name, class: "form-control" %>
+  </div>
+  <div class="form-group">
+    <%= f.label :file %>
+    <%= f.file_field :file, class: "form-control" %>
+  </div>
+  <p>
+    <% if @upload.persisted? %>
+      <%= link_to "Delete", upload_path(@upload), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+    <% end %>
+    <%= f.submit "Save", class: "btn btn-success" %>
+    <%= link_to "Back", :back, class: "btn btn-link" %>
+  </p>
+<% end %>

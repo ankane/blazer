@@ -206,6 +206,14 @@ module Blazer
     slack_webhook_url.present?
   end
 
+  def self.uploads?
+    settings["uploads"]
+  end
+
+  def self.uploads_connection
+    Blazer::UploadsConnection.connection
+  end
+
   def self.adapters
     @adapters ||= {}
   end

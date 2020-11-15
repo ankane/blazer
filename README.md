@@ -468,6 +468,24 @@ And add to `config/blazer.yml`:
 forecasting: trend
 ```
 
+## Uploads
+
+Blazer has experimental support for uploading CSV files into database tables. Run:
+
+```sh
+rails generate blazer:uploads
+rails db:migrate
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+uploads:
+  url: postgres://...
+  schema: uploads
+  data_source: main
+```
+
 ## Data Sources
 
 Blazer supports multiple data sources :tada:

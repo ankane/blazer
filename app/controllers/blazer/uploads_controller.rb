@@ -94,8 +94,7 @@ module Blazer
         column_types =
           columns.size.times.map do |i|
             values = rows.map { |r| r[i] }.uniq.compact
-            # TODO check in bigint range
-            if values.all? { |v| v.is_a?(Integer) }
+            if values.all? { |v| v.is_a?(Integer) && v >= -9223372036854775808 && v <= 9223372036854775807 }
               "bigint"
             elsif values.all? { |v| v.is_a?(Numeric) }
               "decimal"

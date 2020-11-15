@@ -3,6 +3,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
     create_table :blazer_uploads do |t|
       t.references :creator
       t.string :table
+      t.text :description
       t.timestamps null: false
     end
   end

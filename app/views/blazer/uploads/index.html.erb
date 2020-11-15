@@ -25,6 +25,7 @@
   <thead>
     <tr>
       <th>Table</th>
+      <th style="width: 60%;"></th>
       <% if Blazer.user_class %>
         <th style="width: 20%; text-align: right;">Mastermind</th>
       <% end%>
@@ -34,6 +35,7 @@
     <% @uploads.each do |upload| %>
       <tr>
         <td><%= link_to upload.table, edit_upload_path(upload) %></td>
+        <td><%= upload.description %></td>
         <% if Blazer.user_class %>
           <td class="creator"><%= blazer_user && upload.creator == blazer_user ? "You" : upload.creator.try(Blazer.user_name) %></td>
         <% end %>

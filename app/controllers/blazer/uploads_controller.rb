@@ -117,7 +117,7 @@ module Blazer
       end
 
       def upload_params
-        params.require(:upload).slice(:table).permit(:table)
+        params.require(:upload).except(:file).permit(:table, :description)
       end
 
       def set_upload

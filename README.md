@@ -486,6 +486,8 @@ uploads:
   data_source: main
 ```
 
+This requires a PostgreSQL database. Create a new schema just for uploads.
+
 ## Data Sources
 
 Blazer supports multiple data sources :tada:

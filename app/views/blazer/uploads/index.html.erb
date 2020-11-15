@@ -24,7 +24,7 @@
 <table id="uploads" class="table">
   <thead>
     <tr>
-      <th>Name</th>
+      <th>Table</th>
       <% if Blazer.user_class %>
         <th style="width: 20%; text-align: right;">Mastermind</th>
       <% end%>
@@ -33,7 +33,7 @@
   <tbody>
     <% @uploads.each do |upload| %>
       <tr>
-        <td><%= link_to upload.name, edit_upload_path(upload) %></td>
+        <td><%= link_to upload.table, edit_upload_path(upload) %></td>
         <% if Blazer.user_class %>
           <td class="creator"><%= blazer_user && upload.creator == blazer_user ? "You" : upload.creator.try(Blazer.user_name) %></td>
         <% end %>

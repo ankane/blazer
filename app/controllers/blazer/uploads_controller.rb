@@ -3,7 +3,7 @@ module Blazer
     before_action :set_upload, only: [:show, :edit, :update, :destroy]
 
     def index
-      @uploads = Blazer::Upload.order(:name)
+      @uploads = Blazer::Upload.order(:table)
     end
 
     def new
@@ -49,7 +49,7 @@ module Blazer
     end
 
     def update
-      original_name = @upload.name
+      original_table = @upload.table
       @upload.assign_attributes(upload_params)
 
       success = nil
@@ -58,14 +58,14 @@ module Blazer
         if success
           if params.require(:upload).key?(:file)
             begin
-              update_file(@upload, drop: original_name)
+              update_file(@upload, drop: original_table)
             rescue CSV::MalformedCSVError => e
               @upload.errors.add(:base, e.message)
               success = false
               raise ActiveRecord::Rollback
             end
-          elsif @upload.name != original_name
-            Blazer.uploads_connection.execute("ALTER TABLE #{Blazer.uploads_table_name(original_name)} RENAME TO #{Blazer.uploads_connection.quote_table_name(@upload.name)}")
+          elsif @upload.table != original_table
+            Blazer.uploads_connection.execute("ALTER TABLE #{Blazer.uploads_table_name(original_table)} RENAME TO #{Blazer.uploads_connection.quote_table_name(@upload.table)}")
           end
         end
       end
@@ -115,7 +115,7 @@ module Blazer
       end
 
       def upload_params
-        params.require(:upload).slice(:name).permit(:name)
+        params.require(:upload).slice(:table).permit(:table)
       end
 
       def set_upload

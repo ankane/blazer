@@ -99,7 +99,7 @@ module Blazer
             elsif values.all? { |v| v.is_a?(Numeric) }
               "decimal"
             elsif values.all? { |v| v.is_a?(DateTime) }
-              "timestamp"
+              "timestamptz"
             elsif values.all? { |v| v.is_a?(Date) }
               "date"
             else

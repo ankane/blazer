@@ -5,7 +5,7 @@ module Blazer
     validates :name, presence: true, uniqueness: true, format: {with: /\A[a-z0-9_]+\z/}
 
     def table_name
-      Blazer.uploads_connection.quote_table_name("#{Blazer.settings["uploads"]["schema"]}.#{name}")
+      Blazer.uploads_table_name(name)
     end
   end
 end

@@ -214,6 +214,10 @@ module Blazer
     Blazer::UploadsConnection.connection
   end
 
+  def self.uploads_table_name(name)
+    uploads_connection.quote_table_name("#{settings["uploads"]["schema"]}.#{name}")
+  end
+
   def self.adapters
     @adapters ||= {}
   end

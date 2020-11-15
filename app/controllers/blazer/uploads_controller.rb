@@ -49,30 +49,23 @@ module Blazer
     end
 
     def update
-      original_table = @upload.table_name
+      original_name = @upload.name
       @upload.assign_attributes(upload_params)
 
       success = nil
       Blazer::Upload.transaction do
         success = @upload.save
         if success
-          rename_table = @upload.table_name != original_table
-          update_file = params.require(:upload).key?(:file)
-          if rename_table || update_file
+          if params.require(:upload).key?(:file)
             begin
-              Blazer.uploads_connection.transaction do
-                if rename_table
-                  Blazer.uploads_connection.execute("ALTER TABLE #{original_table} RENAME TO #{Blazer.uploads_connection.quote_table_name(@upload.name)}")
-                end
-                if update_file
-                  update_upload(@upload, drop: true)
-                end
-              end
+              update_upload(@upload, drop: original_name)
             rescue CSV::MalformedCSVError => e
               @upload.errors.add(:base, e.message)
               success = false
               raise ActiveRecord::Rollback
             end
+          elsif @upload.name != original_name
+            Blazer.uploads_connection.execute("ALTER TABLE #{Blazer.uploads_table_name(original_name)} RENAME TO #{Blazer.uploads_connection.quote_table_name(@upload.name)}")
           end
         end
       end
@@ -92,7 +85,7 @@ module Blazer
 
     private
 
-      def update_upload(upload, drop: false)
+      def update_upload(upload, drop: nil)
         contents = params.require(:upload).fetch(:file).read
         rows = CSV.parse(contents, converters: %i[numeric date])
         columns = rows.shift.map(&:to_s)
@@ -113,7 +106,7 @@ module Blazer
           end
 
         Blazer.uploads_connection.transaction do
-          Blazer.uploads_connection.execute("DROP TABLE IF EXISTS #{upload.table_name}") if drop
+          Blazer.uploads_connection.execute("DROP TABLE IF EXISTS #{Blazer.uploads_table_name(drop)}") if drop
           Blazer.uploads_connection.execute("CREATE TABLE #{upload.table_name} (#{columns.map.with_index { |c, i| "#{Blazer.uploads_connection.quote_column_name(c)} #{column_types[i]}" }.join(", ")})")
           Blazer.uploads_connection.raw_connection.copy_data("COPY #{upload.table_name} FROM STDIN CSV HEADER") do
             Blazer.uploads_connection.raw_connection.put_copy_data(contents)

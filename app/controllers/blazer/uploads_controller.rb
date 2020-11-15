@@ -22,7 +22,7 @@ module Blazer
           success = @upload.save
           if success
             begin
-              update_upload(@upload)
+              update_file(@upload)
             rescue CSV::MalformedCSVError => e
               @upload.errors.add(:base, e.message)
               success = false
@@ -58,7 +58,7 @@ module Blazer
         if success
           if params.require(:upload).key?(:file)
             begin
-              update_upload(@upload, drop: original_name)
+              update_file(@upload, drop: original_name)
             rescue CSV::MalformedCSVError => e
               @upload.errors.add(:base, e.message)
               success = false
@@ -85,7 +85,7 @@ module Blazer
 
     private
 
-      def update_upload(upload, drop: nil)
+      def update_file(upload, drop: nil)
         contents = params.require(:upload).fetch(:file).read
         rows = CSV.parse(contents, converters: %i[numeric date])
         columns = rows.shift.map(&:to_s)

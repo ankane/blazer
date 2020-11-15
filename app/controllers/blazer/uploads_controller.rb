@@ -16,12 +16,27 @@ module Blazer
       # since we setup association without checking if column exists
       @upload.creator = blazer_user if @upload.respond_to?(:creator_id=) && blazer_user
 
-      file = params.require(:upload).key?(:file)
-      if file && @upload.save
-        update_upload(@upload)
+      success = params.require(:upload).key?(:file)
+      if success
+        Blazer::Upload.transaction do
+          success = @upload.save
+          if success
+            begin
+              update_upload(@upload)
+            rescue CSV::MalformedCSVError => e
+              @upload.errors.add(:base, e.message)
+              success = false
+              raise ActiveRecord::Rollback
+            end
+          end
+        end
+      else
+        @upload.errors.add(:base, "File can't be blank")
+      end
+
+      if success
         redirect_to upload_path(@upload)
       else
-        @upload.errors.add(:base, "File can't be blank") unless file
         render_errors @upload
       end
     end
@@ -35,12 +50,34 @@ module Blazer
 
     def update
       original_table = @upload.table_name
-      if @upload.update(upload_params)
-        # rename table even if update_upload method fails (no transaction)
-        if @upload.table_name != original_table
-          Blazer.uploads_connection.execute("ALTER TABLE #{original_table} RENAME TO #{Blazer.uploads_connection.quote_table_name(@upload.name)}")
+      @upload.assign_attributes(upload_params)
+
+      success = nil
+      Blazer::Upload.transaction do
+        success = @upload.save
+        if success
+          rename_table = @upload.table_name != original_table
+          update_file = params.require(:upload).key?(:file)
+          if rename_table || update_file
+            begin
+              Blazer.uploads_connection.transaction do
+                if rename_table
+                  Blazer.uploads_connection.execute("ALTER TABLE #{original_table} RENAME TO #{Blazer.uploads_connection.quote_table_name(@upload.name)}")
+                end
+                if update_file
+                  update_upload(@upload, drop: true)
+                end
+              end
+            rescue CSV::MalformedCSVError => e
+              @upload.errors.add(:base, e.message)
+              success = false
+              raise ActiveRecord::Rollback
+            end
+          end
         end
-        update_upload(@upload, drop: true) if params.require(:upload).key?(:file)
+      end
+
+      if success
         redirect_to upload_path(@upload)
       else
         render_errors @upload

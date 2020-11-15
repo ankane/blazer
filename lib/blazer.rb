@@ -32,6 +32,7 @@ require "blazer/engine"
 
 module Blazer
   class Error < StandardError; end
+  class UploadError < Error; end
   class TimeoutNotSupported < Error; end
 
   class << self

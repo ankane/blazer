@@ -23,7 +23,7 @@ module Blazer
           if success
             begin
               update_file(@upload)
-            rescue CSV::MalformedCSVError => e
+            rescue CSV::MalformedCSVError, Blazer::UploadError => e
               @upload.errors.add(:base, e.message)
               success = false
               raise ActiveRecord::Rollback
@@ -59,7 +59,7 @@ module Blazer
           if params.require(:upload).key?(:file)
             begin
               update_file(@upload, drop: original_table)
-            rescue CSV::MalformedCSVError => e
+            rescue CSV::MalformedCSVError, Blazer::UploadError => e
               @upload.errors.add(:base, e.message)
               success = false
               raise ActiveRecord::Rollback
@@ -86,7 +86,9 @@ module Blazer
     private
 
       def update_file(upload, drop: nil)
-        contents = params.require(:upload).fetch(:file).read
+        file = params.require(:upload).fetch(:file)
+        raise Blazer::UploadError, "File is not a CSV" if file.content_type != "text/csv"
+        contents = file.read
         rows = CSV.parse(contents, converters: %i[numeric date])
         columns = rows.shift.map(&:to_s)
         column_types =

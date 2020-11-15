@@ -88,6 +88,7 @@ module Blazer
       def update_file(upload, drop: nil)
         file = params.require(:upload).fetch(:file)
         raise Blazer::UploadError, "File is not a CSV" if file.content_type != "text/csv"
+
         contents = file.read
         rows = CSV.parse(contents, converters: %i[numeric date date_time])
         columns = rows.shift.map(&:to_s)

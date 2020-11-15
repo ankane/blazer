@@ -107,6 +107,7 @@ module Blazer
             end
           end
 
+        # maybe SET LOCAL statement_timeout = '30s'
         Blazer.uploads_connection.transaction do
           Blazer.uploads_connection.execute("DROP TABLE IF EXISTS #{Blazer.uploads_table_name(drop)}") if drop
           Blazer.uploads_connection.execute("CREATE TABLE #{upload.table_name} (#{columns.map.with_index { |c, i| "#{Blazer.uploads_connection.quote_column_name(c)} #{column_types[i]}" }.join(", ")})")

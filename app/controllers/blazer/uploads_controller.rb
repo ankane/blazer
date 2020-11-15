@@ -89,7 +89,7 @@ module Blazer
         file = params.require(:upload).fetch(:file)
         raise Blazer::UploadError, "File is not a CSV" if file.content_type != "text/csv"
         contents = file.read
-        rows = CSV.parse(contents, converters: %i[numeric date])
+        rows = CSV.parse(contents, converters: %i[numeric date date_time])
         columns = rows.shift.map(&:to_s)
         column_types =
           columns.size.times.map do |i|
@@ -98,7 +98,7 @@ module Blazer
               "bigint"
             elsif values.all? { |v| v.is_a?(Numeric) }
               "decimal"
-            elsif values.all? { |v| v.is_a?(Time) }
+            elsif values.all? { |v| v.is_a?(DateTime) }
               "timestamp"
             elsif values.all? { |v| v.is_a?(Date) }
               "date"

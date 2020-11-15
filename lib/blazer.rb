@@ -215,8 +215,12 @@ module Blazer
     Blazer::UploadsConnection.connection
   end
 
+  def self.uploads_schema
+    settings.dig("uploads", "schema") || "uploads"
+  end
+
   def self.uploads_table_name(name)
-    uploads_connection.quote_table_name("#{settings["uploads"]["schema"]}.#{name}")
+    uploads_connection.quote_table_name("#{uploads_schema}.#{name}")
   end
 
   def self.adapters

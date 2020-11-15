@@ -28,19 +28,15 @@
       <% if Blazer.user_class %>
         <th style="width: 20%; text-align: right;">Mastermind</th>
       <% end%>
-      <th style="width: 10%;"></th>
     </tr>
   </thead>
   <tbody>
     <% @uploads.each do |upload| %>
       <tr>
-        <td><%= link_to upload.name, upload_path(upload) %></td>
+        <td><%= link_to upload.name, edit_upload_path(upload) %></td>
         <% if Blazer.user_class %>
           <td class="creator"><%= blazer_user && upload.creator == blazer_user ? "You" : upload.creator.try(Blazer.user_name) %></td>
         <% end %>
-        <td style="text-align: right; padding: 1px;">
-          <%= link_to "Edit", edit_upload_path(upload), class: "btn btn-info" %>
-        </td>
       </tr>
     <% end %>
   </tbody>

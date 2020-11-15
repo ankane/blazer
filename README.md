@@ -470,7 +470,7 @@ forecasting: trend
 
 ## Uploads
 
-Blazer has experimental support for uploading CSV files into database tables. Run:
+Blazer has experimental support for creating database tables from CSV files. Run:
 
 ```sh
 rails generate blazer:uploads

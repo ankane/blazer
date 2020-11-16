@@ -1,3 +1,7 @@
+## 2.3.0 (unreleased)
+
+- Added support for archiving queries
+
 ## 2.2.8 (2020-11-01)
 
 - Fixed error when deleting dashboard

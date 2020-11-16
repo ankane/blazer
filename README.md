@@ -859,6 +859,14 @@ async: true
 config.cache_store = :mem_cache_store
 ```
 
+## Archiving
+
+Archive queries that haven’t been viewed in over 90 days.
+
+```sh
+rake blazer:archive_queries
+```
+
 ## Content Security Policy
 
 If views are stuck with a `Loading...` message, there might be a problem with strict CSP settings in your app. This can be checked with Firefox or Chrome dev tools. You can allow Blazer to override these settings for its controllers with:
@@ -868,6 +876,21 @@ override_csp: true
 ```
 
 ## Upgrading
+
+### 2.3
+
+To archive queries, create a migration
+
+```sh
+rails g migration add_status_to_blazer_queries
+```
+
+with:
+
+```ruby
+add_column :blazer_queries, :status, :string
+Blazer::Query.update_all(status: "active")
+```
 
 ### 2.0
 

@@ -13,7 +13,7 @@
       <%= f.select :query_id, [], {include_blank: true} %>
     </div>
     <script>
-      <%= blazer_js_var "queries", Blazer::Query.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
+      <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
       <%= blazer_js_var "items", [@check.query_id].compact %>
 
       $("#check_query_id").selectize({options: queries, items: items, highlight: false, maxOptions: 100}).parents(".hide").removeClass("hide");

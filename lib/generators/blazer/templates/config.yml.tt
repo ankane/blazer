@@ -71,3 +71,9 @@ check_schedules:
 
 # enable map
 # mapbox_access_token: <%%= ENV["MAPBOX_ACCESS_TOKEN"] %>
+
+# enable uploads
+# uploads:
+#   url: <%%= ENV["BLAZER_UPLOADS_URL"] %>
+#   schema: uploads
+#   data_source: main

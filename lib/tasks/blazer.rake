@@ -15,6 +15,6 @@ namespace :blazer do
     abort "Missing status column - see https://github.com/ankane/blazer#23" unless Blazer::Query.column_names.include?("status")
 
     viewed_query_ids = Blazer::Audit.where("created_at > ?", 90.days.ago).group(:query_id).count.keys.compact
-    Blazer::Query.active.where("id NOT IN (?)", viewed_query_ids).update_all(status: "archived")
+    Blazer::Query.active.where.not(id: viewed_query_ids).update_all(status: "archived")
   end
 end

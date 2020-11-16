@@ -27,6 +27,7 @@ Blazer is also available as a [Docker image](https://github.com/ankane/blazer-do
 - [Checks](#checks)
 - [Anomaly Detection](#anomaly-detection)
 - [Forecasting](#forecasting)
+- [Uploads](#uploads)
 - [Data Sources](#data-sources)
 - [Query Permissions](#query-permissions)
 
@@ -489,6 +490,30 @@ And add to `config/blazer.yml`:
 
 ```yml
 forecasting: trend
+```
+
+## Uploads
+
+Blazer has experimental support for creating database tables from CSV files. Run:
+
+```sh
+rails generate blazer:uploads
+rails db:migrate
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+uploads:
+  url: postgres://...
+  schema: uploads
+  data_source: main
+```
+
+This feature requires PostgreSQL. Create a new schema just for uploads to ensure existing tables aren’t overwritten.
+
+```sql
+CREATE SCHEMA uploads;
 ```
 
 ## Data Sources

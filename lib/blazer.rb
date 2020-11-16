@@ -32,6 +32,7 @@ require "blazer/engine"
 
 module Blazer
   class Error < StandardError; end
+  class UploadError < Error; end
   class TimeoutNotSupported < Error; end
 
   class << self
@@ -204,6 +205,23 @@ module Blazer
 
   def self.slack?
     slack_webhook_url.present?
+  end
+
+  def self.uploads?
+    settings.key?("uploads")
+  end
+
+  def self.uploads_connection
+    raise "Empty url for uploads" unless settings.dig("uploads", "url")
+    Blazer::UploadsConnection.connection
+  end
+
+  def self.uploads_schema
+    settings.dig("uploads", "schema") || "uploads"
+  end
+
+  def self.uploads_table_name(name)
+    uploads_connection.quote_table_name("#{uploads_schema}.#{name}")
   end
 
   def self.adapters

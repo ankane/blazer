@@ -89,6 +89,7 @@ module Blazer
       def update_file(upload, drop: nil)
         file = params.require(:upload).fetch(:file)
         raise Blazer::UploadError, "File is not a CSV" if file.content_type != "text/csv"
+        raise Blazer::UploadError, "File is too large (maximum is 100MB)" if file.size > 100.megabytes
 
         contents = file.read
         rows = CSV.parse(contents, converters: %i[numeric date date_time])

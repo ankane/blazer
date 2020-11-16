@@ -1,22 +1,13 @@
 <% blazer_title @dashboard.name %>
 
-<div class="topbar">
-  <div class="container">
-    <div class="row" style="padding-top: 13px;">
-      <div class="col-sm-9">
-        <%= render partial: "blazer/nav" %>
-        <h3 style="line-height: 34px; display: inline; margin-left: 5px;">
-          <%= @dashboard.name %>
-        </h3>
-      </div>
-      <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_dashboard_path(@dashboard, variable_params(@dashboard)), class: "btn btn-info" %>
-      </div>
-    </div>
+<div class="row" style="margin-bottom: 15px;">
+  <div class="col-sm-9">
+    <h3 style="margin-top: 0; margin-bottom: 0; line-height: 34px;"><%= @dashboard.name %></h3>
+  </div>
+  <div class="col-sm-3 text-right">
+    <%= link_to "Edit", edit_dashboard_path(@dashboard, variable_params(@dashboard)), class: "btn btn-info" %>
   </div>
 </div>
-
-<div style="margin-bottom: 60px;"></div>
 
 <% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
   <p class="text-muted" style="float: right;">
@@ -24,6 +15,8 @@
     <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params(@dashboard)), method: :post %>
   </p>
 <% end %>
+
+<hr style="margin-top: 0;" />
 
 <% if @bind_vars.any? %>
   <%= render partial: "blazer/variables", locals: {action: dashboard_path(@dashboard)} %>

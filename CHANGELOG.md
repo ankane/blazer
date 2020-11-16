@@ -1,5 +1,6 @@
 ## 2.3.0 (unreleased)
 
+- Added navbar for consistent navigation
 - Added support for archiving queries
 - Added experimental support for uploads
 

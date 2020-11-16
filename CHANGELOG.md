@@ -1,4 +1,4 @@
-## 2.3.0 (unreleased)
+## 2.3.0 (2020-11-16)
 
 - Added support for archiving queries
 - Added experimental support for uploads

@@ -8,8 +8,9 @@
           <%= link_to "Viewed", root_path(filter: "viewed"), class: params[:filter] == "viewed" ? "active" : nil, style: "margin-right: 40px;" %>
         <% end %>
 
-        <%= link_to "Mine", root_path(filter: "mine"), class: params[:filter] == "mine" ? "active" : nil, style: "margin-right: 8px;" %>
+        <%= link_to "Mine", root_path(filter: "mine"), class: params[:filter] == "mine" ? "active" : nil, style: "margin-right: 40px;" %>
       <% end %>
+      <%= link_to "New Query", new_query_path, class: "btn btn-info" %>
     </div>
     <input type="text" v-model="searchTerm" placeholder="Start typing a query, dashboard, or person" style="width: 300px; display: inline-block;" v-focus class="search form-control" />
   </div>

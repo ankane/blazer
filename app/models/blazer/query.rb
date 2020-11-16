@@ -8,6 +8,7 @@ module Blazer
 
     validates :statement, presence: true
 
+    scope :active, -> { column_names.include?("status") ? where(status: "active") : all }
     scope :named, -> { where("blazer_queries.name <> ''") }
 
     def to_param

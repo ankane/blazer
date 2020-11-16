@@ -12,6 +12,7 @@ pre {
 }
 
 body {
+  padding-top: 15px;
   padding-bottom: 15px;
 }
 
@@ -140,8 +141,15 @@ input.search:focus {
   color: #000;
 }
 
-.navbar-default {
-  border: none;
+.topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 1001;
+  border-bottom: solid 1px whitesmoke;
+  background-color: #fff;
 }
 
 .glyphicon-remove {

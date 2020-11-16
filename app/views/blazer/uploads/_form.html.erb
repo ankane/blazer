@@ -22,5 +22,6 @@
       <%= link_to "Delete", upload_path(@upload), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
     <% end %>
     <%= f.submit "Save", class: "btn btn-success" %>
+    <%= link_to "Back", :back, class: "btn btn-link" %>
   </p>
 <% end %>

@@ -1,0 +1,37 @@
+<% blazer_title "Uploads" %>
+
+<div id="header">
+  <input id="search" type="text" placeholder="Start typing a table or person" style="width: 300px; display: inline-block;" class="search form-control" />
+</div>
+
+<table id="uploads" class="table">
+  <thead>
+    <tr>
+      <th>Table</th>
+      <th style="width: 60%;"></th>
+      <% if Blazer.user_class %>
+        <th style="width: 20%; text-align: right;">Mastermind</th>
+      <% end%>
+    </tr>
+  </thead>
+  <tbody>
+    <% @uploads.each do |upload| %>
+      <tr>
+        <td><%= link_to upload.table, edit_upload_path(upload) %></td>
+        <td><%= truncate(upload.description, length: 100, separator: " ") %></td>
+        <% if Blazer.user_class %>
+          <td class="creator"><%= blazer_user && upload.creator == blazer_user ? "You" : upload.creator.try(Blazer.user_name) %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<script>
+  $("#search").on("keyup", function() {
+    var value = $(this).val().toLowerCase()
+    $("#uploads tbody tr").filter( function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    })
+  }).focus()
+</script>

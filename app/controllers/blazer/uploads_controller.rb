@@ -95,7 +95,7 @@ module Blazer
         rows = CSV.parse(contents, converters: %i[numeric date date_time])
 
         # friendly column names
-        columns = rows.shift.map { |v| v.to_s.encode("UTF-8").parameterize.gsub("-", "_") }
+        columns = rows.shift.map { |v| v.to_s.encode("UTF-8").gsub("%", " pct ").parameterize.gsub("-", "_") }
         duplicate_column = columns.find { |c| columns.count(c) > 1 }
         raise Blazer::UploadError, "Duplicate column name: #{duplicate_column}" if duplicate_column
 

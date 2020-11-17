@@ -1,3 +1,7 @@
+## 2.3.1 (unreleased)
+
+- Improved column names for uploads
+
 ## 2.3.0 (2020-11-16)
 
 - Added support for archiving queries

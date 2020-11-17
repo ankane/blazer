@@ -93,6 +93,7 @@ module Blazer
 
         contents = file.read
         rows = CSV.parse(contents, converters: %i[numeric date date_time])
+        # maybe parameterize and underscore column names in future
         columns = rows.shift.map(&:to_s)
         column_types =
           columns.size.times.map do |i|

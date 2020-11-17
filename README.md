@@ -456,11 +456,9 @@ Commit and deploy away. The first deploy may take a few minutes.
 
 ## Forecasting
 
-Blazer has experimental support for two different forecasting methods.
+Blazer has experimental support for two different forecasting methods. [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
 
 A forecast link will appear for queries that return 2 columns with types timestamp and numeric.
-
-[Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
 
 ### Prophet
 
@@ -494,7 +492,9 @@ forecasting: trend
 
 ## Uploads
 
-Blazer has experimental support for creating database tables from CSV files. Run:
+Blazer has experimental support for creating database tables from CSV files. [Example](https://blazer.dokkuapp.com/uploads)
+
+Run:
 
 ```sh
 rails generate blazer:uploads

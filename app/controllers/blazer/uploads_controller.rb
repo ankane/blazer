@@ -93,8 +93,12 @@ module Blazer
 
         contents = file.read
         rows = CSV.parse(contents, converters: %i[numeric date date_time])
-        # maybe parameterize and underscore column names in future
-        columns = rows.shift.map(&:to_s)
+
+        # friendly column names
+        columns = rows.shift.map { |v| v.to_s.encode("UTF-8").parameterize.gsub("-", "_") }
+        duplicate_column = columns.find { |c| columns.count(c) > 1 }
+        raise Blazer::UploadError, "Duplicate column name: #{duplicate_column}" if duplicate_column
+
         column_types =
           columns.size.times.map do |i|
             values = rows.map { |r| r[i] }.uniq.compact

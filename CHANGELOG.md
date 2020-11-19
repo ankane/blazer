@@ -1,6 +1,7 @@
 ## 2.3.1 (unreleased)
 
 - Improved column names for uploads
+- Allow to configure time range selector preset ranges
 
 ## 2.3.0 (2020-11-16)
 

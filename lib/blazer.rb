@@ -118,6 +118,10 @@ module Blazer
     end
   end
 
+  def self.timepicker_ranges
+    settings["timepicker_ranges"] || [["Today", 0, 0], ["Last 7 Days", 6, 0], ["Last 30 Days", 29, 0]]
+  end
+
   def self.extract_vars(statement)
     # strip commented out lines
     # and regex {1} or {1,2}

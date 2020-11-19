@@ -209,6 +209,15 @@ Use `{start_time}` and `{end_time}` for time ranges. [Example](https://blazer.do
 SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
 ```
 
+You can configure the available preset ranges in the time range selector in `blazer.yml`. The default configuration, if none is provided, is:
+
+```yaml
+timepicker_ranges:
+  - ["Today", 0, 0]
+  - ["Last 7 Days", 6, 0]
+  - ["Last 30 Days", 29, 0]  
+``` 
+
 ### Smart Variables
 
 [Example](https://blazer.dokkuapp.com/queries/1-smart-variable)

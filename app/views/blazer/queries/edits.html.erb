@@ -13,7 +13,17 @@
     &middot;
     <%= edit.created_at.strftime("%l:%M %P") %>
   </p>
-  <% edit.edit_changes.each do |attribute, change| %>
-    <p><%= attribute %>: <code><%= change[0] %></code> to <code><%= change[1] %></code></p>
-  <% end %>
+  <p>
+    <% if edit.edit_changes["statement"][0].nil? %>
+      Created
+    <% else %>
+      <% edit.edit_changes.each do |attribute, change| %>
+          <%= attribute %>:
+          <% if change[0].present? %>
+            <code><%= change[0] %></code> to
+          <% end %>
+          <code><%= change[1] %></code>
+      <% end %>
+    <% end %>
+  </p>
 <% end %>

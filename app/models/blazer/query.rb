@@ -14,7 +14,7 @@ module Blazer
     scope :active, -> { column_names.include?("status") ? where(status: "active") : all }
     scope :named, -> { where("blazer_queries.name <> ''") }
 
-    before_save :save_edit, if: -> { Blazer.edits? }
+    after_save :save_edit, if: -> { Blazer.edits? }
 
     def to_param
       [id, name].compact.join("-").gsub("'", "").parameterize
@@ -44,7 +44,7 @@ module Blazer
     end
 
     def save_edit
-      edit_changes = changes.slice("name", "description", "statement", "data_source")
+      edit_changes = previous_changes.slice("name", "description", "statement", "data_source")
       if edit_changes.any?
         edits.create!(
           user: editor,

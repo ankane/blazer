@@ -49,6 +49,7 @@ module Blazer
         versions.create!(
           user: editor,
           version_changes: version_changes,
+          # keep time consistent with query
           created_at: updated_at
         )
       end

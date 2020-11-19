@@ -13,7 +13,7 @@
     &middot;
     <%= version.created_at.in_time_zone(Blazer.time_zone).strftime("%l:%M %P") %>
   </p>
-  <% if version.version_changes["statement"][0].nil? %>
+  <% if version.created_at == @query.created_at %>
     <p>Created</p>
   <% else %>
     <% version.version_changes.each do |attribute, change| %>

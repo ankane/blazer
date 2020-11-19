@@ -45,7 +45,8 @@ module Blazer
       edit_changes = changes.slice("name", "description", "statement", "data_source")
       if edit_changes.any?
         edits.create!(
-          user: creator,
+          # TODO add user
+          # user: user,
           edit_changes: edit_changes
         )
       end

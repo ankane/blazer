@@ -48,7 +48,8 @@ module Blazer
       if version_changes.any?
         versions.create!(
           user: editor,
-          version_changes: version_changes
+          version_changes: version_changes,
+          created_at: updated_at
         )
       end
     end

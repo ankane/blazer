@@ -13,17 +13,17 @@
     &middot;
     <%= version.created_at.in_time_zone(Blazer.time_zone).strftime("%l:%M %P") %>
   </p>
-  <p>
-    <% if version.version_changes["statement"][0].nil? %>
-      Created
-    <% else %>
-      <% version.version_changes.each do |attribute, change| %>
-          <%= attribute %>:
-          <% if change[0].present? %>
-            <code><%= change[0] %></code> to
-          <% end %>
-          <code><%= change[1] %></code>
-      <% end %>
+  <% if version.version_changes["statement"][0].nil? %>
+    <p>Created</p>
+  <% else %>
+    <% version.version_changes.each do |attribute, change| %>
+      <p>
+        <%= attribute %>:
+        <% if change[0].present? %>
+          <code><%= change[0] %></code> to
+        <% end %>
+        <code><%= change[1] %></code>
+      </p>
     <% end %>
-  </p>
+  <% end %>
 <% end %>

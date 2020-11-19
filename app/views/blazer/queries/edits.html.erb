@@ -2,8 +2,18 @@
 
 <h1 style="line-height: 34px;"><%= @query.name %></h1>
 
-<hr />
-
 <% @edits.each do |edit| %>
-  <p><%= edit.inspect %></p>
+  <hr />
+  <p>
+    <% if edit.user %>
+      <%= edit.user == blazer_user ? "You" : edit.user.try(Blazer.user_name) %>
+      &middot;
+    <% end %>
+    <%= edit.created_at.strftime("%b %-e, %Y") %>
+    &middot;
+    <%= edit.created_at.strftime("%l:%M %P") %>
+  </p>
+  <% edit.edit_changes.each do |attribute, change| %>
+    <p><%= attribute %>: <code><%= change[0] %></code> to <code><%= change[1] %></code></p>
+  <% end %>
 <% end %>

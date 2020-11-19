@@ -1,9 +1,9 @@
 class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version %>
   def change
-    create_table :blazer_edits do |t|
+    create_table :blazer_versions do |t|
       t.references :user
-      t.references :editable, polymorphic: true
-      t.text :edit_changes
+      t.references :versionable, polymorphic: true
+      t.text :version_changes
       t.datetime :created_at
     end
   end

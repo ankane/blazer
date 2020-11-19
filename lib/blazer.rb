@@ -224,12 +224,11 @@ module Blazer
     uploads_connection.quote_table_name("#{uploads_schema}.#{name}")
   end
 
-  def self.edits?
-    unless defined?(@edits)
-      @edits = Blazer::Record.connection.table_exists?("blazer_edits")
+  def self.versions?
+    unless defined?(@versions)
+      @versions = Blazer::Record.connection.table_exists?("blazer_versions")
     end
-
-    @edits
+    @versions
   end
 
   def self.adapters

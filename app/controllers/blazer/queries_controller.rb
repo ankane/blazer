@@ -1,6 +1,6 @@
 module Blazer
   class QueriesController < BaseController
-    before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh, :edits]
+    before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh, :versions]
     before_action :set_data_source, only: [:tables, :docs, :schema, :cancel]
 
     def home
@@ -209,10 +209,10 @@ module Blazer
       head :ok
     end
 
-    def edits
-      return render(plain: "Edits not enabled") unless Blazer.edits?
+    def versions
+      return render(plain: "Versioning not enabled") unless Blazer.versions?
 
-      @edits = @query.edits.order(created_at: :desc)
+      @versions = @query.versions.order(created_at: :desc)
     end
 
     private

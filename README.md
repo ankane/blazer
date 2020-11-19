@@ -861,7 +861,7 @@ Blazer supports a basic permissions model.
 Blazer has experimental support for query versioning. Run:
 
 ```sh
-rails generate blazer:edits
+rails generate blazer:versions
 rails db:migrate
 ```
 

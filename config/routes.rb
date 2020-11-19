@@ -7,8 +7,8 @@ Blazer::Engine.routes.draw do
     get :schema, on: :collection
     get :docs, on: :collection
 
-    if Blazer.edits?
-      get :edits, on: :member
+    if Blazer.versions?
+      get :versions, on: :member
     end
   end
 

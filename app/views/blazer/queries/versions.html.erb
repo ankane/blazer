@@ -2,22 +2,22 @@
 
 <h1 style="line-height: 34px;"><%= @query.name %></h1>
 
-<% @edits.each do |edit| %>
+<% @versions.each do |version| %>
   <hr />
   <p>
-    <% if edit.user %>
-      <%= edit.user == blazer_user ? "You" : edit.user.try(Blazer.user_name) %>
+    <% if version.user %>
+      <%= version.user == blazer_user ? "You" : version.user.try(Blazer.user_name) %>
       &middot;
     <% end %>
-    <%= edit.created_at.strftime("%b %-e, %Y") %>
+    <%= version.created_at.strftime("%b %-e, %Y") %>
     &middot;
-    <%= edit.created_at.strftime("%l:%M %P") %>
+    <%= version.created_at.strftime("%l:%M %P") %>
   </p>
   <p>
-    <% if edit.edit_changes["statement"][0].nil? %>
+    <% if version.version_changes["statement"][0].nil? %>
       Created
     <% else %>
-      <% edit.edit_changes.each do |attribute, change| %>
+      <% version.version_changes.each do |attribute, change| %>
           <%= attribute %>:
           <% if change[0].present? %>
             <code><%= change[0] %></code> to

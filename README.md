@@ -30,6 +30,7 @@ Blazer is also available as a [Docker image](https://github.com/ankane/blazer-do
 - [Uploads](#uploads)
 - [Data Sources](#data-sources)
 - [Query Permissions](#query-permissions)
+- [Query Versioning](#query-versioning)
 
 ## Installation
 
@@ -854,6 +855,15 @@ Blazer supports a basic permissions model.
 1. Queries without a name are unlisted
 2. Queries whose name starts with `#` are only listed to the creator
 3. Queries whose name starts with `*` can only be edited by the creator
+
+## Query Versioning
+
+Blazer has experimental support for query versioning. Run:
+
+```sh
+rails generate blazer:edits
+rails db:migrate
+```
 
 ## Learn SQL
 

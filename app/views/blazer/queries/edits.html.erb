@@ -1,0 +1,9 @@
+<% blazer_title @query.name %>
+
+<h1 style="line-height: 34px;"><%= @query.name %></h1>
+
+<hr />
+
+<% @edits.each do |edit| %>
+  <p><%= edit.inspect %></p>
+<% end %>

@@ -6,6 +6,10 @@ Blazer::Engine.routes.draw do
     get :tables, on: :collection
     get :schema, on: :collection
     get :docs, on: :collection
+
+    if Blazer.edits?
+      get :edits, on: :member
+    end
   end
 
   resources :checks, except: [:show] do

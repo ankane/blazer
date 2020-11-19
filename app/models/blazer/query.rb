@@ -5,11 +5,14 @@ module Blazer
     has_many :dashboard_queries, dependent: :destroy
     has_many :dashboards, through: :dashboard_queries
     has_many :audits
+    has_many :edits, as: :editable
 
     validates :statement, presence: true
 
     scope :active, -> { column_names.include?("status") ? where(status: "active") : all }
     scope :named, -> { where("blazer_queries.name <> ''") }
+
+    before_save :save_edit, if: -> { Blazer.edits? }
 
     def to_param
       [id, name].compact.join("-").gsub("'", "").parameterize
@@ -36,6 +39,16 @@ module Blazer
 
     def variables
       Blazer.extract_vars(statement)
+    end
+
+    def save_edit
+      edit_changes = changes.slice("name", "description", "statement", "data_source")
+      if edit_changes.any?
+        edits.create!(
+          user: creator,
+          edit_changes: edit_changes
+        )
+      end
     end
   end
 end

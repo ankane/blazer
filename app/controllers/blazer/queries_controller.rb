@@ -49,6 +49,7 @@ module Blazer
     def create
       @query = Blazer::Query.new(query_params)
       @query.creator = blazer_user if @query.respond_to?(:creator)
+      @query.editor = blazer_user
       @query.status = "active" if @query.respond_to?(:status)
 
       if @query.save
@@ -173,6 +174,7 @@ module Blazer
         @query = Blazer::Query.new
         @query.creator = blazer_user if @query.respond_to?(:creator)
       end
+      @query.editor = blazer_user
       unless @query.editable?(blazer_user)
         @query.errors.add(:base, "Sorry, permission denied")
       end

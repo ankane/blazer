@@ -1,5 +1,7 @@
 module Blazer
   class Query < Record
+    attr_accessor :editor
+
     belongs_to :creator, optional: true, class_name: Blazer.user_class.to_s if Blazer.user_class
     has_many :checks, dependent: :destroy
     has_many :dashboard_queries, dependent: :destroy
@@ -45,8 +47,7 @@ module Blazer
       edit_changes = changes.slice("name", "description", "statement", "data_source")
       if edit_changes.any?
         edits.create!(
-          # TODO add user
-          # user: user,
+          user: editor,
           edit_changes: edit_changes
         )
       end

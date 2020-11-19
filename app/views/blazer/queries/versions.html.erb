@@ -9,9 +9,9 @@
       <%= version.user == blazer_user ? "You" : version.user.try(Blazer.user_name) %>
       &middot;
     <% end %>
-    <%= version.created_at.strftime("%b %-e, %Y") %>
+    <%= version.created_at.in_time_zone(Blazer.time_zone).strftime("%b %-e, %Y") %>
     &middot;
-    <%= version.created_at.strftime("%l:%M %P") %>
+    <%= version.created_at.in_time_zone(Blazer.time_zone).strftime("%l:%M %P") %>
   </p>
   <p>
     <% if version.version_changes["statement"][0].nil? %>

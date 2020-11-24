@@ -1,4 +1,4 @@
-## 2.3.1 (unreleased)
+## 2.3.1 (2020-11-23)
 
 - Improved column names for uploads
 

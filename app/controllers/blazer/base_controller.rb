@@ -6,6 +6,8 @@ module Blazer
     skip_after_action(*filters, raise: false)
     skip_around_action(*filters, raise: false)
 
+    clear_helpers
+
     protect_from_forgery with: :exception
 
     if ENV["BLAZER_PASSWORD"]

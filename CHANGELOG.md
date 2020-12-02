@@ -1,3 +1,7 @@
+## 2.3.2 (unreleased)
+
+- Fixed broken routes for some applications
+
 ## 2.3.1 (2020-11-23)
 
 - Improved column names for uploads

@@ -39,6 +39,8 @@ module Blazer
           @sql_errors << error if error
         end
       end
+
+      add_cohort_analysis_vars if @queries.any?(&:cohort_analysis?)
     end
 
     def edit

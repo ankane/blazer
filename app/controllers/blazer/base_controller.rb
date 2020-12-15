@@ -67,6 +67,12 @@ module Blazer
         end
       end
 
+      def add_cohort_analysis_vars
+        @bind_vars << "cohort_period" unless @bind_vars.include?("cohort_period")
+        @smart_vars["cohort_period"] = ["day", "week", "month"]
+        params[:cohort_period] ||= "week"
+      end
+
       def parse_smart_variables(var, data_source)
         smart_var_data_source =
           ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_variables[var] }

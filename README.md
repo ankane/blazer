@@ -482,7 +482,7 @@ Commit and deploy away. The first deploy may take a few minutes.
 
 ## Forecasting
 
-Blazer has experimental support for two different forecasting methods. [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
+Blazer supports for two different forecasting methods. [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
 
 A forecast link will appear for queries that return 2 columns with types timestamp and numeric.
 
@@ -518,7 +518,7 @@ forecasting: trend
 
 ## Uploads
 
-Blazer has experimental support for creating database tables from CSV files. [Example](https://blazer.dokkuapp.com/uploads)
+Creating database tables from CSV files. [Example](https://blazer.dokkuapp.com/uploads)
 
 Run:
 
@@ -683,8 +683,6 @@ data_sources:
 
 ### InfluxDB
 
-*Experimental*
-
 Add [influxdb](https://github.com/influxdata/influxdb-ruby) to your Gemfile and set:
 
 ```yml
@@ -717,8 +715,6 @@ data_sources:
 ```
 
 ### Neo4j
-
-*Experimental*
 
 Add [neo4j-core](https://github.com/neo4jrb/neo4j-core) to your Gemfile and set:
 
@@ -761,8 +757,6 @@ data_sources:
 
 ### Salesforce
 
-*Experimental*
-
 Add [restforce](https://github.com/restforce/restforce) to your Gemfile and set:
 
 ```yml
@@ -785,8 +779,6 @@ SALESFORCE_API_VERSION="41.0"
 Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm)
 
 ### Socrata Open Data API (SODA)
-
-*Experimental*
 
 Set:
 

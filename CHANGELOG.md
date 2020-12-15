@@ -2,6 +2,7 @@
 
 - Added cohorts
 - Fixed broken routes for some applications
+- Forecasting and uploads are no longer experimental
 
 ## 2.3.1 (2020-11-23)
 

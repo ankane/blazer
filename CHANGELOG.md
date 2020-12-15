@@ -1,4 +1,4 @@
-## 2.4.0 (unreleased)
+## 2.4.0 (2020-12-15)
 
 - Added cohorts
 - Fixed broken routes for some applications

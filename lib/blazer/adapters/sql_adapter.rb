@@ -123,7 +123,7 @@ module Blazer
       end
 
       def supports_cohort_analysis?
-        postgresql?
+        postgresql? || mysql?
       end
 
       # TODO treat date columns as already in time zone
@@ -131,8 +131,30 @@ module Blazer
         raise "Cohort analysis not supported" unless supports_cohort_analysis?
 
         cohort_column = statement =~ /\bcohort_time\b/ ? "cohort_time" : "conversion_time"
+        tzname = Blazer.time_zone.tzinfo.name
+
+        if mysql?
+          time_sql = "CONVERT_TZ(cohorts.cohort_time, '+00:00', ?)"
+          case period
+          when "day"
+            date_sql = "CAST(DATE_FORMAT(#{time_sql}, '%Y-%m-%d') AS DATE)"
+            date_params = [tzname]
+          when "week"
+            date_sql = "CAST(DATE_FORMAT(#{time_sql} - INTERVAL ((5 + DAYOFWEEK(#{time_sql})) % 7) DAY, '%Y-%m-%d') AS DATE)"
+            date_params = [tzname, tzname]
+          else
+            date_sql = "CAST(DATE_FORMAT(#{time_sql}, '%Y-%m-01') AS DATE)"
+            date_params = [tzname]
+          end
+          bucket_sql = "CAST(CEIL(TIMESTAMPDIFF(SECOND, cohorts.cohort_time, query.conversion_time) / ?) AS INTEGER)"
+        else
+          date_sql = "date_trunc(?, cohorts.cohort_time::timestamptz AT TIME ZONE ?)::date"
+          date_params = [period, tzname]
+          bucket_sql = "CEIL(EXTRACT(EPOCH FROM query.conversion_time - cohorts.cohort_time) / ?)::int"
+        end
 
         # WITH not an optimization fence in Postgres 12+
+        # TODO improve performance for MySQL
         statement = <<~SQL
           WITH query AS (
             #{statement}
@@ -143,14 +165,14 @@ module Blazer
             GROUP BY 1
           )
           SELECT
-            date_trunc(?, cohorts.cohort_time::timestamptz AT TIME ZONE ?)::date AS period,
+            #{date_sql} AS period,
             0 AS bucket,
             COUNT(DISTINCT cohorts.user_id)
           FROM cohorts GROUP BY 1
           UNION ALL
           SELECT
-            date_trunc(?, cohorts.cohort_time::timestamptz AT TIME ZONE ?)::date AS period,
-            CEIL(EXTRACT(EPOCH FROM query.conversion_time - cohorts.cohort_time) / ?)::int AS bucket,
+            #{date_sql} AS period,
+            #{bucket_sql} AS bucket,
             COUNT(DISTINCT query.user_id)
           FROM cohorts INNER JOIN query ON query.user_id = cohorts.user_id
           WHERE query.conversion_time IS NOT NULL
@@ -158,8 +180,7 @@ module Blazer
           #{cohort_column == "conversion_time" ? "AND query.conversion_time != cohorts.cohort_time" : ""}
           GROUP BY 1, 2
         SQL
-        tzname = Blazer.time_zone.tzinfo.name
-        params = [statement, period, tzname, period, tzname, days.to_i * 86400]
+        params = [statement] + date_params + date_params + [days.to_i * 86400]
         connection_model.send(:sanitize_sql_array, params)
       end
 

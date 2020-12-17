@@ -1,3 +1,7 @@
+## 2.4.1 (unreleased)
+
+- Added cohorts for MySQL
+
 ## 2.4.0 (2020-12-15)
 
 - Added cohorts

@@ -154,7 +154,6 @@ module Blazer
         end
 
         # WITH not an optimization fence in Postgres 12+
-        # TODO improve performance for MySQL
         statement = <<~SQL
           WITH query AS (
             #{statement}

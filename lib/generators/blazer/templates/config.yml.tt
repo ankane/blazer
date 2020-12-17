@@ -77,3 +77,6 @@ check_schedules:
 #   url: <%%= ENV["BLAZER_UPLOADS_URL"] %>
 #   schema: uploads
 #   data_source: main
+
+# clear any helpers from surrounding code; defaults to true
+# clear_helpers: true

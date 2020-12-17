@@ -47,6 +47,7 @@ module Blazer
     attr_accessor :transform_statement
     attr_accessor :transform_variable
     attr_accessor :check_schedules
+    attr_accessor :clear_helpers
     attr_accessor :anomaly_checks
     attr_accessor :forecasting
     attr_accessor :async

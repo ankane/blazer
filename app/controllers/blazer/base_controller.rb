@@ -6,7 +6,7 @@ module Blazer
     skip_after_action(*filters, raise: false)
     skip_around_action(*filters, raise: false)
 
-    clear_helpers
+    clear_helpers if Blazer.clear_helpers
 
     protect_from_forgery with: :exception
 

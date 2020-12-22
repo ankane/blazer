@@ -39,6 +39,8 @@ module Blazer
           @sql_errors << error if error
         end
       end
+
+      add_cohort_analysis_vars if @queries.any?(&:cohort_analysis?)
     end
 
     def edit
@@ -54,7 +56,7 @@ module Blazer
 
     def destroy
       @dashboard.destroy
-      redirect_to dashboards_path
+      redirect_to root_path
     end
 
     def refresh

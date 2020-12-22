@@ -43,6 +43,14 @@ module Blazer
         true # optional
       end
 
+      def supports_cohort_analysis?
+        false # optional
+      end
+
+      def cohort_analysis_statement(statement, period:, days:)
+        # optional
+      end
+
       protected
 
       def settings

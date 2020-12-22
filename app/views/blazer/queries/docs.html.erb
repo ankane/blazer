@@ -129,3 +129,9 @@
 </table>
 
 <p>Use the column name <code>target</code> to draw a line for goals.</p>
+
+<% if @data_source.supports_cohort_analysis? %>
+  <h2>Cohort Analysis</h2>
+
+  <p>Create a query with the comment <code>/* cohort analysis */</code>. The result should have columns named <code>user_id</code> and <code>conversion_time</code> and optionally <code>cohort_time</code>.</p>
+<% end %>

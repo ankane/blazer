@@ -6,25 +6,20 @@
   <% else %>
     <div class="alert alert-info">Can’t preview queries with variables...yet!</div>
   <% end %>
+<% elsif @cohort_analysis %>
+  <% if @cohort_error %>
+    <div class="alert alert-info"><%= @cohort_error %></div>
+  <% else %>
+    <%= render partial: "cohorts" %>
+  <% end %>
 <% else %>
   <% unless @only_chart %>
-    <% if @cached_at || @just_cached %>
-      <p class="text-muted" style="float: right;">
-        <% if @cached_at %>
-          Cached <%= time_ago_in_words(@cached_at, include_seconds: true) %> ago
-        <% elsif params[:query_id] %>
-          Cached just now
-          <% if @data_source.cache_mode == "slow" %>
-            (over <%= "%g" % @data_source.cache_slow_threshold %>s)
-          <% end %>
-        <% end %>
-
-        <% if @query && params[:query_id] %>
-          <%= link_to "Refresh", refresh_query_path(@query, variable_params(@query)), method: :post %>
-        <% end %>
-      </p>
-    <% end %>
+    <%= render partial: "caching" %>
     <p class="text-muted" style="margin-bottom: 10px;">
+      <% if @row_limit && @rows.size > @row_limit %>
+        First
+        <% @rows = @rows.first(@row_limit) %>
+      <% end %>
       <%= pluralize(@rows.size, "row") %>
 
       <% @checks.select(&:state).each do |check| %>
@@ -42,6 +37,9 @@
   <% end %>
   <% if @forecast_error %>
     <div class="alert alert-danger"><%= @forecast_error %></div>
+  <% end %>
+  <% if @cohort_error %>
+    <div class="alert alert-info"><%= @cohort_error %></div>
   <% end %>
   <% if @rows.any? %>
     <% values = @rows.first %>
@@ -147,7 +145,7 @@
         <% elsif @columns == ["PLAN"] && @data_source.adapter == "druid" %>
           <pre><code><%= @rows[0][0] %></code></pre>
         <% else %>
-          <table class="table results-table" style="margin-bottom: 0;">
+          <table class="table results-table">
             <thead>
               <tr>
                 <% @columns.each_with_index do |key, i| %>

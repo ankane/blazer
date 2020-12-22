@@ -16,6 +16,10 @@ body {
   padding-bottom: 15px;
 }
 
+table.results-table {
+  margin-bottom: 0;
+}
+
 .results-table th {
   cursor: pointer;
 }

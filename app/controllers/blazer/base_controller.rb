@@ -6,6 +6,8 @@ module Blazer
     skip_after_action(*filters, raise: false)
     skip_around_action(*filters, raise: false)
 
+    clear_helpers
+
     protect_from_forgery with: :exception
 
     if ENV["BLAZER_PASSWORD"]
@@ -63,6 +65,12 @@ module Blazer
             statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
           end
         end
+      end
+
+      def add_cohort_analysis_vars
+        @bind_vars << "cohort_period" unless @bind_vars.include?("cohort_period")
+        @smart_vars["cohort_period"] = ["day", "week", "month"]
+        params[:cohort_period] ||= "week"
       end
 
       def parse_smart_variables(var, data_source)

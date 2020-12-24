@@ -25,6 +25,12 @@ Blazer is also available as a [Docker image](https://github.com/ankane/blazer-do
 - [Charts](#charts)
 - [Dashboards](#dashboards)
 - [Checks](#checks)
+- [Cohorts](#cohorts)
+- [Anomaly Detection](#anomaly-detection)
+- [Forecasting](#forecasting)
+- [Uploads](#uploads)
+- [Data Sources](#data-sources)
+- [Query Permissions](#query-permissions)
 
 ## Installation
 
@@ -383,6 +389,31 @@ SELECT * FROM ratings WHERE user_id IS NULL /* all ratings should have a user */
 
 Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.
 
+## Cohorts
+
+Create a cohort analysis from a simple SQL query. [Example](https://blazer.dokkuapp.com/queries/19-cohort-analysis-from-first-order)
+
+Create a query with the comment `/* cohort analysis */`. The result should have columns named `user_id` and `conversion_time` and optionally `cohort_time`.
+
+You can generate cohorts from the first conversion time:
+
+```sql
+/* cohort analysis */
+SELECT user_id, created_at AS conversion_time FROM orders
+```
+
+(the first conversion isn’t counted in the first time period with this format)
+
+Or from another time, like sign up:
+
+```sql
+/* cohort analysis */
+SELECT users.id AS user_id, orders.created_at AS conversion_time, users.created_at AS cohort_time
+FROM users LEFT JOIN orders ON orders.user_id = users.id
+```
+
+This feature requires PostgreSQL.
+
 ## Anomaly Detection
 
 Blazer supports two different approaches to anomaly detection.
@@ -428,15 +459,32 @@ anomaly_checks: r
 
 If upgrading from version 1.4 or below, also follow the [upgrade instructions](#15).
 
-If you’re on Heroku, follow [these additional instructions](#anomaly-detection-on-heroku).
+If you’re on Heroku, follow the additional instructions below.
+
+### R on Heroku
+
+Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
+
+```sh
+heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git
+```
+
+And create an `init.R` with:
+
+```r
+if (!"AnomalyDetection" %in% installed.packages()) {
+  install.packages("remotes")
+  remotes::install_github("twitter/AnomalyDetection")
+}
+```
+
+Commit and deploy away. The first deploy may take a few minutes.
 
 ## Forecasting
 
-Blazer has experimental support for two different forecasting methods.
+Blazer supports for two different forecasting methods. [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
 
 A forecast link will appear for queries that return 2 columns with types timestamp and numeric.
-
-[Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
 
 ### Prophet
 
@@ -466,6 +514,32 @@ And add to `config/blazer.yml`:
 
 ```yml
 forecasting: trend
+```
+
+## Uploads
+
+Creating database tables from CSV files. [Example](https://blazer.dokkuapp.com/uploads)
+
+Run:
+
+```sh
+rails generate blazer:uploads
+rails db:migrate
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+uploads:
+  url: postgres://...
+  schema: uploads
+  data_source: main
+```
+
+This feature requires PostgreSQL. Create a new schema just for uploads.
+
+```sql
+CREATE SCHEMA uploads;
 ```
 
 ## Data Sources
@@ -609,8 +683,6 @@ data_sources:
 
 ### InfluxDB
 
-*Experimental*
-
 Add [influxdb](https://github.com/influxdata/influxdb-ruby) to your Gemfile and set:
 
 ```yml
@@ -643,8 +715,6 @@ data_sources:
 ```
 
 ### Neo4j
-
-*Experimental*
 
 Add [neo4j-core](https://github.com/neo4jrb/neo4j-core) to your Gemfile and set:
 
@@ -687,8 +757,6 @@ data_sources:
 
 ### Salesforce
 
-*Experimental*
-
 Add [restforce](https://github.com/restforce/restforce) to your Gemfile and set:
 
 ```yml
@@ -711,8 +779,6 @@ SALESFORCE_API_VERSION="41.0"
 Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm)
 
 ### Socrata Open Data API (SODA)
-
-*Experimental*
 
 Set:
 
@@ -836,24 +902,13 @@ async: true
 config.cache_store = :mem_cache_store
 ```
 
-## Anomaly Detection on Heroku
+## Archiving
 
-Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
+Archive queries that haven’t been viewed in over 90 days.
 
 ```sh
-heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git
+rake blazer:archive_queries
 ```
-
-And create an `init.R` with:
-
-```r
-if (!"AnomalyDetection" %in% installed.packages()) {
-  install.packages("remotes")
-  remotes::install_github("twitter/AnomalyDetection")
-}
-```
-
-Commit and deploy away. The first deploy may take a few minutes.
 
 ## Content Security Policy
 
@@ -864,6 +919,21 @@ override_csp: true
 ```
 
 ## Upgrading
+
+### 2.3
+
+To archive queries, create a migration
+
+```sh
+rails g migration add_status_to_blazer_queries
+```
+
+with:
+
+```ruby
+add_column :blazer_queries, :status, :string
+Blazer::Query.update_all(status: "active")
+```
 
 ### 2.0
 
@@ -877,152 +947,6 @@ with:
 
 ```ruby
 add_column :blazer_checks, :slack_channels, :text
-```
-
-### 1.5
-
-To take advantage of the anomaly detection, create a migration
-
-```sh
-rails g migration upgrade_blazer_to_1_5
-```
-
-with:
-
-```ruby
-add_column :blazer_checks, :check_type, :string
-add_column :blazer_checks, :message, :text
-commit_db_transaction
-
-Blazer::Check.reset_column_information
-
-Blazer::Check.where(invert: true).update_all(check_type: "missing_data")
-Blazer::Check.where(check_type: nil).update_all(check_type: "bad_data")
-```
-
-### 1.3
-
-To take advantage of the latest features, create a migration
-
-```sh
-rails g migration upgrade_blazer_to_1_3
-```
-
-with:
-
-```ruby
-add_column :blazer_dashboards, :creator_id, :integer
-add_column :blazer_checks, :creator_id, :integer
-add_column :blazer_checks, :invert, :boolean
-add_column :blazer_checks, :schedule, :string
-add_column :blazer_checks, :last_run_at, :timestamp
-commit_db_transaction
-
-Blazer::Check.update_all schedule: "1 hour"
-```
-
-### 1.0
-
-Blazer 1.0 brings a number of new features:
-
-- multiple data sources, including Redshift
-- dashboards
-- checks
-
-To upgrade, run:
-
-```sh
-bundle update blazer
-```
-
-Create a migration
-
-```sh
-rails g migration upgrade_blazer_to_1_0
-```
-
-with:
-
-```ruby
-add_column :blazer_queries, :data_source, :string
-add_column :blazer_audits, :data_source, :string
-
-create_table :blazer_dashboards do |t|
-  t.text :name
-  t.timestamps
-end
-
-create_table :blazer_dashboard_queries do |t|
-  t.references :dashboard
-  t.references :query
-  t.integer :position
-  t.timestamps
-end
-
-create_table :blazer_checks do |t|
-  t.references :query
-  t.string :state
-  t.text :emails
-  t.timestamps
-end
-```
-
-And run:
-
-```sh
-rails db:migrate
-```
-
-Update `config/blazer.yml` with:
-
-```yml
-# see https://github.com/ankane/blazer for more info
-
-data_sources:
-  main:
-    url: <%= ENV["BLAZER_DATABASE_URL"] %>
-
-    # statement timeout, in seconds
-    # applies to PostgreSQL only
-    # none by default
-    # timeout: 15
-
-    # time to cache results, in minutes
-    # can greatly improve speed
-    # none by default
-    # cache: 60
-
-    # wrap queries in a transaction for safety
-    # not necessary if you use a read-only user
-    # true by default
-    # use_transaction: false
-
-    smart_variables:
-      # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
-
-    linked_columns:
-      # user_id: "/admin/users/{value}"
-
-    smart_columns:
-      # user_id: "SELECT id, name FROM users WHERE id IN {value}"
-
-# create audits
-audit: true
-
-# change the time zone
-# time_zone: "Pacific Time (US & Canada)"
-
-# class name of the user model
-# user_class: User
-
-# method name for the current user
-# user_method: current_user
-
-# method name for the display name
-# user_name: name
-
-# email to send checks from
-# from_email: blazer@example.org
 ```
 
 ## History

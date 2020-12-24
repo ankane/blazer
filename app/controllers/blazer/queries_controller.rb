@@ -38,11 +38,18 @@ module Blazer
       if params[:fork_query_id]
         @query.statement ||= Blazer::Query.find(params[:fork_query_id]).try(:statement)
       end
+      if params[:upload_id]
+        upload = Blazer::Upload.find(params[:upload_id])
+        upload_settings = Blazer.settings["uploads"]
+        @query.data_source ||= upload_settings["data_source"]
+        @query.statement ||= "SELECT * FROM #{upload.table_name} LIMIT 10"
+      end
     end
 
     def create
       @query = Blazer::Query.new(query_params)
       @query.creator = blazer_user if @query.respond_to?(:creator)
+      @query.status = "active" if @query.respond_to?(:status)
 
       if @query.save
         redirect_to query_path(@query, variable_params(@query))
@@ -64,7 +71,11 @@ module Blazer
         @sql_errors << error if error
       end
 
+      @query.update!(status: "active") if @query.try(:status) == "archived"
+
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
+
+      add_cohort_analysis_vars if @query.cohort_analysis?
     end
 
     def edit
@@ -72,6 +83,8 @@ module Blazer
 
     def run
       @statement = params[:statement]
+      # before process_vars
+      @cohort_analysis = Query.new(statement: @statement).cohort_analysis?
       data_source = params[:data_source]
       process_vars(@statement, data_source)
       @only_chart = params[:only_chart]
@@ -79,6 +92,8 @@ module Blazer
       @query = Query.find_by(id: params[:query_id]) if params[:query_id]
       data_source = @query.data_source if @query && @query.data_source
       @data_source = Blazer.data_sources[data_source]
+
+      run_cohort_analysis if @cohort_analysis
 
       # ensure viewable
       if !(@query || Query.new(data_source: @data_source.id)).viewable?(blazer_user)
@@ -155,6 +170,7 @@ module Blazer
       @statement = @query.statement.dup
       process_vars(@statement, @query.data_source)
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
+      @statement = cohort_analysis_statement(data_source, @statement) if @query.cohort_analysis?
       data_source.clear_cache(@statement)
       redirect_to query_path(@query, variable_params(@query))
     end
@@ -232,7 +248,6 @@ module Blazer
           end
         end
 
-        @filename = @query.name.parameterize if @query
         @min_width_types = @columns.each_with_index.select { |c, i| @first_row[i].is_a?(Time) || @first_row[i].is_a?(String) || @data_source.smart_columns[c] }.map(&:last)
 
         @boom = @result.boom if @result
@@ -259,6 +274,8 @@ module Blazer
           end
         end
 
+        render_cohort_analysis if @cohort_analysis && !@error
+
         respond_to do |format|
           format.html do
             render layout: false
@@ -279,7 +296,7 @@ module Blazer
           @queries = queries_by_ids(Blazer::Audit.where(user_id: blazer_user.id).order(created_at: :desc).limit(500).pluck(:query_id).uniq)
         else
           @queries = @queries.limit(limit) if limit
-          @queries = @queries.order(:name)
+          @queries = @queries.active.order(:name)
         end
         @queries = @queries.to_a
 
@@ -300,7 +317,7 @@ module Blazer
       end
 
       def queries_by_ids(favorite_query_ids)
-        queries = Blazer::Query.named.where(id: favorite_query_ids)
+        queries = Blazer::Query.active.named.where(id: favorite_query_ids)
         queries = queries.includes(:creator) if Blazer.user_class
         queries = queries.index_by(&:id)
         favorite_query_ids.map { |query_id| queries[query_id] }.compact
@@ -342,6 +359,105 @@ module Blazer
 
       def blazer_run_id
         params[:run_id].to_s.gsub(/[^a-z0-9\-]/i, "")
+      end
+
+      def run_cohort_analysis
+        unless @data_source.supports_cohort_analysis?
+          @cohort_error = "This data source does not support cohort analysis"
+        end
+
+        @show_cohort_rows = !params[:query_id] || @cohort_error
+
+        unless @show_cohort_rows
+          @statement = cohort_analysis_statement(@data_source, @statement)
+        end
+      end
+
+      def cohort_analysis_statement(data_source, statement)
+        @cohort_period = params["cohort_period"] || "week"
+        @cohort_period = "week" unless ["day", "week", "month"].include?(@cohort_period)
+
+        # for now
+        @conversion_period = @cohort_period
+        @cohort_days =
+          case @cohort_period
+          when "day"
+            1
+          when "week"
+            7
+          when "month"
+            30
+          end
+
+        data_source.cohort_analysis_statement(statement, period: @cohort_period, days: @cohort_days)
+      end
+
+      def render_cohort_analysis
+        if @show_cohort_rows
+          @cohort_analysis = false
+
+          @row_limit = 1000
+
+          # check results
+          unless @cohort_error
+            # check names
+            expected_columns = ["user_id", "conversion_time"]
+            missing_columns = expected_columns - @result.columns
+            if missing_columns.any?
+              @cohort_error = "Expected user_id and conversion_time columns"
+            end
+
+            # check types (user_id can be any type)
+            unless @cohort_error
+              column_types = @result.columns.zip(@result.column_types).to_h
+
+              if !column_types["cohort_time"].in?(["time", nil])
+                @cohort_error = "cohort_time must be time column"
+              elsif !column_types["conversion_time"].in?(["time", nil])
+                @cohort_error = "conversion_time must be time column"
+              end
+            end
+          end
+        else
+          @today = Blazer.time_zone.today
+          @min_cohort_date, @max_cohort_date = @result.rows.map { |r| r[0] }.minmax
+          @buckets = {}
+          @rows.each do |r|
+            @buckets[[r[0], r[1]]] = r[2]
+          end
+
+          @cohort_dates = []
+          current_date = @max_cohort_date
+          while current_date && current_date >= @min_cohort_date
+            @cohort_dates << current_date
+            current_date =
+              case @cohort_period
+              when "day"
+                current_date - 1
+              when "week"
+                current_date - 7
+              else
+                current_date.prev_month
+              end
+          end
+
+          num_cols = @cohort_dates.size
+          @columns = ["Cohort", "Users"] + num_cols.times.map { |i| "#{@conversion_period.titleize} #{i + 1}" }
+          rows = []
+          date_format = @cohort_period == "month" ? "%b %Y" : "%b %-e, %Y"
+          @cohort_dates.each do |date|
+            row = [date.strftime(date_format), @buckets[[date, 0]] || 0]
+
+            num_cols.times do |i|
+              if @today >= date + (@cohort_days * i)
+                row << (@buckets[[date, i + 1]] || 0)
+              end
+            end
+
+            rows << row
+          end
+          @rows = rows
+        end
       end
   end
 end

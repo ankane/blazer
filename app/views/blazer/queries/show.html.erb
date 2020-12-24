@@ -14,7 +14,7 @@
         <%= link_to "Fork", new_query_path(variable_params(@query).merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
 
         <% if !@error && @success %>
-          <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv", forecast: params[:forecast]), params: {statement: @statement}, class: "btn btn-primary" %>
+          <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv", forecast: params[:forecast], cohort_period: params[:cohort_period]), params: {statement: @statement}, class: "btn btn-primary" %>
         <% end %>
       </div>
     </div>

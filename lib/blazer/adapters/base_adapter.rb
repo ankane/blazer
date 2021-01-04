@@ -39,7 +39,7 @@ module Blazer
         # optional
       end
 
-      def cachable?(statement)
+      def cachable?(_statement)
         true # optional
       end
 

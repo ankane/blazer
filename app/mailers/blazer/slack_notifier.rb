@@ -2,7 +2,7 @@ require "net/http"
 
 module Blazer
   class SlackNotifier
-    def self.state_change(check, state, state_was, rows_count, error, check_type)
+    def self.state_change(check, state, _state_was, rows_count, error, check_type)
       check.split_slack_channels.each do |channel|
         text =
           if error

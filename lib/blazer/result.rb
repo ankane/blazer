@@ -137,7 +137,7 @@ module Blazer
               series << {name: k, data: rows.map{ |r| [r[0], r[i + 1]] }}
             end
           else
-            rows.group_by { |r| v = r[1]; (boom[columns[1]] || {})[v.to_s] || v }.each_with_index.map do |(name, v), i|
+            rows.group_by { |r| v = r[1]; (boom[columns[1]] || {})[v.to_s] || v }.each_with_index.map do |(name, v), _i|
               series << {name: name, data: v.map { |v2| [v2[0], v2[2]] }}
             end
           end
@@ -150,15 +150,15 @@ module Blazer
               anomalies << s[:name] if anomaly?(s[:data])
             end
             anomaly = anomalies.any?
-            if anomaly
+            message = if anomaly
               if anomalies.size == 1
-                message = "Anomaly detected in #{anomalies.first}"
+                "Anomaly detected in #{anomalies.first}"
               else
-                message = "Anomalies detected in #{anomalies.to_sentence}"
-              end
+                "Anomalies detected in #{anomalies.to_sentence}"
+                        end
             else
-              message = "No anomalies detected"
-            end
+              "No anomalies detected"
+                      end
           rescue => e
             message = "#{current_series}: #{e.message}"
             raise e if Rails.env.development?
@@ -186,12 +186,12 @@ module Blazer
             end
           end
 
-        r_script = %x[which Rscript].chomp
+        r_script = `which Rscript`.chomp
         type = series.any? && series.last.first.to_time - series.first.first.to_time >= 2.weeks ? "ts" : "vec"
         args = [type, csv_str]
         raise "R not found" if r_script.empty?
         command = "#{r_script} --vanilla #{File.expand_path("../detect_anomalies.R", __FILE__)} #{args.map { |a| Shellwords.escape(a) }.join(" ")}"
-        output = %x[#{command}]
+        output = `#{command}`
         if output.empty?
           raise "Unknown R error"
         end

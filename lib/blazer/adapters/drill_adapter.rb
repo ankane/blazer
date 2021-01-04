@@ -1,7 +1,7 @@
 module Blazer
   module Adapters
     class DrillAdapter < BaseAdapter
-      def run_statement(statement, comment)
+      def run_statement(statement, _comment)
         columns = []
         rows = []
         error = nil

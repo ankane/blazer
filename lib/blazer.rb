@@ -110,7 +110,7 @@ module Blazer
 
   def self.data_sources
     @data_sources ||= begin
-      ds = Hash.new { |hash, key| raise Blazer::Error, "Unknown data source: #{key}" }
+      ds = Hash.new { |_hash, key| raise Blazer::Error, "Unknown data source: #{key}" }
       settings["data_sources"].each do |id, s|
         ds[id] = Blazer::DataSource.new(id, s)
       end

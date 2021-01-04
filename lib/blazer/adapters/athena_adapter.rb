@@ -1,7 +1,7 @@
 module Blazer
   module Adapters
     class AthenaAdapter < BaseAdapter
-      def run_statement(statement, comment)
+      def run_statement(statement, _comment)
         require "digest/md5"
 
         columns = []

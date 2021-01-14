@@ -1,5 +1,5 @@
 module Blazer
-  class UploadsController < BaseController
+  class UploadsController < Blazer::BaseController
     before_action :ensure_uploads
     before_action :set_upload, only: [:show, :edit, :update, :destroy]
 

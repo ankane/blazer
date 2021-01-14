@@ -1,5 +1,5 @@
 module Blazer
-  class ChecksController < BaseController
+  class ChecksController < Blazer::BaseController
     before_action :set_check, only: [:edit, :update, :destroy, :run]
 
     def index

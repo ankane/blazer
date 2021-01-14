@@ -1,5 +1,5 @@
 module Blazer
-  class DashboardsController < BaseController
+  class DashboardsController < Blazer::BaseController
     before_action :set_dashboard, only: [:show, :edit, :update, :destroy, :refresh]
 
     def new

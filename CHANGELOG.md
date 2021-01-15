@@ -1,6 +1,7 @@
 ## 2.4.1 (unreleased)
 
 - Added cohorts for MySQL
+- Fixed deprecation warning with Active Record 6.1
 
 ## 2.4.0 (2020-12-15)
 

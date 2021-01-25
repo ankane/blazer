@@ -18,7 +18,7 @@ module Blazer
       end
 
       def tables
-        client.execute("SHOW TABLES").map { |r| r["tableName"] }
+        client.execute("SHOW TABLES").map { |r| r["tab_name"] }
       end
 
       def preview_statement

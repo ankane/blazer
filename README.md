@@ -566,6 +566,8 @@ data_sources:
 - [Amazon Athena](#amazon-athena)
 - [Amazon Redshift](#amazon-redshift)
 - [Apache Drill](#apache-drill)
+- [Apache Hive](#apache-hive) [master]
+- [Apache Spark](#apache-spark) [master]
 - [Cassandra](#cassandra)
 - [Druid](#druid)
 - [Elasticsearch](#elasticsearch)
@@ -626,6 +628,32 @@ data_sources:
     adapter: drill
     url: http://hostname:8047
 ```
+
+### Apache Hive
+
+Add [hexspace](https://github.com/ankane/hexspace) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: hive
+    url: sasl://user:password@hostname:10000/database
+```
+
+Use a read-only user. Requires [HiveServer2](https://cwiki.apache.org/confluence/display/Hive/Setting+Up+HiveServer2).
+
+### Apache Spark
+
+Add [hexspace](https://github.com/ankane/hexspace) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: spark
+    url: sasl://user:password@hostname:10000/database
+```
+
+Use a read-only user. Requires the [Thrift server](https://spark.apache.org/docs/latest/sql-distributed-sql-engine.html).
 
 ### Cassandra
 

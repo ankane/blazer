@@ -1,6 +1,7 @@
 ## 2.4.1 (unreleased)
 
 - Added cohorts for MySQL
+- Added support for Apache Hive and Apache Spark
 - Fixed deprecation warning with Active Record 6.1
 
 ## 2.4.0 (2020-12-15)

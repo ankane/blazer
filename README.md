@@ -412,7 +412,7 @@ SELECT users.id AS user_id, orders.created_at AS conversion_time, users.created_
 FROM users LEFT JOIN orders ON orders.user_id = users.id
 ```
 
-This feature requires PostgreSQL.
+This feature requires PostgreSQL or MySQL.
 
 ## Anomaly Detection
 
@@ -566,8 +566,8 @@ data_sources:
 - [Amazon Athena](#amazon-athena)
 - [Amazon Redshift](#amazon-redshift)
 - [Apache Drill](#apache-drill)
-- [Apache Hive](#apache-hive) [master]
-- [Apache Spark](#apache-spark) [master]
+- [Apache Hive](#apache-hive)
+- [Apache Spark](#apache-spark)
 - [Cassandra](#cassandra)
 - [Druid](#druid)
 - [Elasticsearch](#elasticsearch)

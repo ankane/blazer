@@ -1,0 +1,3 @@
+test:
+  adapter:  sqlite3
+  database: db/combustion_test.sqlite

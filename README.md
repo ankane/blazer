@@ -567,7 +567,7 @@ data_sources:
 - [Amazon Redshift](#amazon-redshift)
 - [Apache Drill](#apache-drill)
 - [Apache Hive](#apache-hive)
-- [Apache Ignite](#apache-ignite) [master]
+- [Apache Ignite](#apache-ignite) [master, experimental]
 - [Apache Spark](#apache-spark)
 - [Cassandra](#cassandra)
 - [Druid](#druid)

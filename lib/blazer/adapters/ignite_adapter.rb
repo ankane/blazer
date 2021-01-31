@@ -6,6 +6,8 @@ module Blazer
         rows = []
         error = nil
 
+        # TODO support authentication
+        # https://ignite.apache.org/docs/latest/restapi#security
         uri = URI("#{settings["url"].chomp("/")}/ignite")
         uri.query = URI.encode_www_form(
           "cmd" => "qryfldexe",

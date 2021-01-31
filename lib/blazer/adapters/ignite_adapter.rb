@@ -23,7 +23,6 @@ module Blazer
         }
 
         begin
-          # use Net::HTTP instead of soda-ruby for types and better error messages
           res = Net::HTTP.start(uri.hostname, uri.port, options) do |http|
             http.request(req)
           end
@@ -32,9 +31,23 @@ module Blazer
             body = JSON.parse(res.body)
 
             if body["successStatus"] == 0
-              # TODO typecast
               columns = body["response"]["fieldsMetadata"].map { |v| v["fieldName"] } if columns.empty?
               rows = body["response"]["items"]
+
+              body["response"]["fieldsMetadata"].each_with_index do |field, i|
+                case field["fieldTypeName"]
+                when "java.sql.Date"
+                  rows.each do |row|
+                    row[i] = Date.parse(row[i])
+                  end
+                when "java.sql.Timestamp"
+                  # TODO get server time zone
+                  utc = ActiveSupport::TimeZone["Etc/UTC"]
+                  rows.each do |row|
+                    row[i] = utc.parse(row[i])
+                  end
+                end
+              end
             else
               error = body["error"]
             end

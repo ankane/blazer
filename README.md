@@ -651,10 +651,10 @@ Set:
 data_sources:
   my_source:
     adapter: ignite
-    url: http://localhost:8080
+    url: http://user:password@localhost:8080
 ```
 
-Use a read-only user. Requires the [REST API](https://ignite.apache.org/docs/latest/restapi) to be enabled.
+Use a [read-only user](https://www.gridgain.com/docs/latest/administrators-guide/security/authorization-permissions). Requires the [REST API](https://ignite.apache.org/docs/latest/restapi) to be enabled.
 
 ### Apache Spark
 

@@ -44,7 +44,7 @@ module Blazer
             else
               error = body["error"]
 
-              # reset session token if needed
+              # reset session token if expired
               # TODO retry request
               @session_token = nil if error.to_s.include?("unknown session token")
             end

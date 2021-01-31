@@ -1,3 +1,7 @@
+## 2.4.2 (unreleased)
+
+- Added support for Apache Ignite
+
 ## 2.4.1 (2021-01-25)
 
 - Added cohorts for MySQL

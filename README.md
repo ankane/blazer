@@ -567,6 +567,7 @@ data_sources:
 - [Amazon Redshift](#amazon-redshift)
 - [Apache Drill](#apache-drill)
 - [Apache Hive](#apache-hive)
+- [Apache Ignite](#apache-ignite) [master]
 - [Apache Spark](#apache-spark)
 - [Cassandra](#cassandra)
 - [Druid](#druid)
@@ -641,6 +642,19 @@ data_sources:
 ```
 
 Use a read-only user. Requires [HiveServer2](https://cwiki.apache.org/confluence/display/Hive/Setting+Up+HiveServer2).
+
+### Apache Ignite
+
+Set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: ignite
+    url: http://localhost:8080
+```
+
+Use a read-only user. Requires the [REST API](https://ignite.apache.org/docs/latest/restapi) to be enabled.
 
 ### Apache Spark
 

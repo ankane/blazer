@@ -59,7 +59,7 @@ For production, specify your database:
 ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database"
 ```
 
-Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user. [See how to create one](#permissions).
+Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read-only user. [See how to create one](#permissions).
 
 #### Checks (optional)
 
@@ -641,7 +641,7 @@ data_sources:
     url: sasl://user:password@hostname:10000/database
 ```
 
-Use a read-only user. Requires [HiveServer2](https://cwiki.apache.org/confluence/display/Hive/Setting+Up+HiveServer2).
+Use a [read-only user](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Authorization). Requires [HiveServer2](https://cwiki.apache.org/confluence/display/Hive/Setting+Up+HiveServer2).
 
 ### Apache Ignite
 

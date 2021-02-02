@@ -6,51 +6,10 @@ module Blazer
         rows = []
         error = nil
 
-        uri = base_uri.dup
-        query_params = {
-          "cmd" => "qryfldexe",
-          "pageSize" => 1_000_000_000, # TODO paginate
-          "cacheName" => "PUBLIC",
-          "qry" => "#{statement} /*#{comment}*/"
-        }
-
         begin
-          # place inside exception block for friendly error message if fails
-          query_params["sessionToken"] = session_token if session_token
-
-          res = make_request(uri, query_params)
-
-          if res.is_a?(Net::HTTPSuccess)
-            body = JSON.parse(res.body)
-
-            if body["successStatus"] == 0
-              columns = body["response"]["fieldsMetadata"].map { |v| v["fieldName"] } if columns.empty?
-              rows = body["response"]["items"]
-
-              body["response"]["fieldsMetadata"].each_with_index do |field, i|
-                case field["fieldTypeName"]
-                when "java.sql.Date"
-                  rows.each do |row|
-                    row[i] = Date.parse(row[i])
-                  end
-                when "java.sql.Timestamp"
-                  # TODO get server time zone
-                  utc = ActiveSupport::TimeZone["Etc/UTC"]
-                  rows.each do |row|
-                    row[i] = utc.parse(row[i])
-                  end
-                end
-              end
-            else
-              error = body["error"]
-
-              # reset session token if expired
-              # TODO retry request
-              @session_token = nil if error.to_s.include?("unknown session token")
-            end
-          else
-            error = JSON.parse(res.body)["message"] rescue "Bad response: #{res.code}"
-          end
+          result = client.query("#{statement} /*#{comment}*/", schema: default_schema, statement_type: :select, timeout: data_source.timeout)
+          columns = result.any? ? result.first.keys : []
+          rows = result.map(&:values)
         rescue => e
           error = e.message
         end
@@ -84,41 +43,10 @@ module Blazer
         "PUBLIC"
       end
 
-      def base_uri
-        @base_uri ||= URI("#{settings["url"].chomp("/")}/ignite")
-      end
-
-      def make_request(uri, query_params)
-        uri = uri.dup
-        uri.user = nil
-        uri.password = nil
-        uri.query = URI.encode_www_form(query_params)
-        options = {
-          use_ssl: uri.scheme == "https",
-          open_timeout: 3,
-          read_timeout: 30
-        }
-        Net::HTTP.start(uri.hostname, uri.port, options) do |http|
-          http.request(Net::HTTP::Get.new(uri))
-        end
-      end
-
-      # https://ignite.apache.org/docs/latest/restapi#security
-      def session_token
-        @session_token ||= begin
-          if base_uri.user || base_uri.password
-            query_params = {
-              "cmd" => "authenticate",
-              "ignite.login" => base_uri.user,
-              "ignite.password" => base_uri.password,
-            }
-            res = make_request(base_uri, query_params)
-            if res.is_a?(Net::HTTPSuccess)
-              JSON.parse(res.body)["sessionToken"]
-            else
-              JSON.parse(res.body)["error"] rescue "Bad authentication response: #{res.code}"
-            end
-          end
+      def client
+        @client ||= begin
+          uri = URI(settings["url"])
+          Ignite::Client.new(host: uri.host, port: uri.port, username: uri.user, password: uri.password)
         end
       end
     end

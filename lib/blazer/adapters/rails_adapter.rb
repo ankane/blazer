@@ -24,9 +24,12 @@ module Blazer
 
             relation = cls.all
 
-            final_method = nil
-            final_args = nil
-            final_relation = nil
+            last_method = nil
+            last_args = nil
+            last_relation = nil
+
+            # TODO add rest of methods
+            groupdate_methods = defined?(Groupdate) ? [:group_by_day, :group_by_week, :group_by_hour_of_day] : []
 
             parents.reverse.each_with_index do |parent, i|
               method = parent.children[1]
@@ -39,29 +42,21 @@ module Blazer
                 when ActiveRecord::Base
                   has_association?(cls, method)
                 when ActiveRecord::Relation
-                  method.in?([:all, :distinct, :group, :having, :joins, :left_outer_joins, :limit, :offset, :only, :order, :reselect, :reorder, :reverse_order, :rewhere, :select, :unscope, :unscoped, :where]) || has_scope?(cls, method)
+                  method.in?([:all, :distinct, :group, :having, :joins, :left_outer_joins, :limit, :offset, :only, :order, :reselect, :reorder, :reverse_order, :rewhere, :select, :unscope, :unscoped, :where]) ||
+                  method.in?([:any?, :average, :count, :exists?, :explain, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take]) ||
+                  (method.in?(groupdate_methods) && cls.respond_to?(method)) ||
+                  has_scope?(cls, method)
                 else
-                  raise "Unexpected class: #{relation.class.name}"
+                  raise "Unexpected class for #{method}: #{relation.class.name}"
                 end
-
-              # TODO add rest of methods
-              if !permitted && defined?(Groupdate)
-                permitted = method.in?([:group_by_day, :group_by_week, :group_by_hour_of_day]) && cls.respond_to?(method)
-              end
-
-              final_method = nil
-              if !permitted && relation.is_a?(ActiveRecord::Relation)
-                permitted = method.in?([:any?, :average, :count, :exists?, :explain, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take])
-                final_method = method if permitted
-              end
 
               raise "Unpermitted method: #{method}" unless permitted
 
               args = parent.children[2..-1].map { |n| parse_arg(n) }
-              if final_method
-                final_args = args
-                final_relation = relation
-              end
+
+              last_method = method
+              last_args = args
+              last_relation = relation
 
               if method == :explain
                 raise "Explain must come at end" unless i == parents.size - 1
@@ -75,7 +70,7 @@ module Blazer
               end
             end
 
-            case final_method
+            case last_method
             when :find, :find_by, :first, :last, :take
               result = relation
               result = [result] unless result.is_a?(Array)
@@ -86,13 +81,13 @@ module Blazer
                 end
               end
             when :pluck
-              columns = final_args.map(&:to_s)
+              columns = last_args.map(&:to_s)
               rows = relation
             when :ids
               columns = ["id"]
               rows = relation.map { |r| [r] }
             when :any?, :exists?, :many?
-              columns = [final_method.to_s[0..-2]]
+              columns = [last_method.to_s[0..-2]]
               rows = [[relation]]
             when :average, :count, :maximum, :minimum, :sum
               result = relation
@@ -104,18 +99,18 @@ module Blazer
                   # TODO make more efficient
                   rows << ((k.is_a?(Array) ? k : [k]) + [v])
                 end
-                columns = final_relation.group_values.map(&:to_s)
+                columns = last_relation.group_values.map(&:to_s)
 
-                if final_relation.respond_to?(:groupdate_values)
-                  final_relation.groupdate_values.each do |v|
+                if last_relation.respond_to?(:groupdate_values)
+                  last_relation.groupdate_values.each do |v|
                     columns[v.group_index] = v.period
                   end
                 end
 
-                columns[rows.first.size - 1] = final_method
+                columns[rows.first.size - 1] = last_method
               end
             else
-              prefix = final_method == :explain ? "EXPLAIN " : ""
+              prefix = last_method == :explain ? "EXPLAIN " : ""
               result = relation.connection.select_all("#{prefix}#{relation.to_sql} /*#{comment}*/")
               columns = result.columns
               result.rows.each do |untyped_row|

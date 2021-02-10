@@ -40,7 +40,7 @@ module Blazer
                 end
 
               if !permitted && i == parents.size - 1
-                permitted = method.in?([:any?, :average, :count, :exists?, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take])
+                permitted = method.in?([:any?, :average, :count, :exists?, :explain, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take])
                 final_method = method
               end
 
@@ -51,7 +51,7 @@ module Blazer
                 final_args = args
                 final_relation = relation
               end
-              relation = relation.send(method, *args)
+              relation = relation.send(method, *args) unless final_method == :explain
 
               # TODO support aggregate methods like count and pluck for last node
               raise "Expected relation, not #{relation.class.name}" unless relation.is_a?(ActiveRecord::Relation) || relation.is_a?(ActiveRecord::QueryMethods::WhereChain) || final_method
@@ -90,7 +90,8 @@ module Blazer
                 columns[rows.first.size - 1] = final_method
               end
             else
-              result = relation.connection.select_all("#{relation.to_sql} /*#{comment}*/")
+              prefix = final_method == :explain ? "EXPLAIN " : ""
+              result = relation.connection.select_all("#{prefix}#{relation.to_sql} /*#{comment}*/")
               columns = result.columns
               result.rows.each do |untyped_row|
                 rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })

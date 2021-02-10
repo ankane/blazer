@@ -23,7 +23,8 @@ module Blazer
             end
 
             relation = cls.all
-            parents.reverse.each do |parent|
+            final_method = nil
+            parents.reverse.each_with_index do |parent, i|
               method = parent.children[1]
 
               # check against known methods and scopes
@@ -34,21 +35,36 @@ module Blazer
                   method.in?([:all, :group, :joins, :limit, :offset, :order, :rewhere, :reorder, :select, :where]) || has_scope?(cls, method)
                 end
 
-              unless permitted
-                raise "Unpermitted method: #{method}"
+              if !permitted && i == parents.size - 1
+                permitted = method.in?([:find_by, :first])
+                final_method = method
               end
+
+              raise "Unpermitted method: #{method}" unless permitted
 
               args = parent.children[2..-1].map { |n| parse_arg(n) }
               relation = relation.send(method, *args)
 
               # TODO support aggregate methods like count and pluck for last node
-              raise "Expected relation, not #{relation.class.name}" unless relation.is_a?(ActiveRecord::Relation) || relation.is_a?(ActiveRecord::QueryMethods::WhereChain)
+              raise "Expected relation, not #{relation.class.name}" unless relation.is_a?(ActiveRecord::Relation) || relation.is_a?(ActiveRecord::QueryMethods::WhereChain) || final_method
             end
 
-            result = relation.connection.select_all("#{relation.to_sql} /*#{comment}*/")
-            columns = result.columns
-            result.rows.each do |untyped_row|
-              rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
+            case final_method
+            when :find_by, :first
+              result = relation
+              result = [result] unless result.is_a?(Array)
+              if result.any?
+                columns = result[0].attributes.keys
+                result.each do |record|
+                  rows << columns.map { |c| record.read_attribute(c) }
+                end
+              end
+            else
+              result = relation.connection.select_all("#{relation.to_sql} /*#{comment}*/")
+              columns = result.columns
+              result.rows.each do |untyped_row|
+                rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
+              end
             end
           else
             raise "Invalid query"

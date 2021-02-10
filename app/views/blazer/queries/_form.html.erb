@@ -69,6 +69,7 @@
 <script>
   <%= blazer_js_var "params", variable_params(@query) %>
   <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, (v.preview_statement rescue "")] }] %>
+  <%= blazer_js_var "highlightMode", Hash[Blazer.data_sources.map { |k, v| [k, (v.highlight_mode rescue "sql")] }] %>
 
   var app = new Vue({
     el: "#app",
@@ -143,13 +144,14 @@
           selectize.addOption(newOptions)
           selectize.refreshOptions(false)
         })
+
+        this.editor.getSession().setMode("ace/mode/" + highlightMode[this.dataSource])
       },
       showEditor: function() {
         var _this = this
 
         editor = ace.edit("editor")
         editor.setTheme("ace/theme/twilight")
-        editor.getSession().setMode("ace/mode/sql")
         editor.setOptions({
           enableBasicAutocompletion: false,
           enableSnippets: false,
@@ -235,6 +237,7 @@
       })
       this.selectize = selectize
 
+      this.showEditor()
       this.updateDataSource($("#query_data_source").val())
 
       var $dsSelect = $("#query_data_source").selectize({})
@@ -243,8 +246,6 @@
         _this.updateDataSource(val)
         dsSelectize.blur()
       })
-
-      this.showEditor()
     }
   })
 </script>

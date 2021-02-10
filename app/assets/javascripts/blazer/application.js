@@ -4,7 +4,7 @@
 //= require ./stupidtable-custom-settings
 //= require ./jquery.stickytableheaders
 //= require ./selectize
-//= require ./highlight.min
+//= require ./highlight.pack
 //= require ./moment
 //= require ./moment-timezone-with-data
 //= require ./daterangepicker

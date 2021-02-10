@@ -51,6 +51,10 @@ module Blazer
         # optional
       end
 
+      def highlight_mode
+        "sql" # optional
+      end
+
       protected
 
       def settings

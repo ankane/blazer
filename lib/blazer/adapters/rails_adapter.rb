@@ -10,12 +10,12 @@ module Blazer
           node = parser.parse(statement)
 
           parents = []
-          while node.type == :send
+          while node && node.type == :send
             parents << node
             node = node.children[0]
           end
 
-          if node.type == :const
+          if node && node.type == :const
             class_name = find_class_name(node)
             cls = models.find { |c| c.name == class_name }
             unless cls
@@ -64,6 +64,10 @@ module Blazer
       # def schema
       #   TODO
       # end
+
+      def highlight_mode
+        "ruby"
+      end
 
       private
 

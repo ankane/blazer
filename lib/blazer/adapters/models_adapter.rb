@@ -209,14 +209,14 @@ module Blazer
       end
 
       # not ideal, but Active Record doesn't keep track of scopes
-      def has_scope?(cls, method)
-        cls.singleton_method(method).source_location[0].end_with?("lib/active_record/scoping/named.rb")
+      def has_scope?(relation, method)
+        relation.model.singleton_method(method).source_location[0].end_with?("lib/active_record/scoping/named.rb")
       rescue NameError
         false
       end
 
-      def has_association?(cls, method)
-        cls._reflections.key?(method.to_s)
+      def has_association?(relation, method)
+        relation.model._reflections.key?(method.to_s)
       end
     end
   end

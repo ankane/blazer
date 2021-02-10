@@ -8,6 +8,7 @@ module Blazer
 
         @connection_model =
           Class.new(Blazer::Connection) do
+            self.abstract_class = true
             def self.name
               "Blazer::Connection::Adapter#{object_id}"
             end

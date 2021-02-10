@@ -581,6 +581,7 @@ data_sources:
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
+- [Rails](#rails) [master, experimental]
 - [Salesforce](#salesforce)
 - [Socrata Open Data API (SODA)](#socrata-open-data-api-soda)
 - [Snowflake](#snowflake)
@@ -792,6 +793,16 @@ Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your
 data_sources:
   my_source:
     url: presto://user@hostname:8080/catalog
+```
+
+### Rails
+
+Add [parser](https://github.com/whitequark/parser) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: rails
 ```
 
 ### Salesforce

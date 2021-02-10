@@ -40,7 +40,7 @@ module Blazer
                 end
 
               if !permitted && i == parents.size - 1
-                permitted = method.in?([:average, :count, :find_by, :first, :last, :maximum, :minimum, :pluck, :sum])
+                permitted = method.in?([:average, :count, :find, :find_by, :first, :last, :maximum, :minimum, :pluck, :sum, :take])
                 final_method = method
               end
 
@@ -58,7 +58,7 @@ module Blazer
             end
 
             case final_method
-            when :find_by, :first, :last
+            when :find, :find_by, :first, :last, :take
               result = relation
               result = [result] unless result.is_a?(Array)
               if result.any?

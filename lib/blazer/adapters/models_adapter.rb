@@ -112,6 +112,8 @@ module Blazer
                 columns[rows.first.size - 1] = last_method
               end
             else
+              raise "Expected relation, not #{result.class.name}" unless result.is_a?(ActiveRecord::Relation)
+
               prefix = last_method == :explain ? "EXPLAIN " : ""
               result = result.connection.select_all("#{prefix}#{result.to_sql} /*#{comment}*/")
               columns = result.columns

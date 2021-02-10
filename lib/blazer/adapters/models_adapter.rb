@@ -22,7 +22,7 @@ module Blazer
               raise "Unknown model: #{class_name}"
             end
 
-            relation = cls.all
+            result = cls.all
 
             last_method = nil
             last_args = nil
@@ -36,18 +36,18 @@ module Blazer
 
               # check against known methods and scopes
               permitted =
-                case relation
+                case result
                 when ActiveRecord::QueryMethods::WhereChain
                   method.in?([:not])
                 when ActiveRecord::Base
-                  has_association?(cls, method)
+                  has_association?(result, method)
                 when ActiveRecord::Relation
                   method.in?([:all, :distinct, :group, :having, :joins, :left_outer_joins, :limit, :offset, :only, :order, :reselect, :reorder, :reverse_order, :rewhere, :select, :unscope, :unscoped, :where]) ||
                   method.in?([:any?, :average, :count, :exists?, :explain, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take]) ||
-                  (method.in?(groupdate_methods) && cls.respond_to?(method)) ||
-                  has_scope?(cls, method)
+                  (method.in?(groupdate_methods) && result.respond_to?(method)) ||
+                  has_scope?(result, method)
                 else
-                  raise "Unexpected class for #{method}: #{relation.class.name}"
+                  raise "Unexpected class for #{method}: #{result.class.name}"
                 end
 
               raise "Unpermitted method: #{method}" unless permitted
@@ -56,23 +56,22 @@ module Blazer
 
               last_method = method
               last_args = args
-              last_relation = relation
+              last_relation = result
 
               if method == :explain
                 raise "Explain must come at end" unless i == parents.size - 1
               else
                 # TODO check arity/parameters
                 if args.last.is_a?(Hash)
-                  relation = relation.send(method, *args[0..-2], **args[-1])
+                  result = result.send(method, *args[0..-2], **args[-1])
                 else
-                  relation = relation.send(method, *args)
+                  result = result.send(method, *args)
                 end
               end
             end
 
             case last_method
             when :find, :find_by, :first, :last, :take
-              result = relation
               result = [result] unless result.is_a?(Array)
               if result.any?
                 columns = result[0].attributes.keys
@@ -82,15 +81,18 @@ module Blazer
               end
             when :pluck
               columns = last_args.map(&:to_s)
-              rows = relation
+              if columns.size == 1
+                rows = result.map { |r| [r] }
+              else
+                rows = result
+              end
             when :ids
               columns = ["id"]
-              rows = relation.map { |r| [r] }
+              rows = result.map { |r| [r] }
             when :any?, :exists?, :many?
               columns = [last_method.to_s[0..-2]]
-              rows = [[relation]]
+              rows = [[result]]
             when :average, :count, :maximum, :minimum, :sum
-              result = relation
               if result.is_a?(Integer)
                 columns = ["count"]
                 rows << [result]
@@ -111,7 +113,7 @@ module Blazer
               end
             else
               prefix = last_method == :explain ? "EXPLAIN " : ""
-              result = relation.connection.select_all("#{prefix}#{relation.to_sql} /*#{comment}*/")
+              result = result.connection.select_all("#{prefix}#{result.to_sql} /*#{comment}*/")
               columns = result.columns
               result.rows.each do |untyped_row|
                 rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })

@@ -27,7 +27,7 @@ module Blazer
               method = parent.children[1]
 
               # check against known methods and scopes
-              unless method.in?([:all, :limit, :offset, :order])
+              unless method.in?([:all, :group, :limit, :offset, :order, :select, :where])
                 raise "Unpermitted method: #{method}"
               end
 
@@ -102,9 +102,20 @@ module Blazer
         parts.reverse.join("::")
       end
 
-      # TODO handle args correctly
       def parse_arg(node)
-        node.children[0]
+        case node.type
+        when :int, :sym
+          node.children[0]
+        when :hash
+          res = {}
+          node.children.each do |n|
+            raise "Expected pair, not #{n.type}" unless n.type == :pair
+            res[parse_arg(n.children[0])] = parse_arg(n.children[1])
+          end
+          res
+        else
+          raise "Unknown arg type: #{node.type}"
+        end
       end
     end
   end

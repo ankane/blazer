@@ -36,11 +36,11 @@ module Blazer
                 if relation.is_a?(ActiveRecord::QueryMethods::WhereChain)
                   method.in?([:not])
                 else
-                  method.in?([:all, :distinct, :group, :having, :joins, :limit, :offset, :only, :order, :reselect, :reorder, :reverse_order, :rewhere, :select, :unscope, :unscoped, :where]) || has_scope?(cls, method)
+                  method.in?([:all, :distinct, :group, :having, :joins, :left_outer_joins, :limit, :offset, :only, :order, :reselect, :reorder, :reverse_order, :rewhere, :select, :unscope, :unscoped, :where]) || has_scope?(cls, method)
                 end
 
               if !permitted && i == parents.size - 1
-                permitted = method.in?([:average, :count, :find, :find_by, :first, :last, :maximum, :minimum, :pluck, :sum, :take])
+                permitted = method.in?([:average, :count, :exists?, :find, :find_by, :first, :ids, :last, :maximum, :minimum, :pluck, :sum, :take])
                 final_method = method
               end
 
@@ -70,6 +70,12 @@ module Blazer
             when :pluck
               columns = final_args.map(&:to_s)
               rows = relation
+            when :ids
+              columns = ["id"]
+              rows = relation.map { |r| [r] }
+            when :exists?
+              columns = ["exists"]
+              rows = [[relation]]
             when :average, :count, :maximum, :minimum, :sum
               result = relation
               if result.is_a?(Integer)

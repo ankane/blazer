@@ -27,7 +27,14 @@ module Blazer
               method = parent.children[1]
 
               # check against known methods and scopes
-              unless method.in?([:all, :group, :joins, :limit, :offset, :order, :rewhere, :reorder, :select, :where]) || has_scope?(cls, method)
+              permitted =
+                if relation.is_a?(ActiveRecord::QueryMethods::WhereChain)
+                  method.in?([:not])
+                else
+                  method.in?([:all, :group, :joins, :limit, :offset, :order, :rewhere, :reorder, :select, :where]) || has_scope?(cls, method)
+                end
+
+              unless permitted
                 raise "Unpermitted method: #{method}"
               end
 
@@ -35,7 +42,7 @@ module Blazer
               relation = relation.send(method, *args)
 
               # TODO support aggregate methods like count and pluck for last node
-              raise "Safety check failed" unless relation.is_a?(ActiveRecord::Relation)
+              raise "Expected relation, not #{relation.class.name}" unless relation.is_a?(ActiveRecord::Relation) || relation.is_a?(ActiveRecord::QueryMethods::WhereChain)
             end
 
             result = relation.connection.select_all("#{relation.to_sql} /*#{comment}*/")

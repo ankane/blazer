@@ -23,11 +23,11 @@ module Blazer
             end
 
             relation = cls.all
-            parents.each do |parent|
+            parents.reverse.each do |parent|
               method = parent.children[1]
 
               # check against known methods and scopes
-              unless method.in?([:all, :group, :limit, :offset, :order, :select, :where])
+              unless method.in?([:all, :group, :limit, :offset, :order, :rewhere, :reorder, :select, :where])
                 raise "Unpermitted method: #{method}"
               end
 
@@ -120,7 +120,7 @@ module Blazer
         when :erange
           Range.new(parse_arg(node.children[0]), parse_arg(node.children[1]), true)
         else
-          raise "Unknown arg type: #{node.type}"
+          raise "Argument type not supported: #{node.type}"
         end
       end
     end

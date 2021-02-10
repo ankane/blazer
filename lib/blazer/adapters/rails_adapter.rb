@@ -40,7 +40,7 @@ module Blazer
                 end
 
               if !permitted && i == parents.size - 1
-                permitted = method.in?([:average, :count, :exists?, :find, :find_by, :first, :ids, :last, :maximum, :minimum, :pluck, :sum, :take])
+                permitted = method.in?([:any?, :average, :count, :exists?, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take])
                 final_method = method
               end
 
@@ -73,8 +73,8 @@ module Blazer
             when :ids
               columns = ["id"]
               rows = relation.map { |r| [r] }
-            when :exists?
-              columns = ["exists"]
+            when :any?, :exists?, :many?
+              columns = [final_method.to_s[0..-2]]
               rows = [[relation]]
             when :average, :count, :maximum, :minimum, :sum
               result = relation

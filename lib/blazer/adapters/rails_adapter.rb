@@ -27,7 +27,7 @@ module Blazer
               method = parent.children[1]
 
               # check against known methods and scopes
-              unless method.in?([:all, :group, :limit, :offset, :order, :rewhere, :reorder, :select, :where]) || has_scope?(cls, method)
+              unless method.in?([:all, :group, :joins, :limit, :offset, :order, :rewhere, :reorder, :select, :where]) || has_scope?(cls, method)
                 raise "Unpermitted method: #{method}"
               end
 
@@ -124,8 +124,10 @@ module Blazer
         end
       end
 
-      # TODO figure out best way to do this
+      # not ideal, but Active Record doesn't keep track of scopes
       def has_scope?(cls, method)
+        cls.singleton_method(method).source_location[0].end_with?("lib/active_record/scoping/named.rb")
+      rescue NameError
         false
       end
     end

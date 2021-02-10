@@ -144,7 +144,7 @@ module Blazer
 
     def adapter_instance
       @adapter_instance ||= begin
-        unless settings["url"] || Rails.env.development? || ["bigquery", "athena", "snowflake", "salesforce", "rails"].include?(settings["adapter"])
+        unless settings["url"] || Rails.env.development? || ["bigquery", "athena", "snowflake", "salesforce", "models"].include?(settings["adapter"])
           raise Blazer::Error, "Empty url for data source: #{id}"
         end
 

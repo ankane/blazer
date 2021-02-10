@@ -1,6 +1,6 @@
 module Blazer
   module Adapters
-    class RailsAdapter < BaseAdapter
+    class ModelsAdapter < BaseAdapter
       def run_statement(statement, comment)
         columns = []
         rows = []

@@ -167,6 +167,16 @@ GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED 
 FLUSH PRIVILEGES;
 ```
 
+### Models
+
+Add [parser](https://github.com/whitequark/parser) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: models
+```
+
 ### MongoDB
 
 Create a user with read only permissions:
@@ -575,13 +585,13 @@ data_sources:
 - [Google BigQuery](#google-bigquery)
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [InfluxDB](#influxdb)
+- [Models](#models) [master, experimental]
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
 - [Neo4j](#neo4j)
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
-- [Rails](#rails) [master, experimental]
 - [Salesforce](#salesforce)
 - [Socrata Open Data API (SODA)](#socrata-open-data-api-soda)
 - [Snowflake](#snowflake)
@@ -793,16 +803,6 @@ Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your
 data_sources:
   my_source:
     url: presto://user@hostname:8080/catalog
-```
-
-### Rails
-
-Add [parser](https://github.com/whitequark/parser) to your Gemfile and set:
-
-```yml
-data_sources:
-  my_source:
-    adapter: rails
 ```
 
 ### Salesforce

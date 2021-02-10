@@ -33,10 +33,15 @@ module Blazer
 
               # check against known methods and scopes
               permitted =
-                if relation.is_a?(ActiveRecord::QueryMethods::WhereChain)
+                case relation
+                when ActiveRecord::QueryMethods::WhereChain
                   method.in?([:not])
-                else
+                when ActiveRecord::Base
+                  has_association?(cls, method)
+                when ActiveRecord::Relation
                   method.in?([:all, :distinct, :group, :having, :joins, :left_outer_joins, :limit, :offset, :only, :order, :reselect, :reorder, :reverse_order, :rewhere, :select, :unscope, :unscoped, :where]) || has_scope?(cls, method)
+                else
+                  raise "Unexpected class: #{relation.class.name}"
                 end
 
               # TODO add rest of methods
@@ -44,14 +49,10 @@ module Blazer
                 permitted = method.in?([:group_by_day, :group_by_week, :group_by_hour_of_day]) && cls.respond_to?(method)
               end
 
-              unless permitted
+              final_method = nil
+              if !permitted && relation.is_a?(ActiveRecord::Relation)
                 permitted = method.in?([:any?, :average, :count, :exists?, :explain, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take])
-                if permitted
-                  if i != parents.size - 1
-                    raise "Method only permitted at end: #{method}"
-                  end
-                  final_method = method
-                end
+                final_method = method if permitted
               end
 
               raise "Unpermitted method: #{method}" unless permitted
@@ -62,7 +63,9 @@ module Blazer
                 final_relation = relation
               end
 
-              unless final_method == :explain
+              if method == :explain
+                raise "Explain must come at end" unless i == parents.size - 1
+              else
                 # TODO check arity/parameters
                 if args.last.is_a?(Hash)
                   relation = relation.send(method, *args[0..-2], **args[-1])
@@ -70,8 +73,6 @@ module Blazer
                   relation = relation.send(method, *args)
                 end
               end
-
-              raise "Expected relation, not #{relation.class.name}" unless relation.is_a?(ActiveRecord::Relation) || relation.is_a?(ActiveRecord::QueryMethods::WhereChain) || final_method
             end
 
             case final_method
@@ -211,6 +212,10 @@ module Blazer
         cls.singleton_method(method).source_location[0].end_with?("lib/active_record/scoping/named.rb")
       rescue NameError
         false
+      end
+
+      def has_association?(cls, method)
+        cls._reflections.key?(method.to_s)
       end
     end
   end

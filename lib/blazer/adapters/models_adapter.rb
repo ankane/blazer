@@ -30,6 +30,7 @@ module Blazer
 
             # TODO add rest of methods
             groupdate_methods = defined?(Groupdate) ? [:group_by_day, :group_by_week, :group_by_hour_of_day] : []
+            hightop_methods = defined?(Hightop) ? [:top] : []
 
             parents.reverse.each_with_index do |parent, i|
               method = parent.children[1]
@@ -45,6 +46,7 @@ module Blazer
                   method.in?([:all, :distinct, :group, :having, :joins, :left_outer_joins, :limit, :offset, :only, :order, :reselect, :reorder, :reverse_order, :rewhere, :select, :unscope, :unscoped, :where]) ||
                   method.in?([:any?, :average, :count, :exists?, :explain, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take]) ||
                   (method.in?(groupdate_methods) && result.respond_to?(method)) ||
+                  (method.in?(hightop_methods) && result.respond_to?(method)) ||
                   has_scope?(result, method)
                 else
                   raise "Unexpected class for #{method}: #{result.class.name}"
@@ -92,7 +94,7 @@ module Blazer
             when :any?, :exists?, :many?
               columns = [last_method.to_s[0..-2]]
               rows = [[result]]
-            when :average, :count, :maximum, :minimum, :sum
+            when :average, :count, :maximum, :minimum, :sum, :top
               if result.is_a?(Integer)
                 columns = ["count"]
                 rows << [result]
@@ -101,10 +103,10 @@ module Blazer
                   # TODO make more efficient
                   rows << ((k.is_a?(Array) ? k : [k]) + [v])
                 end
-                columns = last_relation.group_values.map(&:to_s)
+                columns = last_method == :top ? last_args.map(&:to_s) : last_relation.group_values.map(&:to_s)
 
                 if last_relation.respond_to?(:groupdate_values)
-                  last_relation.groupdate_values.each do |v|
+                  (last_relation.groupdate_values || []).each do |v|
                     columns[v.group_index] = v.period
                   end
                 end

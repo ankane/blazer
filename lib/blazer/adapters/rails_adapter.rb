@@ -106,6 +106,8 @@ module Blazer
         case node.type
         when :false, :float, :int, :nil, :str, :sym, :true
           node.children[0]
+        when :array
+          node.children.map { |n| parse_arg(n) }
         when :hash
           res = {}
           node.children.each do |n|
@@ -113,6 +115,10 @@ module Blazer
             res[parse_arg(n.children[0])] = parse_arg(n.children[1])
           end
           res
+        when :irange
+          Range.new(parse_arg(node.children[0]), parse_arg(node.children[1]))
+        when :erange
+          Range.new(parse_arg(node.children[0]), parse_arg(node.children[1]), true)
         else
           raise "Unknown arg type: #{node.type}"
         end

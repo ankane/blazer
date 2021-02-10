@@ -23,8 +23,11 @@ module Blazer
             end
 
             relation = cls.all
+
             final_method = nil
             final_args = nil
+            final_relation = nil
+
             parents.reverse.each_with_index do |parent, i|
               method = parent.children[1]
 
@@ -37,14 +40,17 @@ module Blazer
                 end
 
               if !permitted && i == parents.size - 1
-                permitted = method.in?([:find_by, :first, :last, :pluck])
+                permitted = method.in?([:count, :find_by, :first, :last, :pluck])
                 final_method = method
               end
 
               raise "Unpermitted method: #{method}" unless permitted
 
               args = parent.children[2..-1].map { |n| parse_arg(n) }
-              final_args = args if final_method
+              if final_method
+                final_args = args
+                final_relation = relation
+              end
               relation = relation.send(method, *args)
 
               # TODO support aggregate methods like count and pluck for last node
@@ -64,6 +70,19 @@ module Blazer
             when :pluck
               columns = final_args.map(&:to_s)
               rows = relation
+            when :count
+              result = relation
+              if result.is_a?(Integer)
+                columns = ["count"]
+                rows << [result]
+              elsif result.any?
+                result.each do |k, v|
+                  # TODO make more efficient
+                  rows << ((k.is_a?(Array) ? k : [k]) + [v])
+                end
+                columns = final_relation.group_values.map(&:to_s)
+                columns[rows.first.size - 1] = "count"
+              end
             else
               result = relation.connection.select_all("#{relation.to_sql} /*#{comment}*/")
               columns = result.columns

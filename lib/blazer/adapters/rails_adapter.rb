@@ -44,9 +44,14 @@ module Blazer
                 permitted = method.in?([:group_by_day, :group_by_week, :group_by_hour_of_day]) && cls.respond_to?(method)
               end
 
-              if !permitted && i == parents.size - 1
+              unless permitted
                 permitted = method.in?([:any?, :average, :count, :exists?, :explain, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take])
-                final_method = method
+                if permitted
+                  if i != parents.size - 1
+                    raise "Method only permitted at end: #{method}"
+                  end
+                  final_method = method
+                end
               end
 
               raise "Unpermitted method: #{method}" unless permitted

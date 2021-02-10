@@ -104,7 +104,7 @@ module Blazer
 
       def parse_arg(node)
         case node.type
-        when :int, :sym
+        when :false, :float, :int, :nil, :str, :sym, :true
           node.children[0]
         when :hash
           res = {}

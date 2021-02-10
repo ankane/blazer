@@ -66,7 +66,6 @@ module Blazer
                 end
               end
 
-              # TODO support aggregate methods like count and pluck for last node
               raise "Expected relation, not #{relation.class.name}" unless relation.is_a?(ActiveRecord::Relation) || relation.is_a?(ActiveRecord::QueryMethods::WhereChain) || final_method
             end
 

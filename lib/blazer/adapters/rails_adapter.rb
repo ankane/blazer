@@ -27,7 +27,7 @@ module Blazer
               method = parent.children[1]
 
               # check against known methods and scopes
-              unless method.in?([:all, :group, :limit, :offset, :order, :rewhere, :reorder, :select, :where])
+              unless method.in?([:all, :group, :limit, :offset, :order, :rewhere, :reorder, :select, :where]) || has_scope?(cls, method)
                 raise "Unpermitted method: #{method}"
               end
 
@@ -122,6 +122,11 @@ module Blazer
         else
           raise "Argument type not supported: #{node.type}"
         end
+      end
+
+      # TODO figure out best way to do this
+      def has_scope?(cls, method)
+        false
       end
     end
   end

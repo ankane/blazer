@@ -36,7 +36,7 @@ module Blazer
                 if relation.is_a?(ActiveRecord::QueryMethods::WhereChain)
                   method.in?([:not])
                 else
-                  method.in?([:all, :distinct, :group, :having, :joins, :limit, :offset, :order, :rewhere, :reorder, :select, :where]) || has_scope?(cls, method)
+                  method.in?([:all, :distinct, :group, :having, :joins, :limit, :offset, :only, :order, :reselect, :reorder, :reverse_order, :rewhere, :select, :unscope, :unscoped, :where]) || has_scope?(cls, method)
                 end
 
               if !permitted && i == parents.size - 1

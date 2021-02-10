@@ -22,17 +22,16 @@ module Blazer
               raise "Unknown model: #{class_name}"
             end
 
-            relation = cls
+            relation = cls.all
             parents.each do |parent|
               method = parent.children[1]
 
               # check against known methods and scopes
-              unless method.in?([:limit, :offset, :order])
+              unless method.in?([:all, :limit, :offset, :order])
                 raise "Unpermitted method: #{method}"
               end
 
-              # TODO handle args correctly
-              args = [parent.children[2].children[0]]
+              args = parent.children[2..-1].map { |n| parse_arg(n) }
               relation = relation.send(method, *args)
 
               # TODO support aggregate methods like count and pluck for last node
@@ -101,6 +100,11 @@ module Blazer
           node = node.children[0]
         end
         parts.reverse.join("::")
+      end
+
+      # TODO handle args correctly
+      def parse_arg(node)
+        node.children[0]
       end
     end
   end

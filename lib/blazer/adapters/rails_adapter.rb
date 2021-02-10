@@ -39,6 +39,11 @@ module Blazer
                   method.in?([:all, :distinct, :group, :having, :joins, :left_outer_joins, :limit, :offset, :only, :order, :reselect, :reorder, :reverse_order, :rewhere, :select, :unscope, :unscoped, :where]) || has_scope?(cls, method)
                 end
 
+              # TODO add rest of methods
+              if !permitted && defined?(Groupdate)
+                permitted = method.in?([:group_by_day, :group_by_week, :group_by_hour_of_day]) && cls.respond_to?(method)
+              end
+
               if !permitted && i == parents.size - 1
                 permitted = method.in?([:any?, :average, :count, :exists?, :explain, :find, :find_by, :first, :ids, :last, :many?, :maximum, :minimum, :pluck, :sum, :take])
                 final_method = method
@@ -51,7 +56,15 @@ module Blazer
                 final_args = args
                 final_relation = relation
               end
-              relation = relation.send(method, *args) unless final_method == :explain
+
+              unless final_method == :explain
+                # TODO check arity/parameters
+                if args.last.is_a?(Hash)
+                  relation = relation.send(method, *args[0..-2], **args[-1])
+                else
+                  relation = relation.send(method, *args)
+                end
+              end
 
               # TODO support aggregate methods like count and pluck for last node
               raise "Expected relation, not #{relation.class.name}" unless relation.is_a?(ActiveRecord::Relation) || relation.is_a?(ActiveRecord::QueryMethods::WhereChain) || final_method
@@ -87,6 +100,13 @@ module Blazer
                   rows << ((k.is_a?(Array) ? k : [k]) + [v])
                 end
                 columns = final_relation.group_values.map(&:to_s)
+
+                if final_relation.respond_to?(:groupdate_values)
+                  final_relation.groupdate_values.each do |v|
+                    columns[v.group_index] = v.period
+                  end
+                end
+
                 columns[rows.first.size - 1] = final_method
               end
             else

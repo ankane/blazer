@@ -40,7 +40,7 @@ module Blazer
                 end
 
               if !permitted && i == parents.size - 1
-                permitted = method.in?([:count, :find_by, :first, :last, :pluck])
+                permitted = method.in?([:average, :count, :find_by, :first, :last, :maximum, :minimum, :pluck, :sum])
                 final_method = method
               end
 
@@ -70,7 +70,7 @@ module Blazer
             when :pluck
               columns = final_args.map(&:to_s)
               rows = relation
-            when :count
+            when :average, :count, :maximum, :minimum, :sum
               result = relation
               if result.is_a?(Integer)
                 columns = ["count"]
@@ -81,7 +81,7 @@ module Blazer
                   rows << ((k.is_a?(Array) ? k : [k]) + [v])
                 end
                 columns = final_relation.group_values.map(&:to_s)
-                columns[rows.first.size - 1] = "count"
+                columns[rows.first.size - 1] = final_method
               end
             else
               result = relation.connection.select_all("#{relation.to_sql} /*#{comment}*/")

@@ -126,6 +126,16 @@ module Blazer
         postgresql? || mysql?
       end
 
+      def array(value)
+        if postgresql?
+          "{#{value.join(",")}}"
+        end
+      end
+
+      def supports_array?
+        postgresql?
+      end
+
       # TODO treat date columns as already in time zone
       def cohort_analysis_statement(statement, period:, days:)
         raise "Cohort analysis not supported" unless supports_cohort_analysis?

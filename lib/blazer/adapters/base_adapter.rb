@@ -47,6 +47,14 @@ module Blazer
         false # optional
       end
 
+      def supports_array?
+        false # optional
+      end
+
+      def array(value)
+        # optional
+      end
+
       def cohort_analysis_statement(statement, period:, days:)
         # optional
       end

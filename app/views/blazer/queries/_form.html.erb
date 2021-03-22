@@ -70,6 +70,27 @@
   <%= blazer_js_var "params", variable_params(@query) %>
   <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, (v.preview_statement rescue "")] }] %>
 
+  const extractTableNameFromEditor = function(content, pos) {
+    const lines = content.split('\n');
+    const currentRow = lines[pos.row];
+    const previousTokens = currentRow.slice(pos.column - 2, pos.column);
+    const columnSeparatorPosition = previousTokens.indexOf('.');
+    if (columnSeparatorPosition === -1) {
+        return null;
+    }
+    const absolutTableNamePosition = ((pos.column) - previousTokens.length) + columnSeparatorPosition;
+
+    let tableName = "";
+    for (index = absolutTableNamePosition - 1; index > 0; index--) {
+        if (currentRow[index] === ' ') {
+            break;
+        } else {
+            tableName += currentRow[index];
+        }
+    }
+    return tableName.split('').reverse().join('');
+  }
+
   var app = new Vue({
     el: "#app",
     data: {
@@ -151,13 +172,36 @@
         editor.setTheme("ace/theme/twilight")
         editor.getSession().setMode("ace/mode/sql")
         editor.setOptions({
-          enableBasicAutocompletion: false,
+          enableBasicAutocompletion: true,
           enableSnippets: false,
-          enableLiveAutocompletion: false,
+          enableLiveAutocompletion: true,
           highlightActiveLine: false,
           fontSize: 12,
           minLines: 10
-        })
+        });
+
+        const tableNames = JSON.parse("<%== j blazer_table_name_completion_source %>");
+        editor.completers.push({
+            getCompletions: function(editor, session, pos, prefix, callback) {
+                callback(null, tableNames);
+            }
+        });
+
+        editor.completers.push({
+            getCompletions: function(editor, session, pos, prefix, callback) {
+                const tableName = extractTableNameFromEditor(editor.getValue(), pos);
+                if (tableName !== null) {
+                    for (index = 0; index < tableNames.length; index++) {
+                        const entry = tableNames[index];
+                        if (entry.value === tableName) {
+                            callback(null, entry.columns);
+                            break;
+                        }
+                    }
+                }
+            }
+        });
+
         editor.renderer.setShowGutter(true)
         editor.renderer.setPrintMarginColumn(false)
         editor.renderer.setPadding(10)

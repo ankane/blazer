@@ -25,6 +25,7 @@ module Blazer
       Blazer.from_email = Blazer.settings["from_email"] if Blazer.settings["from_email"]
       Blazer.before_action = Blazer.settings["before_action_method"] if Blazer.settings["before_action_method"]
       Blazer.check_schedules = Blazer.settings["check_schedules"] if Blazer.settings.key?("check_schedules")
+      Blazer.row_limit = Blazer.settings["row_limit"] if Blazer.settings["row_limit"]
       Blazer.cache ||= Rails.cache
 
       Blazer.anomaly_checks = Blazer.settings["anomaly_checks"] || false

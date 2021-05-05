@@ -324,7 +324,8 @@ module Blazer
       end
 
       def set_query
-        @query = Blazer::Query.find(params[:id].to_s.split("-").first)
+        id = params[:id].to_s.scan(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i).first || params[:id].to_s.split("-").first
+        @query = Blazer::Query.find(id)
 
         unless @query.viewable?(blazer_user)
           render_forbidden

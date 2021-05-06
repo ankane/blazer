@@ -735,6 +735,8 @@ Supports [InfluxQL](https://docs.influxdata.com/influxdb/v1.8/query_language/exp
 
 ### MongoDB
 
+*Requires MongoDB < 4.2 at the moment*
+
 Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:
 
 ```yml

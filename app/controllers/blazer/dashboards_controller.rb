@@ -77,14 +77,17 @@ module Blazer
       end
 
       def set_dashboard
-        @dashboard = Blazer::Dashboard.find(params[:id])
+        id = params[:id].to_s.scan(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i).first || params[:id].to_s.split("-").first
+        @dashboard = Blazer::Dashboard.find(id)
       end
 
       def update_dashboard(dashboard)
         dashboard.assign_attributes(dashboard_params)
         Blazer::Dashboard.transaction do
           if params[:query_ids].is_a?(Array)
-            query_ids = params[:query_ids].map(&:to_i)
+            query_ids = params[:query_ids].each { |id|
+              id.match?(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i) ? id.to_s : id.to_i
+            }     
             @queries = Blazer::Query.find(query_ids).sort_by { |q| query_ids.index(q.id) }
           end
           if dashboard.save

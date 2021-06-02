@@ -60,7 +60,7 @@ module Blazer
             column_types.each_with_index do |ct, i|
               # TODO more column_types
               case ct
-              when "timestamp"
+              when "timestamp", "timestamp with time zone"
                 rows.each do |row|
                   row[i] = utc.parse(row[i])
                 end

@@ -208,7 +208,7 @@ module Blazer
       end
 
       def sqlserver?
-        ["SQLServer", "tinytds", "mssql"].include?(adapter_name)
+        data_source.settings["url"].starts_with?("jdbc:sqlserver://")
       end
 
       def snowflake?

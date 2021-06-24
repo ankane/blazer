@@ -62,19 +62,19 @@ module Blazer
               case ct
               when "timestamp"
                 rows.each do |row|
-                  row[i] = utc.parse(row[i])
+                  row[i] &&= utc.parse(row[i])
                 end
               when "date"
                 rows.each do |row|
-                  row[i] = Date.parse(row[i])
+                  row[i] &&= Date.parse(row[i])
                 end
               when "bigint"
                 rows.each do |row|
-                  row[i] = row[i].to_i
+                  row[i] &&= row[i].to_i
                 end
               when "double"
                 rows.each do |row|
-                  row[i] = row[i].to_f
+                  row[i] &&= row[i].to_f
                 end
               end
             end

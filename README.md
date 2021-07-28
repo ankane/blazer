@@ -416,11 +416,25 @@ This feature requires PostgreSQL or MySQL.
 
 ## Anomaly Detection
 
-Blazer supports two different approaches to anomaly detection.
+Blazer supports three different approaches to anomaly detection.
+
+### Prophet [master]
+
+Add [prophet](https://github.com/ankane/prophet) to your Gemfile:
+
+```ruby
+gem 'prophet-rb'
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+anomaly_checks: prophet
+```
 
 ### Trend
 
-[Trend](https://trendapi.org/) is easiest to set up. By default, it uses an external service, but you can run it on your own infrastructure as well.
+[Trend](https://trendapi.org/) uses an external service by default, but you can run it on your own infrastructure as well.
 
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 

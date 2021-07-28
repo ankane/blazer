@@ -420,7 +420,7 @@ Blazer supports three different approaches to anomaly detection.
 
 ### Prophet [master]
 
-Add [prophet](https://github.com/ankane/prophet) to your Gemfile:
+Add [prophet-rb](https://github.com/ankane/prophet) to your Gemfile:
 
 ```ruby
 gem 'prophet-rb'

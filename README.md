@@ -456,7 +456,7 @@ Trend.url = "http://localhost:8000"
 
 ### R
 
-R is harder to set up but doesn’t use an external service. It uses Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
+R uses Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
 
 First, [install R](https://cloud.r-project.org/). Then, run:
 

@@ -178,6 +178,7 @@ module Blazer
       when "prophet"
         df = Rover::DataFrame.new(series[0..-2].map { |v| {"ds" => v[0], "y" => v[1]} })
         m = Prophet.new(interval_width: 0.99)
+        m.logger.level = ::Logger::FATAL # no logging
         m.fit(df)
         future = Rover::DataFrame.new(series[-1..-1].map { |v| {"ds" => v[0]} })
         forecast = m.predict(future).to_a[0]

@@ -180,9 +180,9 @@ module Blazer
         m = Prophet.new(interval_width: 0.99)
         m.fit(df)
         future = Rover::DataFrame.new(series[-1..-1].map { |v| {"ds" => v[0]} })
-        forecast = m.predict(future)
-        lower = forecast.to_a[0]["yhat_lower"]
-        upper = forecast.to_a[0]["yhat_upper"]
+        forecast = m.predict(future).to_a[0]
+        lower = forecast["yhat_lower"]
+        upper = forecast["yhat_upper"]
         value = series.last[1]
         value < lower || value > upper
       when "trend"

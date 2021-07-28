@@ -418,7 +418,7 @@ This feature requires PostgreSQL or MySQL.
 
 Blazer supports three different approaches to anomaly detection.
 
-### Prophet [master]
+### Prophet
 
 Add [prophet-rb](https://github.com/ankane/prophet) to your Gemfile:
 

@@ -1,4 +1,4 @@
-## 2.4.3 (unreleased)
+## 2.4.3 (2021-07-27)
 
 - Added Prophet anomaly detection
 - Fixed style for new select items

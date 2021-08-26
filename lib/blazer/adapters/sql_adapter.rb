@@ -226,6 +226,8 @@ module Blazer
             "public"
           elsif sqlserver?
             "dbo"
+          elsif connection_model.respond_to?(:connection_db_config)
+            connection_model.connection_db_config.database
           else
             connection_model.connection_config[:database]
           end

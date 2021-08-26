@@ -42,9 +42,9 @@ module Blazer
               end
             end
           end
-         rescue => e
-           error = e.message
-         end
+        rescue => e
+          error = e.message
+        end
 
         [columns, rows, error]
       end

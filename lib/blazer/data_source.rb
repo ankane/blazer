@@ -144,6 +144,7 @@ module Blazer
 
     def adapter_instance
       @adapter_instance ||= begin
+        # TODO add required settings to adapters
         unless settings["url"] || Rails.env.development? || ["bigquery", "athena", "snowflake", "salesforce"].include?(settings["adapter"])
           raise Blazer::Error, "Empty url for data source: #{id}"
         end
@@ -182,11 +183,12 @@ module Blazer
       Blazer::Result.new(self, columns, rows, error, nil, cache && !cache_data.nil?)
     end
 
+    # TODO check for adapter with same name, default to sql
     def detect_adapter
-      schema = settings["url"].to_s.split("://").first
-      case schema
-      when "mongodb", "presto", "cassandra"
-        schema
+      scheme = settings["url"].to_s.split("://").first
+      case scheme
+      when "mongodb", "presto", "cassandra", "ignite"
+        scheme
       else
         "sql"
       end

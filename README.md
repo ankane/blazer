@@ -4,7 +4,7 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 [Try it out](https://blazer.dokkuapp.com)
 
-[![Screenshot](https://blazer.dokkuapp.com/assets/blazer-90bd7acc9fdf1f5fc2bb25bfe5506f746ec8c9d2e0730388debfd697e32f75b8.png)](https://blazer.dokkuapp.com)
+[![Screenshot](https://blazer.dokkuapp.com/assets/blazer-a10baa40fef1ca2f5bb25fc97bcf261a6a54192fb1ad0f893c0f562b8c7c4697.png)](https://blazer.dokkuapp.com)
 
 Blazer is also available as a [Docker image](https://github.com/ankane/blazer-docker).
 
@@ -59,7 +59,7 @@ For production, specify your database:
 ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database"
 ```
 
-Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user. [See how to create one](#permissions).
+Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read-only user. [See how to create one](#permissions).
 
 #### Checks (optional)
 
@@ -412,15 +412,29 @@ SELECT users.id AS user_id, orders.created_at AS conversion_time, users.created_
 FROM users LEFT JOIN orders ON orders.user_id = users.id
 ```
 
-This feature requires PostgreSQL.
+This feature requires PostgreSQL or MySQL.
 
 ## Anomaly Detection
 
-Blazer supports two different approaches to anomaly detection.
+Blazer supports three different approaches to anomaly detection.
+
+### Prophet
+
+Add [prophet-rb](https://github.com/ankane/prophet) to your Gemfile:
+
+```ruby
+gem 'prophet-rb'
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+anomaly_checks: prophet
+```
 
 ### Trend
 
-[Trend](https://trendapi.org/) is easiest to set up. By default, it uses an external service, but you can run it on your own infrastructure as well.
+[Trend](https://trendapi.org/) uses an external service by default, but you can run it on your own infrastructure as well.
 
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 
@@ -442,7 +456,7 @@ Trend.url = "http://localhost:8000"
 
 ### R
 
-R is harder to set up but doesn’t use an external service. It uses Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
+R uses Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
 
 First, [install R](https://cloud.r-project.org/). Then, run:
 
@@ -566,6 +580,9 @@ data_sources:
 - [Amazon Athena](#amazon-athena)
 - [Amazon Redshift](#amazon-redshift)
 - [Apache Drill](#apache-drill)
+- [Apache Hive](#apache-hive)
+- [Apache Ignite](#apache-ignite)
+- [Apache Spark](#apache-spark)
 - [Cassandra](#cassandra)
 - [Druid](#druid)
 - [Elasticsearch](#elasticsearch)
@@ -626,6 +643,42 @@ data_sources:
     adapter: drill
     url: http://hostname:8047
 ```
+
+### Apache Hive
+
+Add [hexspace](https://github.com/ankane/hexspace) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: hive
+    url: sasl://user:password@hostname:10000/database
+```
+
+Use a [read-only user](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Authorization). Requires [HiveServer2](https://cwiki.apache.org/confluence/display/Hive/Setting+Up+HiveServer2).
+
+### Apache Ignite
+
+Add [ignite-client](https://github.com/ankane/ignite-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: ignite://user:password@hostname:10800
+```
+
+### Apache Spark
+
+Add [hexspace](https://github.com/ankane/hexspace) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: spark
+    url: sasl://user:password@hostname:10000/database
+```
+
+Use a read-only user. Requires the [Thrift server](https://spark.apache.org/docs/latest/sql-distributed-sql-engine.html).
 
 ### Cassandra
 
@@ -695,6 +748,8 @@ data_sources:
 Supports [InfluxQL](https://docs.influxdata.com/influxdb/v1.8/query_language/explore-data/)
 
 ### MongoDB
+
+*Requires MongoDB < 4.2 at the moment*
 
 Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:
 

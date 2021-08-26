@@ -1,6 +1,17 @@
-## 2.4.1 (unreleased)
+## 2.4.3 (2021-07-27)
+
+- Added Prophet anomaly detection
+- Fixed style for new select items
+
+## 2.4.2 (2021-02-08)
+
+- Added support for Apache Ignite
+
+## 2.4.1 (2021-01-25)
 
 - Added cohorts for MySQL
+- Added support for Apache Hive and Apache Spark
+- Fixed deprecation warning with Active Record 6.1
 
 ## 2.4.0 (2020-12-15)
 

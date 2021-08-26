@@ -236,3 +236,7 @@ h2 {
 .schema-table {
   max-width: 500px;
 }
+
+.selectize-dropdown .create {
+  padding: 5px 8px;
+}

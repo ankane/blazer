@@ -10,7 +10,7 @@ module Blazer
 
     protect_from_forgery with: :exception
 
-    if ENV["BLAZER_PASSWORD"]
+    if ENV["BLAZER_PASSWORD"].present?
       http_basic_authenticate_with name: ENV["BLAZER_USERNAME"], password: ENV["BLAZER_PASSWORD"]
     end
 

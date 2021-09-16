@@ -1,4 +1,4 @@
-## 2.4.4 (unreleased)
+## 2.4.4 (2021-09-15)
 
 - Fixed issue with forked queries not appearing on home page
 

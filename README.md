@@ -977,7 +977,7 @@ override_csp: true
 
 ### 2.4.4
 
-Due to a bug, newly forked queries stopped appearing on the home page when archiving was enabled. To restore them, run:
+Due to a bug, some newly forked queries stopped appearing on the home page when archiving was enabled. To restore them, run:
 
 ```ruby
 Blazer::Query.where(status: nil).update_all(status: "active")

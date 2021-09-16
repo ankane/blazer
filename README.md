@@ -975,14 +975,6 @@ override_csp: true
 
 ## Upgrading
 
-### 2.4.4
-
-Due to a bug, some newly forked queries stopped appearing on the home page when archiving was enabled. To restore them, run:
-
-```ruby
-Blazer::Query.where(status: nil).update_all(status: "active")
-```
-
 ### 2.3
 
 To archive queries, create a migration

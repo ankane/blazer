@@ -71,7 +71,7 @@ module Blazer
         @sql_errors << error if error
       end
 
-      @query.update!(status: "active") if @query.try(:status) == "archived"
+      @query.update!(status: "active") if @query.respond_to?(:status) && @query.status.in?(["archived", nil])
 
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
 

@@ -179,6 +179,7 @@ module Blazer
       if params[:commit] == "Fork"
         @query = Blazer::Query.new
         @query.creator = blazer_user if @query.respond_to?(:creator)
+        @query.status = "active" if @query.respond_to?(:status)
       end
       unless @query.editable?(blazer_user)
         @query.errors.add(:base, "Sorry, permission denied")

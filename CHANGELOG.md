@@ -1,3 +1,7 @@
+## 2.4.4 (unreleased)
+
+- Fixed issue with forked queries not appearing on home page
+
 ## 2.4.3 (2021-07-27)
 
 - Added Prophet anomaly detection

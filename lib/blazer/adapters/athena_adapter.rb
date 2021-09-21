@@ -8,19 +8,25 @@ module Blazer
         rows = []
         error = nil
 
+        query_options = {
+          query_string: statement,
+          # use token so we fetch cached results after query is run
+          client_request_token: Digest::MD5.hexdigest([statement, data_source.id].join("/")),
+          query_execution_context: {
+            database: database,
+          }
+        }
+
+        if settings["output_location"]
+          query_options[:result_configuration] = {output_location: settings["output_location"]}
+        end
+
+        if settings["workgroup"]
+          query_options[:work_group] = settings["workgroup"]
+        end
+
         begin
-          resp =
-            client.start_query_execution(
-              query_string: statement,
-              # use token so we fetch cached results after query is run
-              client_request_token: Digest::MD5.hexdigest([statement,data_source.id].join("/")),
-              query_execution_context: {
-                database: database,
-              },
-              result_configuration: {
-                output_location: settings["output_location"]
-              }
-            )
+          resp = client.start_query_execution(**query_options)
           query_execution_id = resp.query_execution_id
 
           timeout = data_source.timeout || 300

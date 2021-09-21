@@ -1,7 +1,9 @@
 ## 2.4.6 (unreleased)
 
+- Added support for workgroup with Amazon Athena
 - Added casting for timestamp with time zone columns with Amazon Athena
 - Added support for setting credentials in config file with Amazon Athena
+- Made output location optional with Amazon Athena
 - Fixed casting error for `NULL` values with Amazon Athena
 
 ## 2.4.5 (2021-09-15)

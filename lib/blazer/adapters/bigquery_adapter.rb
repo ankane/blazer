@@ -13,7 +13,7 @@ module Blazer
           # code is for backward compatibility
           if !results.respond_to?(:complete?) || results.complete?
             columns = results.first.keys.map(&:to_s) if results.size > 0
-            rows = results.map(&:values)
+            rows = results.all.map(&:values)
           else
             error = Blazer::TIMEOUT_MESSAGE
           end

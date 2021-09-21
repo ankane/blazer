@@ -621,6 +621,8 @@ data_sources:
     adapter: athena
     database: database
     output_location: s3://some-bucket/
+    access_key_id: ...     # optional
+    secret_access_key: ... # optional
 ```
 
 Here’s an example IAM policy:

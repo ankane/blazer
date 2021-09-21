@@ -118,11 +118,21 @@ module Blazer
       end
 
       def client
-        @client ||= Aws::Athena::Client.new
+        @client ||= Aws::Athena::Client.new(**client_options)
       end
 
       def glue
-        @glue ||= Aws::Glue::Client.new
+        @glue ||= Aws::Glue::Client.new(**client_options)
+      end
+
+      def client_options
+        @client_options ||= begin
+          if settings["access_key_id"] || settings["secret_access_key"]
+            {credentials: Aws::Credentials.new(settings["access_key_id"], settings["secret_access_key"])}
+          else
+            {}
+          end
+        end
       end
     end
   end

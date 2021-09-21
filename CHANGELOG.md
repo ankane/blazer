@@ -5,6 +5,7 @@
 - Added support for setting credentials in config file with Amazon Athena
 - Made output location optional with Amazon Athena
 - Fixed casting error for `NULL` values with Amazon Athena
+- Fixed issue with Google BigQuery only showing first page of results
 
 ## 2.4.5 (2021-09-15)
 

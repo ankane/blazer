@@ -1,4 +1,4 @@
-## 2.4.6 (unreleased)
+## 2.4.6 (2021-09-20)
 
 - Added support for workgroup with Amazon Athena
 - Added casting for timestamp with time zone columns with Amazon Athena

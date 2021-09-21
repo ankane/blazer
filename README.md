@@ -623,6 +623,41 @@ data_sources:
     output_location: s3://some-bucket/
 ```
 
+Here’s an example IAM policy:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "athena:GetQueryExecution",
+                "athena:GetQueryResults",
+                "athena:StartQueryExecution"
+            ],
+            "Resource": [
+                "arn:aws:athena:region:account-id:workgroup/primary"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "glue:GetTable",
+                "glue:GetTables"
+            ],
+            "Resource": [
+                "arn:aws:glue:region:account-id:catalog",
+                "arn:aws:glue:region:account-id:database/default",
+                "arn:aws:glue:region:account-id:table/default/*"
+            ]
+        }
+    ]
+}
+```
+
+You also need to configure [S3 permissions](https://aws.amazon.com/premiumsupport/knowledge-center/access-denied-athena/).
+
 ### Amazon Redshift
 
 Add [activerecord6-redshift-adapter](https://github.com/kwent/activerecord6-redshift-adapter) or [activerecord5-redshift-adapter](https://github.com/ConsultingMD/activerecord5-redshift-adapter) to your Gemfile and set:

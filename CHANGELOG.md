@@ -1,3 +1,9 @@
+## 2.4.6 (unreleased)
+
+- Added casting for timestamp with time zone columns with Amazon Athena
+- Added support for setting credentials in config file with Amazon Athena
+- Fixed casting error for `NULL` values with Amazon Athena
+
 ## 2.4.5 (2021-09-15)
 
 - Improved fix for some forked queries not appearing on home page

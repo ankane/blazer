@@ -11,7 +11,7 @@ module Blazer
         query_options = {
           query_string: statement,
           # use token so we fetch cached results after query is run
-          client_request_token: Digest::MD5.hexdigest([statement, data_source.id].join("/")),
+          client_request_token: Digest::MD5.hexdigest([statement, data_source.id, settings["workgroup"]].compact.join("/")),
           query_execution_context: {
             database: database,
           }

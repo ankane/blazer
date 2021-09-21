@@ -1,3 +1,7 @@
+## 2.4.7 (unreleased)
+
+- Made Action Mailer optional
+
 ## 2.4.6 (2021-09-20)
 
 - Added support for workgroup with Amazon Athena

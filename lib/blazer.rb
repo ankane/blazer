@@ -38,6 +38,11 @@ module Blazer
   class UploadError < Error; end
   class TimeoutNotSupported < Error; end
 
+  # actionmailer optional
+  autoload :CheckMailer, "blazer/check_mailer"
+  # net/http optional
+  autoload :SlackNotifier, "blazer/slack_notifier"
+
   class << self
     attr_accessor :audit
     attr_reader :time_zone

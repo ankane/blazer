@@ -1,6 +1,7 @@
 ## 2.4.7 (unreleased)
 
 - Made Action Mailer optional
+- Fixed error with multiple maps on dashboard
 
 ## 2.4.6 (2021-09-20)
 

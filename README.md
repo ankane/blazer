@@ -100,6 +100,14 @@ BLAZER_SLACK_WEBHOOK_URL=https://hooks.slack.com/...
 
 Name the webhook “Blazer” and add a cool icon.
 
+If you want to send more than 1 channel, [create an app](https://api.slack.com/apps?new_app=1), create one webhook per channel
+you want to send to, and use the following syntax in blazer.yml
+```yaml
+slack_webhook_url:
+  a_channel: https://hooks.slack.com/...
+  another_channel: https://hooks.slack.com/...
+```   
+
 ## Authentication
 
 Don’t forget to protect the dashboard in production.

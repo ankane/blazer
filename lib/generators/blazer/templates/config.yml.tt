@@ -55,6 +55,11 @@ audit: true
 
 # webhook for Slack
 # slack_webhook_url: <%%= ENV["BLAZER_SLACK_WEBHOOK_URL"] %>
+#
+# or for more than one channel
+# slack_webhook_url:
+#   a_channel: https://hooks.slack.com/...
+#   another_channel: https://hooks.slack.com/...
 
 check_schedules:
   - "1 day"

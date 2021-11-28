@@ -49,7 +49,12 @@ module Blazer
         ]
       }
 
-      post(Blazer.slack_webhook_url, payload)
+      url = if Blazer.slack_webhook_url.is_a?(Hash)
+              Blazer.slack_webhook_url[channel]
+            else
+              Blazer.slack_webhook_url
+            end
+      post(url, payload) if url.present?
     end
 
     # https://api.slack.com/docs/message-formatting#how_to_escape_characters

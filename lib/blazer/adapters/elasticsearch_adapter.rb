@@ -15,7 +15,7 @@ module Blazer
             rows = response["rows"]
             date_indexes.each do |i|
               rows.each do |row|
-                row[i] = Time.parse(row[i])
+                row[i] &&= Time.parse(row[i])
               end
             end
           end

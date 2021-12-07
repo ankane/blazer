@@ -502,7 +502,7 @@ A forecast link will appear for queries that return 2 columns with types timesta
 
 ### Prophet
 
-Add [prophet](https://github.com/ankane/prophet) to your Gemfile:
+Add [prophet-rb](https://github.com/ankane/prophet) to your Gemfile:
 
 ```ruby
 gem 'prophet-rb', '>= 0.2.1'

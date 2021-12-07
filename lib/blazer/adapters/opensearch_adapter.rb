@@ -9,6 +9,8 @@ module Blazer
         begin
           response = client.transport.perform_request("POST", "_plugins/_sql", {}, {query: "#{statement} /*#{comment}*/"}).body
           columns = response["schema"].map { |v| v["name"] }
+          # TODO typecast more types
+          # https://github.com/opensearch-project/sql/blob/main/docs/user/general/datatypes.rst
           date_indexes = response["schema"].each_index.select { |i| response["schema"][i]["type"] == "timestamp" }
           if columns.any?
             rows = response["datarows"]

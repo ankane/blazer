@@ -7,10 +7,10 @@ module Blazer
         error = nil
 
         begin
-          response = client.xpack.sql.query(body: {query: "#{statement} /*#{comment}*/"})
+          response = client.transport.perform_request("POST", endpoint, {}, {query: "#{statement} /*#{comment}*/"}).body
           columns = response["columns"].map { |v| v["name"] }
           # Elasticsearch does not differentiate between dates and times
-          date_indexes = response["columns"].each_index.select { |i| response["columns"][i]["type"] == "date" }
+          date_indexes = response["columns"].each_index.select { |i| ["date", "datetime"].include?(response["columns"][i]["type"]) }
           if columns.any?
             rows = response["rows"]
             date_indexes.each do |i|
@@ -37,6 +37,10 @@ module Blazer
       end
 
       protected
+
+      def endpoint
+        @endpoint ||= client.info["version"]["number"].to_i >= 7 ? "_sql" : "_xpack/sql"
+      end
 
       def client
         @client ||= Elasticsearch::Client.new(url: settings["url"])

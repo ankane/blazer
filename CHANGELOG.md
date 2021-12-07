@@ -1,6 +1,7 @@
 ## 2.4.8 (unreleased)
 
 - Added support for OpenSearch
+- Removed `elasticsearch-xpack` dependency for Elasticsearch
 
 ## 2.4.7 (2021-09-25)
 

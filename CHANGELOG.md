@@ -1,3 +1,7 @@
+## 2.4.8 (unreleased)
+
+- Added support for OpenSearch
+
 ## 2.4.7 (2021-09-25)
 
 - Made Action Mailer optional

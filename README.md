@@ -592,6 +592,7 @@ data_sources:
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
 - [Neo4j](#neo4j)
+- [OpenSearch](#opensearch) [unreleased]
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
@@ -818,6 +819,17 @@ data_sources:
   my_source:
     adapter: neo4j
     url: http://user:password@hostname:7474
+```
+
+### OpenSearch
+
+Add [opensearch-ruby](https://github.com/opensearch-project/opensearch-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: opensearch
+    url: http://user:password@hostname:9200
 ```
 
 ### Oracle

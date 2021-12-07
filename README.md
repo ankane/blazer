@@ -592,7 +592,7 @@ data_sources:
 - [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
 - [Neo4j](#neo4j)
-- [OpenSearch](#opensearch) [unreleased]
+- [OpenSearch](#opensearch)
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
@@ -744,7 +744,7 @@ data_sources:
 
 ### Elasticsearch
 
-Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) and [elasticsearch-xpack](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-xpack) to your Gemfile and set:
+Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) to your Gemfile and set:
 
 ```yml
 data_sources:

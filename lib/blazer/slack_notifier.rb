@@ -68,14 +68,14 @@ module Blazer
     end
 
     def self.post(payload)
-      if Blazer.slack_oauth_token
+      if Blazer.slack_webhook_url
+        post_api(Blazer.slack_webhook_url, payload, {})
+      else
         headers = {
           "Authorization" => "Bearer #{Blazer.slack_oauth_token}",
           "Content-type" => "application/json"
         }
         post_api("https://slack.com/api/chat.postMessage", payload, headers)
-      else
-        post_api(Blazer.slack_webhook_url, payload, {})
       end
     end
 

@@ -75,11 +75,11 @@ module Blazer
         }
         post_api("https://slack.com/api/chat.postMessage", payload, headers)
       else
-        post_api(Blazer.slack_webhook_url, payload)
+        post_api(Blazer.slack_webhook_url, payload, {})
       end
     end
 
-    def self.post_api(url, payload, headers = {})
+    def self.post_api(url, payload, headers)
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true

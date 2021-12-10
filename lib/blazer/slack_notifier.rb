@@ -68,7 +68,7 @@ module Blazer
     end
 
     def self.post(payload)
-      if Blazer.slack_webhook_url
+      if Blazer.slack_webhook_url.present?
         post_api(Blazer.slack_webhook_url, payload, {})
       else
         headers = {

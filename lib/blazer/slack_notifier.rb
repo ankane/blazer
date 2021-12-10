@@ -69,24 +69,23 @@ module Blazer
 
     def self.post(payload)
       if Blazer.slack_oauth_token
-        uri = URI.parse("https://slack.com/api/chat.postMessage")
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true
-        http.open_timeout = 3
-        http.read_timeout = 5
         headers = {
           "Authorization" => "Bearer #{Blazer.slack_oauth_token}",
           "Content-type" => "application/json"
         }
-        http.post(uri.request_uri, payload.to_json, headers)
+        post_api("https://slack.com/api/chat.postMessage", payload, headers)
       else
-        uri = URI.parse(Blazer.slack_webhook_url)
-        http = Net::HTTP.new(uri.host, uri.port)
-        http.use_ssl = true
-        http.open_timeout = 3
-        http.read_timeout = 5
-        http.post(uri.request_uri, payload.to_json)
+        post_api(Blazer.slack_webhook_url, payload)
       end
+    end
+
+    def self.post_api(url, payload, headers = {})
+      uri = URI.parse(url)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.open_timeout = 3
+      http.read_timeout = 5
+      http.post(uri.request_uri, payload.to_json, headers)
     end
   end
 end

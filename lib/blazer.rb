@@ -63,6 +63,7 @@ module Blazer
     attr_accessor :query_viewable
     attr_accessor :query_editable
     attr_accessor :override_csp
+    attr_accessor :slack_oauth_token
     attr_accessor :slack_webhook_url
     attr_accessor :mapbox_access_token
   end
@@ -213,7 +214,7 @@ module Blazer
   end
 
   def self.slack?
-    slack_webhook_url.present?
+    slack_oauth_token.present? || slack_webhook_url.present?
   end
 
   def self.uploads?

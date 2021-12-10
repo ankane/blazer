@@ -1,3 +1,7 @@
+## 2.5.0 (unreleased)
+
+- Added support for Slack OAuth tokens
+
 ## 2.4.8 (2021-12-07)
 
 - Added support for OpenSearch

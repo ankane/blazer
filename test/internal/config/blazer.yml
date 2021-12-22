@@ -32,6 +32,10 @@ data_sources:
     smart_columns:
       # user_id: "SELECT id, name FROM users WHERE id IN {value}"
 
+  elasticsearch:
+    adapter: elasticsearch
+    url: http://localhost:9200
+
 # create audits
 audit: true
 

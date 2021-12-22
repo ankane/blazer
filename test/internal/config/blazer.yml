@@ -2,7 +2,7 @@
 
 data_sources:
   main:
-    url: "sqlite3::memory:"
+    url: postgres://localhost/blazer_test
 
     # statement timeout, in seconds
     # none by default

@@ -27,9 +27,10 @@ class ControllerTest < ActionDispatch::IntegrationTest
     assert_equal query.data_source, audit.data_source
   end
 
-  # TODO switch to postgres and check table names
   def test_tables
     get blazer.tables_queries_path(data_source: "main")
     assert_response :success
+    expected = ["ar_internal_metadata", "blazer_audits", "blazer_checks", "blazer_dashboard_queries", "blazer_dashboards", "blazer_queries", "schema_migrations"]
+    assert_equal expected, JSON.parse(response.body).map { |v| v["table"] }
   end
 end

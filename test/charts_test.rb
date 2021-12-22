@@ -1,10 +1,9 @@
 require_relative "test_helper"
 
 class ChartsTest < ActionDispatch::IntegrationTest
-  # TODO fix casting
   def test_line_chart
-    run_query "SELECT date('now'), 1"
-    # assert_match "LineChart", response.body
+    run_query "SELECT NOW(), 1"
+    assert_match "LineChart", response.body
   end
 
   def test_column_chart_format1
@@ -43,18 +42,18 @@ class ChartsTest < ActionDispatch::IntegrationTest
     assert_match "map", response.body
   end
 
-  # TODO update
   def test_target
-    run_query "SELECT date('now'), 1, 2 AS target"
+    run_query "SELECT NOW(), 1, 2 AS target"
+    assert_match %{"name":"target"}, response.body
   end
 
   def test_cohort_analysis
-    run_query "SELECT 1 AS user_id, date('now') AS conversion_time /* cohort analysis */"
-    assert_match "This data source does not support cohort analysis", response.body
+    run_query "SELECT 1 AS user_id, NOW() AS conversion_time /* cohort analysis */", query_id: 1
+    assert_match "1 cohort", response.body
   end
 
-  def run_query(statement)
-    post blazer.run_queries_path, params: {statement: statement, data_source: "main"}, xhr: true
+  def run_query(statement, query_id: nil)
+    post blazer.run_queries_path, params: {statement: statement, data_source: "main", query_id: query_id}, xhr: true
     assert_response :success
   end
 end

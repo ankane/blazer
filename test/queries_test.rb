@@ -33,4 +33,14 @@ class QueriesTest < ActionDispatch::IntegrationTest
     tables = JSON.parse(response.body).map { |v| v["table"] }
     assert_includes tables, "blazer_queries"
   end
+
+  def test_schema
+    get blazer.schema_queries_path(data_source: "main")
+    assert_response :success
+  end
+
+  def test_docs
+    get blazer.docs_queries_path(data_source: "main")
+    assert_response :success
+  end
 end

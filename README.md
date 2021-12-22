@@ -412,7 +412,7 @@ SELECT users.id AS user_id, orders.created_at AS conversion_time, users.created_
 FROM users LEFT JOIN orders ON orders.user_id = users.id
 ```
 
-This feature requires PostgreSQL or MySQL.
+This feature requires PostgreSQL or MySQL 8.
 
 ## Anomaly Detection
 

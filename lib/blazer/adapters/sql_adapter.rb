@@ -146,7 +146,7 @@ module Blazer
             date_sql = "CAST(DATE_FORMAT(#{time_sql}, '%Y-%m-01') AS DATE)"
             date_params = [tzname]
           end
-          bucket_sql = "CAST(CEIL(TIMESTAMPDIFF(SECOND, cohorts.cohort_time, query.conversion_time) / ?) AS INTEGER)"
+          bucket_sql = "CAST(CEIL(TIMESTAMPDIFF(SECOND, cohorts.cohort_time, query.conversion_time) / ?) AS SIGNED)"
         else
           date_sql = "date_trunc(?, cohorts.cohort_time::timestamptz AT TIME ZONE ?)::date"
           date_params = [period, tzname]

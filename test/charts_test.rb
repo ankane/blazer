@@ -51,9 +51,4 @@ class ChartsTest < ActionDispatch::IntegrationTest
     run_query "SELECT 1 AS user_id, NOW() AS conversion_time /* cohort analysis */", query_id: 1
     assert_match "1 cohort", response.body
   end
-
-  def run_query(statement, query_id: nil)
-    post blazer.run_queries_path, params: {statement: statement, data_source: "main", query_id: query_id}, xhr: true
-    assert_response :success
-  end
 end

@@ -73,7 +73,7 @@ check_schedules:
 mapbox_access_token: token
 
 # enable uploads
-# uploads:
-#   url:
-#   schema: uploads
-#   data_source: main
+uploads:
+  url: postgres://localhost/blazer_test
+  schema: uploads
+  data_source: main

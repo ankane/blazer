@@ -1,6 +1,6 @@
 require_relative "test_helper"
 
-class ControllerTest < ActionDispatch::IntegrationTest
+class ChartsTest < ActionDispatch::IntegrationTest
   # TODO fix casting
   def test_line_chart
     run_query "SELECT date('now'), 1"

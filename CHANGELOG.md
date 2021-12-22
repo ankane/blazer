@@ -1,6 +1,7 @@
 ## 2.5.0 (unreleased)
 
 - Added support for Slack OAuth tokens
+- Improved table preview for MySQL
 - Fixed cohort analysis for MySQL
 
 ## 2.4.8 (2021-12-07)

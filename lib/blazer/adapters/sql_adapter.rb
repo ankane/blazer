@@ -238,6 +238,9 @@ module Blazer
         if settings["schemas"]
           where = "table_schema IN (?)"
           schemas = settings["schemas"]
+        elsif mysql?
+          where = "table_schema IN (?)"
+          schemas = [default_schema]
         else
           where = "table_schema NOT IN (?)"
           schemas = ["information_schema"]

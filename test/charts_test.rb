@@ -7,9 +7,15 @@ class ChartsTest < ActionDispatch::IntegrationTest
     # assert_match "LineChart", response.body
   end
 
-  def test_column_chart
+  def test_column_chart_format1
     run_query "SELECT 'Label', 1"
     assert_match "ColumnChart", response.body
+  end
+
+  def test_column_chart_format2
+    run_query "SELECT 'Label', 'Group', 1"
+    assert_match "ColumnChart", response.body
+    assert_match %{"name":"Group"}, response.body
   end
 
   def test_scatter_chart

@@ -1,6 +1,6 @@
 require_relative "test_helper"
 
-class ControllerTest < ActionDispatch::IntegrationTest
+class QueriesTest < ActionDispatch::IntegrationTest
   def setup
     Blazer::Audit.delete_all
     Blazer::Query.delete_all

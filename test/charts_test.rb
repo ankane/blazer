@@ -42,6 +42,11 @@ class ChartsTest < ActionDispatch::IntegrationTest
     run_query "SELECT date('now'), 1, 2 AS target"
   end
 
+  def test_cohort_analysis
+    run_query "SELECT 1 AS user_id, date('now') AS conversion_time /* cohort analysis */"
+    assert_match "This data source does not support cohort analysis", response.body
+  end
+
   def run_query(statement)
     post blazer.run_queries_path, params: {statement: statement, data_source: "main"}, xhr: true
     assert_response :success

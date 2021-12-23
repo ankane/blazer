@@ -27,6 +27,12 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_equal query.data_source, audit.data_source
   end
 
+  def test_rollback
+    create_query
+    run_query "DELETE FROM blazer_queries"
+    assert_equal 1, Blazer::Query.count
+  end
+
   def test_tables
     get blazer.tables_queries_path(data_source: "main")
     assert_response :success

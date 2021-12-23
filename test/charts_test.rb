@@ -53,9 +53,9 @@ class ChartsTest < ActionDispatch::IntegrationTest
   end
 
   def test_forecasting
-    skip "Too slow" unless ENV["TEST_FORECASTING"]
+    skip "Too slow" unless ENV["TEST_PROPHET"]
 
-    query = Blazer::Query.create!(statement: "SELECT current_date + n AS day, n FROM generate_series(1, 30) n", data_source: "main")
+    query = create_query(statement: "SELECT current_date + n AS day, n FROM generate_series(1, 30) n")
     run_query query.statement, query_id: query.id, forecast: "t"
     assert_match %{"name":"forecast"}, response.body
   end

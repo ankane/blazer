@@ -41,6 +41,23 @@ class ChecksTest < ActionDispatch::IntegrationTest
     assert_equal "failing", check.state
   end
 
+  def test_anomaly
+    skip "Too slow" unless ENV["TEST_PROPHET"]
+
+    query = create_query(statement: "SELECT current_date + n AS day, 1 FROM generate_series(1, 30) n")
+    check = create_check(query: query, check_type: "anomaly")
+
+    Blazer.run_checks(schedule: "5 minutes")
+    check.reload
+    assert_equal "passing", check.state
+
+    query.update!(statement: "SELECT current_date + n AS day, 1 FROM generate_series(1, 30) n UNION ALL SELECT current_date + 31, 2")
+
+    Blazer.run_checks(schedule: "5 minutes")
+    check.reload
+    assert_equal "failing", check.state
+  end
+
   def test_emails
     query = create_query
     check = create_check(query: query, check_type: "bad_data", emails: "hi@example.org")

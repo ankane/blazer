@@ -46,9 +46,4 @@ class ChartsTest < ActionDispatch::IntegrationTest
     run_query "SELECT NOW(), 1, 2 AS target"
     assert_match %{"name":"target"}, response.body
   end
-
-  def test_cohort_analysis
-    run_query "SELECT 1 AS user_id, NOW() AS conversion_time /* cohort analysis */", query_id: 1
-    assert_match "1 cohort", response.body
-  end
 end

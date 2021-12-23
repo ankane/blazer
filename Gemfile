@@ -11,6 +11,7 @@ gem "sprockets-rails"
 
 # data sources
 gem "elasticsearch"
+gem "mysql2"
 
 # anomaly detection and forecasting
 gem "prophet-rb" if ENV["TEST_PROPHET"]

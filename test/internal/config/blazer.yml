@@ -36,6 +36,9 @@ data_sources:
     adapter: elasticsearch
     url: http://localhost:9200
 
+  mysql:
+    url: mysql2://localhost:3306/blazer_test
+
 # create audits
 audit: true
 

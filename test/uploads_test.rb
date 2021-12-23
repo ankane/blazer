@@ -22,5 +22,6 @@ class UploadsTest < ActionDispatch::IntegrationTest
     assert_equal "timestamp with time zone", column_types["c"]
     assert_equal "date", column_types["d"]
     assert_equal "text", column_types["e"]
+    assert_equal "text", column_types["f"]
   end
 end

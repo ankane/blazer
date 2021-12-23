@@ -13,7 +13,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
 
   def test_run
     query = create_query
-    check = Blazer::Check.create!(query: query, schedule: "5 minutes", emails: "hi@example.org")
+    check = Blazer::Check.create!(query: query, schedule: "5 minutes", emails: "hi@example.org", check_type: "bad_data")
 
     assert_emails 0 do
       Blazer.send_failing_checks

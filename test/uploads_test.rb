@@ -16,5 +16,9 @@ class UploadsTest < ActionDispatch::IntegrationTest
 
     run_query "SELECT * FROM uploads.line_items"
     assert_response :success
+
+    column_types = Blazer::UploadsConnection.connection.select_all("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'uploads' AND table_name = 'line_items'").rows.to_h
+    assert_equal "bigint", column_types["a"]
+    assert_equal "text", column_types["b"]
   end
 end

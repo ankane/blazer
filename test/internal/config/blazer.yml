@@ -55,7 +55,7 @@ audit: true
 # before_action_method: require_admin
 
 # email to send checks from
-# from_email: blazer@example.org
+from_email: blazer@example.org
 
 # webhook for Slack
 # slack_webhook_url:

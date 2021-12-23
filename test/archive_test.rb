@@ -18,8 +18,4 @@ class ArchiveTest < ActionDispatch::IntegrationTest
     query2.reload
     assert_equal "active", query2.status
   end
-
-  def create_query
-    Blazer::Query.create!(statement: "SELECT 1", data_source: "main", status: "active")
-  end
 end

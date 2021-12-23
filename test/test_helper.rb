@@ -7,7 +7,7 @@ require "minitest/pride"
 logger = ActiveSupport::Logger.new(ENV["VERBOSE"] ? STDERR : nil)
 
 Combustion.path = "test/internal"
-Combustion.initialize! :active_record, :action_controller, :sprockets do
+Combustion.initialize! :active_record, :action_controller, :action_mailer, :sprockets do
   config.action_controller.logger = logger
   config.active_record.logger = logger
 end
@@ -20,5 +20,9 @@ class ActionDispatch::IntegrationTest
   def run_query(statement, **params)
     post blazer.run_queries_path, params: {statement: statement, data_source: "main"}.merge(params), xhr: true
     assert_response :success
+  end
+
+  def create_query
+    Blazer::Query.create!(statement: "SELECT 1", data_source: "main", status: "active")
   end
 end

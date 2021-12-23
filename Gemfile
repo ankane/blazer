@@ -8,7 +8,10 @@ gem "combustion"
 gem "rails"
 gem "pg"
 gem "sprockets-rails"
-gem "prophet-rb" if ENV["TEST_PROPHET"]
 
 # data sources
 gem "elasticsearch"
+
+# anomaly detection and forecasting
+gem "prophet-rb" if ENV["TEST_PROPHET"]
+gem "trend" if ENV["TEST_TREND"]

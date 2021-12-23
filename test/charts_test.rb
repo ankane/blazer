@@ -51,12 +51,4 @@ class ChartsTest < ActionDispatch::IntegrationTest
     run_query "SELECT 1 AS user_id, NOW() AS conversion_time /* cohort analysis */", query_id: 1
     assert_match "1 cohort", response.body
   end
-
-  def test_forecasting
-    skip "Too slow" unless ENV["TEST_PROPHET"]
-
-    query = create_query(statement: "SELECT current_date + n AS day, n FROM generate_series(1, 30) n")
-    run_query query.statement, query_id: query.id, forecast: "t"
-    assert_match %{"name":"forecast"}, response.body
-  end
 end

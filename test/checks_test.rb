@@ -41,21 +41,16 @@ class ChecksTest < ActionDispatch::IntegrationTest
     assert_equal "failing", check.state
   end
 
-  def test_anomaly
-    skip "Too slow" unless ENV["TEST_PROPHET"]
+  def test_anomaly_prophet
+    skip unless ENV["TEST_PROPHET"]
 
-    query = create_query(statement: "SELECT current_date + n AS day, 1 FROM generate_series(1, 30) n")
-    check = create_check(query: query, check_type: "anomaly")
+    assert_anomaly("prophet")
+  end
 
-    Blazer.run_checks(schedule: "5 minutes")
-    check.reload
-    assert_equal "passing", check.state
+  def test_anomaly_trend
+    skip unless ENV["TEST_TREND"]
 
-    query.update!(statement: "SELECT current_date + n AS day, 1 FROM generate_series(1, 30) n UNION ALL SELECT current_date + 31, 2")
-
-    Blazer.run_checks(schedule: "5 minutes")
-    check.reload
-    assert_equal "failing", check.state
+    assert_anomaly("trend")
   end
 
   def test_emails
@@ -77,5 +72,27 @@ class ChecksTest < ActionDispatch::IntegrationTest
 
   def create_check(**attributes)
     Blazer::Check.create!(schedule: "5 minutes", **attributes)
+  end
+
+  def assert_anomaly(anomaly_checks)
+    previous_value = Blazer.anomaly_checks
+    begin
+      Blazer.anomaly_checks = anomaly_checks
+
+      query = create_query(statement: "SELECT current_date + n AS day, 0.1 * random() FROM generate_series(1, 30) n")
+      check = create_check(query: query, check_type: "anomaly")
+
+      Blazer.run_checks(schedule: "5 minutes")
+      check.reload
+      assert_equal "passing", check.state
+
+      query.update!(statement: "SELECT current_date + n AS day, 0.1 * random() FROM generate_series(1, 30) n UNION ALL SELECT current_date + 31, 2")
+
+      Blazer.run_checks(schedule: "5 minutes")
+      check.reload
+      assert_equal "failing", check.state
+    ensure
+      Blazer.anomaly_checks = previous_value
+    end
   end
 end

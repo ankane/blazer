@@ -67,11 +67,11 @@ check_schedules:
 
 # enable anomaly detection
 # note: with trend, time series are sent to https://trendapi.org
-anomaly_checks: prophet
+# anomaly_checks: prophet / trend / r
 
 # enable forecasting
 # note: with trend, time series are sent to https://trendapi.org
-forecasting: prophet
+# forecasting: prophet / trend
 
 # enable map
 mapbox_access_token: token

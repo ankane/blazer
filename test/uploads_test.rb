@@ -5,7 +5,6 @@ class UploadsTest < ActionDispatch::IntegrationTest
     Blazer::Upload.delete_all
   end
 
-  # TODO test column types
   def test_create
     post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/line_items.csv", "text/csv")}}
     assert_response :redirect
@@ -19,6 +18,9 @@ class UploadsTest < ActionDispatch::IntegrationTest
 
     column_types = Blazer::UploadsConnection.connection.select_all("SELECT column_name, data_type FROM information_schema.columns WHERE table_schema = 'uploads' AND table_name = 'line_items'").rows.to_h
     assert_equal "bigint", column_types["a"]
-    assert_equal "text", column_types["b"]
+    assert_equal "numeric", column_types["b"]
+    assert_equal "timestamp with time zone", column_types["c"]
+    assert_equal "date", column_types["d"]
+    assert_equal "text", column_types["e"]
   end
 end

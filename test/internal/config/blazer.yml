@@ -27,10 +27,11 @@ data_sources:
       # status: {0: "Active", 1: "Archived"}
 
     linked_columns:
-      # user_id: "/admin/users/{value}"
+      user_id: "/admin/users/{value}"
 
     smart_columns:
       # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+      status: {0: "Active", 1: "Archived"}
 
   elasticsearch:
     adapter: elasticsearch
@@ -38,6 +39,9 @@ data_sources:
 
   mysql:
     url: mysql2://localhost:3306/blazer_test
+
+  sqlite:
+    url: "sqlite3::memory:"
 
 # create audits
 audit: true
@@ -61,7 +65,7 @@ audit: true
 from_email: blazer@example.org
 
 # webhook for Slack
-# slack_webhook_url:
+slack_webhook_url: http://localhost:5000
 
 check_schedules:
   - "1 day"

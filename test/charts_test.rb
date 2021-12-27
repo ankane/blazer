@@ -1,8 +1,13 @@
 require_relative "test_helper"
 
 class ChartsTest < ActionDispatch::IntegrationTest
-  def test_line_chart
+  def test_line_chart_format1
     run_query "SELECT NOW(), 1"
+    assert_match "LineChart", response.body
+  end
+
+  def test_line_chart_format2
+    run_query "SELECT NOW(), 'Label', 1"
     assert_match "LineChart", response.body
   end
 

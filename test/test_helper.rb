@@ -10,7 +10,10 @@ Combustion.path = "test/internal"
 Combustion.initialize! :active_record, :action_controller, :action_mailer, :sprockets do
   config.action_controller.logger = logger
   config.active_record.logger = logger
+  config.cache_store = :memory_store
 end
+
+Rails.cache.logger = logger
 
 ActiveSupport.on_load(:active_record) do
   connection.execute("CREATE SCHEMA IF NOT EXISTS uploads")

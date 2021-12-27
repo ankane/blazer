@@ -5,6 +5,16 @@ class UploadsTest < ActionDispatch::IntegrationTest
     Blazer::Upload.delete_all
   end
 
+  def test_index
+    get blazer.uploads_path
+    assert_response :success
+  end
+
+  def test_new
+    get blazer.new_upload_path
+    assert_response :success
+  end
+
   def test_create
     post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/line_items.csv", "text/csv")}}
     assert_response :redirect

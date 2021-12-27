@@ -17,5 +17,10 @@ class ArchiveTest < ActionDispatch::IntegrationTest
     assert_equal "archived", query.status
     query2.reload
     assert_equal "active", query2.status
+
+    get blazer.query_path(query)
+    assert_response :success
+    query.reload
+    assert_equal "active", query.status
   end
 end

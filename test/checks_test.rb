@@ -70,6 +70,23 @@ class ChecksTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_slack
+    query = create_query
+    check = create_check(query: query, check_type: "bad_data", slack_channels: "#general")
+
+    assert_slack_messages 0 do
+      Blazer.send_failing_checks
+    end
+
+    assert_slack_messages 1 do
+      Blazer.run_checks(schedule: "5 minutes")
+    end
+
+    assert_slack_messages 1 do
+      Blazer.send_failing_checks
+    end
+  end
+
   def create_check(**attributes)
     Blazer::Check.create!(schedule: "5 minutes", **attributes)
   end
@@ -94,5 +111,13 @@ class ChecksTest < ActionDispatch::IntegrationTest
     ensure
       Blazer.anomaly_checks = previous_value
     end
+  end
+
+  def assert_slack_messages(expected)
+    count = 0
+    Blazer::SlackNotifier.stub :post_api, ->(*) { count += 1 } do
+      yield
+    end
+    assert_equal expected, count
   end
 end

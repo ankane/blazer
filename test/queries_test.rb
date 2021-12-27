@@ -27,6 +27,12 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_equal query.data_source, audit.data_source
   end
 
+  def test_destroy
+    query = create_query
+    delete blazer.query_path(query)
+    assert_response :redirect
+  end
+
   def test_rollback
     create_query
     run_query "DELETE FROM blazer_queries"
@@ -48,5 +54,15 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_docs
     get blazer.docs_queries_path(data_source: "main")
     assert_response :success
+  end
+
+  def test_linked_columns
+    run_query "SELECT 123 AS user_id"
+    assert_match "/admin/users/123", response.body
+  end
+
+  def test_smart_columns
+    run_query "SELECT 0 AS status"
+    assert_match "Active", response.body
   end
 end

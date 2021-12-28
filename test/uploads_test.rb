@@ -44,6 +44,18 @@ class UploadsTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  def test_rename
+    create_upload
+    assert_response :redirect
+
+    upload = Blazer::Upload.last
+    patch blazer.upload_path(upload), params: {upload: {table: "items"}}
+    assert_response :redirect
+
+    tables = Blazer::UploadsConnection.connection.select_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'uploads'").rows.map(&:first)
+    assert_equal ["items"], tables
+  end
+
   def create_upload
     post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/line_items.csv", "text/csv")}}
   end

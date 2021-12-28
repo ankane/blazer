@@ -114,4 +114,16 @@ class QueriesTest < ActionDispatch::IntegrationTest
       Blazer.images = previous_value
     end
   end
+
+  def test_override_csp
+    previous_value = Blazer.override_csp
+    begin
+      Blazer.override_csp = true
+      get blazer.root_path
+      assert_response :success
+      assert response.headers["Content-Security-Policy"]
+    ensure
+      Blazer.override_csp = previous_value
+    end
+  end
 end

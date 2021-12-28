@@ -105,13 +105,9 @@ class QueriesTest < ActionDispatch::IntegrationTest
   end
 
   def test_images
-    previous_value = Blazer.images
-    begin
-      Blazer.images = true
+    Blazer.stub(:images, true) do
       run_query("SELECT 'http://localhost:3000/image.png'")
       assert_match %{<img referrerpolicy="no-referrer" src="http://localhost:3000/image.png" />}, response.body
-    ensure
-      Blazer.images = previous_value
     end
   end
 end

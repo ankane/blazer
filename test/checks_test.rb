@@ -100,10 +100,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
   end
 
   def assert_anomaly(anomaly_checks)
-    previous_value = Blazer.anomaly_checks
-    begin
-      Blazer.anomaly_checks = anomaly_checks
-
+    Blazer.stub(:anomaly_checks, anomaly_checks) do
       query = create_query(statement: "SELECT current_date + n AS day, 0.1 * random() FROM generate_series(1, 30) n")
       check = create_check(query: query, check_type: "anomaly")
 
@@ -116,8 +113,6 @@ class ChecksTest < ActionDispatch::IntegrationTest
       Blazer.run_checks(schedule: "5 minutes")
       check.reload
       assert_equal "failing", check.state
-    ensure
-      Blazer.anomaly_checks = previous_value
     end
   end
 

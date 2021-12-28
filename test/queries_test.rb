@@ -56,6 +56,15 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  def test_smart_variables
+    query = create_query(statement: "SELECT {period}")
+    get blazer.query_path(query)
+    assert_response :success
+    assert_match "day", response.body
+    assert_match "week", response.body
+    assert_match "month", response.body
+  end
+
   def test_linked_columns
     run_query "SELECT 123 AS user_id"
     assert_match "/admin/users/123", response.body

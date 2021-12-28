@@ -65,7 +65,7 @@ audit: true
 from_email: blazer@example.org
 
 # webhook for Slack
-slack_webhook_url: http://localhost:5000
+slack_webhook_url: http://localhost:3000
 
 check_schedules:
   - "1 day"

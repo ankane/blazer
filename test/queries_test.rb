@@ -93,4 +93,25 @@ class QueriesTest < ActionDispatch::IntegrationTest
     run_query("SELECT 1 AS id, 'Chicago' AS city", format: "csv")
     assert_equal "id,city\n1,Chicago\n", response.body
   end
+
+  def test_url
+    run_query "SELECT 'http://localhost:3000/'"
+    assert_match %{<a target="_blank" href="http://localhost:3000/">http://localhost:3000/</a>}, response.body
+  end
+
+  def test_images_default
+    run_query("SELECT 'http://localhost:3000/image.png'")
+    refute_match %{<img referrerpolicy="no-referrer" src="http://localhost:3000/image.png" />}, response.body
+  end
+
+  def test_images
+    previous_value = Blazer.images
+    begin
+      Blazer.images = true
+      run_query("SELECT 'http://localhost:3000/image.png'")
+      assert_match %{<img referrerpolicy="no-referrer" src="http://localhost:3000/image.png" />}, response.body
+    ensure
+      Blazer.images = previous_value
+    end
+  end
 end

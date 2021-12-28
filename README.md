@@ -492,7 +492,7 @@ forecasting: prophet
 
 ### Trend
 
-[Trend](https://trendapi.org/) uses an external service.
+[Trend](https://trendapi.org/) uses an external service by default, but you can run it on your own infrastructure as well.
 
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 
@@ -504,6 +504,12 @@ And add to `config/blazer.yml`:
 
 ```yml
 forecasting: trend
+```
+
+For the [self-hosted API](https://github.com/ankane/trend-api), create an initializer with:
+
+```ruby
+Trend.url = "http://localhost:8000"
 ```
 
 ## Uploads

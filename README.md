@@ -456,45 +456,19 @@ For the [self-hosted API](https://github.com/ankane/trend-api), create an initia
 Trend.url = "http://localhost:8000"
 ```
 
-### R
+### AnomalyDetection.rb (unreleased, experimental)
 
-R uses Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
+Add [anomaly_detection](https://github.com/ankane/AnomalyDetection.rb) to your Gemfile:
 
-First, [install R](https://cloud.r-project.org/). Then, run:
-
-```R
-install.packages("remotes")
-remotes::install_github("twitter/AnomalyDetection")
+```ruby
+gem 'anomaly_detection'
 ```
 
 And add to `config/blazer.yml`:
 
 ```yml
-anomaly_checks: r
+anomaly_checks: anomaly_detection
 ```
-
-If upgrading from version 1.4 or below, also follow the [upgrade instructions](#15).
-
-If you’re on Heroku, follow the additional instructions below.
-
-### R on Heroku
-
-Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
-
-```sh
-heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git
-```
-
-And create an `init.R` with:
-
-```r
-if (!"AnomalyDetection" %in% installed.packages()) {
-  install.packages("remotes")
-  remotes::install_github("twitter/AnomalyDetection")
-}
-```
-
-Commit and deploy away. The first deploy may take a few minutes.
 
 ## Forecasting
 

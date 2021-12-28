@@ -189,6 +189,10 @@ module Blazer
       when "trend"
         anomalies = Trend.anomalies(Hash[series])
         anomalies.include?(series.last[0])
+      when "anomaly_detection"
+        period = 7 # TODO determine period
+        anomalies = AnomalyDetection.detect(Hash[series], period: period)
+        anomalies.include?(series.last[0])
       else
         csv_str =
           CSV.generate do |csv|

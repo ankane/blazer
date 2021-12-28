@@ -1,6 +1,7 @@
 ## 2.5.0 (unreleased)
 
 - Added support for Slack OAuth tokens
+- Added experimental support for AnomalyDetection.rb
 - Improved table preview for MySQL
 - Fixed cohort analysis for MySQL
 

@@ -15,5 +15,6 @@ gem "mysql2"
 gem "sqlite3"
 
 # anomaly detection and forecasting
+gem "anomaly_detection" if ENV["TEST_ANOMALY_DETECTION"]
 gem "prophet-rb" if ENV["TEST_PROPHET"]
 gem "trend" if ENV["TEST_TREND"]

@@ -61,6 +61,12 @@ class ChecksTest < ActionDispatch::IntegrationTest
     assert_anomaly("trend")
   end
 
+  def test_anomaly_anomaly_detection
+    skip unless ENV["TEST_ANOMALY_DETECTION"]
+
+    assert_anomaly("anomaly_detection")
+  end
+
   def test_emails
     query = create_query
     check = create_check(query: query, check_type: "bad_data", emails: "hi@example.org,hi2@example.org")

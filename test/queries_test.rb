@@ -88,4 +88,9 @@ class QueriesTest < ActionDispatch::IntegrationTest
     run_query "SELECT 0 AS status"
     assert_match "Active", response.body
   end
+
+  def test_csv
+    run_query("SELECT 1 AS id, 'Chicago' AS city", format: "csv")
+    assert_equal "id,city\n1,Chicago\n", response.body
+  end
 end

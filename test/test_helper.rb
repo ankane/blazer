@@ -16,8 +16,8 @@ end
 Rails.cache.logger = logger
 
 class ActionDispatch::IntegrationTest
-  def run_query(statement, **params)
-    post blazer.run_queries_path, params: {statement: statement, data_source: "main"}.merge(params), xhr: true
+  def run_query(statement, format: nil, **params)
+    post blazer.run_queries_path(format: format), params: {statement: statement, data_source: "main"}.merge(params), xhr: true
     assert_response :success
   end
 

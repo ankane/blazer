@@ -57,12 +57,18 @@ class UploadsTest < ActionDispatch::IntegrationTest
   end
 
   def test_malformed_csv
-    post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/malformed.csv", "text/csv")}}
+    create_upload(file: "malformed.csv")
     assert_response :unprocessable_entity
     assert_match "Unclosed quoted field in line 1", response.body
   end
 
-  def create_upload
-    post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/line_items.csv", "text/csv")}}
+  def test_duplicate_columns
+    create_upload(file: "duplicate_columns.csv")
+    assert_response :unprocessable_entity
+    assert_match "Duplicate column name: a", response.body
+  end
+
+  def create_upload(file: "line_items.csv")
+    post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/#{file}", "text/csv")}}
   end
 end

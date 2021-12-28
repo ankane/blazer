@@ -24,4 +24,8 @@ class ActionDispatch::IntegrationTest
   def create_query(statement: "SELECT 1")
     Blazer::Query.create!(statement: statement, data_source: "main", status: "active")
   end
+
+  def create_check(**attributes)
+    Blazer::Check.create!(schedule: "5 minutes", **attributes)
+  end
 end

@@ -39,7 +39,7 @@ Blazer is also available as a [Docker image](https://github.com/ankane/blazer-do
 Add this line to your application’s Gemfile:
 
 ```ruby
-gem 'blazer'
+gem "blazer"
 ```
 
 Run:
@@ -425,7 +425,7 @@ Blazer supports three different approaches to anomaly detection.
 Add [prophet-rb](https://github.com/ankane/prophet) to your Gemfile:
 
 ```ruby
-gem 'prophet-rb'
+gem "prophet-rb"
 ```
 
 And add to `config/blazer.yml`:
@@ -441,7 +441,7 @@ anomaly_checks: prophet
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 
 ```ruby
-gem 'trend'
+gem "trend"
 ```
 
 And add to `config/blazer.yml`:
@@ -461,7 +461,7 @@ Trend.url = "http://localhost:8000"
 Add [anomaly_detection](https://github.com/ankane/AnomalyDetection.rb) to your Gemfile:
 
 ```ruby
-gem 'anomaly_detection'
+gem "anomaly_detection"
 ```
 
 And add to `config/blazer.yml`:
@@ -481,7 +481,7 @@ A forecast link will appear for queries that return 2 columns with types timesta
 Add [prophet-rb](https://github.com/ankane/prophet) to your Gemfile:
 
 ```ruby
-gem 'prophet-rb', '>= 0.2.1'
+gem "prophet-rb", ">= 0.2.1"
 ```
 
 And add to `config/blazer.yml`:
@@ -497,7 +497,7 @@ forecasting: prophet
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 
 ```ruby
-gem 'trend'
+gem "trend"
 ```
 
 And add to `config/blazer.yml`:

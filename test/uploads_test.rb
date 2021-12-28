@@ -56,6 +56,12 @@ class UploadsTest < ActionDispatch::IntegrationTest
     assert_equal ["items"], tables
   end
 
+  def test_bad_content_type
+    create_upload(content_type: "text/plain")
+    assert_response :unprocessable_entity
+    assert_match "File is not a CSV", response.body
+  end
+
   def test_malformed_csv
     create_upload(file: "malformed.csv")
     assert_response :unprocessable_entity
@@ -68,7 +74,7 @@ class UploadsTest < ActionDispatch::IntegrationTest
     assert_match "Duplicate column name: a", response.body
   end
 
-  def create_upload(file: "line_items.csv")
-    post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/#{file}", "text/csv")}}
+  def create_upload(file: "line_items.csv", content_type: "text/csv")
+    post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/#{file}", content_type)}}
   end
 end

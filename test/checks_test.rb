@@ -41,6 +41,14 @@ class ChecksTest < ActionDispatch::IntegrationTest
     assert_equal "failing", check.state
   end
 
+  def test_error
+    query = create_query(statement: "invalid")
+    check = create_check(query: query, check_type: "bad_data")
+    Blazer.run_checks(schedule: "5 minutes")
+    check.reload
+    assert_equal "error", check.state
+  end
+
   def test_anomaly_prophet
     skip unless ENV["TEST_PROPHET"]
 

@@ -15,10 +15,6 @@ end
 
 Rails.cache.logger = logger
 
-ActiveSupport.on_load(:active_record) do
-  connection.execute("CREATE SCHEMA IF NOT EXISTS uploads")
-end
-
 class ActionDispatch::IntegrationTest
   def run_query(statement, **params)
     post blazer.run_queries_path, params: {statement: statement, data_source: "main"}.merge(params), xhr: true

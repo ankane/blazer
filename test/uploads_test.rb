@@ -3,6 +3,8 @@ require_relative "test_helper"
 class UploadsTest < ActionDispatch::IntegrationTest
   def setup
     Blazer::Upload.delete_all
+    Blazer::UploadsConnection.connection.execute("DROP SCHEMA IF EXISTS uploads CASCADE")
+    Blazer::UploadsConnection.connection.execute("CREATE SCHEMA uploads")
   end
 
   def test_index
@@ -16,7 +18,7 @@ class UploadsTest < ActionDispatch::IntegrationTest
   end
 
   def test_create
-    post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/line_items.csv", "text/csv")}}
+    create_upload
     assert_response :redirect
 
     upload = Blazer::Upload.last
@@ -33,5 +35,16 @@ class UploadsTest < ActionDispatch::IntegrationTest
     assert_equal "date", column_types["d"]
     assert_equal "text", column_types["e"]
     assert_equal "text", column_types["f"]
+  end
+
+  def test_create_duplicate_table
+    create_upload
+    assert_response :redirect
+    create_upload
+    assert_response :unprocessable_entity
+  end
+
+  def create_upload
+    post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/line_items.csv", "text/csv")}}
   end
 end

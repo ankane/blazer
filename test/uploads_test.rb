@@ -40,8 +40,11 @@ class UploadsTest < ActionDispatch::IntegrationTest
   def test_create_duplicate_table
     create_upload
     assert_response :redirect
+    Blazer::Upload.delete_all
+
     create_upload
     assert_response :unprocessable_entity
+    assert_match "Table already exists", response.body
   end
 
   def test_rename

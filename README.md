@@ -94,13 +94,27 @@ Here’s what it looks like with cron.
 0   8 * * * rake blazer:send_failing_checks
 ```
 
-For Slack notifications, create an [incoming webhook](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) and set:
+For Slack notifications, create [an app](https://api.slack.com/apps?new_app=1) with the following manifest:
 
-```sh
-BLAZER_SLACK_WEBHOOK_URL=https://hooks.slack.com/...
+```yml
+display_information:
+  name: Blazer
+  description: Business intelligence made simple
+oauth_config:
+  scopes:
+    bot:
+      - chat:write
+      - chat:write.public
+features:
+  bot_user:
+    display_name: Blazer
 ```
 
-Name the webhook “Blazer” and add a cool icon.
+Add a cool icon, install the app in your workspace, and set:
+
+```sh
+BLAZER_SLACK_OAUTH_TOKEN=xoxb-...
+```
 
 ## Authentication
 

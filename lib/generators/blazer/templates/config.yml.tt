@@ -53,8 +53,9 @@ audit: true
 # email to send checks from
 # from_email: blazer@example.org
 
-# webhook for Slack
-# slack_webhook_url: <%%= ENV["BLAZER_SLACK_WEBHOOK_URL"] %>
+# bot token for Slack
+# requires chat:write and chat:write.public scopes
+# slack_oauth_token: <%%= ENV["BLAZER_SLACK_OAUTH_TOKEN"] %>
 
 check_schedules:
   - "1 day"

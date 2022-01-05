@@ -1,4 +1,4 @@
-## 2.5.0 (unreleased)
+## 2.5.0 (2022-01-04)
 
 - Added support for Slack OAuth tokens
 - Added experimental support for AnomalyDetection.rb

@@ -456,7 +456,7 @@ For the [self-hosted API](https://github.com/ankane/trend-api), create an initia
 Trend.url = "http://localhost:8000"
 ```
 
-### AnomalyDetection.rb (unreleased, experimental)
+### AnomalyDetection.rb (experimental)
 
 Add [anomaly_detection](https://github.com/ankane/AnomalyDetection.rb) to your Gemfile:
 

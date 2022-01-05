@@ -67,15 +67,18 @@ module Blazer
       Blazer::Engine.routes.url_helpers.query_url(id, ActionMailer::Base.default_url_options)
     end
 
+    # TODO use return value
     def self.post(payload)
       if Blazer.slack_webhook_url.present?
-        post_api(Blazer.slack_webhook_url, payload, {})
+        response = post_api(Blazer.slack_webhook_url, payload, {})
+        response.is_a?(Net::HTTPSuccess) && response.body == "ok"
       else
         headers = {
           "Authorization" => "Bearer #{Blazer.slack_oauth_token}",
           "Content-type" => "application/json"
         }
-        post_api("https://slack.com/api/chat.postMessage", payload, headers)
+        response = post_api("https://slack.com/api/chat.postMessage", payload, headers)
+        response.is_a?(Net::HTTPSuccess) && (JSON.parse(response.body)["ok"] rescue false)
       end
     end
 

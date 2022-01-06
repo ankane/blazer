@@ -111,7 +111,8 @@ module Blazer
         if postgresql?
           select_all("SELECT pg_cancel_backend(pid) FROM pg_stat_activity WHERE pid <> pg_backend_pid() AND query LIKE ?", ["%,run_id:#{run_id}%"])
         elsif redshift?
-          first_row = select_all("SELECT pid FROM stv_recents WHERE status = 'Running' AND query LIKE ?", ["%,run_id:#{run_id}%"]).first
+          run_text = "%,run_id:#{run_id}%"
+          first_row = select_all("SELECT pid FROM stv_recents WHERE status = 'Running' AND query LIKE ? UNION SELECT pid FROM stv_inflight WHERE text LIKE ?", [run_text, run_text]).first
           if first_row
             select_all("CANCEL #{first_row["pid"].to_i}")
           end

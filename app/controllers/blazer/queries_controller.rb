@@ -345,10 +345,19 @@ module Blazer
       end
 
       def csv_data(columns, rows, data_source)
-        CSV.generate do |csv|
+        CSV.generate(col_sep: ";") do |csv|
           csv << columns
           rows.each do |row|
-            csv << row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(data_source, columns[i], v) : v }
+            csv << row.each_with_index.map do |v, i|
+              case v
+              when Time
+                blazer_time_value(data_source, columns[i], v)
+              when Float, BigDecimal
+                v.to_s.tr(".", ",")
+              else
+                v
+              end
+            end
           end
         end
       end

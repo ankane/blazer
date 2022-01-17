@@ -566,6 +566,7 @@ data_sources:
 - [Apache Ignite](#apache-ignite)
 - [Apache Spark](#apache-spark)
 - [Cassandra](#cassandra)
+- [ClickHouse](#clickhouse)
 - [Druid](#druid)
 - [Elasticsearch](#elasticsearch)
 - [Google BigQuery](#google-bigquery)
@@ -711,6 +712,16 @@ Add [cassandra-driver](https://github.com/datastax/ruby-driver) to your Gemfile 
 data_sources:
   my_source:
     url: cassandra://user:password@hostname:9042/keyspace
+```
+
+### ClickHouse
+
+Add [ClickHouse Ruby driver](https://github.com/shlima/click_house) to your Gemfile and set:
+```yml
+data_sources:
+  my_source:
+    adapter: clickhouse
+    url: http://user:password@hostname:8123/database
 ```
 
 ### Druid

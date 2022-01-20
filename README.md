@@ -716,7 +716,7 @@ data_sources:
 
 ### ClickHouse
 
-Add [ClickHouse Ruby driver](https://github.com/shlima/click_house) to your Gemfile and set:
+Add [ClickHouse Ruby driver](https://github.com/shlima/click_house) OR [Clickhouse::Activerecord](https://github.com/PNixx/clickhouse-activerecord) to your Gemfile and set:
 ```yml
 data_sources:
   my_source:

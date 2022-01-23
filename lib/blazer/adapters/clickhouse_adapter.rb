@@ -2,46 +2,11 @@ module Blazer
   module Adapters
     class ClickhouseAdapter < BaseAdapter
       SUPPORTED_DRIVERS_MAPPING = {
-        "click_house" => ClickHouseDriver,
-        "clickhouse-activerecord" => ClickhouseActiverecordDriver
+        "click_house" => "ClickHouseDriver",
+        "clickhouse-activerecord" => "ClickhouseActiverecordDriver"
       }.freeze
 
       delegate :tables, to: :driver
-
-      # Wrapper for ClickHouse Ruby driver (https://github.com/shlima/click_house)
-      class ClickHouseDriver
-        delegate :tables, to: :connection
-
-        def initialize(config)
-          @config = ClickHouse::Config.new(**config)
-        end
-
-        def connection
-          @connection ||= ClickHouse::Connection.new(@config)
-        end
-
-        def execute(statement, format)
-          connection.post(query: { query: statement, default_format: format }).body
-        end
-      end
-
-      # Wrapper for Clickhouse::Activerecord driver (https://github.com/PNixx/clickhouse-activerecord)
-      class ClickhouseActiverecordDriver
-        delegate :tables, to: :connection
-
-        def initialize(config)
-          @config = config
-        end
-
-        def connection
-          @connection ||= ActiveRecord::Base.clickhouse_connection(@config)
-        end
-
-        def execute(statement, format)
-          body = connection.do_execute(statement, format: format)
-          format.in?(%w[CSV CSVWithNames]) ? CSV.parse(body) : body
-        end
-      end
 
       def run_statement(statement, _comment)
         columns = []
@@ -49,8 +14,9 @@ module Blazer
         error = nil
 
         begin
-          rows = driver.execute(statement, "CSVWithNames")
-          columns = rows.shift
+          data = driver.select_all(statement)
+          columns = data.first.keys
+          rows = data.map(&:values)
         rescue => e
           error = e.message
         end
@@ -87,7 +53,7 @@ module Blazer
           driver = SUPPORTED_DRIVERS_MAPPING.keys.find { |driver| installed?(driver) }
           raise Blazer::Error, "ClickHouse driver not installed!" unless driver
 
-          SUPPORTED_DRIVERS_MAPPING[driver].new(config)
+          "Blazer::Adapters::#{SUPPORTED_DRIVERS_MAPPING[driver]}".constantize.new(config)
         end
       end
 
@@ -110,6 +76,41 @@ module Blazer
         true
       rescue Gem::LoadError
         false
+      end
+    end
+
+    # Wrapper for ClickHouse Ruby driver (https://github.com/shlima/click_house)
+    class ClickHouseDriver
+      delegate :tables, :select_all, to: :connection
+
+      def initialize(config)
+        @config = ClickHouse::Config.new(**config)
+      end
+
+      def connection
+        @connection ||= ClickHouse::Connection.new(@config)
+      end
+
+      def execute(statement, format)
+        connection.post(query: { query: statement, default_format: format }).body
+      end
+    end
+
+    # Wrapper for Clickhouse::Activerecord driver (https://github.com/PNixx/clickhouse-activerecord)
+    class ClickhouseActiverecordDriver
+      delegate :tables, :select_all, to: :connection
+
+      def initialize(config)
+        @config = config.merge(ssl: config[:port] == 8443)
+      end
+
+      def connection
+        @connection ||= ActiveRecord::Base.clickhouse_connection(@config)
+      end
+
+      def execute(statement, format)
+        body = connection.do_execute(statement, format: format)
+        format == "CSV" ? CSV.parse(body) : body
       end
     end
   end

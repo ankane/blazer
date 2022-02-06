@@ -1,20 +1,13 @@
 module Blazer
   module Adapters
     class ClickhouseAdapter < BaseAdapter
-      SUPPORTED_DRIVERS_MAPPING = {
-        "click_house" => "ClickHouseDriver",
-        "clickhouse-activerecord" => "ClickhouseActiverecordDriver"
-      }.freeze
-
-      delegate :tables, to: :driver
-
       def run_statement(statement, _comment)
         columns = []
         rows = []
         error = nil
 
         begin
-          data = driver.select_all(statement)
+          data = connection.select_all(statement)
           columns = data.first.keys
           rows = data.map(&:values)
         rescue => e
@@ -24,18 +17,23 @@ module Blazer
         [columns, rows, error]
       end
 
+      def tables
+        connection.tables
+      end
+
       def schema
         statement = <<-SQL
           SELECT table, name, type
           FROM system.columns
-          WHERE database = '#{config[:database]}'
+          WHERE database = currentDatabase()
           ORDER BY table, position
         SQL
 
-        rows = driver.execute(statement, "CSV")
-        rows.group_by { |row| row[0] }
-            .transform_values { |columns| columns.map { |c| { name: c[1], data_type: c[2] } } }
-            .map { |table, columns| { schema: "public", table: table, columns: columns } }
+        response = connection.post(query: { query: statement, default_format: "CSV" })
+        response.body
+                .group_by { |row| row[0] }
+                .transform_values { |columns| columns.map { |c| { name: c[1], data_type: c[2] } } }
+                .map { |table, columns| { schema: "public", table: table, columns: columns } }
       end
 
       def preview_statement
@@ -43,74 +41,29 @@ module Blazer
       end
 
       def explain(statement)
-        driver.execute("EXPLAIN #{statement.gsub(/\A(\s*EXPLAIN)/io, '')}", "TSV")
+        connection.explain(statement)
       end
 
       protected
 
-      def driver
-        @driver ||= begin
-          driver = SUPPORTED_DRIVERS_MAPPING.keys.find { |driver| installed?(driver) }
-          raise Blazer::Error, "ClickHouse driver not installed!" unless driver
-
-          "Blazer::Adapters::#{SUPPORTED_DRIVERS_MAPPING[driver]}".constantize.new(config)
-        end
+      def connection
+        @connection ||= ClickHouse::Connection.new(config)
       end
 
       def config
         @config ||= begin
           uri = URI.parse(settings["url"])
-          {
+          options = {
             scheme: uri.scheme,
             host: uri.host,
             port: uri.port,
             username: uri.user,
             password: uri.password,
-            database: uri.path.split("/").last
+            database: uri.path.sub(/\A\//, ""),
+            ssl_verify: settings.fetch("ssl_verify", false)
           }.compact
+          ClickHouse::Config.new(**options)
         end
-      end
-
-      def installed?(driver_name)
-        Gem::Specification.find_by_name(driver_name)
-        true
-      rescue Gem::LoadError
-        false
-      end
-    end
-
-    # Wrapper for ClickHouse Ruby driver (https://github.com/shlima/click_house)
-    class ClickHouseDriver
-      delegate :tables, :select_all, to: :connection
-
-      def initialize(config)
-        @config = ClickHouse::Config.new(**config)
-      end
-
-      def connection
-        @connection ||= ClickHouse::Connection.new(@config)
-      end
-
-      def execute(statement, format)
-        connection.post(query: { query: statement, default_format: format }).body
-      end
-    end
-
-    # Wrapper for Clickhouse::Activerecord driver (https://github.com/PNixx/clickhouse-activerecord)
-    class ClickhouseActiverecordDriver
-      delegate :tables, :select_all, to: :connection
-
-      def initialize(config)
-        @config = config.merge(ssl: config[:port] == 8443)
-      end
-
-      def connection
-        @connection ||= ActiveRecord::Base.clickhouse_connection(@config)
-      end
-
-      def execute(statement, format)
-        body = connection.do_execute(statement, format: format)
-        format == "CSV" ? CSV.parse(body) : body
       end
     end
   end

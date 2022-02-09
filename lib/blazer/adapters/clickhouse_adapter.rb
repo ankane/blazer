@@ -1,15 +1,22 @@
 module Blazer
   module Adapters
     class ClickhouseAdapter < BaseAdapter
+      DATE_TIME_TYPES = ["DateTime", "DateTime(%s)", "DateTime64(%d, %s)"].freeze
+
       def run_statement(statement, _comment)
         columns = []
         rows = []
         error = nil
 
         begin
-          data = connection.select_all(statement)
-          columns = data.first.keys
-          rows = data.map(&:values)
+          result = connection.select_all(statement)
+          unless result.data.blank?
+            date_time_columns = result.meta
+                                      .select { |column| column["type"].in?(DATE_TIME_TYPES) }
+                                      .map { |column| column["name"] }
+            columns = result.data.first.keys
+            rows = result.data.map { |row| convert_time_columns(row, date_time_columns).values }
+          end
         rescue => e
           error = e.message
         end
@@ -64,6 +71,13 @@ module Blazer
           }.compact
           ClickHouse::Config.new(**options)
         end
+      end
+
+      def convert_time_columns(row, date_time_columns)
+        time_values = row.slice(*date_time_columns).transform_values!(&:to_time)
+        row.merge(time_values)
+      rescue NoMethodError
+        row
       end
     end
   end

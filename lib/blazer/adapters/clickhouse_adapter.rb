@@ -14,8 +14,8 @@ module Blazer
             date_time_columns = result.meta
                                       .select { |column| column["type"].in?(DATE_TIME_TYPES) }
                                       .map { |column| column["name"] }
-            columns = result.data.first.keys
-            rows = result.data.map { |row| convert_time_columns(row, date_time_columns).values }
+            columns = result.first.keys
+            rows = result.map { |row| convert_time_columns(row, date_time_columns).values }
           end
         rescue => e
           error = e.message

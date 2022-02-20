@@ -264,10 +264,23 @@ module Blazer
               @rows.select do |r|
                 r[lat_index] && r[lon_index]
               end.map do |r|
+                rows_limit = 6
+                row_length_limit = 70
+                key_length_limit = 20
+                limit = 140
+                title = @columns.zip(r).reject { |k, v| keys.include?(k) }[0...rows_limit].collect do |k, v|
+                          # Mapbox.js does sanitization with https://github.com/mapbox/sanitize-caja
+                          # but we should do it here as well
+                          k = ERB::Util.html_escape(k)
+                          v = ERB::Util.html_escape(v)
+                          new_key_lenght = (key_length_limit + v.length) > row_length_limit ? key_length_limit : row_length_limit - v.length
+
+                          k = k.truncate(new_key_lenght)
+                          v = v.truncate(row_length_limit - k.length)
+                          "<strong>#{k}:</strong> #{v}"
+                        end.join("<br />")
                 {
-                  # Mapbox.js does sanitization with https://github.com/mapbox/sanitize-caja
-                  # but we should do it here as well
-                  title: r.each_with_index.map { |v, i| i == lat_index || i == lon_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br />").truncate(140),
+                  title: title,
                   latitude: r[lat_index],
                   longitude: r[lon_index]
                 }

@@ -135,7 +135,7 @@ module Blazer
         @client_options ||= begin
           options = {}
           if settings["access_key_id"] || settings["secret_access_key"]
-            options[:credentials] = Aws::Credentials.new(settings["access_key_id"], settings["secret_access_key"])}
+            options[:credentials] = Aws::Credentials.new(settings["access_key_id"], settings["secret_access_key"])
           end
           options[:region] = settings["region"] if settings["region"]
           options

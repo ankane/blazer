@@ -267,7 +267,6 @@ module Blazer
                 rows_limit = 6
                 row_length_limit = 70
                 key_length_limit = 20
-                limit = 140
                 title = @columns.zip(r).reject { |k, v| keys.include?(k) }[0...rows_limit].collect do |k, v|
                           # Mapbox.js does sanitization with https://github.com/mapbox/sanitize-caja
                           # but we should do it here as well

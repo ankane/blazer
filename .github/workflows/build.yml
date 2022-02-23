@@ -15,4 +15,5 @@ jobs:
     - uses: ankane/setup-mysql@v1
       with:
         database: blazer_test
+    - uses: ankane/setup-elasticsearch@v1
     - run: bundle exec rake test

@@ -162,6 +162,16 @@ module Blazer
       columns, rows, error = adapter_instance.run_statement(statement, comment)
       duration = Time.now - start_time
 
+      rows.collect! do |row|
+        row.collect do |value|
+          if value.respond_to?(:force_encoding)
+            value = value.force_encoding(Encoding::UTF_8)
+            value.encode!("UTF-8", "binary", invalid: :replace, undef: :replace, replace: "") unless value.valid_encoding?
+          end
+          value
+        end
+      end
+
       cache_data = nil
       cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
       if cache || run_id

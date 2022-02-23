@@ -12,4 +12,7 @@ jobs:
     - uses: ankane/setup-postgres@v1
       with:
         database: blazer_test
+    - uses: ankane/setup-mysql@v1
+      with:
+        database: blazer_test
     - run: bundle exec rake test

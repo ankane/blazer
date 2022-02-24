@@ -24,7 +24,21 @@ module Blazer
           link_to value, value, target: "_blank"
         end
       else
-        value
+        if key.include?("json")
+          begin
+            content_tag(:pre, JSON.pretty_generate(JSON.parse(value)))
+          rescue JSON::ParserError
+            content_tag(:pre, value)
+          end
+        elsif key.include?("yaml")
+          begin
+            content_tag(:pre, YAML.dump(YAML.load(value)))
+          rescue Psych::SyntaxError
+            content_tag(:pre, value)
+          end
+        else
+          value
+        end
       end
     end
 

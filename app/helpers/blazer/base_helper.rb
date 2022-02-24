@@ -33,7 +33,7 @@ module Blazer
         elsif key.include?("yaml")
           begin
             content_tag(:pre, YAML.dump(YAML.load(value)))
-          rescue Psych::SyntaxError
+          rescue Exception
             content_tag(:pre, value)
           end
         else

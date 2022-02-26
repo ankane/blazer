@@ -25,17 +25,9 @@ module Blazer
         end
       else
         if key.include?("json")
-          begin
-            content_tag(:pre, JSON.pretty_generate(JSON.parse(value)))
-          rescue JSON::ParserError
-            content_tag(:pre, value)
-          end
+          content_tag(:pre, format_json_value(value), class: "hljs")
         elsif key.include?("yaml")
-          begin
-            content_tag(:pre, YAML.dump(YAML.load(value)))
-          rescue Psych::SyntaxError
-            content_tag(:pre, value)
-          end
+          content_tag(:pre, format_yaml_value(value), class: "hljs")
         else
           value
         end
@@ -52,6 +44,24 @@ module Blazer
 
     def blazer_series_name(k)
       k.nil? ? "null" : k.to_s
+    end
+
+    private
+
+    def format_json_value(value)
+      begin
+        JSON.pretty_generate(JSON.parse(value))
+      rescue JSON::ParserError
+        value
+      end
+    end
+
+    def format_yaml_value(value)
+      begin
+        YAML.dump(YAML.load(value))
+      rescue Exception
+        value
+      end
     end
   end
 end

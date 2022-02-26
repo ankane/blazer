@@ -219,6 +219,11 @@
 
         Vue.nextTick(function () {
           $("#results-html").html(data)
+          document.querySelectorAll("#results-html .hljs").forEach((item)=>{
+            if(item.textContent.length < 5000) {
+              hljs.highlightBlock(item)
+            }
+          });
         })
       }
     },

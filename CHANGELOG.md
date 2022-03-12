@@ -1,3 +1,7 @@
+## 2.5.1 (unreleased)
+
+- Added experimental support for Propshaft
+
 ## 2.5.0 (2022-01-04)
 
 - Added support for Slack OAuth tokens

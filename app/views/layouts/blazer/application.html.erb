@@ -5,8 +5,13 @@
 
     <meta charset="utf-8" />
     <%= favicon_link_tag "blazer/favicon.png" %>
-    <%= stylesheet_link_tag "blazer/application" %>
-    <%= javascript_include_tag "blazer/application" %>
+    <% if defined?(Propshaft::Railtie) %>
+      <%= stylesheet_link_tag "blazer/bootstrap-propshaft", "blazer/selectize", "blazer/github", "blazer/daterangepicker", "blazer/application" %>
+      <%= javascript_include_tag "blazer/jquery", "blazer/jquery-ujs", "blazer/stupidtable", "blazer/stupidtable-custom-settings", "blazer/jquery.stickytableheaders", "blazer/selectize", "blazer/highlight.min", "blazer/moment", "blazer/moment-timezone-with-data", "blazer/daterangepicker", "blazer/Chart.js", "blazer/chartkick", "blazer/ace/ace", "blazer/ace/ext-language_tools", "blazer/ace/theme-twilight", "blazer/ace/mode-sql", "blazer/ace/snippets/text", "blazer/ace/snippets/sql", "blazer/Sortable", "blazer/bootstrap", "blazer/vue", "blazer/routes", "blazer/queries", "blazer/fuzzysearch", "blazer/application" %>
+    <% else %>
+      <%= stylesheet_link_tag "blazer/application" %>
+      <%= javascript_include_tag "blazer/application" %>
+    <% end %>
     <script>
       <%= blazer_js_var "rootPath", root_path %>
     </script>

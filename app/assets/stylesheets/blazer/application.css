@@ -1,4 +1,5 @@
 /*
+ *= require ./bootstrap-sprockets
  *= require ./bootstrap
  *= require ./selectize
  *= require ./github

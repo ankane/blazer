@@ -84,13 +84,14 @@
           $("#end_time").val(toDate(end).endOf("day").utc().format())
         }
 
+        var datepickerRanges = <%=raw Blazer.timepicker_ranges %>;
+
         $("#reportrange").daterangepicker(
           {
-            ranges: {
-             "Today": [dateStr(), dateStr()],
-             "Last 7 Days": [dateStr(6), dateStr()],
-             "Last 30 Days": [dateStr(29), dateStr()]
-            },
+            ranges: datepickerRanges.reduce(function(map, range) {
+              map[range[0]] = [dateStr(range[1]), dateStr(range[2])];
+              return map;
+            }, {}),
             locale: {
               format: format
             },

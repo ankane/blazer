@@ -282,7 +282,10 @@ module Blazer
             render layout: false
           end
           format.csv do
-            send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
+            params = variable_params.select { |k| @query.variables.include?(k) }
+            name = @query.try(:name).presence || "query"
+            filename = "#{name}-#{params.to_query}".parameterize + ".csv"
+            send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{filename}\""
           end
         end
       end

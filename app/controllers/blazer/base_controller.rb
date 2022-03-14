@@ -47,6 +47,10 @@ module Blazer
                 value = value.to_s.gsub(" ", "+") # fix for Quip bug
               end
 
+              if value.is_a?(Array) &&  Blazer.data_sources[data_source].supports_array?
+                value = Blazer.data_sources[data_source].array(value)
+              end
+
               if var.end_with?("_at")
                 begin
                   value = Blazer.time_zone.parse(value)

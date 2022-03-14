@@ -19,7 +19,7 @@
     <% @bind_vars.each_with_index do |var, i| %>
       <%= label_tag var, var %>
       <% if (data = @smart_vars[var]) %>
-        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
+        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), multiple: @plural_vars[var].present?,  style: "margin-right: 20px; width: 200px; display: none;" %>
         <script>
           $("#<%= var %>").selectize({
             create: true

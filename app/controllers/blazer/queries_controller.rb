@@ -63,11 +63,14 @@ module Blazer
       process_vars(@statement, @query.data_source)
 
       @smart_vars = {}
+      @plural_vars = {}
       @sql_errors = []
       data_source = Blazer.data_sources[@query.data_source]
       @bind_vars.each do |var|
         smart_var, error = parse_smart_variables(var, data_source)
-        @smart_vars[var] = smart_var if smart_var
+        plural_var, error = parse_smart_variables(var.singularize, data_source) if smart_var.nil? && error.nil?
+        @smart_vars[var] = smart_var || plural_var
+        @plural_vars[var] = true if smart_var.nil? && plural_var.present?
         @sql_errors << error if error
       end
 

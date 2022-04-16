@@ -6,4 +6,8 @@ class MongodbTest < ActionDispatch::IntegrationTest
   def data_source
     "mongodb"
   end
+
+  def test_run
+    assert_result [], "db.items.find()"
+  end
 end

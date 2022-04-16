@@ -6,4 +6,8 @@ class AthenaTest < ActionDispatch::IntegrationTest
   def data_source
     "athena"
   end
+
+  def test_run
+    assert_result [{"hello" => "world"}], "SELECT 'world' AS hello"
+  end
 end

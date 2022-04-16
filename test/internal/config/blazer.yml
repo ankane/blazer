@@ -83,7 +83,7 @@ data_sources:
     url: postgres://localhost/blazer_test
 
   presto:
-    url: presto://localhost:8080/blazer_test
+    url: presto://user@localhost:8080/jmx
 
   redshift:
     url: redshift://localhost:5439/blazer_test

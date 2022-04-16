@@ -2,6 +2,10 @@ module Blazer
   module Adapters
     class SodaAdapter < BaseAdapter
       def run_statement(statement, comment)
+        require "json"
+        require "net/http"
+        require "uri"
+
         columns = []
         rows = []
         error = nil

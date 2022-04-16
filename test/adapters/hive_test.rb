@@ -6,4 +6,8 @@ class HiveTest < ActionDispatch::IntegrationTest
   def data_source
     "hive"
   end
+
+  def test_run
+    assert_result [{"hello" => "world"}], "SELECT 'world' AS hello"
+  end
 end

@@ -1,10 +1,10 @@
 require_relative "../test_helper"
 
-class SqliteTest < ActionDispatch::IntegrationTest
+class PostgresqlTest < ActionDispatch::IntegrationTest
   include AdapterTest
 
   def data_source
-    "sqlite"
+    "postgresql"
   end
 
   def test_run

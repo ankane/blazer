@@ -29,3 +29,5 @@ class ActionDispatch::IntegrationTest
     Blazer::Check.create!(schedule: "5 minutes", **attributes)
   end
 end
+
+require_relative "support/adapter_test"

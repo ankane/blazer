@@ -61,6 +61,9 @@ data_sources:
     adapter: hive
     url: sasl://localhost:10000/blazer_test
 
+  ignite:
+    url: ignite://localhost:10800
+
   influxdb:
     adapter: influxdb
     url: http://localhost:8086/blazer_test

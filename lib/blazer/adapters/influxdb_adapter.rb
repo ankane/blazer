@@ -8,16 +8,19 @@ module Blazer
 
         begin
           result = client.query(statement, denormalize: false).first
-          columns = result["columns"]
-          rows = result["values"]
 
-          # parse time columns
-          # current approach isn't ideal, but result doesn't include types
-          # another approach would be to check the format
-          time_index = columns.index("time")
-          if time_index
-            rows.each do |row|
-              row[time_index] = Time.parse(row[time_index]) if row[time_index]
+          if result
+            columns = result["columns"]
+            rows = result["values"]
+
+            # parse time columns
+            # current approach isn't ideal, but result doesn't include types
+            # another approach would be to check the format
+            time_index = columns.index("time")
+            if time_index
+              rows.each do |row|
+                row[time_index] = Time.parse(row[time_index]) if row[time_index]
+              end
             end
           end
         rescue => e

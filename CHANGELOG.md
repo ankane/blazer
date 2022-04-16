@@ -1,6 +1,7 @@
 ## 2.5.1 (unreleased)
 
 - Added experimental support for Propshaft
+- Fixed error with empty results with InfluxDB
 
 ## 2.5.0 (2022-01-04)
 

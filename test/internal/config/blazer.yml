@@ -108,7 +108,7 @@ data_sources:
     url: "sqlite3::memory:"
 
   sqlserver:
-    url: sqlserver://localhost:1433/blazer_test
+    url: sqlserver://SA:YourStrong!Passw0rd@localhost:1433/blazer_test
 
 # create audits
 audit: true

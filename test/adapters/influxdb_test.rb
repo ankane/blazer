@@ -1,14 +1,19 @@
 require_relative "../test_helper"
 
-# USE blazer_test
-# DROP SERIES FROM items
-# INSERT items,hello=world value=1
-
 class InfluxdbTest < ActionDispatch::IntegrationTest
   include AdapterTest
 
   def data_source
     "influxdb"
+  end
+
+  def setup
+    @@once ||= begin
+      client = InfluxDB::Client.new(url: "http://localhost:8086/blazer_test")
+      client.delete_series("items")
+      client.write_point("items", {values: {value: 1}, tags: {hello: "world"}, timestamp: 0})
+      true
+    end
   end
 
   def test_run

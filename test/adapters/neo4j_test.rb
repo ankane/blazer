@@ -6,4 +6,8 @@ class Neo4jTest < ActionDispatch::IntegrationTest
   def data_source
     "neo4j"
   end
+
+  def test_run
+    assert_result [{"hello" => "world"}], "OPTIONAL MATCH () RETURN 'world' AS `hello`"
+  end
 end

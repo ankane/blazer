@@ -1,4 +1,5 @@
 module AdapterTest
+  # some adapter tests override this method
   def test_tables
     assert_kind_of Array, tables
   end

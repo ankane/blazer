@@ -13,8 +13,11 @@ module AdapterTest
   end
 
   def assert_result(expected, statement)
+    assert_equal expected, run_statement(statement)
+  end
+
+  def run_statement(statement)
     run_query statement, data_source: data_source, format: "csv"
-    assert_response :success
-    assert_equal expected, CSV.parse(response.body, headers: true).map(&:to_h)
+    CSV.parse(response.body, headers: true).map(&:to_h)
   end
 end

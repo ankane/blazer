@@ -6,4 +6,8 @@ class BigqueryTest < ActionDispatch::IntegrationTest
   def data_source
     "bigquery"
   end
+
+  def test_run
+    assert_result [{"hello" => "world"}], "SELECT 'world' AS hello"
+  end
 end

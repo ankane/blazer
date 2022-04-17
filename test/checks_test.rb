@@ -50,6 +50,8 @@ class ChecksTest < ActionDispatch::IntegrationTest
   end
 
   def test_emails
+    skip "No assert_emails" if Rails::VERSION::MAJOR < 6
+
     query = create_query
     check = create_check(query: query, check_type: "bad_data", emails: "hi@example.org,hi2@example.org")
 

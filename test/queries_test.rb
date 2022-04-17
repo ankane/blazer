@@ -107,7 +107,7 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_images
     Blazer.stub(:images, true) do
       run_query("SELECT 'http://localhost:3000/image.png'")
-      assert_match %{<img referrerpolicy="no-referrer" src="http://localhost:3000/image.png" />}, response.body
+      assert_match %{<img referrerpolicy="no-referrer" src="http://localhost:3000/image.png" }, response.body
     end
   end
 end

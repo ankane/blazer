@@ -52,7 +52,7 @@ module Blazer
       @query.status = "active" if @query.respond_to?(:status)
 
       if @query.save
-        redirect_to query_path(@query, variable_params(@query))
+        redirect_to query_path(@query, params: variable_params(@query))
       else
         render_errors @query
       end
@@ -172,7 +172,7 @@ module Blazer
       Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
       @statement = cohort_analysis_statement(data_source, @statement) if @query.cohort_analysis?
       data_source.clear_cache(@statement)
-      redirect_to query_path(@query, variable_params(@query))
+      redirect_to query_path(@query, params: variable_params(@query))
     end
 
     def update
@@ -185,7 +185,7 @@ module Blazer
         @query.errors.add(:base, "Sorry, permission denied")
       end
       if @query.errors.empty? && @query.update(query_params)
-        redirect_to query_path(@query, variable_params(@query))
+        redirect_to query_path(@query, params: variable_params(@query))
       else
         render_errors @query
       end

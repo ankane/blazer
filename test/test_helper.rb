@@ -9,6 +9,7 @@ logger = ActiveSupport::Logger.new(ENV["VERBOSE"] ? STDERR : nil)
 Combustion.path = "test/internal"
 Combustion.initialize! :active_record, :action_controller, :action_mailer, :sprockets do
   config.action_controller.logger = logger
+  config.action_mailer.logger = logger
   config.active_record.logger = logger
   config.cache_store = :memory_store
 end

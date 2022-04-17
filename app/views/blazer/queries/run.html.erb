@@ -31,7 +31,7 @@
 
       <% if @query && @result.forecastable? && !params[:forecast] %>
         &middot;
-        <%= link_to "Forecast", query_path(@query, {forecast: "t"}.merge(variable_params(@query))) %>
+        <%= link_to "Forecast", query_path(@query, params: {forecast: "t"}.merge(variable_params(@query))) %>
       <% end %>
     </p>
   <% end %>

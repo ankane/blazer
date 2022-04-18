@@ -70,6 +70,13 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_match "daterangepicker", response.body
   end
 
+  def test_variable_defaults
+    query = create_query(statement: "SELECT {default_var}")
+    get blazer.query_path(query)
+    assert_response :success
+    assert_match "default_value", response.body
+  end
+
   def test_smart_variables
     query = create_query(statement: "SELECT {period}")
     get blazer.query_path(query)

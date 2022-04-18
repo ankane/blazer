@@ -33,6 +33,9 @@ data_sources:
       # user_id: "SELECT id, name FROM users WHERE id IN {value}"
       status: {0: "Active", 1: "Archived"}
 
+    variable_defaults:
+      default_var: default_value
+
   athena:
     adapter: athena
     database: blazer_test

@@ -32,16 +32,17 @@ module Blazer
 
     private
 
-      def process_vars(statement, data_source)
+      def process_vars(statement, data_source, var_params = nil)
+        var_params ||= request.query_parameters
         (@bind_vars ||= []).concat(Blazer.extract_vars(statement)).uniq!
         @bind_vars.each do |var|
           params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
         end
-        @success = @bind_vars.all? { |v| params[v] }
+        @success = @bind_vars.all? { |v| var_params[v] }
 
         if @success
           @bind_vars.each do |var|
-            value = params[var].presence
+            value = var_params[var].presence
             if value
               if ["start_time", "end_time"].include?(var)
                 value = value.to_s.gsub(" ", "+") # fix for Quip bug
@@ -94,22 +95,14 @@ module Blazer
         [smart_var, error]
       end
 
-      # don't pass to url helpers
-      #
-      # some are dangerous when passed as symbols
-      # root_url({host: "evilsite.com"})
-      #
-      # certain ones (like host) only affect *_url and not *_path
-      #
-      # when permitted parameters are passed in Rails 6,
-      # they appear to be added as GET parameters
-      # root_url(params.permit(:host))
+      # TODO allow all keys
+      # or show error message for disallowed keys
       UNPERMITTED_KEYS = [:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id, :blazer, :run_id, :script_name, :original_script_name]
 
-      # remove unpermitted keys from both params and permitted keys for better sleep
-      def variable_params(resource)
+      def variable_params(resource, var_params = nil)
         permitted_keys = resource.variables - UNPERMITTED_KEYS.map(&:to_s)
-        params.except(*UNPERMITTED_KEYS).slice(*permitted_keys).permit!
+        var_params ||= request.query_parameters
+        var_params.slice(*permitted_keys)
       end
       helper_method :variable_params
 

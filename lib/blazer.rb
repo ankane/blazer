@@ -43,6 +43,8 @@ module Blazer
   autoload :CheckMailer, "blazer/check_mailer"
   # net/http optional
   autoload :SlackNotifier, "blazer/slack_notifier"
+  # activejob optional
+  autoload :RunStatementJob, "blazer/run_statement_job"
 
   class << self
     attr_accessor :audit

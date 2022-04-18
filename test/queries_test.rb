@@ -56,6 +56,12 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  def test_refresh
+    query = create_query
+    post blazer.refresh_query_path(query)
+    assert_response :redirect
+  end
+
   def test_variables_time
     query = create_query(statement: "SELECT {created_at}")
     get blazer.query_path(query)
@@ -115,6 +121,15 @@ class QueriesTest < ActionDispatch::IntegrationTest
     Blazer.stub(:images, true) do
       run_query("SELECT 'http://localhost:3000/image.png'")
       assert_match %{<img referrerpolicy="no-referrer" src="http://localhost:3000/image.png" }, response.body
+    end
+  end
+
+  def test_async
+    Blazer.stub(:async, true) do
+      perform_enqueued_jobs do
+        run_query "SELECT 123"
+      end
+      assert_match "123", response.body
     end
   end
 end

@@ -85,6 +85,7 @@ module Blazer
       @query = Query.find_by(id: params[:query_id]) if params[:query_id]
 
       # use query data source when present
+      # need to update viewable? logic below if this changes
       data_source = @query.data_source if @query && @query.data_source
       data_source ||= params[:data_source]
       @data_source = Blazer.data_sources[data_source]

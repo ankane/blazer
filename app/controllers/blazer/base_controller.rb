@@ -72,7 +72,8 @@ module Blazer
       def add_cohort_analysis_vars
         @bind_vars << "cohort_period" unless @bind_vars.include?("cohort_period")
         @smart_vars["cohort_period"] = ["day", "week", "month"]
-        params[:cohort_period] ||= "week"
+        # TODO create var_params method
+        request.query_parameters["cohort_period"] ||= "week"
       end
 
       def parse_smart_variables(var, data_source)

@@ -35,6 +35,7 @@ module Blazer
       def process_vars(statement, data_source, var_params = nil)
         var_params ||= request.query_parameters
         (@bind_vars ||= []).concat(Blazer.extract_vars(statement)).uniq!
+        # update in-place so populated in view and consistent across queries on dashboard
         @bind_vars.each do |var|
           var_params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
         end

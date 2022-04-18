@@ -82,18 +82,21 @@ module Blazer
     end
 
     def run
+      @query = Query.find_by(id: params[:query_id]) if params[:query_id]
+
+      # use query data source when present
+      data_source = @query.data_source if @query && @query.data_source
+      data_source ||= params[:data_source]
+      @data_source = Blazer.data_sources[data_source]
+
       @statement = params[:statement]
       # before process_vars
       @cohort_analysis = Query.new(statement: @statement).cohort_analysis?
-      data_source = params[:data_source]
       # fallback for now for users with open tabs
       @var_params = request.request_parameters["variables"] || request.request_parameters
       process_vars(@statement, data_source, @var_params)
       @only_chart = params[:only_chart]
       @run_id = blazer_params[:run_id]
-      @query = Query.find_by(id: params[:query_id]) if params[:query_id]
-      data_source = @query.data_source if @query && @query.data_source
-      @data_source = Blazer.data_sources[data_source]
 
       run_cohort_analysis if @cohort_analysis
 

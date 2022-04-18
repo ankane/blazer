@@ -35,7 +35,6 @@ module Blazer
       def process_vars(statement, data_source, var_params = nil)
         var_params ||= request.query_parameters
         (@bind_vars ||= []).concat(Blazer.extract_vars(statement)).uniq!
-        var_params = var_params.dup
         @bind_vars.each do |var|
           var_params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
         end

@@ -1,4 +1,4 @@
-## 2.6.0 (unreleased)
+## 2.6.0 (2022-04-20)
 
 - Fixed quoting issue with variables
 - Custom adapters now need to specify how to quote variables in queries

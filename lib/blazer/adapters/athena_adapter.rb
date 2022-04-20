@@ -1,31 +1,50 @@
 module Blazer
   module Adapters
     class AthenaAdapter < BaseAdapter
-      def run_statement(statement, comment)
+      def run_statement(statement, comment, bind_params = [])
         require "digest/md5"
 
         columns = []
         rows = []
         error = nil
 
-        query_options = {
-          query_string: statement,
-          # use token so we fetch cached results after query is run
-          client_request_token: Digest::MD5.hexdigest([statement, data_source.id, settings["workgroup"]].compact.join("/")),
-          query_execution_context: {
-            database: database,
-          }
-        }
-
-        if settings["output_location"]
-          query_options[:result_configuration] = {output_location: settings["output_location"]}
-        end
-
-        if settings["workgroup"]
-          query_options[:work_group] = settings["workgroup"]
-        end
-
         begin
+          # use empty? since any? doesn't work for [nil]
+          if !bind_params.empty?
+            request_token = Digest::MD5.hexdigest([statement, bind_params.to_json, data_source.id, settings["workgroup"]].compact.join("/"))
+            statement_name = "blazer_#{request_token}"
+            begin
+              client.create_prepared_statement({
+                statement_name: statement_name,
+                work_group: settings["workgroup"],
+                query_statement: statement
+              })
+            rescue Aws::Athena::Errors::InvalidRequestException => e
+              raise e unless e.message.include?("already exists in WorkGroup")
+            end
+            using_statement = bind_params.map { |v| data_source.quote(v) }.join(", ")
+            statement = "EXECUTE #{statement_name} USING #{using_statement}"
+          else
+            request_token = Digest::MD5.hexdigest([statement, data_source.id, settings["workgroup"]].compact.join("/"))
+          end
+
+          query_options = {
+            query_string: statement,
+            # use token so we fetch cached results after query is run
+            client_request_token: request_token,
+            query_execution_context: {
+              database: database,
+            }
+          }
+
+          if settings["output_location"]
+            query_options[:result_configuration] = {output_location: settings["output_location"]}
+          end
+
+          if settings["workgroup"]
+            query_options[:work_group] = settings["workgroup"]
+          end
+
           resp = client.start_query_execution(**query_options)
           query_execution_id = resp.query_execution_id
 
@@ -111,10 +130,27 @@ module Blazer
         "SELECT * FROM {table} LIMIT 10"
       end
 
+      # https://docs.aws.amazon.com/athena/latest/ug/select.html#select-escaping
+      def quoting
+        :single_quote_escape
+      end
+
+      # https://docs.aws.amazon.com/athena/latest/ug/querying-with-prepared-statements.html
+      def parameter_binding
+        engine_version > 1 ? :positional : nil
+      end
+
       private
 
       def database
         @database ||= settings["database"] || "default"
+      end
+
+      # note: this setting is experimental
+      # it does *not* need to be set to use engine version 2
+      # prepared statements must be manually deleted if enabled
+      def engine_version
+        @engine_version ||= (settings["engine_version"] || 1).to_i
       end
 
       def fetch_error(query_execution_id)

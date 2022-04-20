@@ -61,7 +61,7 @@ For production, specify your database:
 ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database"
 ```
 
-Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read-only user. [See how to create one](#permissions).
+When possible, Blazer tries to protect against queries which modify data by running each query in a transaction and rolling it back, but a safer approach is to use a read-only user. [See how to create one](#permissions).
 
 #### Checks (optional)
 
@@ -144,11 +144,9 @@ Be sure to render or redirect for unauthorized users.
 
 ## Permissions
 
-Blazer runs each query in a transaction and rolls it back to prevent queries from modifying data. As an additional line of defense, we recommend using a read only user.
-
 ### PostgreSQL
 
-Create a user with read only permissions:
+Create a user with read-only permissions:
 
 ```sql
 BEGIN;
@@ -162,7 +160,7 @@ COMMIT;
 
 ### MySQL
 
-Create a user with read only permissions:
+Create a user with read-only permissions:
 
 ```sql
 GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
@@ -171,7 +169,7 @@ FLUSH PRIVILEGES;
 
 ### MongoDB
 
-Create a user with read only permissions:
+Create a user with read-only permissions:
 
 ```
 db.createUser({user: "blazer", pwd: "password", roles: ["read"]})
@@ -656,6 +654,8 @@ data_sources:
     url: redshift://user:password@hostname:5439/database
 ```
 
+Use a [read-only user](https://docs.aws.amazon.com/redshift/latest/dg/r_GRANT.html).
+
 ### Apache Drill
 
 Add [drill-sergeant](https://github.com/ankane/drill-sergeant) to your Gemfile and set:
@@ -666,6 +666,8 @@ data_sources:
     adapter: drill
     url: http://hostname:8047
 ```
+
+Use a [read-only user](https://drill.apache.org/docs/roles-and-privileges/).
 
 ### Apache Hive
 
@@ -690,6 +692,8 @@ data_sources:
     url: ignite://user:password@hostname:10800
 ```
 
+Use a [read-only user](https://www.gridgain.com/docs/latest/administrators-guide/security/authorization-permissions) (requires a third-party plugin).
+
 ### Apache Spark
 
 Add [hexspace](https://github.com/ankane/hexspace) to your Gemfile and set:
@@ -713,6 +717,8 @@ data_sources:
     url: cassandra://user:password@hostname:9042/keyspace
 ```
 
+Use a [read-only role](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_using/useSecurePermission.html).
+
 ### Druid
 
 Enable [SQL support](http://druid.io/docs/latest/querying/sql.html#configuration) on the broker and set:
@@ -724,6 +730,8 @@ data_sources:
     url: http://hostname:8082
 ```
 
+Use a [read-only role](https://druid.apache.org/docs/latest/development/extensions-core/druid-basic-security.html).
+
 ### Elasticsearch
 
 Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) to your Gemfile and set:
@@ -734,6 +742,8 @@ data_sources:
     adapter: elasticsearch
     url: http://user:password@hostname:9200
 ```
+
+Use a [read-only role](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-privileges.html).
 
 ### Google BigQuery
 
@@ -757,6 +767,8 @@ data_sources:
     url: ibm-db://user:password@hostname:50000/database
 ```
 
+Use a [read-only user](https://www.ibm.com/support/pages/creating-read-only-database-permissions-user).
+
 ### InfluxDB
 
 Add [influxdb](https://github.com/influxdata/influxdb-ruby) to your Gemfile and set:
@@ -768,7 +780,7 @@ data_sources:
     url: http://user:password@hostname:8086/database
 ```
 
-Supports [InfluxQL](https://docs.influxdata.com/influxdb/v1.8/query_language/explore-data/)
+Use a [read-only user](https://docs.influxdata.com/influxdb/v1.8/administration/authentication_and_authorization/). Supports [InfluxQL](https://docs.influxdata.com/influxdb/v1.8/query_language/explore-data/).
 
 ### MongoDB
 
@@ -782,6 +794,8 @@ data_sources:
     url: mongodb://user:password@hostname:27017/database
 ```
 
+Use a [read-only user](#mongodb).
+
 ### MySQL
 
 Add [mysql2](https://github.com/brianmario/mysql2) to your Gemfile (if it’s not there) and set:
@@ -791,6 +805,8 @@ data_sources:
   my_source:
     url: mysql2://user:password@hostname:3306/database
 ```
+
+Use a [read-only user](#mysql).
 
 ### Neo4j
 
@@ -803,6 +819,8 @@ data_sources:
     url: http://user:password@hostname:7474
 ```
 
+Use a [read-only user](https://neo4j.com/docs/cypher-manual/current/access-control/manage-privileges/).
+
 ### OpenSearch
 
 Add [opensearch-ruby](https://github.com/opensearch-project/opensearch-ruby) to your Gemfile and set:
@@ -814,6 +832,8 @@ data_sources:
     url: http://user:password@hostname:9200
 ```
 
+Use a [read-only user](https://opensearch.org/docs/latest/security-plugin/access-control/permissions/).
+
 ### Oracle
 
 Add [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced) and [ruby-oci8](https://github.com/kubo/ruby-oci8) to your Gemfile and set:
@@ -823,6 +843,8 @@ data_sources:
   my_source:
     url: oracle-enhanced://user:password@hostname:1521/database
 ```
+
+Use a [read-only user](https://docs.oracle.com/cd/B19306_01/network.102/b14266/authoriz.htm).
 
 ### PostgreSQL
 
@@ -834,6 +856,8 @@ data_sources:
     url: postgres://user:password@hostname:5432/database
 ```
 
+Use a [read-only user](#postgresql).
+
 ### Presto
 
 Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
@@ -843,6 +867,8 @@ data_sources:
   my_source:
     url: presto://user@hostname:8080/catalog
 ```
+
+Use a [read-only user](https://prestodb.io/docs/current/security/built-in-system-access-control.html).
 
 ### Salesforce
 
@@ -865,7 +891,7 @@ SALESFORCE_CLIENT_SECRET="client secret"
 SALESFORCE_API_VERSION="41.0"
 ```
 
-Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm)
+Use a read-only user. Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm).
 
 ### Socrata Open Data API (SODA)
 
@@ -879,7 +905,7 @@ data_sources:
     app_token: ...
 ```
 
-Supports [SoQL](https://dev.socrata.com/docs/functions/)
+Supports [SoQL](https://dev.socrata.com/docs/functions/).
 
 ### Snowflake
 
@@ -913,6 +939,8 @@ data_sources:
     conn_str: Driver=/path/to/libSnowflake.so;uid=user;pwd=password;server=host.snowflakecomputing.com
 ```
 
+Use a [read-only role](https://docs.snowflake.com/en/user-guide/security-access-control-configure.html).
+
 ### SQLite
 
 Add [sqlite3](https://github.com/sparklemotion/sqlite3-ruby) to your Gemfile and set:
@@ -932,6 +960,8 @@ data_sources:
   my_source:
     url: sqlserver://user:password@hostname:1433/database
 ```
+
+Use a [read-only user](https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/getting-started-with-database-engine-permissions?view=sql-server-ver15).
 
 ## Creating an Adapter
 
@@ -1008,6 +1038,22 @@ override_csp: true
 ```
 
 ## Upgrading
+
+### 2.6
+
+Custom adapters now need to specify how to quote variables in queries (there is no longer a default)
+
+```ruby
+class FooAdapter < Blazer::Adapters::BaseAdapter
+  def quoting
+    :backslash_escape # single quote strings and convert ' to \' and \ to \\
+    # or
+    :single_quote_escape # single quote strings and convert ' to ''
+    # or
+    ->(value) { ... } # custom method
+  end
+end
+```
 
 ### 2.3
 

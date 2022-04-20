@@ -1,5 +1,7 @@
-## 2.5.1 (unreleased)
+## 2.6.0 (unreleased)
 
+- Fixed quoting issue with variables
+- Custom adapters now need to specify how to quote variables in queries
 - Added experimental support for Propshaft
 - Fixed error with empty results with InfluxDB
 

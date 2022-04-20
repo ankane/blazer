@@ -1,5 +1,11 @@
 <% blazer_title @query.name %>
 
+<% if @success %>
+  <% run_data = {statement: @query.statement, query_id: @query.id, variables: variable_params(@query)} %>
+  <% run_data.merge!(forecast: "t") if params[:forecast] %>
+  <% run_data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
+<% end %>
+
 <div class="topbar">
   <div class="container">
     <div class="row" style="padding-top: 13px;">
@@ -14,7 +20,7 @@
         <%= link_to "Fork", new_query_path(params: variable_params(@query).merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
 
         <% if !@error && @success %>
-          <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv", forecast: params[:forecast], cohort_period: params[:cohort_period]), params: {statement: @statement}, class: "btn btn-primary" %>
+          <%= button_to "Download", run_queries_path(format: "csv"), params: run_data, class: "btn btn-primary" %>
         <% end %>
       </div>
     </div>
@@ -39,7 +45,7 @@
 
 <%= render partial: "blazer/variables", locals: {action: query_path(@query)} %>
 
-<pre id="code"><code><%= @statement %></code></pre>
+<pre id="code"><code><%= @statement.display_statement %></code></pre>
 
 <% if @success %>
   <div id="results">
@@ -56,9 +62,7 @@
       $("#results").addClass("query-error").html(message)
     }
 
-    <% data = {statement: @statement, query_id: @query.id, data_source: @query.data_source, variables: variable_params(@query)} %>
-    <% data.merge!(forecast: "t") if params[:forecast] %>
-    <%= blazer_js_var "data", data %>
+    <%= blazer_js_var "data", run_data %>
 
     runQuery(data, showRun, showError)
   </script>

@@ -35,13 +35,19 @@ module Blazer
     end
 
     def variables
-      variables = Blazer.extract_vars(statement)
+      # don't require data_source to be loaded
+      variables = Statement.new(statement).variables
       variables += ["cohort_period"] if cohort_analysis?
       variables
     end
 
     def cohort_analysis?
-      /\/\*\s*cohort analysis\s*\*\//i.match?(statement)
+      # don't require data_source to be loaded
+      Statement.new(statement).cohort_analysis?
+    end
+
+    def statement_object
+      Statement.new(statement, data_source)
     end
   end
 end

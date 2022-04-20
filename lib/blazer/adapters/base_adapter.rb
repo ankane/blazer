@@ -8,7 +8,22 @@ module Blazer
       end
 
       def run_statement(statement, comment)
-        # the one required method
+        # required
+      end
+
+      def quoting
+        # required, how to quote variables
+        # :backslash_escape - single quote strings and convert ' to \' and \ to \\
+        # :single_quote_escape - single quote strings and convert ' to ''
+        # ->(value) { ... } - custom method
+      end
+
+      def parameter_binding
+        # optional, but recommended when possible for security
+        # if specified, quoting is only used for display
+        # :positional - ?
+        # :numeric - $1
+        # ->(statement, values) { ... } - custom method
       end
 
       def tables

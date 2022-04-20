@@ -68,6 +68,15 @@ module Blazer
       def cancel(run_id)
         # todo
       end
+
+      # https://docs.snowflake.com/en/sql-reference/data-types-text.html#escape-sequences
+      def quoting
+        :backslash_escape
+      end
+
+      def parameter_binding
+        # TODO
+      end
     end
   end
 end

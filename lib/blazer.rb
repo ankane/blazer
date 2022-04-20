@@ -1,14 +1,18 @@
 # dependencies
-require "csv"
-require "yaml"
 require "chartkick"
 require "safely/core"
+
+# stdlib
+require "csv"
+require "json"
+require "yaml"
 
 # modules
 require "blazer/version"
 require "blazer/data_source"
 require "blazer/result"
 require "blazer/run_statement"
+require "blazer/statement"
 
 # adapters
 require "blazer/adapters/base_adapter"
@@ -78,6 +82,7 @@ module Blazer
   self.images = false
   self.override_csp = false
 
+  VARIABLE_MESSAGE = "Variable cannot be used in this position"
   TIMEOUT_MESSAGE = "Query timed out :("
   TIMEOUT_ERRORS = [
     "canceling statement due to statement timeout", # postgres
@@ -130,6 +135,7 @@ module Blazer
     end
   end
 
+  # TODO move to Statement and remove in 3.0.0
   def self.extract_vars(statement)
     # strip commented out lines
     # and regex {1} or {1,2}
@@ -150,9 +156,8 @@ module Blazer
 
     ActiveSupport::Notifications.instrument("run_check.blazer", check_id: check.id, query_id: check.query.id, state_was: check.state) do |instrument|
       # try 3 times on timeout errors
-      data_source = data_sources[check.query.data_source]
-      statement = check.query.statement
-      Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
+      statement = check.query.statement_object
+      data_source = statement.data_source
 
       while tries <= 3
         result = data_source.run_statement(statement, refresh_cache: true, check: check, query: check.query)
@@ -180,7 +185,8 @@ module Blazer
       # TODO use proper logfmt
       Rails.logger.info "[blazer check] query=#{check.query.name} state=#{check.state} rows=#{result.rows.try(:size)} error=#{result.error}"
 
-      instrument[:statement] = statement
+      # should be no variables
+      instrument[:statement] = statement.bind_statement
       instrument[:data_source] = data_source
       instrument[:state] = check.state
       instrument[:rows] = result.rows.try(:size)

@@ -1,12 +1,16 @@
 module Blazer
   class RunStatement
-    def perform(data_source, statement, options = {})
+    def perform(statement, options = {})
       query = options[:query]
-      Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
+
+      data_source = statement.data_source
+      statement.bind
 
       # audit
       if Blazer.audit
-        audit = Blazer::Audit.new(statement: statement)
+        audit_statement = statement.bind_statement
+        audit_statement += "\n\n#{statement.bind_values.to_json}" if statement.bind_values.any?
+        audit = Blazer::Audit.new(statement: audit_statement)
         audit.query = query
         audit.data_source = data_source.id
         audit.user = options[:user]

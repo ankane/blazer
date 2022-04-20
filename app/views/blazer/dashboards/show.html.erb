@@ -39,7 +39,7 @@
     </div>
   </div>
   <script>
-    <%= blazer_js_var "data", {statement: @statements[i], query_id: query.id, data_source: query.data_source, only_chart: true, cohort_period: params[:cohort_period]} %>
+    <%= blazer_js_var "data", {statement: query.statement, query_id: query.id, variables: variable_params(query), only_chart: true, cohort_period: params[:cohort_period]} %>
 
     runQuery(data, function (data) {
       $("#chart-<%= i %>").html(data)

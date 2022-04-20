@@ -15,7 +15,7 @@ module Blazer
           end
       end
 
-      def run_statement(statement, comment)
+      def run_statement(statement, comment, bind_params = [])
         columns = []
         rows = []
         error = nil
@@ -24,7 +24,8 @@ module Blazer
           in_transaction do
             set_timeout(data_source.timeout) if data_source.timeout
 
-            result = select_all("#{statement} /*#{comment}*/")
+            binds = bind_params.map { |v| ActiveRecord::Relation::QueryAttribute.new(nil, v, ActiveRecord::Type::Value.new) }
+            result = connection_model.connection.select_all("#{statement} /*#{comment}*/", nil, binds)
             columns = result.columns
             result.rows.each do |untyped_row|
               rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
@@ -33,6 +34,7 @@ module Blazer
         rescue => e
           error = e.message.sub(/.+ERROR: /, "")
           error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
+          error = Blazer::VARIABLE_MESSAGE if error.include?("syntax error at or near \"$") || error.include?("Incorrect syntax near '@") || error.include?("your MySQL server version for the right syntax to use near '?")
           reconnect if error.include?("PG::ConnectionBad")
         end
 
@@ -156,7 +158,7 @@ module Blazer
         # WITH not an optimization fence in Postgres 12+
         statement = <<~SQL
           WITH query AS (
-            #{statement}
+            {placeholder}
           ),
           cohorts AS (
             SELECT user_id, MIN(#{cohort_column}) AS cohort_time FROM query
@@ -183,6 +185,27 @@ module Blazer
         connection_model.send(:sanitize_sql_array, params)
       end
 
+      def quoting
+        ->(value) { connection_model.connection.quote(value) }
+      end
+
+      # Redshift adapter silently ignores binds
+      def parameter_binding
+        if postgresql? || sqlite?
+          :numeric
+        elsif mysql? && connection_model.connection.prepared_statements?
+          # Active Record silently ignores binds with MySQL when prepared statements are disabled
+          :positional
+        elsif sqlserver?
+          proc do |statement, variables|
+            variables.each_with_index do |(k, _), i|
+              statement = statement.gsub("{#{k}}", "@#{i} ")
+            end
+            [statement, variables.values]
+          end
+        end
+      end
+
       protected
 
       def select_all(statement, params = [])
@@ -205,6 +228,10 @@ module Blazer
 
       def mysql?
         ["MySQL", "Mysql2", "Mysql2Spatial"].include?(adapter_name)
+      end
+
+      def sqlite?
+        ["SQLite"].include?(adapter_name)
       end
 
       def sqlserver?

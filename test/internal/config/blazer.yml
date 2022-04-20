@@ -75,7 +75,7 @@ data_sources:
     url: mongodb://localhost:27017/blazer_test
 
   mysql:
-    url: mysql2://localhost:3306/blazer_test
+    url: mysql2://localhost:3306/blazer_test # ?prepared_statements=true
 
   neo4j:
     adapter: neo4j

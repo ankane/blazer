@@ -38,6 +38,15 @@ module Blazer
         "SELECT * FROM {table} LIMIT 10"
       end
 
+      # https://docs.influxdata.com/influxdb/v1.8/query_language/spec/#strings
+      def quoting
+        :backslash_escape
+      end
+
+      def parameter_binding
+        # not supported
+      end
+
       protected
 
       def client

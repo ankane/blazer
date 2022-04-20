@@ -95,6 +95,11 @@ module Blazer
       def tables
         ["all"]
       end
+
+      # https://dev.socrata.com/docs/datatypes/text.html
+      def quoting
+        :single_quote_escape
+      end
     end
   end
 end

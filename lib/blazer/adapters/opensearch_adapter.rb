@@ -38,6 +38,10 @@ module Blazer
         "SELECT * FROM `{table}` LIMIT 10"
       end
 
+      def quoting
+        # unknown
+      end
+
       protected
 
       def client

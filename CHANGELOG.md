@@ -1,3 +1,7 @@
+## 2.6.1 (unreleased)
+
+- Added `region` setting to Amazon Athena
+
 ## 2.6.0 (2022-04-20)
 
 - Fixed quoting issue with variables

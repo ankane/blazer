@@ -1,4 +1,4 @@
-## 2.6.1 (unreleased)
+## 2.6.1 (2022-04-21)
 
 - Added `region` setting to Amazon Athena
 - Fixed error with MySQL for Rails < 7

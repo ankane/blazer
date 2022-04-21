@@ -193,7 +193,7 @@ module Blazer
       def parameter_binding
         if postgresql? || sqlite?
           :numeric
-        elsif mysql? && connection_model.connection.prepared_statements?
+        elsif mysql? && connection_model.connection.prepared_statements
           # Active Record silently ignores binds with MySQL when prepared statements are disabled
           :positional
         elsif sqlserver?

@@ -1,6 +1,7 @@
 ## 2.6.1 (unreleased)
 
 - Added `region` setting to Amazon Athena
+- Fixed error with MySQL
 - Fixed error with binary data
 
 ## 2.6.0 (2022-04-20)

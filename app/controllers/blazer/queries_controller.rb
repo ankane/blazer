@@ -52,28 +52,25 @@ module Blazer
       @query.status = "active" if @query.respond_to?(:status)
 
       if @query.save
-        redirect_to query_path(@query, variable_params(@query))
+        redirect_to query_path(@query, params: variable_params(@query))
       else
         render_errors @query
       end
     end
 
     def show
-      @statement = @query.statement.dup
-      process_vars(@statement, @query.data_source)
+      @statement = @query.statement_object
+      @success = process_vars(@statement)
 
       @smart_vars = {}
       @sql_errors = []
-      data_source = Blazer.data_sources[@query.data_source]
       @bind_vars.each do |var|
-        smart_var, error = parse_smart_variables(var, data_source)
+        smart_var, error = parse_smart_variables(var, @statement.data_source)
         @smart_vars[var] = smart_var if smart_var
         @sql_errors << error if error
       end
 
-      @query.update!(status: "active") if @query.try(:status) == "archived"
-
-      Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
+      @query.update!(status: "active") if @query.respond_to?(:status) && @query.status.in?(["archived", nil])
 
       add_cohort_analysis_vars if @query.cohort_analysis?
     end
@@ -82,16 +79,23 @@ module Blazer
     end
 
     def run
-      @statement = params[:statement]
+      @query = Query.find_by(id: params[:query_id]) if params[:query_id]
+
+      # use query data source when present
+      # need to update viewable? logic below if this changes
+      data_source = @query.data_source if @query && @query.data_source
+      data_source ||= params[:data_source]
+      @data_source = Blazer.data_sources[data_source]
+
+      @statement = Blazer::Statement.new(params[:statement], @data_source)
       # before process_vars
-      @cohort_analysis = Query.new(statement: @statement).cohort_analysis?
-      data_source = params[:data_source]
-      process_vars(@statement, data_source)
+      @cohort_analysis = @statement.cohort_analysis?
+
+      # fallback for now for users with open tabs
+      @var_params = request.request_parameters["variables"] || request.request_parameters
+      @success = process_vars(@statement, @var_params)
       @only_chart = params[:only_chart]
       @run_id = blazer_params[:run_id]
-      @query = Query.find_by(id: params[:query_id]) if params[:query_id]
-      data_source = @query.data_source if @query && @query.data_source
-      @data_source = Blazer.data_sources[data_source]
 
       run_cohort_analysis if @cohort_analysis
 
@@ -128,7 +132,7 @@ module Blazer
 
         options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id, async: Blazer.async}
         if Blazer.async && request.format.symbol != :csv
-          Blazer::RunStatementJob.perform_later(@data_source.id, @statement, options)
+          Blazer::RunStatementJob.perform_later(@data_source.id, @statement.statement, options.merge(values: @statement.values))
           wait_start = Time.now
           loop do
             sleep(0.1)
@@ -136,7 +140,7 @@ module Blazer
             break if @result || Time.now - wait_start > 3
           end
         else
-          @result = Blazer::RunStatement.new.perform(@data_source, @statement, options)
+          @result = Blazer::RunStatement.new.perform(@statement, options)
         end
 
         if @result
@@ -166,13 +170,8 @@ module Blazer
     end
 
     def refresh
-      data_source = Blazer.data_sources[@query.data_source]
-      @statement = @query.statement.dup
-      process_vars(@statement, @query.data_source)
-      Blazer.transform_statement.call(data_source, @statement) if Blazer.transform_statement
-      @statement = cohort_analysis_statement(data_source, @statement) if @query.cohort_analysis?
-      data_source.clear_cache(@statement)
-      redirect_to query_path(@query, variable_params(@query))
+      refresh_query(@query)
+      redirect_to query_path(@query, params: variable_params(@query))
     end
 
     def update
@@ -180,11 +179,12 @@ module Blazer
         @query = Blazer::Query.new
         @query.creator = blazer_user if @query.respond_to?(:creator)
       end
+      @query.status = "active" if @query.respond_to?(:status)
       unless @query.editable?(blazer_user)
         @query.errors.add(:base, "Sorry, permission denied")
       end
       if @query.errors.empty? && @query.update(query_params)
-        redirect_to query_path(@query, variable_params(@query))
+        redirect_to query_path(@query, params: variable_params(@query))
       else
         render_errors @query
       end
@@ -281,6 +281,9 @@ module Blazer
             render layout: false
           end
           format.csv do
+            # not ideal, but useful for testing
+            raise Error, @error if @error && Rails.env.test?
+
             send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
           end
         end
@@ -362,34 +365,12 @@ module Blazer
       end
 
       def run_cohort_analysis
-        unless @data_source.supports_cohort_analysis?
+        unless @statement.data_source.supports_cohort_analysis?
           @cohort_error = "This data source does not support cohort analysis"
         end
 
         @show_cohort_rows = !params[:query_id] || @cohort_error
-
-        unless @show_cohort_rows
-          @statement = cohort_analysis_statement(@data_source, @statement)
-        end
-      end
-
-      def cohort_analysis_statement(data_source, statement)
-        @cohort_period = params["cohort_period"] || "week"
-        @cohort_period = "week" unless ["day", "week", "month"].include?(@cohort_period)
-
-        # for now
-        @conversion_period = @cohort_period
-        @cohort_days =
-          case @cohort_period
-          when "day"
-            1
-          when "week"
-            7
-          when "month"
-            30
-          end
-
-        data_source.cohort_analysis_statement(statement, period: @cohort_period, days: @cohort_days)
+        cohort_analysis_statement(@statement) unless @show_cohort_rows
       end
 
       def render_cohort_analysis

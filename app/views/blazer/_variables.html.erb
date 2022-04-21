@@ -1,4 +1,5 @@
 <% if @bind_vars.any? %>
+  <% var_params = request.query_parameters %>
   <script>
     <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>
     var now = moment.tz(timeZone)
@@ -19,14 +20,14 @@
     <% @bind_vars.each_with_index do |var, i| %>
       <%= label_tag var, var %>
       <% if (data = @smart_vars[var]) %>
-        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
+        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: var_params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
         <script>
           $("#<%= var %>").selectize({
             create: true
           });
         </script>
       <% elsif var.end_with?("_at") || var == "start_time" || var == "end_time" %>
-        <%= hidden_field_tag var, params[var] %>
+        <%= hidden_field_tag var, var_params[var] %>
 
         <div class="selectize-control single" style="width: 200px;">
           <div id="<%= var %>-select" class="selectize-input" style="display: inline-block;">
@@ -58,13 +59,13 @@
           })()
         </script>
       <% else %>
-        <%= text_field_tag var, params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !params[var], class: "form-control" %>
+        <%= text_field_tag var, var_params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !var_params[var], class: "form-control" %>
       <% end %>
     <% end %>
 
     <% if date_vars %>
       <% date_vars.each do |var| %>
-        <%= hidden_field_tag var, params[var] %>
+        <%= hidden_field_tag var, var_params[var] %>
       <% end %>
 
       <%= label_tag nil, date_vars.join(" & ") %>

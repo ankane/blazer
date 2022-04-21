@@ -1,0 +1,33 @@
+name: build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+        - ruby: 3.1
+          gemfile: Gemfile
+        - ruby: "3.0"
+          gemfile: gemfiles/rails61.gemfile
+        - ruby: 2.7
+          gemfile: gemfiles/rails60.gemfile
+        - ruby: 2.6
+          gemfile: gemfiles/rails52.gemfile
+        - ruby: 2.5
+          gemfile: gemfiles/rails51.gemfile
+        - ruby: 2.4
+          gemfile: gemfiles/rails50.gemfile
+    env:
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+        bundler-cache: true
+    - uses: ankane/setup-postgres@v1
+      with:
+        database: blazer_test
+    - run: bundle exec rake test

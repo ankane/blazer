@@ -1,5 +1,12 @@
 <% blazer_title @query.name %>
 
+<% if @success %>
+  <% run_data = {statement: @query.statement, query_id: @query.id, variables: variable_params(@query)} %>
+  <% run_data.merge!(forecast: "t") if params[:forecast] %>
+  <% run_data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
+  <% run_data.transform_keys!(&:to_s) if Rails::VERSION::STRING.to_f == 5.0 %>
+<% end %>
+
 <div class="topbar">
   <div class="container">
     <div class="row" style="padding-top: 13px;">
@@ -10,11 +17,11 @@
         </h3>
       </div>
       <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_query_path(@query, variable_params(@query)), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
-        <%= link_to "Fork", new_query_path(variable_params(@query).merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
+        <%= link_to "Edit", edit_query_path(@query, params: variable_params(@query)), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
+        <%= link_to "Fork", new_query_path(params: variable_params(@query).merge(fork_query_id: @query.id, data_source: @query.data_source, name: @query.name)), class: "btn btn-info" %>
 
         <% if !@error && @success %>
-          <%= button_to "Download", run_queries_path(query_id: @query.id, format: "csv", forecast: params[:forecast], cohort_period: params[:cohort_period]), params: {statement: @statement}, class: "btn btn-primary" %>
+          <%= button_to "Download", run_queries_path(format: "csv"), params: run_data, class: "btn btn-primary" %>
         <% end %>
       </div>
     </div>
@@ -39,7 +46,7 @@
 
 <%= render partial: "blazer/variables", locals: {action: query_path(@query)} %>
 
-<pre id="code"><code><%= @statement %></code></pre>
+<pre id="code"><code><%= @statement.display_statement %></code></pre>
 
 <% if @success %>
   <div id="results">
@@ -56,9 +63,7 @@
       $("#results").addClass("query-error").html(message)
     }
 
-    <% data = variable_params(@query).merge(statement: @statement, query_id: @query.id, data_source: @query.data_source) %>
-    <% data.merge!(forecast: "t") if params[:forecast] %>
-    <%= blazer_js_var "data", data %>
+    <%= blazer_js_var "data", run_data %>
 
     runQuery(data, showRun, showError)
   </script>

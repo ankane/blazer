@@ -30,12 +30,9 @@ module Blazer
       Blazer.anomaly_checks = Blazer.settings["anomaly_checks"] || false
       Blazer.forecasting = Blazer.settings["forecasting"] || false
       Blazer.async = Blazer.settings["async"] || false
-      if Blazer.async
-        require "blazer/run_statement_job"
-      end
-
       Blazer.images = Blazer.settings["images"] || false
       Blazer.override_csp = Blazer.settings["override_csp"] || false
+      Blazer.slack_oauth_token = Blazer.settings["slack_oauth_token"] || ENV["BLAZER_SLACK_OAUTH_TOKEN"]
       Blazer.slack_webhook_url = Blazer.settings["slack_webhook_url"] || ENV["BLAZER_SLACK_WEBHOOK_URL"]
       Blazer.mapbox_access_token = Blazer.settings["mapbox_access_token"] || ENV["MAPBOX_ACCESS_TOKEN"]
     end

@@ -21,11 +21,8 @@ module Blazer
 
     def show
       @queries = @dashboard.dashboard_queries.order(:position).preload(:query).map(&:query)
-      @statements = []
       @queries.each do |query|
-        statement = query.statement.dup
-        process_vars(statement, query.data_source)
-        @statements << statement
+        @success = process_vars(query.statement_object)
       end
       @bind_vars ||= []
 
@@ -48,7 +45,7 @@ module Blazer
 
     def update
       if update_dashboard(@dashboard)
-        redirect_to dashboard_path(@dashboard, variable_params(@dashboard))
+        redirect_to dashboard_path(@dashboard, params: variable_params(@dashboard))
       else
         render_errors @dashboard
       end
@@ -61,13 +58,9 @@ module Blazer
 
     def refresh
       @dashboard.queries.each do |query|
-        data_source = Blazer.data_sources[query.data_source]
-        statement = query.statement.dup
-        process_vars(statement, query.data_source)
-        Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
-        data_source.clear_cache(statement)
+        refresh_query(query)
       end
-      redirect_to dashboard_path(@dashboard, variable_params(@dashboard))
+      redirect_to dashboard_path(@dashboard, params: variable_params(@dashboard))
     end
 
     private

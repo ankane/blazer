@@ -25,6 +25,10 @@ module Blazer
         "db.{table}.find().limit(10)"
       end
 
+      def quoting
+        :backslash_escape
+      end
+
       protected
 
       def client

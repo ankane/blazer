@@ -11,10 +11,10 @@ namespace :blazer do
 
   desc "archive queries"
   task archive_queries: :environment do
-    abort "Audits must be enabled to archive" unless Blazer.audit
-    abort "Missing status column - see https://github.com/ankane/blazer#23" unless Blazer::Query.column_names.include?("status")
-
-    viewed_query_ids = Blazer::Audit.where("created_at > ?", 90.days.ago).group(:query_id).count.keys.compact
-    Blazer::Query.active.where.not(id: viewed_query_ids).update_all(status: "archived")
+    begin
+      Blazer.archive_queries
+    rescue => e
+      abort e.message
+    end
   end
 end

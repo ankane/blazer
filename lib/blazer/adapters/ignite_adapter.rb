@@ -1,13 +1,13 @@
 module Blazer
   module Adapters
     class IgniteAdapter < BaseAdapter
-      def run_statement(statement, comment)
+      def run_statement(statement, comment, bind_params)
         columns = []
         rows = []
         error = nil
 
         begin
-          result = client.query("#{statement} /*#{comment}*/", schema: default_schema, statement_type: :select, timeout: data_source.timeout)
+          result = client.query("#{statement} /*#{comment}*/", bind_params, schema: default_schema, statement_type: :select, timeout: data_source.timeout)
           columns = result.any? ? result.first.keys : []
           rows = result.map(&:values)
         rescue => e
@@ -36,6 +36,16 @@ module Blazer
       #   result = data_source.run_statement(sql)
       #   result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }.sort_by { |t| [t[:schema] == default_schema ? "" : t[:schema], t[:table]] }
       # end
+
+      def quoting
+        :single_quote_escape
+      end
+
+      # query arguments
+      # https://ignite.apache.org/docs/latest/binary-client-protocol/sql-and-scan-queries#op_query_sql
+      def parameter_binding
+        :positional
+      end
 
       private
 

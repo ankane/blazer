@@ -3,10 +3,12 @@ module Blazer
     self.queue_adapter = :async
 
     def perform(data_source_id, statement, options)
-      data_source = Blazer.data_sources[data_source_id]
+      statement = Blazer::Statement.new(statement, data_source_id)
+      statement.values = options.delete(:values)
+      data_source = statement.data_source
       begin
         ActiveRecord::Base.connection_pool.with_connection do
-          Blazer::RunStatement.new.perform(data_source, statement, options)
+          Blazer::RunStatement.new.perform(statement, options)
         end
       rescue Exception => e
         Blazer::Result.new(data_source, [], [], "Unknown error", nil, false)

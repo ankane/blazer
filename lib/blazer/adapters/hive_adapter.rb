@@ -25,6 +25,16 @@ module Blazer
         "SELECT * FROM {table} LIMIT 10"
       end
 
+      # https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Types#LanguageManualTypes-StringsstringStrings
+      def quoting
+        :backslash_escape
+      end
+
+      # has variable substitution, but sets for session
+      # https://cwiki.apache.org/confluence/display/Hive/LanguageManual+VariableSubstitution
+      def parameter_binding
+      end
+
       protected
 
       def client

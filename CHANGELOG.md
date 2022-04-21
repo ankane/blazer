@@ -1,5 +1,53 @@
-## 2.4.3 (unreleased)
+## 2.6.1 (2022-04-21)
 
+- Added `region` setting to Amazon Athena
+- Fixed error with MySQL for Rails < 7
+- Fixed error with binary data
+
+## 2.6.0 (2022-04-20)
+
+- Fixed quoting issue with variables
+- Custom adapters now need to specify how to quote variables in queries
+- Added experimental support for Propshaft
+- Fixed error with empty results with InfluxDB
+
+## 2.5.0 (2022-01-04)
+
+- Added support for Slack OAuth tokens
+- Added experimental support for AnomalyDetection.rb
+- Improved table preview for MySQL
+- Fixed cohort analysis for MySQL
+
+## 2.4.8 (2021-12-07)
+
+- Added support for OpenSearch
+- Removed `elasticsearch-xpack` dependency for Elasticsearch
+
+## 2.4.7 (2021-09-25)
+
+- Made Action Mailer optional
+- Fixed error with multiple maps on dashboard
+
+## 2.4.6 (2021-09-20)
+
+- Added support for workgroup with Amazon Athena
+- Added casting for timestamp with time zone columns with Amazon Athena
+- Added support for setting credentials in config file with Amazon Athena
+- Made output location optional with Amazon Athena
+- Fixed casting error for `NULL` values with Amazon Athena
+- Fixed issue with Google BigQuery only showing first page of results
+
+## 2.4.5 (2021-09-15)
+
+- Improved fix for some forked queries not appearing on home page
+
+## 2.4.4 (2021-09-15)
+
+- Fixed issue with some forked queries not appearing on home page
+
+## 2.4.3 (2021-07-27)
+
+- Added Prophet anomaly detection
 - Fixed style for new select items
 
 ## 2.4.2 (2021-02-08)

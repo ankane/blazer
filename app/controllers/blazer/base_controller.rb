@@ -32,45 +32,34 @@ module Blazer
 
     private
 
-      def process_vars(statement, data_source)
-        (@bind_vars ||= []).concat(Blazer.extract_vars(statement)).uniq!
+      def process_vars(statement, var_params = nil)
+        var_params ||= request.query_parameters
+        (@bind_vars ||= []).concat(statement.variables).uniq!
+        # update in-place so populated in view and consistent across queries on dashboard
         @bind_vars.each do |var|
-          params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
-        end
-        @success = @bind_vars.all? { |v| params[v] }
-
-        if @success
-          @bind_vars.each do |var|
-            value = params[var].presence
-            if value
-              if ["start_time", "end_time"].include?(var)
-                value = value.to_s.gsub(" ", "+") # fix for Quip bug
-              end
-
-              if var.end_with?("_at")
-                begin
-                  value = Blazer.time_zone.parse(value)
-                rescue
-                  # do nothing
-                end
-              end
-
-              if value =~ /\A\d+\z/
-                value = value.to_i
-              elsif value =~ /\A\d+\.\d+\z/
-                value = value.to_f
-              end
-            end
-            value = Blazer.transform_variable.call(var, value) if Blazer.transform_variable
-            statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
+          if !var_params[var]
+            default = statement.data_source.variable_defaults[var]
+            # only add if default exists
+            var_params[var] = default if default
           end
         end
+        runnable = @bind_vars.all? { |v| var_params[v] }
+        statement.add_values(var_params) if runnable
+        runnable
+      end
+
+      def refresh_query(query)
+        statement = query.statement_object
+        runnable = process_vars(statement)
+        cohort_analysis_statement(statement) if statement.cohort_analysis?
+        statement.clear_cache if runnable
       end
 
       def add_cohort_analysis_vars
         @bind_vars << "cohort_period" unless @bind_vars.include?("cohort_period")
-        @smart_vars["cohort_period"] = ["day", "week", "month"]
-        params[:cohort_period] ||= "week"
+        @smart_vars["cohort_period"] = ["day", "week", "month"] if @smart_vars
+        # TODO create var_params method
+        request.query_parameters["cohort_period"] ||= "week"
       end
 
       def parse_smart_variables(var, data_source)
@@ -94,22 +83,33 @@ module Blazer
         [smart_var, error]
       end
 
-      # don't pass to url helpers
-      #
-      # some are dangerous when passed as symbols
-      # root_url({host: "evilsite.com"})
-      #
-      # certain ones (like host) only affect *_url and not *_path
-      #
-      # when permitted parameters are passed in Rails 6,
-      # they appear to be added as GET parameters
-      # root_url(params.permit(:host))
+      def cohort_analysis_statement(statement)
+        @cohort_period = params["cohort_period"] || "week"
+        @cohort_period = "week" unless ["day", "week", "month"].include?(@cohort_period)
+
+        # for now
+        @conversion_period = @cohort_period
+        @cohort_days =
+          case @cohort_period
+          when "day"
+            1
+          when "week"
+            7
+          when "month"
+            30
+          end
+
+        statement.apply_cohort_analysis(period: @cohort_period, days: @cohort_days)
+      end
+
+      # TODO allow all keys
+      # or show error message for disallowed keys
       UNPERMITTED_KEYS = [:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id, :blazer, :run_id, :script_name, :original_script_name]
 
-      # remove unpermitted keys from both params and permitted keys for better sleep
-      def variable_params(resource)
+      def variable_params(resource, var_params = nil)
         permitted_keys = resource.variables - UNPERMITTED_KEYS.map(&:to_s)
-        params.except(*UNPERMITTED_KEYS).slice(*permitted_keys).permit!
+        var_params ||= request.query_parameters
+        var_params.slice(*permitted_keys)
       end
       helper_method :variable_params
 

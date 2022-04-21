@@ -23,7 +23,7 @@ module Blazer
           ]
         }
 
-        post(Blazer.slack_webhook_url, payload)
+        post(payload)
       end
     end
 
@@ -44,7 +44,7 @@ module Blazer
         ]
       }
 
-      post(Blazer.slack_webhook_url, payload)
+      post(payload)
     end
 
     # https://api.slack.com/docs/message-formatting#how_to_escape_characters
@@ -67,13 +67,28 @@ module Blazer
       Blazer::Engine.routes.url_helpers.query_url(id, ActionMailer::Base.default_url_options)
     end
 
-    def self.post(url, payload)
+    # TODO use return value
+    def self.post(payload)
+      if Blazer.slack_webhook_url.present?
+        response = post_api(Blazer.slack_webhook_url, payload, {})
+        response.is_a?(Net::HTTPSuccess) && response.body == "ok"
+      else
+        headers = {
+          "Authorization" => "Bearer #{Blazer.slack_oauth_token}",
+          "Content-type" => "application/json"
+        }
+        response = post_api("https://slack.com/api/chat.postMessage", payload, headers)
+        response.is_a?(Net::HTTPSuccess) && (JSON.parse(response.body)["ok"] rescue false)
+      end
+    end
+
+    def self.post_api(url, payload, headers)
       uri = URI.parse(url)
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true
       http.open_timeout = 3
       http.read_timeout = 5
-      http.post(uri.request_uri, payload.to_json)
+      http.post(uri.request_uri, payload.to_json, headers)
     end
   end
 end

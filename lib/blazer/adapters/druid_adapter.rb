@@ -3,15 +3,37 @@ module Blazer
     class DruidAdapter < BaseAdapter
       TIMESTAMP_REGEX = /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\z/
 
-      def run_statement(statement, comment)
+      def run_statement(statement, comment, bind_params)
+        require "json"
+        require "net/http"
+        require "uri"
+
         columns = []
         rows = []
         error = nil
+
+        params =
+          bind_params.map do |v|
+            type =
+              case v
+              when Integer
+                "BIGINT"
+              when Float
+                "DOUBLE"
+              when ActiveSupport::TimeWithZone
+                v = (v.to_f * 1000).round
+                "TIMESTAMP"
+              else
+                "VARCHAR"
+              end
+            {type: type, value: v}
+          end
 
         header = {"Content-Type" => "application/json", "Accept" => "application/json"}
         timeout = data_source.timeout ? data_source.timeout.to_i : 300
         data = {
           query: statement,
+          parameters: params,
           context: {
             timeout: timeout * 1000
           }
@@ -27,6 +49,8 @@ module Blazer
             error = response["errorMessage"] || "Unknown error: #{response.inspect}"
             if error.include?("timed out")
               error = Blazer::TIMEOUT_MESSAGE
+            elsif error.include?("Encountered \"?\" at")
+              error = Blazer::VARIABLE_MESSAGE
             end
           else
             columns = (response.first || {}).keys
@@ -61,6 +85,17 @@ module Blazer
 
       def preview_statement
         "SELECT * FROM {table} LIMIT 10"
+      end
+
+      # https://druid.apache.org/docs/latest/querying/sql.html#identifiers-and-literals
+      # docs only mention double quotes
+      def quoting
+        :single_quote_escape
+      end
+
+      # https://druid.apache.org/docs/latest/querying/sql.html#dynamic-parameters
+      def parameter_binding
+        :positional
       end
     end
   end

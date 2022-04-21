@@ -56,6 +56,8 @@ module Blazer
             "time"
           elsif v.nil?
             nil
+          elsif v.is_a?(String) && v.encoding == Encoding::BINARY
+            "binary"
           else
             "string"
           end
@@ -174,8 +176,24 @@ module Blazer
     def anomaly?(series)
       series = series.reject { |v| v[0].nil? }.sort_by { |v| v[0] }
 
-      if Blazer.anomaly_checks == "trend"
+      case Blazer.anomaly_checks
+      when "prophet"
+        df = Rover::DataFrame.new(series[0..-2].map { |v| {"ds" => v[0], "y" => v[1]} })
+        m = Prophet.new(interval_width: 0.99)
+        m.logger.level = ::Logger::FATAL # no logging
+        m.fit(df)
+        future = Rover::DataFrame.new(series[-1..-1].map { |v| {"ds" => v[0]} })
+        forecast = m.predict(future).to_a[0]
+        lower = forecast["yhat_lower"]
+        upper = forecast["yhat_upper"]
+        value = series.last[1]
+        value < lower || value > upper
+      when "trend"
         anomalies = Trend.anomalies(Hash[series])
+        anomalies.include?(series.last[0])
+      when "anomaly_detection"
+        period = 7 # TODO determine period
+        anomalies = AnomalyDetection.detect(Hash[series], period: period)
         anomalies.include?(series.last[0])
       else
         csv_str =

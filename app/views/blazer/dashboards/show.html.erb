@@ -10,7 +10,7 @@
         </h3>
       </div>
       <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_dashboard_path(@dashboard, variable_params(@dashboard)), class: "btn btn-info" %>
+        <%= link_to "Edit", edit_dashboard_path(@dashboard, params: variable_params(@dashboard)), class: "btn btn-info" %>
       </div>
     </div>
   </div>
@@ -21,7 +21,7 @@
 <% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
   <p class="text-muted" style="float: right;">
     Some queries may be cached
-    <%= link_to "Refresh", refresh_dashboard_path(@dashboard, variable_params(@dashboard)), method: :post %>
+    <%= link_to "Refresh", refresh_dashboard_path(@dashboard, params: variable_params(@dashboard)), method: :post %>
   </p>
 <% end %>
 
@@ -33,13 +33,13 @@
 
 <% @queries.each_with_index do |query, i| %>
   <div class="chart-container">
-    <h4><%= link_to query.friendly_name, query_path(query, variable_params(query)), target: "_blank" %></h4>
+    <h4><%= link_to query.friendly_name, query_path(query, params: variable_params(query)), target: "_blank" %></h4>
     <div id="chart-<%= i %>" class="chart">
       <p class="text-muted">Loading...</p>
     </div>
   </div>
   <script>
-    <%= blazer_js_var "data", {statement: @statements[i], query_id: query.id, data_source: query.data_source, only_chart: true, cohort_period: params[:cohort_period]} %>
+    <%= blazer_js_var "data", {statement: query.statement, query_id: query.id, variables: variable_params(query), only_chart: true, cohort_period: params[:cohort_period]} %>
 
     runQuery(data, function (data) {
       $("#chart-<%= i %>").html(data)

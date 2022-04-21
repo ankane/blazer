@@ -1,0 +1,163 @@
+# see https://github.com/ankane/blazer for more info
+
+data_sources:
+  main:
+    url: postgres://localhost/blazer_test
+
+    # statement timeout, in seconds
+    # none by default
+    # timeout: 15
+
+    # caching settings
+    # can greatly improve speed
+    # off by default
+    # cache:
+    #   mode: slow # or all
+    #   expires_in: 60 # min
+    #   slow_threshold: 15 # sec, only used in slow mode
+
+    # wrap queries in a transaction for safety
+    # not necessary if you use a read-only user
+    # true by default
+    # use_transaction: false
+
+    smart_variables:
+      # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
+      period: ["day", "week", "month"]
+      # status: {0: "Active", 1: "Archived"}
+
+    linked_columns:
+      user_id: "/admin/users/{value}"
+
+    smart_columns:
+      # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+      status: {0: "Active", 1: "Archived"}
+
+    variable_defaults:
+      default_var: default_value
+
+  athena:
+    adapter: athena
+    database: blazer_test
+
+  bigquery:
+    adapter: bigquery
+    project: your-project
+    keyfile: path/to/keyfile.json
+
+  cassandra:
+    url: cassandra://localhost:9042/blazer_test
+
+  drill:
+    adapter: drill
+    url: http://localhost:8047
+
+  druid:
+    adapter: druid
+    url: http://localhost:8082
+
+  elasticsearch:
+    adapter: elasticsearch
+    url: http://localhost:9200
+
+  hive:
+    adapter: hive
+    url: sasl://localhost:10000/blazer_test
+
+  ignite:
+    url: ignite://localhost:10800
+
+  influxdb:
+    adapter: influxdb
+    url: http://localhost:8086/blazer_test
+
+  mongodb:
+    url: mongodb://localhost:27017/blazer_test
+
+  mysql:
+    url: mysql2://localhost:3306/blazer_test # ?prepared_statements=true
+
+  neo4j:
+    adapter: neo4j
+    url: http://neo4j:secret@localhost:7474/blazer_test
+
+  opensearch:
+    adapter: opensearch
+    url: http://localhost:9200
+
+  postgresql:
+    url: postgres://localhost/blazer_test
+
+  presto:
+    url: presto://user@localhost:8080/jmx
+
+  redshift:
+    url: redshift://localhost:5439/blazer_test
+
+  salesforce:
+    adapter: salesforce
+
+  soda:
+    adapter: soda
+    # url: https://...
+    # app_token: ...
+
+  spark:
+    adapter: spark
+    url: sasl://localhost:10000/blazer_test
+
+  snowflake:
+    adapter: snowflake
+    # conn_str: ...
+
+  sqlite:
+    url: "sqlite3::memory:"
+
+  sqlserver:
+    url: sqlserver://SA:YourStrong!Passw0rd@localhost:1433/blazer_test
+
+# create audits
+audit: true
+
+# change the time zone
+# time_zone: "Pacific Time (US & Canada)"
+
+# class name of the user model
+# user_class: User
+
+# method name for the current user
+# user_method: current_user
+
+# method name for the display name
+# user_name: name
+
+# custom before_action to use for auth
+# before_action_method: require_admin
+
+# email to send checks from
+from_email: blazer@example.org
+
+# webhook for Slack
+slack_webhook_url: http://localhost:3000
+
+check_schedules:
+  - "1 day"
+  - "1 hour"
+  - "5 minutes"
+
+# enable anomaly detection
+# note: with trend, time series are sent to https://trendapi.org
+# anomaly_checks: prophet / trend / r
+
+# enable forecasting
+# note: with trend, time series are sent to https://trendapi.org
+# forecasting: prophet / trend
+
+# enable map
+mapbox_access_token: token
+
+# enable uploads
+uploads:
+  url: postgres://localhost/blazer_test
+  schema: uploads
+  data_source: main

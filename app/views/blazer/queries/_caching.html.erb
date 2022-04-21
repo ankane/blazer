@@ -10,7 +10,7 @@
     <% end %>
 
     <% if @query && params[:query_id] %>
-      <%= link_to "Refresh", refresh_query_path(@query, variable_params(@query)), method: :post %>
+      <%= link_to "Refresh", refresh_query_path(@query, params: variable_params(@query, @var_params)), method: :post %>
     <% end %>
   </p>
 <% end %>

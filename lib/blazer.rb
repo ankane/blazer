@@ -1,14 +1,18 @@
 # dependencies
-require "csv"
-require "yaml"
 require "chartkick"
 require "safely/core"
+
+# stdlib
+require "csv"
+require "json"
+require "yaml"
 
 # modules
 require "blazer/version"
 require "blazer/data_source"
 require "blazer/result"
 require "blazer/run_statement"
+require "blazer/statement"
 
 # adapters
 require "blazer/adapters/base_adapter"
@@ -23,6 +27,7 @@ require "blazer/adapters/ignite_adapter"
 require "blazer/adapters/influxdb_adapter"
 require "blazer/adapters/mongodb_adapter"
 require "blazer/adapters/neo4j_adapter"
+require "blazer/adapters/opensearch_adapter"
 require "blazer/adapters/presto_adapter"
 require "blazer/adapters/salesforce_adapter"
 require "blazer/adapters/soda_adapter"
@@ -37,6 +42,13 @@ module Blazer
   class Error < StandardError; end
   class UploadError < Error; end
   class TimeoutNotSupported < Error; end
+
+  # actionmailer optional
+  autoload :CheckMailer, "blazer/check_mailer"
+  # net/http optional
+  autoload :SlackNotifier, "blazer/slack_notifier"
+  # activejob optional
+  autoload :RunStatementJob, "blazer/run_statement_job"
 
   class << self
     attr_accessor :audit
@@ -57,6 +69,7 @@ module Blazer
     attr_accessor :query_viewable
     attr_accessor :query_editable
     attr_accessor :override_csp
+    attr_accessor :slack_oauth_token
     attr_accessor :slack_webhook_url
     attr_accessor :mapbox_access_token
   end
@@ -69,6 +82,7 @@ module Blazer
   self.images = false
   self.override_csp = false
 
+  VARIABLE_MESSAGE = "Variable cannot be used in this position"
   TIMEOUT_MESSAGE = "Query timed out :("
   TIMEOUT_ERRORS = [
     "canceling statement due to statement timeout", # postgres
@@ -121,6 +135,7 @@ module Blazer
     end
   end
 
+  # TODO move to Statement and remove in 3.0.0
   def self.extract_vars(statement)
     # strip commented out lines
     # and regex {1} or {1,2}
@@ -141,9 +156,8 @@ module Blazer
 
     ActiveSupport::Notifications.instrument("run_check.blazer", check_id: check.id, query_id: check.query.id, state_was: check.state) do |instrument|
       # try 3 times on timeout errors
-      data_source = data_sources[check.query.data_source]
-      statement = check.query.statement
-      Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
+      statement = check.query.statement_object
+      data_source = statement.data_source
 
       while tries <= 3
         result = data_source.run_statement(statement, refresh_cache: true, check: check, query: check.query)
@@ -171,7 +185,8 @@ module Blazer
       # TODO use proper logfmt
       Rails.logger.info "[blazer check] query=#{check.query.name} state=#{check.state} rows=#{result.rows.try(:size)} error=#{result.error}"
 
-      instrument[:statement] = statement
+      # should be no variables
+      instrument[:statement] = statement.bind_statement
       instrument[:data_source] = data_source
       instrument[:state] = check.state
       instrument[:rows] = result.rows.try(:size)
@@ -207,7 +222,7 @@ module Blazer
   end
 
   def self.slack?
-    slack_webhook_url.present?
+    slack_oauth_token.present? || slack_webhook_url.present?
   end
 
   def self.uploads?
@@ -234,6 +249,14 @@ module Blazer
   def self.register_adapter(name, adapter)
     adapters[name] = adapter
   end
+
+  def self.archive_queries
+    raise "Audits must be enabled to archive" unless Blazer.audit
+    raise "Missing status column - see https://github.com/ankane/blazer#23" unless Blazer::Query.column_names.include?("status")
+
+    viewed_query_ids = Blazer::Audit.where("created_at > ?", 90.days.ago).group(:query_id).count.keys.compact
+    Blazer::Query.active.where.not(id: viewed_query_ids).update_all(status: "archived")
+  end
 end
 
 Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter
@@ -245,9 +268,10 @@ Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter
 Blazer.register_adapter "hive", Blazer::Adapters::HiveAdapter
 Blazer.register_adapter "ignite", Blazer::Adapters::IgniteAdapter
 Blazer.register_adapter "influxdb", Blazer::Adapters::InfluxdbAdapter
-Blazer.register_adapter "neo4j", Blazer::Adapters::Neo4jAdapter
-Blazer.register_adapter "presto", Blazer::Adapters::PrestoAdapter
 Blazer.register_adapter "mongodb", Blazer::Adapters::MongodbAdapter
+Blazer.register_adapter "neo4j", Blazer::Adapters::Neo4jAdapter
+Blazer.register_adapter "opensearch", Blazer::Adapters::OpensearchAdapter
+Blazer.register_adapter "presto", Blazer::Adapters::PrestoAdapter
 Blazer.register_adapter "salesforce", Blazer::Adapters::SalesforceAdapter
 Blazer.register_adapter "soda", Blazer::Adapters::SodaAdapter
 Blazer.register_adapter "spark", Blazer::Adapters::SparkAdapter

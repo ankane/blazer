@@ -56,6 +56,8 @@ module Blazer
             "time"
           elsif v.nil?
             nil
+          elsif v.is_a?(String) && v.encoding == Encoding::BINARY
+            "binary"
           else
             "string"
           end

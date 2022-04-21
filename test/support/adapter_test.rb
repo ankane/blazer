@@ -32,8 +32,8 @@ module AdapterTest
     assert_error "Variable cannot be used in this position", statement, **params
   end
 
-  def run_statement(statement, **params)
-    run_query statement, **params, data_source: data_source, format: "csv"
-    CSV.parse(response.body, headers: true).map(&:to_h)
+  def run_statement(statement, format: "csv", **params)
+    run_query statement, **params, data_source: data_source, format: format
+    CSV.parse(response.body, headers: true).map(&:to_h) if format == "csv"
   end
 end

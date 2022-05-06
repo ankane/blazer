@@ -12,7 +12,11 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   end
 
   def test_audit
-    assert_audit "SELECT $1 AS hello\n\n[\"world\"]", "SELECT {var} AS hello", var: "world"
+    if no_binds?
+      assert_audit "SELECT 'world' AS hello", "SELECT {var} AS hello", var: "world"
+    else
+      assert_audit "SELECT $1 AS hello\n\n[\"world\"]", "SELECT {var} AS hello", var: "world"
+    end
   end
 
   def test_string
@@ -52,19 +56,43 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   end
 
   def test_bad_position
-    assert_bad_position "SELECT 'world' AS {var}", var: "hello"
+    if no_binds?
+      assert_error "syntax error at or near \"'hello'\"\nLINE 1: SELECT 'world' AS 'hello'", "SELECT 'world' AS {var}", var: "hello"
+    else
+      assert_bad_position "SELECT 'world' AS {var}", var: "hello"
+    end
   end
 
   def test_bad_position_before
-    assert_error "syntax error at or near \"SELECT$1\"", "SELECT{var}", var: "world"
+    if no_binds?
+      assert_result [{"?column?" => "world"}], "SELECT{var}", var: "world"
+    else
+      assert_error "syntax error at or near \"SELECT$1\"", "SELECT{var}", var: "world"
+    end
   end
 
   def test_bad_position_after
-    assert_error "syntax error at or near \"456\"\nLINE 1: SELECT $1 456", "SELECT {var}456", var: "world"
-    assert_equal "SELECT $1 456\n\n[\"world\"]", Blazer::Audit.last.statement
+    if no_binds?
+      assert_error "syntax error at or near \"456\"\nLINE 1: SELECT 'world'456", "SELECT {var}456", var: "world"
+      assert_equal "SELECT 'world'456", Blazer::Audit.last.statement
+    else
+      assert_error "syntax error at or near \"456\"\nLINE 1: SELECT $1 456", "SELECT {var}456", var: "world"
+      assert_equal "SELECT $1 456\n\n[\"world\"]", Blazer::Audit.last.statement
+    end
   end
 
   def test_quoted
-    assert_error "could not determine data type of parameter $1", "SELECT '{var}' AS hello", var: "world"
+    if no_binds?
+      assert_error "syntax error at or near \"''\"\nLINE 1: SELECT ''world'' AS hello", "SELECT '{var}' AS hello", var: "world"
+    else
+      assert_error "could not determine data type of parameter $1", "SELECT '{var}' AS hello", var: "world"
+    end
+  end
+
+  private
+
+  def no_binds?
+    ActiveRecord::VERSION::STRING.to_f < 6.1 &&
+      Blazer.data_sources[data_source].settings["url"].include?("prepared_statements=false")
   end
 end

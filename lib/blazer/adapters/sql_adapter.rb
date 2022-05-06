@@ -191,9 +191,11 @@ module Blazer
 
       # Redshift adapter silently ignores binds
       def parameter_binding
-        if postgresql? || sqlite?
+        if postgresql? && (ActiveRecord::VERSION::STRING.to_f >= 6.1 || prepared_statements?)
           :numeric
-        elsif mysql? && connection_model.connection.prepared_statements
+        elsif sqlite?
+          :numeric
+        elsif mysql? && prepared_statements?
           # Active Record silently ignores binds with MySQL when prepared statements are disabled
           :positional
         elsif sqlserver?
@@ -308,6 +310,10 @@ module Blazer
             yield
           end
         end
+      end
+
+      def prepared_statements?
+        connection_model.connection.prepared_statements
       end
     end
   end

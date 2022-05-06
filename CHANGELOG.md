@@ -1,3 +1,7 @@
+## 2.6.2 (unreleased)
+
+- Fixed error with Postgres when prepared statements are disabled with Rails < 6.1
+
 ## 2.6.1 (2022-04-21)
 
 - Added `region` setting to Amazon Athena

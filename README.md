@@ -150,8 +150,8 @@ Create a user with read-only permissions:
 
 ```sql
 BEGIN;
-CREATE ROLE blazer LOGIN PASSWORD 'secret123';
-GRANT CONNECT ON DATABASE database_name TO blazer;
+CREATE ROLE blazer LOGIN PASSWORD 'secret';
+GRANT CONNECT ON DATABASE dbname TO blazer;
 GRANT USAGE ON SCHEMA public TO blazer;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
@@ -163,7 +163,8 @@ COMMIT;
 Create a user with read-only permissions:
 
 ```sql
-GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
+CREATE USER 'blazer'@'127.0.0.1' IDENTIFIED BY 'secret';
+GRANT SELECT, SHOW VIEW ON dbname.* TO 'blazer'@'127.0.0.1';
 FLUSH PRIVILEGES;
 ```
 
@@ -171,8 +172,8 @@ FLUSH PRIVILEGES;
 
 Create a user with read-only permissions:
 
-```
-db.createUser({user: "blazer", pwd: "password", roles: ["read"]})
+```javascript
+db.createUser({user: "blazer", pwd: "secret", roles: ["read"]})
 ```
 
 Also, make sure authorization is enabled when you start the server.

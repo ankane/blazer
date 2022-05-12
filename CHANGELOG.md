@@ -1,4 +1,4 @@
-## 2.6.3 (unreleased)
+## 2.6.3 (2022-05-11)
 
 - Fixed error with canceling queries
 

@@ -3,6 +3,9 @@ var runningQueries = []
 var maxQueries = 3
 
 function runQuery(data, success, error) {
+  if (!data.data_source) {
+    throw new Error("Data source is required to cancel queries")
+  }
   data.run_id = uuid()
   var query = {
     data: data,

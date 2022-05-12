@@ -39,7 +39,9 @@
     </div>
   </div>
   <script>
-    <%= blazer_js_var "data", {statement: query.statement, query_id: query.id, variables: variable_params(query), only_chart: true, cohort_period: params[:cohort_period]} %>
+    <% data = {statement: query.statement, query_id: query.id, data_source: query.data_source, variables: variable_params(query), only_chart: true} %>
+    <% data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
+    <%= blazer_js_var "data", data %>
 
     runQuery(data, function (data) {
       $("#chart-<%= i %>").html(data)

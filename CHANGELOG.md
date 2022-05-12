@@ -1,3 +1,7 @@
+## 2.6.3 (unreleased)
+
+- Fixed error with canceling queries
+
 ## 2.6.2 (2022-05-06)
 
 - Fixed error with Postgres when prepared statements are disabled with Rails < 6.1

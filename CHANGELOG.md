@@ -1,4 +1,4 @@
-## 2.6.4 (unreleased)
+## 2.6.4 (2022-05-24)
 
 - Fixed error with caching
 

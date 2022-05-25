@@ -34,7 +34,8 @@ class CacheTest < ActionDispatch::IntegrationTest
 
   def test_variables
     with_caching({"mode" => "all"}) do
-      run_query "SELECT {str_var}, {int_var}", str_var: "hello", int_var: 1
+      run_query "SELECT {str_var}, {int_var}", variables: {str_var: "hello", int_var: 1}
+      assert_match "hello", response.body
     end
   end
 

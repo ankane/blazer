@@ -6,7 +6,7 @@ class CacheTest < ActionDispatch::IntegrationTest
   end
 
   def test_all
-    Blazer.data_sources["main"].stub(:cache, {"mode" => "all"}) do
+    with_caching({"mode" => "all"}) do
       run_query "SELECT 1"
       refute_match "Cached", response.body
       run_query "SELECT 1"
@@ -15,7 +15,7 @@ class CacheTest < ActionDispatch::IntegrationTest
   end
 
   def test_slow_under_threshold
-    Blazer.data_sources["main"].stub(:cache, {"mode" => "slow"}) do
+    with_caching({"mode" => "slow"}) do
       run_query "SELECT 1"
       refute_match "Cached", response.body
       run_query "SELECT 1"
@@ -24,7 +24,7 @@ class CacheTest < ActionDispatch::IntegrationTest
   end
 
   def test_slow_over_threshold
-    Blazer.data_sources["main"].stub(:cache, {"mode" => "slow", "slow_threshold" => 0.01}) do
+    with_caching({"mode" => "slow", "slow_threshold" => 0.01}) do
       run_query "SELECT pg_sleep(0.01)::text"
       refute_match "Cached", response.body
       run_query "SELECT pg_sleep(0.01)::text"
@@ -33,8 +33,16 @@ class CacheTest < ActionDispatch::IntegrationTest
   end
 
   def test_variables
-    Blazer.data_sources["main"].stub(:cache, {"mode" => "all"}) do
+    with_caching({"mode" => "all"}) do
       run_query "SELECT {str_var}, {int_var}", str_var: "hello", int_var: 1
+    end
+  end
+
+  private
+
+  def with_caching(value)
+    Blazer.data_sources["main"].stub(:cache, value) do
+      yield
     end
   end
 end

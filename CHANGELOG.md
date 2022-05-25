@@ -1,3 +1,7 @@
+## 2.6.4 (unreleased)
+
+- Fixed error with caching
+
 ## 2.6.3 (2022-05-11)
 
 - Fixed error with canceling queries

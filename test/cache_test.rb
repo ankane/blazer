@@ -31,4 +31,10 @@ class CacheTest < ActionDispatch::IntegrationTest
       assert_match "Cached", response.body
     end
   end
+
+  def test_variables
+    Blazer.data_sources["main"].stub(:cache, {"mode" => "all"}) do
+      run_query "SELECT {str_var}, {int_var}", str_var: "hello", int_var: 1
+    end
+  end
 end

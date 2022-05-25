@@ -12,28 +12,28 @@ module AdapterTest
     JSON.parse(response.body)
   end
 
-  def assert_result(expected, statement, **params)
-    assert_equal expected, run_statement(statement, **params)
+  def assert_result(expected, statement, **variables)
+    assert_equal expected, run_statement(statement, **variables)
   end
 
-  def assert_audit(expected, statement, **params)
-    run_statement(statement, **params)
+  def assert_audit(expected, statement, **variables)
+    run_statement(statement, **variables)
     assert_equal expected, Blazer::Audit.last.statement
   end
 
-  def assert_error(message, statement, **params)
+  def assert_error(message, statement, **variables)
     error = assert_raises(Blazer::Error) do
-      run_statement(statement, **params)
+      run_statement(statement, **variables)
     end
     assert_match message, error.message
   end
 
-  def assert_bad_position(statement, **params)
-    assert_error "Variable cannot be used in this position", statement, **params
+  def assert_bad_position(statement, **variables)
+    assert_error "Variable cannot be used in this position", statement, **variables
   end
 
-  def run_statement(statement, format: "csv", **params)
-    run_query statement, **params, data_source: data_source, format: format
+  def run_statement(statement, format: "csv", **variables)
+    run_query statement, data_source: data_source, format: format, variables: variables
     CSV.parse(response.body, headers: true).map(&:to_h) if format == "csv"
   end
 end

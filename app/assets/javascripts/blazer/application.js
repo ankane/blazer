@@ -12,6 +12,7 @@
 //= require ./chartjs-adapter-date-fns.bundle
 //= require ./chartkick
 //= require ./mapkick.bundle
+//= require ./chartjs-plugin-annotation.js
 //= require ./ace
 //= require ./Sortable
 //= require ./bootstrap

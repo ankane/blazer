@@ -32,6 +32,10 @@ data_sources:
     smart_columns:
       # user_id: "SELECT id, name FROM users WHERE id IN {value}"
 
+    annotations:
+      # box: SELECT min_date, max_date, label FROM holidays WHERE (min_date, max_date) OVERLAPS ({min_date}, {max_date})
+      # line: SELECT date, label FROM deployments WHERE date BETWEEN {min_date} and {max_date}
+
 # create audits
 audit: true
 

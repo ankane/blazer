@@ -62,6 +62,11 @@
         <% chart_options.merge!(library: {tooltips: {intersect: false}}) %>
       <% end %>
     <% end %>
+    <% if ["line", "line2"].include?(chart_type) %>
+      <% chart_options[:library].merge!({
+        annotation: { drawTime: "beforeDatasetsDraw", annotations: blazer_format_annotations(@annotations), }
+      }) %>
+    <% end %>
     <% series_library = {} %>
     <% target_index = @columns.index { |k| k.downcase == "target" } %>
     <% if target_index %>

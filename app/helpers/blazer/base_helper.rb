@@ -35,5 +35,46 @@ module Blazer
     def blazer_series_name(k)
       k.nil? ? "null" : k.to_s
     end
+
+    def blazer_format_annotations(annotations)
+      return [] unless annotations.is_a?(Array)
+      sorted = annotations.sort_by { |annotation| annotation[:min_date] }
+
+      boxes = sorted.select { |annotation| annotation[:max_date] }.map.with_index do |annotation, index|
+        {
+          type: "box",
+          xScaleID: "x-axis-0",
+          xMin: annotation[:min_date],
+          xMax: annotation[:max_date],
+          backgroundColor: blazer_map_annotation_box_colors(index),
+        }
+      end
+
+      # chartjs annotations don't support labels for box annotations
+      labels = sorted.select { |annotation| annotation[:label] }.map.with_index do |annotation, index|
+        {
+          type: "line",
+          value: annotation[:min_date],
+          mode: "vertical",
+          scaleID: "x-axis-0",
+          label: {
+            content: annotation[:label],
+            enabled: true,
+            position: "top",
+            yAdjust: (index * 30) % 210,
+          },
+        }
+      end
+
+      boxes + labels
+    end
+
+    private
+
+    def blazer_map_annotation_box_colors(index)
+      colors = ['#aec7e8', '#ffbb78', '#98df8a', '#ff9896', '#c5b0d5', '#c49c94', '#f7b6d2', '#c7c7c7', '#dbdb8d', '#9edae5']
+      colors[index % colors.size] + 'da'
+    end
   end
 end
+

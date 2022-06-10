@@ -3,7 +3,7 @@ module Blazer
     attr_reader :annotations
 
     def initialize(annotations)
-      @annotations = annotations.map { |name, annotation| { query: annotation, name: name } }
+      @annotations = annotations.values
     end
 
     def call(result)
@@ -16,17 +16,19 @@ module Blazer
 
     def fetch_annotation(annotation, result, min_date, max_date)
       query = build_query(annotation, max_date, min_date)
-      results = result.data_source.run_statement(query).rows
-      if results.first.size == 3 # boxes
-        results.map do |row|
+      results = result.data_source.run_statement(query)
+      return [] unless results.error.nil?
+
+      if results.columns.size == 3 # boxes
+        results.rows.map do |row|
           {
             min_date: row[0],
             max_date: row[1],
             label: row[2],
           }
         end
-      elsif results.first.size == 2 # lines
-        results.map do |row|
+      elsif results.columns.size == 2 # lines
+        results.rows.map do |row|
           {
             min_date: row[0],
             label: row[1],
@@ -38,9 +40,8 @@ module Blazer
     end
 
     def build_query(annotation, max_date, min_date)
-      query = annotation[:query]
-      query = ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{min_date}", "(?)"), min_date])
-      ActiveRecord::Base.send(:sanitize_sql_array, [query.sub("{max_date}", "(?)"), max_date])
+      annotation = annotation.sub("{min_date}", "(:min_date)").sub("{max_date}", "(:max_date)")
+      ActiveRecord::Base.send(:sanitize_sql_array, [annotation, {min_date: min_date, max_date: max_date}])
     end
   end
 end

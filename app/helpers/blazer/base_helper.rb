@@ -57,11 +57,13 @@ module Blazer
           value: annotation[:min_date],
           mode: "vertical",
           scaleID: "x-axis-0",
+          borderColor: '#00000050',
+          drawTime: "afterDatasetsDraw",
           label: {
             content: annotation[:label],
             enabled: true,
-            position: "top",
-            yAdjust: (index * 30) % 210,
+            position: "bottom",
+            yAdjust: 30 + (index * 30) % 60,
           },
         }
       end

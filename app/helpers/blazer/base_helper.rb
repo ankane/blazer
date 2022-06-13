@@ -46,7 +46,7 @@ module Blazer
           xScaleID: "x-axis-0",
           xMin: annotation[:min_date],
           xMax: annotation[:max_date],
-          backgroundColor: blazer_map_annotation_box_colors(index),
+          backgroundColor: annotation[:color] || blazer_map_annotation_box_colors(index),
         }
       end
 
@@ -57,7 +57,7 @@ module Blazer
           value: annotation[:min_date],
           mode: "vertical",
           scaleID: "x-axis-0",
-          borderColor: '#00000050',
+          borderColor: annotation[:color] || '#00000050',
           drawTime: "afterDatasetsDraw",
           label: {
             content: annotation[:label],

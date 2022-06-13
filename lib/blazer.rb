@@ -84,6 +84,7 @@ module Blazer
   self.async = false
   self.images = false
   self.override_csp = false
+  self.annotations = Blazer::Annotations
 
   VARIABLE_MESSAGE = "Variable cannot be used in this position"
   TIMEOUT_MESSAGE = "Query timed out :("

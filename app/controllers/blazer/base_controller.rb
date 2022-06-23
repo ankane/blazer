@@ -6,6 +6,9 @@ module Blazer
     skip_after_action(*filters, raise: false)
     skip_around_action(*filters, raise: false)
 
+    before_action :check_write_access, only: [:new, :edit, :create, :update, :destroy]
+    helper_method :write_access?, :restricted_vars
+
     clear_helpers
 
     protect_from_forgery with: :exception
@@ -32,6 +35,22 @@ module Blazer
 
     private
 
+      def check_write_access
+        unless write_access?
+          render plain: "404 Not Found", status: 404
+        end
+      end
+
+      def write_access?
+        current_user.blank? || current_user.present? && !current_user.try(:blazer_read_only_access?)
+      end
+
+      def restricted_vars
+        return [] unless current_user.present?
+
+        current_user.attributes.keys.map { |attribute| "current_user_#{attribute}" }
+      end
+
       def process_vars(statement, var_params = nil)
         var_params ||= request.query_parameters
         (@bind_vars ||= []).concat(statement.variables).uniq!
@@ -43,8 +62,8 @@ module Blazer
             var_params[var] = default if default
           end
         end
-        runnable = @bind_vars.all? { |v| var_params[v] }
-        statement.add_values(var_params) if runnable
+        runnable = @bind_vars.all? { |v| var_params[v] || restricted_vars.include?(v) }
+        statement.add_values(var_params, current_user, restricted_vars) if runnable
         runnable
       end
 

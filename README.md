@@ -211,6 +211,18 @@ Use `{start_time}` and `{end_time}` for time ranges. [Example](https://blazer.do
 SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
 ```
 
+If your app has `current_user` set at controller level, you can use any of its attributes by prefixing it with "current_user_", see examples below:
+
+```sql
+SELECT score FROM ratings WHERE user_id = {current_user_id}
+```
+
+Filtering by `current_user`'s first name:
+
+```sql
+SELECT birth_date FROM users WHERE first_name = {current_user_first_name}
+```
+
 ### Smart Variables
 
 [Example](https://blazer.dokkuapp.com/queries/1-smart-variable)
@@ -377,6 +389,19 @@ Create a dashboard with multiple queries. [Example](https://blazer.dokkuapp.com/
 If the query has a chart, the chart is shown. Otherwise, you’ll see a table.
 
 If any queries have variables, they will show up on the dashboard.
+
+### Enabling read-only mode
+
+If you want to display a dashboard for users who cannot edit it (like inside of an iframe), you can implement a method `blazer_read_only_access?` on the same class of `current_user` (tipically the user model) and the buttons that lead to write actions like "new", "edit" etc won't show up when displaying the dashboard. Requests to these actions will return 404 error (in case a sneaky user tries to change resources guessing the urls).
+
+```rb
+# app/models/user.rb
+def blazer_read_only_access?
+  role == 'viewer'
+end
+```
+
+In the example above, users with the role `viewer` won't be able to create/edit new resources, only to see existing ones.
 
 ## Checks
 

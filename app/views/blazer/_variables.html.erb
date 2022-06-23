@@ -1,4 +1,4 @@
-<% if @bind_vars.any? %>
+<% if @bind_vars.reject{ |var| restricted_vars.include?(var) }.any? %>
   <% var_params = request.query_parameters %>
   <script>
     <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>

@@ -13,7 +13,7 @@ module Blazer
       @variables ||= Blazer.extract_vars(statement)
     end
 
-    def add_values(var_params)
+    def add_values(var_params, current_user, current_user_restricted_vars)
       variables.each do |var|
         value = var_params[var].presence
         value = nil unless value.is_a?(String) # ignore arrays and hashes
@@ -38,6 +38,11 @@ module Blazer
             end
           end
         end
+
+        if current_user_restricted_vars.include?(var)
+          value = current_user.public_send(var.split("current_user_")[1])
+        end
+
         value = Blazer.transform_variable.call(var, value) if Blazer.transform_variable
         @values[var] = value
       end

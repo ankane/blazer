@@ -1,3 +1,8 @@
+## 2.7.0 (unreleased)
+
+- Added reading of current_user's attributes
+- Added read-only mode for desired users through `blazer_read_only_access?`
+
 ## 2.6.4 (2022-05-24)
 
 - Fixed error with caching

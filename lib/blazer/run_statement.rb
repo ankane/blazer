@@ -17,9 +17,9 @@ module Blazer
         audit.save!
       end
 
-      start_time = Time.now
+      start_time = Blazer.monotonic_time
       result = data_source.run_statement(statement, options)
-      duration = Time.now - start_time
+      duration = Blazer.monotonic_time - start_time
 
       if Blazer.audit
         audit.duration = duration if audit.respond_to?(:duration=)

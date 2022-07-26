@@ -233,14 +233,14 @@ module Blazer
     end
 
     def run_statement_helper(statement, comment, run_id, options)
-      start_time = Time.now
+      start_time = Blazer.monotonic_time
       columns, rows, error =
         if adapter_instance.parameter_binding
           adapter_instance.run_statement(statement.bind_statement, comment, statement.bind_values)
         else
           adapter_instance.run_statement(statement.bind_statement, comment)
         end
-      duration = Time.now - start_time
+      duration = Blazer.monotonic_time - start_time
 
       cache_data = nil
       cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))

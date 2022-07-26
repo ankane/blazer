@@ -134,11 +134,11 @@ module Blazer
         options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id, async: Blazer.async}
         if Blazer.async && request.format.symbol != :csv
           Blazer::RunStatementJob.perform_later(@data_source.id, @statement.statement, options.merge(values: @statement.values))
-          wait_start = Time.now
+          wait_start = Blazer.monotonic_time
           loop do
             sleep(0.1)
             @result = @data_source.run_results(@run_id)
-            break if @result || Time.now - wait_start > 3
+            break if @result || Blazer.monotonic_time - wait_start > 3
           end
         else
           @result = Blazer::RunStatement.new.perform(@statement, options)

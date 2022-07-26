@@ -257,6 +257,11 @@ module Blazer
     viewed_query_ids = Blazer::Audit.where("created_at > ?", 90.days.ago).group(:query_id).count.keys.compact
     Blazer::Query.active.where.not(id: viewed_query_ids).update_all(status: "archived")
   end
+
+  # private
+  def self.monotonic_time
+    Process.clock_gettime(Process::CLOCK_MONOTONIC)
+  end
 end
 
 Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter

@@ -35,6 +35,9 @@ module Blazer
           error = e.message.sub(/.+ERROR: /, "")
           error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
           error = Blazer::VARIABLE_MESSAGE if error.include?("syntax error at or near \"$") || error.include?("Incorrect syntax near '@") || error.include?("your MySQL server version for the right syntax to use near '?")
+          if error.include?("could not determine data type of parameter")
+            error += " - try adding casting to variables and make sure none are inside a string literal"
+          end
           reconnect if error.include?("PG::ConnectionBad")
         end
 

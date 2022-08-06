@@ -107,6 +107,15 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_equal "id,city\n1,Chicago\n", response.body
   end
 
+  def test_share
+    ENV['BLAZER_DOWNLOAD_API_KEY'] = '123'
+    query = create_query
+    get blazer.query_share_path(query_id: query.id, token: Digest::SHA1.hexdigest("#{query.id}-123"), format: 'csv')
+    assert_response :success
+    assert_match query.name, response.body
+    ENV.delete('BLAZER_DOWNLOAD_API_KEY')
+  end
+
   def test_url
     run_query "SELECT 'http://localhost:3000/'"
     assert_match %{<a target="_blank" href="http://localhost:3000/">http://localhost:3000/</a>}, response.body

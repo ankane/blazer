@@ -78,6 +78,14 @@ module Blazer
     def edit
     end
 
+    def share
+      if params[:token] && params[:query_id] && params[:token] == Blazer.sharing.query_token(params[:query_id])
+        run
+      else
+        render_forbidden
+      end
+    end
+
     def run
       @query = Query.find_by(id: params[:query_id]) if params[:query_id]
 
@@ -87,7 +95,8 @@ module Blazer
       data_source ||= params[:data_source]
       @data_source = Blazer.data_sources[data_source]
 
-      @statement = Blazer::Statement.new(params[:statement], @data_source)
+      sql_statement = params[:statement] || @query.statement
+      @statement = Blazer::Statement.new(sql_statement, @data_source)
       # before process_vars
       @cohort_analysis = @statement.cohort_analysis?
 

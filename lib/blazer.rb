@@ -12,6 +12,7 @@ require "blazer/version"
 require "blazer/data_source"
 require "blazer/result"
 require "blazer/run_statement"
+require "blazer/sharing"
 require "blazer/statement"
 
 # adapters
@@ -132,6 +133,13 @@ module Blazer
         ds[id] = Blazer::DataSource.new(id, s)
       end
       ds
+    end
+  end
+
+  def self.sharing
+    @sharing ||= begin
+      sharing_settings = settings["sharing"] || {}
+      Blazer::Sharing.new(**sharing_settings.symbolize_keys)
     end
   end
 

@@ -17,7 +17,7 @@
 
         <div class="form-group">
           <label for="csvShare">Google sheets</label>
-          <input type="text" class="form-control" id="csvShare" readonly value='=IMPORTDATA("<%= Blazer.sharing.url_for(7, request.url, format: 'csv') %>")'>
+          <input type="text" class="form-control" id="googleShare" readonly value='=IMPORTDATA("<%= Blazer.sharing.url_for(7, request.url, format: 'csv') %>")'>
         </div>
       </div>
       <div class="modal-footer">

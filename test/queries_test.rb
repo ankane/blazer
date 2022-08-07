@@ -108,12 +108,12 @@ class QueriesTest < ActionDispatch::IntegrationTest
   end
 
   def test_share
-    ENV['BLAZER_DOWNLOAD_API_KEY'] = '123'
+    Blazer.sharing.api_key = "123"
     query = create_query
     get blazer.query_share_path(query_id: query.id, token: Digest::SHA1.hexdigest("#{query.id}-123"), format: 'csv')
     assert_response :success
     assert_match query.name, response.body
-    ENV.delete('BLAZER_DOWNLOAD_API_KEY')
+    Blazer.sharing.api_key = nil
   end
 
   def test_url

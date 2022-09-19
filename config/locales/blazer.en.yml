@@ -1,0 +1,14 @@
+en:
+  blazer:
+    variables:
+      date_select:
+        placeholder: Select a date
+      submit: Run
+      time_range:
+        label: Start time & End time
+        placeholder: Select a time range
+    vars:
+      created_at: Created at
+      end_time: End time
+      start_time: Start time
+      updated_at: Updated at

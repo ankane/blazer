@@ -18,7 +18,7 @@
     <% end %>
 
     <% @bind_vars.each_with_index do |var, i| %>
-      <%= label_tag var, var %>
+      <%= label_tag var, t(var, scope: [:blazer, :vars], default: var) %>
       <% if (data = @smart_vars[var]) %>
         <%= select_tag var, options_for_select([[nil, nil]] + data, selected: var_params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
         <script>
@@ -31,7 +31,7 @@
 
         <div class="selectize-control single" style="width: 200px;">
           <div id="<%= var %>-select" class="selectize-input" style="display: inline-block;">
-            <span>Select a date</span>
+            <span><%= t(".date_select.placeholder", default: "Select a date") %></span>
           </div>
         </div>
 
@@ -68,10 +68,10 @@
         <%= hidden_field_tag var, var_params[var] %>
       <% end %>
 
-      <%= label_tag nil, date_vars.join(" & ") %>
+      <%= label_tag nil, t(".time_range.label", default: date_vars.join(" & ")) %>
       <div class="selectize-control single" style="width: 300px;">
         <div id="reportrange" class="selectize-input" style="display: inline-block;">
-          <span>Select a time range</span>
+          <span><%= t(".time_range.placeholder", default: "Select a time range") %></span>
         </div>
       </div>
 
@@ -122,6 +122,8 @@
       </script>
     <% end %>
 
-    <input type="submit" class="btn btn-success" value="Run" style="vertical-align: top;" />
+    <button type="submit" class="btn btn-success" style="vertical-align: top;">
+      <%= t(".submit", default: "Run") %>
+    </button>
   </form>
 <% end %>

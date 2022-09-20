@@ -54,8 +54,8 @@
           </ul>
         </td>
         <td style="text-align: right; padding: 1px;">
-          <%= link_to "Edit", edit_check_path(check), class: "btn btn-info" %>
-          <%= link_to "Run Now", query_path(check.query), class: "btn btn-primary" %>
+          <%= link_to t("blazer.actions.edit", default: "Edit"), edit_check_path(check), class: "btn btn-info" %>
+          <%= link_to t("blazer.actions.run_now", default: "Run Now"), query_path(check.query), class: "btn btn-primary" %>
         </td>
       </tr>
     <% end %>

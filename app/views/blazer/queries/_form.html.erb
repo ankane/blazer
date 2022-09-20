@@ -14,17 +14,17 @@
         </div>
         <div class="form-group text-right" style="margin-bottom: 8px;">
           <div class="pull-left" style="margin-top: 8px;">
-            <%= link_to "Back", :back %>
-            <a :href="docsPath" target="_blank" style="margin-left: 40px;">Docs</a>
-            <a :href="schemaPath" target="_blank" style="margin-left: 40px;">Schema</a>
+            <%= link_to t("blazer.actions.back", default: "Back"), :back %>
+            <a :href="docsPath" target="_blank" style="margin-left: 40px;"><%= link_to t("blazer.docs", default: "Docs"), :back %></a>
+            <a :href="schemaPath" target="_blank" style="margin-left: 40px;"><%= link_to t("blazer.schema", default: "Schema"), :back %></a>
           </div>
 
           <%= f.select :data_source, Blazer.data_sources.values.select { |ds| q = @query.dup; q.data_source = ds.id; q.editable?(blazer_user) }.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size <= 1), style: "width: 140px;" %>
           <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;">
             <select id="table_names" style="width: 240px;" placeholder="Preview table"></select>
           </div>
-          <a v-on:click="run" v-if="!running" class="btn btn-info" style="vertical-align: top; width: 70px;">Run</a>
-          <a v-on:click="cancel" v-if="running" class="btn btn-danger" style="vertical-align: top; width: 70px;">Cancel</a>
+          <a v-on:click="run" v-if="!running" class="btn btn-info" style="vertical-align: top; width: 70px;"><%= t("blazer.actions.run", default: "Run") %></a>
+          <a v-on:click="cancel" v-if="running" class="btn btn-danger" style="vertical-align: top; width: 70px;"><%= t("blazer.actions.cancel", default: "Cancel") %></a>
         </div>
       </div>
       <div class="col-xs-4">
@@ -39,10 +39,10 @@
         <div class="form-group text-right">
           <%= f.submit "For Enter Press", class: "hide" %>
           <% if @query.persisted? %>
-            <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
-            <%= f.submit "Fork", class: "btn btn-info" %>
+            <%= link_to t("blazer.actions.delete", default: "Delete"), query_path(@query), method: :delete, "data-confirm" => t("blazer.are_you_sure", default: "Are you sure?"), class: "btn btn-danger" %>
+            <%= f.submit t("blazer.actions.fork", default: "Fork"), class: "btn btn-info" %>
           <% end %>
-          <%= f.submit @query.persisted? ? "Update" : "Create", class: "btn btn-success" %>
+          <%= f.submit @query.persisted? ? t("blazer.actions.update", default: "Update") : t("blazer.actions.create", default: "Create"), class: "btn btn-success" %>
         </div>
         <% if @query.persisted? %>
           <% dashboards_count = @query.dashboards.count %>

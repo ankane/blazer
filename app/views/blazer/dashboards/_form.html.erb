@@ -23,10 +23,10 @@
   </div>
   <p style="padding-bottom: 140px;" v-cloak>
     <% if @dashboard.persisted? %>
-      <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger"%>
+      <%= link_to t("blazer.actions.delete", default: "Delete"), dashboard_path(@dashboard), method: :delete, "data-confirm" => t("blazer.are_you_sure", default: "Are you sure?"), class: "btn btn-danger"%>
     <% end %>
-    <%= f.submit "Save", class: "btn btn-success" %>
-    <%= link_to "Back", :back, class: "btn btn-link" %>
+    <%= f.submit t("blazer.actions.save", default: "Save"), class: "btn btn-success" %>
+    <%= link_to t("blazer.actions.back", default: "Back"), :back, class: "btn btn-link" %>
   </p>
 <% end %>
 

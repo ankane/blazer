@@ -1,5 +1,20 @@
 en:
   blazer:
+    actions:
+      back: Back
+      cancel: Cancel
+      create: Create
+      delete: Delete
+      download: Download
+      edit: Edit
+      fork: Fork
+      refresh: Refresh
+      run: Run
+      run_now: Run Now
+      save: Save
+      update: Update
+    are_you_sure: Are you sure?
+    docs: Docs
     loading: Loading...
     nav:
       checks: Checks
@@ -9,6 +24,7 @@ en:
       new_query: New Query
       toggle_dropdown: Toggle Dropdown
       uploads: Uploads
+    schema: Schema
     variables:
       date_select:
         placeholder: Select a date

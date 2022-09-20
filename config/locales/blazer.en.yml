@@ -1,5 +1,13 @@
 en:
   blazer:
+    nav:
+      checks: Checks
+      home: Home
+      new_check: New Check
+      new_dashboard: New Dashboard
+      new_query: New Query
+      toggle_dropdown: Toggle Dropdown
+      uploads: Uploads
     variables:
       date_select:
         placeholder: Select a date

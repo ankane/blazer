@@ -23,8 +23,8 @@
           <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;">
             <select id="table_names" style="width: 240px;" placeholder="Preview table"></select>
           </div>
-          <a v-on:click="run" v-if="!running" class="btn btn-info" style="vertical-align: top; width: 70px;"><%= t("blazer.actions.run", default: "Run") %></a>
-          <a v-on:click="cancel" v-if="running" class="btn btn-danger" style="vertical-align: top; width: 70px;"><%= t("blazer.actions.cancel", default: "Cancel") %></a>
+          <a v-on:click="run" v-if="!running" class="btn btn-info" style="vertical-align: top;"><%= t("blazer.actions.run", default: "Run") %></a>
+          <a v-on:click="cancel" v-if="running" class="btn btn-danger" style="vertical-align: top;"><%= t("blazer.actions.cancel", default: "Cancel") %></a>
         </div>
       </div>
       <div class="col-xs-4">

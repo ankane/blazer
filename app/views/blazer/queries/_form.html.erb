@@ -61,7 +61,7 @@
   <% end %>
 
   <div id="results">
-    <p class="text-muted" v-if="running">Loading...</p>
+    <p class="text-muted" v-if="running"><%= t("blazer.loading", default: "Loading...") %></p>
     <div id="results-html" v-if="!running" :class="{ 'query-error': error }"></div>
   </div>
 </div>

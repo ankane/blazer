@@ -35,7 +35,7 @@
   <div class="chart-container">
     <h4><%= link_to query.friendly_name, query_path(query, params: variable_params(query)), target: "_blank" %></h4>
     <div id="chart-<%= i %>" class="chart">
-      <p class="text-muted">Loading...</p>
+      <p class="text-muted"><%= t("blazer.loading", default: "Loading...") %></p>
     </div>
   </div>
   <script>

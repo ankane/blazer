@@ -1,5 +1,6 @@
 en:
   blazer:
+    loading: Loading...
     nav:
       checks: Checks
       home: Home

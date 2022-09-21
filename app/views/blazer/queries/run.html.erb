@@ -2,7 +2,7 @@
   <div class="alert alert-danger"><%= @error.first(200) %></div>
 <% elsif !@success %>
   <% if @only_chart %>
-    <p class="text-muted">Select variables</p>
+    <p class="text-muted"><%= t(".select_variables", default: "Select variables") %></p>
   <% else %>
     <div class="alert alert-info">Can’t preview queries with variables...yet!</div>
   <% end %>
@@ -17,10 +17,10 @@
     <%= render partial: "caching" %>
     <p class="text-muted" style="margin-bottom: 10px;">
       <% if @row_limit && @rows.size > @row_limit %>
-        First
+        <%= t(".first_row", default: "First") %>
         <% @rows = @rows.first(@row_limit) %>
       <% end %>
-      <%= pluralize(@rows.size, "row") %>
+      <%= t(".rows", count: @rows.size) %>
 
       <% @checks.select(&:state).each do |check| %>
         &middot; <small class="check-state <%= check.state.parameterize.gsub("-", "_") %>"><%= link_to check.state.upcase, edit_check_path(check) %></small>
@@ -31,7 +31,7 @@
 
       <% if @query && @result.forecastable? && !params[:forecast] %>
         &middot;
-        <%= link_to "Forecast", query_path(@query, params: {forecast: "t"}.merge(variable_params(@query))) %>
+        <%= link_to t(".forecast", default: "Forecast"), query_path(@query, params: {forecast: "t"}.merge(variable_params(@query))) %>
       <% end %>
     </p>
   <% end %>
@@ -130,7 +130,7 @@
       <% if @rows.size == 1 && @rows.first.size == 1 %>
         <% v = @rows.first.first %>
         <% if v.is_a?(String) && v == "" %>
-          <div class="text-muted">empty string</div>
+          <div class="text-muted"><%= t(".empty_string", default: "empty string") %></div>
         <% else %>
           <p style="font-size: 160px;"><%= blazer_format_value(@columns.first, v) %></p>
         <% end %>
@@ -172,7 +172,7 @@
 
                       <% unless v.nil? %>
                         <% if v.is_a?(String) && v == "" %>
-                          <div class="text-muted">empty string</div>
+                          <div class="text-muted"><%= t(".empty_string", default: "empty string") %></div>
                         <% elsif @linked_columns[k] %>
                           <%= link_to blazer_format_value(k, v), @linked_columns[k].gsub("{value}", u(v.to_s)), target: "_blank" %>
                         <% else %>
@@ -193,6 +193,6 @@
       </div>
     <% end %>
   <% elsif @only_chart %>
-    <p class="text-muted">No rows</p>
+    <p class="text-muted"><%= t(".no_rows", default: "No rows") %></p>
   <% end %>
 <% end %>

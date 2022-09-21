@@ -37,3 +37,12 @@ en:
       end_time: End time
       start_time: Start time
       updated_at: Updated at
+    queries:
+      run:
+        empty_string: empty string
+        forecast: Forecast
+        no_rows: No rows
+        rows:
+          one: row
+          other: rows
+        select_variables: Select variables

@@ -275,6 +275,20 @@ module Blazer
           end
         end
 
+        @geojson = []
+        geojson_index = @columns.each_index.select {|i| @columns[i].include?("geojson") }.first
+        if geojson_index
+          @geojson = @rows.map do |r|
+            geometry = JSON.parse(r[geojson_index]) rescue nil
+            next unless geometry
+
+            {
+              title: r.each_with_index.map { |v, i| i == geojson_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br />").truncate(140),
+              geometry: geometry,
+            }
+          end.compact
+        end
+
         render_cohort_analysis if @cohort_analysis && !@error
 
         respond_to do |format|

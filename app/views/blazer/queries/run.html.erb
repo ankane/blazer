@@ -105,6 +105,34 @@
         featureLayer.setGeoJSON(geojson);
         map.fitBounds(featureLayer.getBounds());
       </script>
+    <% elsif blazer_maps? && @geojson.any? %>
+      <% map_id = SecureRandom.hex %>
+      <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
+      <script>
+        <%= blazer_js_var "mapboxAccessToken", Blazer.mapbox_access_token %>
+        <%= blazer_js_var "geojson", @geojson %>
+        <%= blazer_js_var "mapId", map_id %>
+        L.mapbox.accessToken = mapboxAccessToken;
+        var map = L.mapbox.map(mapId)
+          .addLayer(L.mapbox.styleLayer('mapbox://styles/mapbox/streets-v11'));
+        var featureLayer = L.mapbox.featureLayer().addTo(map);
+        var features = [];
+        for (var i = 0; i < geojson.length; i++) {
+          var geometry = geojson[i].geometry;
+          var title = geojson[i].title;
+
+          features.push({
+            type: 'Feature',
+            geometry: geometry,
+            properties: {
+              description: title,
+            }
+          });
+        }
+        console.log(features);
+        featureLayer.setGeoJSON(features);
+        map.fitBounds(featureLayer.getBounds());
+      </script>
     <% elsif chart_type == "line" %>
       <% chart_data = @columns[1..-1].each_with_index.map{ |k, i| {name: blazer_series_name(k), data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} } %>
       <%= line_chart chart_data, **chart_options %>

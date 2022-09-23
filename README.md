@@ -354,10 +354,14 @@ SELECT gender, COUNT(*) AS pie FROM users GROUP BY 1
 
 ### Maps
 
-Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` - [Example](https://blazer.dokkuapp.com/queries/15-map)
+Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` or GeoJSON in a column with `geojson` in the name - [Example](https://blazer.dokkuapp.com/queries/15-map)
 
 ```sql
 SELECT name, latitude, longitude FROM cities
+```
+
+```sql
+SELECT name, ST_AsGeoJSON(the_geom) AS geojson FROM counties
 ```
 
 To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `ENV["MAPBOX_ACCESS_TOKEN"]`.

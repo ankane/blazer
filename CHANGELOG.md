@@ -1,6 +1,7 @@
-## 2.6.5 (unreleased)
+## 2.6.5 (2022-08-31)
 
 - Use monotonic time
+- Fixed `comparison of Symbol with String failed` error with certain versions of Rails
 
 ## 2.6.4 (2022-05-24)
 

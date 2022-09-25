@@ -4,7 +4,7 @@
   <% run_data = {statement: @query.statement, query_id: @query.id, data_source: @query.data_source, variables: variable_params(@query)} %>
   <% run_data.merge!(forecast: "t") if params[:forecast] %>
   <% run_data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
-  <% run_data.transform_keys!(&:to_s) if Rails::VERSION::STRING.to_f == 5.0 %>
+  <% run_data.transform_keys!(&:to_s) if Rails::VERSION::MAJOR < 6 %>
 <% end %>
 
 <div class="topbar">

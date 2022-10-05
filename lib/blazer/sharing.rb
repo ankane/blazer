@@ -16,7 +16,7 @@ module Blazer
     end
 
     def query_token(query_id)
-      Digest::SHA1.hexdigest("#{query_id}-#{ENV.fetch('BLAZER_DOWNLOAD_API_KEY')}")
+      Digest::SHA1.hexdigest("#{query_id}-#{api_key}")
     end
 
     def enabled?

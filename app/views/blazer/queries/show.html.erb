@@ -30,6 +30,12 @@
 
 <div style="margin-bottom: 60px;"></div>
 
+<div class="row">
+  <div class="col-sm-12">
+    <%= render "add_to_dashboards", query: @query, dashboards: @dashboards %>
+  </div>
+</div>
+
 <% if @sql_errors.any? %>
   <div class="alert alert-danger">
     <ul>

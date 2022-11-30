@@ -1,6 +1,7 @@
 module Blazer
   class QueriesController < BaseController
-    before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
+    before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh, :add_to_dashboards]
+    before_action :set_dashboards, only: [:show]
     before_action :set_data_source, only: [:tables, :docs, :schema, :cancel]
 
     def home
@@ -215,6 +216,33 @@ module Blazer
       head :ok
     end
 
+    def add_to_dashboards
+      dashboard_ids = params[:query] ? params[:query][:dashboard_ids] : []
+      if dashboard_ids && @query.persisted?
+        # Remove Dashboard Queries where dashboard ID was not selected
+        destroyed_dashboard_queries =  @query.dashboard_queries.where.not(dashboard_id: dashboard_ids).destroy_all
+
+        # Fix/Reset dashboard_query positions after removal of queries
+        destroyed_dashboard_queries.each do |destroyed_dashboard_query|
+          dashboard_id = destroyed_dashboard_query.dashboard_id
+          Blazer::Dashboard.find(dashboard_id).dashboard_queries.order(:position).each_with_index do |dashboard_query, i|
+            dashboard_query.position = i 
+            dashboard_query.save!
+          end
+        end
+
+        # Add query to selected dashboards
+        dashboard_ids.each do |dashboard_id|
+          # only modifies new dashboard queries
+          @query.dashboard_queries.where(dashboard_id: dashboard_id).first_or_initialize do |dashboard_query|
+            dashboard_query.position = Blazer::Dashboard.find(dashboard_id).query_ids.length
+            dashboard_query.save!
+          end
+        end
+      end
+      redirect_to query_path(@query)
+    end
+
     private
 
       def set_data_source
@@ -333,6 +361,10 @@ module Blazer
         unless @query.viewable?(blazer_user)
           render_forbidden
         end
+      end
+
+      def set_dashboards
+        @dashboards = Blazer::Dashboard.order(:name)
       end
 
       def render_forbidden

@@ -1,5 +1,5 @@
 //= require ./jquery
-//= require ./jquery-ujs
+//= require ./rails-ujs
 //= require ./stupidtable
 //= require ./stupidtable-custom-settings
 //= require ./jquery.stickytableheaders

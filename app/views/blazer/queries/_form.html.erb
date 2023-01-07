@@ -70,15 +70,16 @@
   <%= blazer_js_var "variableParams", variable_params(@query) %>
   <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, (v.preview_statement rescue "")] }] %>
 
-  var app = new Vue({
-    el: "#app",
-    data: {
-      running: false,
-      results: "",
-      error: false,
-      dataSource: "",
-      selectize: null,
-      editorHeight: "180px"
+  var app = Vue.createApp({
+    data: function() {
+      return {
+        running: false,
+        results: "",
+        error: false,
+        dataSource: "",
+        selectize: null,
+        editorHeight: "180px"
+      }
     },
     computed: {
       schemaPath: function() {
@@ -246,5 +247,5 @@
 
       this.showEditor()
     }
-  })
+  }).mount("#app")
 </script>

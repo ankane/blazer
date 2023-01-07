@@ -77,12 +77,13 @@
     return str.toLowerCase()
   }
 
-  var app = new Vue({
-    el: "#queries",
-    data: {
-      searchTerm: "",
-      more: more,
-      updateCounter: 0
+  var app = Vue.createApp({
+    data: function() {
+      return {
+        searchTerm: "",
+        more: more,
+        updateCounter: 0
+      }
     },
     created: function() {
       this.listItems = dashboards.concat(queries)
@@ -162,5 +163,5 @@
         }
       }
     }
-  })
+  }).mount("#queries")
 </script>

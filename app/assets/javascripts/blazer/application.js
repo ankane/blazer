@@ -14,13 +14,10 @@
 //= require ./ace
 //= require ./Sortable
 //= require ./bootstrap
-//= require ./vue
+//= require ./vue.global.prod
 //= require ./routes
 //= require ./queries
 //= require ./fuzzysearch
-
-Vue.config.devtools = false
-Vue.config.productionTip = false
 
 $(document).on('mouseenter', '.dropdown-toggle', function () {
   $(this).parent().addClass('open')

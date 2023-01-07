@@ -34,10 +34,11 @@
   <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
   <%= blazer_js_var "dashboardQueries", @queries || @dashboard.dashboard_queries.order(:position).map(&:query) %>
 
-  var app = new Vue({
-    el: "#app",
-    data: {
-      queries: dashboardQueries
+  var app = Vue.createApp({
+    data: function() {
+      return {
+        queries: dashboardQueries
+      }
     },
     methods: {
       remove: function(index) {
@@ -67,7 +68,7 @@
         }
       })
     }
-  })
+  }).mount("#app")
   Sortable.create($("#queries").get(0), {
     onEnd: function(e) {
       app.queries.splice(e.newIndex, 0, app.queries.splice(e.oldIndex, 1)[0])

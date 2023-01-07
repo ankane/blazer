@@ -1,3 +1,7 @@
+## 3.0.0 (unreleased)
+
+- Dropped support for Ruby < 2.7 and Rails < 6
+
 ## 2.6.5 (2022-08-31)
 
 - Use monotonic time

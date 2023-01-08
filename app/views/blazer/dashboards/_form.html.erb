@@ -23,7 +23,7 @@
   </div>
   <p style="padding-bottom: 140px;" v-cloak>
     <% if @dashboard.persisted? %>
-      <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger"%>
+      <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
     <% end %>
     <%= f.submit "Save", class: "btn btn-success" %>
     <%= link_to "Back", :back, class: "btn btn-link" %>
@@ -68,7 +68,10 @@
         }
       })
     }
-  }).mount("#app")
+  })
+  app.config.compilerOptions.whitespace = "preserve"
+  app.mount("#app")
+
   Sortable.create($("#queries").get(0), {
     onEnd: function(e) {
       app.queries.splice(e.newIndex, 0, app.queries.splice(e.oldIndex, 1)[0])

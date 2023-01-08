@@ -18,8 +18,6 @@ end
 Rails.cache.logger = logger
 
 class ActionDispatch::IntegrationTest
-  include ActiveJob::TestHelper if Rails::VERSION::MAJOR < 6
-
   def run_query(statement, format: nil, **params)
     post blazer.run_queries_path(format: format), params: {statement: statement, data_source: "main"}.merge(params), xhr: true
     assert_response :success

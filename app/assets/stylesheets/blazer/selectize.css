@@ -172,7 +172,7 @@
   vertical-align: baseline;
   display: -moz-inline-stack;
   display: inline-block;
-  zoom: 1;
+  transform: scale(1);
   *display: inline;
 }
 .selectize-control.multi .selectize-input > div {

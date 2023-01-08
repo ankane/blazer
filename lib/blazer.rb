@@ -135,13 +135,6 @@ module Blazer
     end
   end
 
-  # TODO move to Statement and remove in 3.0.0
-  def self.extract_vars(statement)
-    # strip commented out lines
-    # and regex {1} or {1,2}
-    statement.to_s.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{\w*?\}/i).map { |v| v[1...-1] }.reject { |v| /\A\d+(\,\d+)?\z/.match(v) || v.empty? }.uniq
-  end
-
   def self.run_checks(schedule: nil)
     checks = Blazer::Check.includes(:query)
     checks = checks.where(schedule: schedule) if schedule

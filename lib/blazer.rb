@@ -72,6 +72,7 @@ module Blazer
     attr_accessor :slack_oauth_token
     attr_accessor :slack_webhook_url
     attr_accessor :mapbox_access_token
+    attr_accessor :row_limit
   end
   self.audit = true
   self.user_name = :name

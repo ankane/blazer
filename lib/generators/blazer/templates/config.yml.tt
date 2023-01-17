@@ -77,3 +77,7 @@ check_schedules:
 #   url: <%%= ENV["BLAZER_UPLOADS_URL"] %>
 #   schema: uploads
 #   data_source: main
+
+# limit of row count in HTML view.
+# default is unlimited
+# row_limit: 5000

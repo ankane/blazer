@@ -279,6 +279,7 @@ module Blazer
 
         respond_to do |format|
           format.html do
+            @row_limit ||= Blazer.row_limit if Blazer.row_limit
             render layout: false
           end
           format.csv do

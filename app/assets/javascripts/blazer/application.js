@@ -11,6 +11,7 @@
 //= require ./Chart
 //= require ./chartjs-adapter-moment
 //= require ./chartkick
+//= require ./mapkick
 //= require ./ace
 //= require ./Sortable
 //= require ./bootstrap

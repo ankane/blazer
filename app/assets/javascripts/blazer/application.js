@@ -8,8 +8,8 @@
 //= require ./moment
 //= require ./moment-timezone-with-data
 //= require ./daterangepicker
-//= require ./Chart
-//= require ./chartjs-adapter-moment
+//= require ./chart.umd
+//= require ./chartjs-adapter-date-fns.bundle
 //= require ./chartkick
 //= require ./mapkick
 //= require ./ace

@@ -11,7 +11,7 @@
 //= require ./chart.umd
 //= require ./chartjs-adapter-date-fns.bundle
 //= require ./chartkick
-//= require ./mapkick
+//= require ./mapkick.bundle
 //= require ./ace
 //= require ./Sortable
 //= require ./bootstrap

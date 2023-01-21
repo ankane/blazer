@@ -7,7 +7,7 @@
     <%= favicon_link_tag "blazer/favicon.png" %>
     <% if defined?(Propshaft::Railtie) %>
       <%= stylesheet_link_tag "blazer/bootstrap-propshaft", "blazer/bootstrap", "blazer/selectize", "blazer/github", "blazer/daterangepicker", "blazer/application" %>
-      <%= javascript_include_tag "blazer/jquery", "blazer/rails-ujs", "blazer/stupidtable", "blazer/stupidtable-custom-settings", "blazer/jquery.stickytableheaders", "blazer/selectize", "blazer/highlight.min", "blazer/moment", "blazer/moment-timezone-with-data", "blazer/daterangepicker", "blazer/chart.umd", "blazer/chartjs-adapter-date-fns.bundle", "blazer/chartkick", "blazer/mapkick", "blazer/ace/ace", "blazer/ace/ext-language_tools", "blazer/ace/theme-twilight", "blazer/ace/mode-sql", "blazer/ace/snippets/text", "blazer/ace/snippets/sql", "blazer/Sortable", "blazer/bootstrap", "blazer/vue.global.prod", "blazer/routes", "blazer/queries", "blazer/fuzzysearch", "blazer/application" %>
+      <%= javascript_include_tag "blazer/jquery", "blazer/rails-ujs", "blazer/stupidtable", "blazer/stupidtable-custom-settings", "blazer/jquery.stickytableheaders", "blazer/selectize", "blazer/highlight.min", "blazer/moment", "blazer/moment-timezone-with-data", "blazer/daterangepicker", "blazer/chart.umd", "blazer/chartjs-adapter-date-fns.bundle", "blazer/chartkick", "blazer/mapkick.bundle", "blazer/ace/ace", "blazer/ace/ext-language_tools", "blazer/ace/theme-twilight", "blazer/ace/mode-sql", "blazer/ace/snippets/text", "blazer/ace/snippets/sql", "blazer/Sortable", "blazer/bootstrap", "blazer/vue.global.prod", "blazer/routes", "blazer/queries", "blazer/fuzzysearch", "blazer/application" %>
     <% else %>
       <%= stylesheet_link_tag "blazer/application" %>
       <%= javascript_include_tag "blazer/application" %>
@@ -15,10 +15,6 @@
     <script>
       <%= blazer_js_var "rootPath", root_path %>
     </script>
-    <% if Blazer.maps? %>
-      <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css", integrity: "sha384-JnF4GvwrnLggHxx0ORCeHombtPxfqigY/GeEvbdv0Uy5qrCAuAyN3AulKRA+VAPr", crossorigin: "anonymous" %>
-      <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js", integrity: "sha384-vfOzZDaNX5M/OSAH3SyXcnOJbCgq0Y8y4c0WSofB4ePtoj17jb1QEVO/pf7j7+Co", crossorigin: "anonymous" %>
-    <% end %>
     <%= csrf_meta_tags %>
   </head>
   <body>

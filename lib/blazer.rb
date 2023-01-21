@@ -218,6 +218,10 @@ module Blazer
     slack_oauth_token.present? || slack_webhook_url.present?
   end
 
+  def self.maps?
+    mapbox_access_token.present?
+  end
+
   def self.uploads?
     settings.key?("uploads")
   end

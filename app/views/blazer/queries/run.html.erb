@@ -72,7 +72,7 @@
       <% color = "#54a3ee" %>
       <% series_library[1] = {borderDash: [8], borderColor: color, pointBackgroundColor: color, backgroundColor: color, pointHoverBackgroundColor: color} %>
     <% end %>
-    <% if blazer_maps? && @markers.any? %>
+    <% if Blazer.maps? && @markers.any? %>
       <% map_id = SecureRandom.hex %>
       <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
       <script>

@@ -15,7 +15,7 @@
     <script>
       <%= blazer_js_var "rootPath", root_path %>
     </script>
-    <% if blazer_maps? %>
+    <% if Blazer.maps? %>
       <%= stylesheet_link_tag "https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.css", integrity: "sha384-JnF4GvwrnLggHxx0ORCeHombtPxfqigY/GeEvbdv0Uy5qrCAuAyN3AulKRA+VAPr", crossorigin: "anonymous" %>
       <%= javascript_include_tag "https://api.mapbox.com/mapbox-gl-js/v2.12.0/mapbox-gl.js", integrity: "sha384-vfOzZDaNX5M/OSAH3SyXcnOJbCgq0Y8y4c0WSofB4ePtoj17jb1QEVO/pf7j7+Co", crossorigin: "anonymous" %>
     <% end %>

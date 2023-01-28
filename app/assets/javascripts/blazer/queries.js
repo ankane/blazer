@@ -106,7 +106,8 @@ function cancelServerQuery(query) {
   var path = Routes.cancel_queries_path()
   var data = {run_id: query.run_id, data_source: query.data_source}
   if (navigator.sendBeacon) {
-    navigator.sendBeacon(path + "?" + $.param(csrfProtect(data)))
+    var json = JSON.stringify(csrfProtect(data));
+    navigator.sendBeacon(path, new Blob([json], {type: "application/json"}))
   } else {
     // TODO make sync
     $.post(path, data)

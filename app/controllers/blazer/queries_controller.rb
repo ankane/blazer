@@ -44,6 +44,7 @@ module Blazer
         @query.data_source ||= upload_settings["data_source"]
         @query.statement ||= "SELECT * FROM #{upload.table_name} LIMIT 10"
       end
+      @variable_params = nested_variable_params(@query)
     end
 
     def create
@@ -76,6 +77,7 @@ module Blazer
     end
 
     def edit
+      @variable_params = variable_params(@query)
     end
 
     def run

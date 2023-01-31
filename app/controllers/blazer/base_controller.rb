@@ -102,16 +102,16 @@ module Blazer
         statement.apply_cohort_analysis(period: @cohort_period, days: @cohort_days)
       end
 
-      # TODO allow all keys
-      # or show error message for disallowed keys
-      UNPERMITTED_KEYS = [:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id, :blazer, :run_id, :script_name, :original_script_name]
-
       def variable_params(resource, var_params = nil)
-        permitted_keys = resource.variables - UNPERMITTED_KEYS.map(&:to_s)
+        permitted_keys = resource.variables
         var_params ||= request.query_parameters
         var_params.slice(*permitted_keys)
       end
       helper_method :variable_params
+
+      def nested_variable_params(resource)
+        variable_params(resource, request.query_parameters["variables"] || {})
+      end
 
       def blazer_user
         send(Blazer.user_method) if Blazer.user_method && respond_to?(Blazer.user_method, true)

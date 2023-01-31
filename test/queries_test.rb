@@ -83,6 +83,13 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_match %{value="default_value"}, response.body
   end
 
+  def test_variables_id
+    query = create_query(statement: "SELECT {id}")
+    get blazer.query_path(query), params: {id: 123}
+    assert_response :success
+    assert_match %!"variables":{"id":"123"}!, response.body
+  end
+
   def test_smart_variables
     query = create_query(statement: "SELECT {period}")
     get blazer.query_path(query)

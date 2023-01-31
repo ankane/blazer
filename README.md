@@ -1,5 +1,11 @@
 # Blazer
 
+
+
+## UPDATED FOR CUSTOM ALERTING
+
+
+
 Explore your data with SQL. Easily create charts and dashboards, and share them with your team.
 
 [Try it out](https://blazer.dokkuapp.com)

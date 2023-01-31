@@ -1,5 +1,8 @@
 module Blazer
   class DashboardQuery < Record
+
+    self.table_name = 'data_alert_dashboard_queries'
+
     belongs_to :dashboard
     belongs_to :query
 

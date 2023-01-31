@@ -1,5 +1,8 @@
 module Blazer
   class Check < Record
+
+    self.table_name = 'data_alert_checks'
+
     belongs_to :creator, optional: true, class_name: Blazer.user_class.to_s if Blazer.user_class
     belongs_to :query
 

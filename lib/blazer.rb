@@ -218,8 +218,9 @@ module Blazer
     slack_oauth_token.present? || slack_webhook_url.present?
   end
 
+  # TODO show warning on invalid access token
   def self.maps?
-    mapbox_access_token.present?
+    mapbox_access_token.present? && mapbox_access_token.start_with?("pk.")
   end
 
   def self.uploads?

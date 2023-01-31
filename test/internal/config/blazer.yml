@@ -154,7 +154,7 @@ check_schedules:
 # forecasting: prophet / trend
 
 # enable map
-mapbox_access_token: token
+mapbox_access_token: pk.token
 
 # enable uploads
 uploads:

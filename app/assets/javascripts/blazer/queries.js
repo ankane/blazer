@@ -106,7 +106,16 @@ function cancelServerQuery(query) {
   var path = Routes.cancel_queries_path()
   var data = {run_id: query.run_id, data_source: query.data_source}
   if (navigator.sendBeacon) {
-    navigator.sendBeacon(path + "?" + $.param(csrfProtect(data)))
+    // use FormData over Blob and URLSearchParams for maximum compatibility
+    // Blob works with Chrome 81+ and URLSearchParams works with Chrome 88+
+    var formdata = new FormData()
+    var params = csrfProtect(data)
+    for (var key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        formdata.append(key, params[key])
+      }
+    }
+    navigator.sendBeacon(path, formdata)
   } else {
     // TODO make sync
     $.post(path, data)

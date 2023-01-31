@@ -46,6 +46,7 @@
       }
     },
     mounted: function() {
+      var app = this
       $("#query_id").selectize({
         options: queries,
         highlight: false,
@@ -74,6 +75,7 @@
 
   Sortable.create($("#queries").get(0), {
     onEnd: function(e) {
+      var app = window.app._component.data()
       app.queries.splice(e.newIndex, 0, app.queries.splice(e.oldIndex, 1)[0])
     }
   })

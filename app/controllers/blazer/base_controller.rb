@@ -112,6 +112,7 @@ module Blazer
     def nested_variable_params(resource)
       variable_params(resource, request.query_parameters["variables"] || {})
     end
+    helper_method :nested_variable_params
 
     def blazer_user
       send(Blazer.user_method) if Blazer.user_method && respond_to?(Blazer.user_method, true)

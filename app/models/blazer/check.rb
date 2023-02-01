@@ -51,6 +51,8 @@ module Blazer
           else
             "passing"
           end
+        elsif check_type == "alert"
+          "passing"
         elsif result.rows.any?
           check_type == "missing_data" ? "passing" : "failing"
         else
@@ -73,6 +75,8 @@ module Blazer
       if (state_was != "new" || state != "passing") && state != state_was
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now if emails.present?
         Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size, message, check_type)
+      elsif check_type == "alert" && result.rows.any?
+        Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(20).as_json, result.column_types, check_type).deliver_now if emails.present?
       end
       save! if changed?
     end

@@ -84,7 +84,6 @@ module Blazer
       @query = Query.find_by(id: params[:query_id]) if params[:query_id]
 
       # use query data source when present
-      # need to update viewable? logic below if this changes
       data_source = @query.data_source if @query && @query.data_source
       data_source ||= params[:data_source]
       @data_source = Blazer.data_sources[data_source]
@@ -102,10 +101,7 @@ module Blazer
 
       run_cohort_analysis if @cohort_analysis
 
-      # ensure viewable
-      if !(@query || Query.new(data_source: @data_source.id)).viewable?(blazer_user)
-        render_forbidden
-      elsif @run_id
+      if @run_id
         @timestamp = blazer_params[:timestamp].to_i
 
         @result = @data_source.run_results(@run_id)
@@ -329,10 +325,6 @@ module Blazer
 
       def set_query
         @query = Blazer::Query.find(params[:id].to_s.split("-").first)
-
-        unless @query.viewable?(blazer_user)
-          render_forbidden
-        end
       end
 
       def render_forbidden

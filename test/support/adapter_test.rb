@@ -1,4 +1,9 @@
 module AdapterTest
+  def setup
+    settings = YAML.load_file("test/support/adapters.yml")
+    Blazer.instance_variable_set(:@settings, settings)
+  end
+
   # some adapter tests override this method
   def test_tables
     assert_kind_of Array, tables

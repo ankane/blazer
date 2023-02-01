@@ -28,11 +28,9 @@ class PermissionsTest < ActionDispatch::IntegrationTest
       end
 
     with_new_user do
-      Blazer.stub(:data_sources, Blazer.data_sources.slice("main")) do
-        patch blazer.query_path(query), params: {name: "Renamed"}
-        assert_response :unprocessable_entity
-        assert_match "Sorry, permission denied", response.body
-      end
+      patch blazer.query_path(query), params: {name: "Renamed"}
+      assert_response :unprocessable_entity
+      assert_match "Sorry, permission denied", response.body
 
       delete blazer.query_path(query)
       # TODO error response

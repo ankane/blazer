@@ -37,7 +37,7 @@ module Blazer
                 result.rows
               end
 
-            boom[key] = Hash[res.map { |k, v| [k.nil? ? k : k.to_s, v] }]
+            boom[key] = res.to_h { |k, v| [k.nil? ? k : k.to_s, v] }
           end
         end
         boom
@@ -189,7 +189,7 @@ module Blazer
         value = series.last[1]
         value < lower || value > upper
       when "trend"
-        anomalies = Trend.anomalies(Hash[series])
+        anomalies = Trend.anomalies(series.to_h)
         anomalies.include?(series.last[0])
       when "anomaly_detection"
         anomalies = AnomalyDetection.detect(series.to_h, period: :auto)

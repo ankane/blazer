@@ -68,7 +68,7 @@
 
 <script>
   <%= blazer_js_var "variableParams", @variable_params %>
-  <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, (v.preview_statement rescue "")] }] %>
+  <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
   var app = Vue.createApp({
     data: function() {

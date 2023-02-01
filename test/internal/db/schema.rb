@@ -49,4 +49,8 @@ ActiveRecord::Schema.define do
     t.text :description
     t.timestamps null: false
   end
+
+  create_table :users do |t|
+    t.string :name
+  end
 end

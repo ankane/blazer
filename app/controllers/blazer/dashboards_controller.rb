@@ -65,35 +65,35 @@ module Blazer
 
     private
 
-      def dashboard_params
-        params.require(:dashboard).permit(:name)
-      end
+    def dashboard_params
+      params.require(:dashboard).permit(:name)
+    end
 
-      def set_dashboard
-        @dashboard = Blazer::Dashboard.find(params[:id])
-      end
+    def set_dashboard
+      @dashboard = Blazer::Dashboard.find(params[:id])
+    end
 
-      def update_dashboard(dashboard)
-        dashboard.assign_attributes(dashboard_params)
-        Blazer::Dashboard.transaction do
-          if params[:query_ids].is_a?(Array)
-            query_ids = params[:query_ids].map(&:to_i)
-            @queries = Blazer::Query.find(query_ids).sort_by { |q| query_ids.index(q.id) }
-          end
-          if dashboard.save
-            if @queries
-              @queries.each_with_index do |query, i|
-                dashboard_query = dashboard.dashboard_queries.where(query_id: query.id).first_or_initialize
-                dashboard_query.position = i
-                dashboard_query.save!
-              end
-              if dashboard.persisted?
-                dashboard.dashboard_queries.where.not(query_id: query_ids).destroy_all
-              end
+    def update_dashboard(dashboard)
+      dashboard.assign_attributes(dashboard_params)
+      Blazer::Dashboard.transaction do
+        if params[:query_ids].is_a?(Array)
+          query_ids = params[:query_ids].map(&:to_i)
+          @queries = Blazer::Query.find(query_ids).sort_by { |q| query_ids.index(q.id) }
+        end
+        if dashboard.save
+          if @queries
+            @queries.each_with_index do |query, i|
+              dashboard_query = dashboard.dashboard_queries.where(query_id: query.id).first_or_initialize
+              dashboard_query.position = i
+              dashboard_query.save!
             end
-            true
+            if dashboard.persisted?
+              dashboard.dashboard_queries.where.not(query_id: query_ids).destroy_all
+            end
           end
+          true
         end
       end
+    end
   end
 end

@@ -32,6 +32,10 @@ $(document).on("click", "#code", function () {
   $(this).addClass("expanded")
 })
 
+$(document).on("click", "a[disabled]", function (e) {
+  e.preventDefault()
+})
+
 function submitIfCompleted($form) {
   var completed = true
   $form.find("input[name], select").each( function () {

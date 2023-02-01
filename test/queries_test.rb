@@ -27,6 +27,12 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_equal query.data_source, audit.data_source
   end
 
+  def test_create_error
+    post blazer.queries_path, params: {query: {name: "Test", statement: "", data_source: "main"}}
+    assert_response :unprocessable_entity
+    assert_match "Statement can&#39;t be blank", response.body
+  end
+
   def test_destroy
     query = create_query
     delete blazer.query_path(query)

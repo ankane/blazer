@@ -1,6 +1,7 @@
 ## 3.0.0 (unreleased)
 
 - Switched to Mapbox GL for maps (this affects Mapbox billing)
+- Support for AnomalyDetection.rb is no longer experimental
 - Dropped support for Ruby < 2.7 and Rails < 6
 - Dropped support for R anomaly detection
 

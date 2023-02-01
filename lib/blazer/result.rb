@@ -192,8 +192,7 @@ module Blazer
         anomalies = Trend.anomalies(Hash[series])
         anomalies.include?(series.last[0])
       when "anomaly_detection"
-        period = 7 # TODO determine period
-        anomalies = AnomalyDetection.detect(Hash[series], period: period)
+        anomalies = AnomalyDetection.detect(series.to_h, period: :auto)
         anomalies.include?(series.last[0])
       else
         raise "Unknown anomaly detector"

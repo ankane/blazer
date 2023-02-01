@@ -17,6 +17,9 @@ jobs:
             gemfile: gemfiles/rails60.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+      TEST_ANOMALY_DETECTION: true
+      TEST_PROPHET: true
+      TEST_TREND: true
     steps:
       - uses: actions/checkout@v3
       - uses: ruby/setup-ruby@v1

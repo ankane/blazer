@@ -21,6 +21,26 @@ class PermissionsTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_edit
+    query =
+      with_new_user do |user|
+        create_query(name: "* Test", creator: user)
+      end
+
+    with_new_user do
+      Blazer.stub(:data_sources, Blazer.data_sources.slice("main")) do
+        patch blazer.query_path(query), params: {name: "Renamed"}
+        assert_response :unprocessable_entity
+        assert_match "Sorry, permission denied", response.body
+      end
+
+      delete blazer.query_path(query)
+      # TODO error response
+      assert_response :redirect
+      assert Blazer::Query.exists?(query.id)
+    end
+  end
+
   private
 
   def with_new_user

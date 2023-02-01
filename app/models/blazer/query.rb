@@ -1,8 +1,5 @@
 module Blazer
   class Query < Record
-
-    self.table_name = 'data_alert_queries'
-
     belongs_to :creator, optional: true, class_name: Blazer.user_class.to_s if Blazer.user_class
     has_many :checks, dependent: :destroy
     has_many :dashboard_queries, dependent: :destroy

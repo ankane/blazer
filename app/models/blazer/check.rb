@@ -1,8 +1,5 @@
 module Blazer
   class Check < Record
-
-    self.table_name = 'data_alert_checks'
-
     belongs_to :creator, optional: true, class_name: Blazer.user_class.to_s if Blazer.user_class
     belongs_to :query
 
@@ -76,7 +73,10 @@ module Blazer
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now if emails.present?
         Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size, message, check_type)
       elsif check_type == "alert" && result.rows.any?
-        Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(20).as_json, result.column_types, check_type).deliver_now if emails.present?
+        uid = result.columns.index("user_id")
+        result.rows.each do |r|
+          puts "ALERT  USER_ID: #{r[uid]}"
+        end
       end
       save! if changed?
     end

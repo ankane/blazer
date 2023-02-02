@@ -28,7 +28,7 @@ class PermissionsTest < ActionDispatch::IntegrationTest
       end
 
     with_new_user do
-      patch blazer.query_path(query), params: {name: "Renamed"}
+      patch blazer.query_path(query), params: {query: {name: "Renamed"}}
       assert_response :unprocessable_entity
       assert_match "Sorry, permission denied", response.body
 
@@ -36,6 +36,18 @@ class PermissionsTest < ActionDispatch::IntegrationTest
       # TODO error response
       assert_response :redirect
       assert Blazer::Query.exists?(query.id)
+    end
+  end
+
+  def test_change_creator
+    with_new_user do |user|
+      query = create_query(name: "Test", creator: user)
+
+      patch blazer.query_path(query), params: {query: {name: "* Test"}}
+      assert_response :redirect
+
+      patch blazer.query_path(query), params: {query: {name: "# Test"}}
+      assert_response :redirect
     end
   end
 

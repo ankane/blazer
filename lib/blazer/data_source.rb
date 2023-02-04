@@ -1,4 +1,4 @@
-require "digest/md5"
+require "digest/sha2"
 
 module Blazer
   class DataSource
@@ -141,11 +141,11 @@ module Blazer
     end
 
     def cache_key(key)
-      (["blazer", "v4"] + key).join("/")
+      (["blazer", "v5"] + key).join("/")
     end
 
     def statement_cache_key(statement)
-      cache_key(["statement", id, Digest::MD5.hexdigest(statement.bind_statement.to_s.gsub("\r\n", "\n") + statement.bind_values.to_json)])
+      cache_key(["statement", id, Digest::SHA256.hexdigest(statement.bind_statement.to_s.gsub("\r\n", "\n") + statement.bind_values.to_json)])
     end
 
     def run_cache_key(run_id)

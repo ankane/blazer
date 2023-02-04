@@ -12,7 +12,7 @@ module Blazer
         end
       rescue Exception => e
         Blazer::Result.new(data_source, [], [], "Unknown error", nil, false)
-        Blazer.cache.write(data_source.run_cache_key(options[:run_id]), Marshal.dump([[], [], "Unknown error", nil]), expires_in: 30.seconds)
+        Blazer.cache.write(data_source.run_cache_key(options[:run_id]), Blazer::Result.dump([[], [], "Unknown error", nil]), expires_in: 30.seconds)
         raise e
       end
     end

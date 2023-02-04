@@ -77,7 +77,7 @@ module Blazer
     def read_cache(cache_key)
       value = Blazer.cache.read(cache_key)
       if value
-        Blazer::Result.new(self, *Marshal.load(value), nil)
+        Blazer::Result.new(self, *Blazer::Result.load(value), nil)
       end
     end
 
@@ -245,7 +245,7 @@ module Blazer
       cache_data = nil
       cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
       if cache || run_id
-        cache_data = Marshal.dump([columns, rows, error, cache ? Time.now : nil]) rescue nil
+        cache_data = Blazer::Result.dump([columns, rows, error, cache ? Time.now : nil]) rescue nil
       end
 
       if cache && cache_data && adapter_instance.cachable?(statement.bind_statement)
@@ -255,7 +255,7 @@ module Blazer
       if run_id
         unless cache_data
           error = "Error storing the results of this query :("
-          cache_data = Marshal.dump([[], [], error, nil])
+          cache_data = Blazer::Result.dump([[], [], error, nil])
         end
         Blazer.cache.write(run_cache_key(run_id), cache_data, expires_in: 30.seconds)
       end

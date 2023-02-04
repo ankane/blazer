@@ -198,5 +198,13 @@ module Blazer
         raise "Unknown anomaly detector"
       end
     end
+
+    def self.load(*args)
+      Marshal.load(*args)
+    end
+
+    def self.dump(*args)
+      Marshal.dump(*args)
+    end
   end
 end

@@ -55,7 +55,7 @@
         </td>
         <td style="text-align: right; padding: 1px;">
           <%= link_to "Edit", edit_check_path(check), class: "btn btn-info" %>
-          <%= link_to "Run Now", query_path(check.query), class: "btn btn-primary" %>
+          <%= button_to "Run Now", refresh_query_path(check.query), class: "btn btn-primary" %>
         </td>
       </tr>
     <% end %>

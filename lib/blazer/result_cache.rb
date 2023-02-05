@@ -17,15 +17,15 @@ module Blazer
     end
 
     def write_statement(statement, result, expires_in:)
-      write(statement_cache_key(statement), result, expires_in: expires_in)
+      write(statement_cache_key(statement), result, expires_in: expires_in) if caching?
     end
 
     def read_statement(statement)
-      read(statement_cache_key(statement))
+      read(statement_cache_key(statement)) if caching?
     end
 
     def delete_statement(statement)
-      delete(statement_cache_key(statement))
+      delete(statement_cache_key(statement)) if caching?
     end
 
     private
@@ -46,6 +46,10 @@ module Blazer
 
     def delete(key)
       cache.delete(key)
+    end
+
+    def caching?
+      @data_source.cache_mode != "off"
     end
 
     def cache_key(key)

@@ -97,7 +97,6 @@ module Blazer
       statement = Statement.new(statement, self) if statement.is_a?(String)
       statement.bind unless statement.bind_statement
 
-      async = options[:async]
       result = nil
       if cache_mode != "off"
         if options[:refresh_cache]
@@ -125,7 +124,17 @@ module Blazer
         if options[:run_id]
           comment << ",run_id:#{options[:run_id]}"
         end
-        result = run_statement_helper(statement, comment, async ? options[:run_id] : nil, options)
+        result = run_statement_helper(statement, comment, options)
+      end
+
+      if options[:async] && options[:run_id]
+        run_id = options[:run_id]
+        begin
+          result_cache.write_run(run_id, result)
+        rescue
+          result = Blazer::Result.new(self, [], [], "Error storing the results of this query :(", nil, false)
+          result_cache.write_run(run_id, result)
+        end
       end
 
       result
@@ -215,7 +224,7 @@ module Blazer
       @parameter_binding ||= adapter_instance.parameter_binding
     end
 
-    def run_statement_helper(statement, comment, run_id, options)
+    def run_statement_helper(statement, comment, options)
       start_time = Blazer.monotonic_time
       columns, rows, error =
         if adapter_instance.parameter_binding
@@ -234,15 +243,6 @@ module Blazer
           result_cache.write_statement(statement, result, expires_in: cache_expires_in.to_f * 60)
         rescue
           result.just_cached = false
-        end
-      end
-
-      if run_id
-        begin
-          result_cache.write_run(run_id, result)
-        rescue
-          result = Blazer::Result.new(self, [], [], "Error storing the results of this query :(", nil, false)
-          result_cache.write_run(run_id, result)
         end
       end
 

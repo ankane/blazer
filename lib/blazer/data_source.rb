@@ -1,5 +1,3 @@
-require "digest/sha2"
-
 module Blazer
   class DataSource
     extend Forwardable

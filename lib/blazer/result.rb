@@ -171,27 +171,8 @@ module Blazer
     def anomaly?(series)
       series = series.reject { |v| v[0].nil? }.sort_by { |v| v[0] }
 
-      case Blazer.anomaly_checks
-      when "prophet"
-        df = Rover::DataFrame.new(series[0..-2].map { |v| {"ds" => v[0], "y" => v[1]} })
-        m = Prophet.new(interval_width: 0.99)
-        m.logger.level = ::Logger::FATAL # no logging
-        m.fit(df)
-        future = Rover::DataFrame.new(series[-1..-1].map { |v| {"ds" => v[0]} })
-        forecast = m.predict(future).to_a[0]
-        lower = forecast["yhat_lower"]
-        upper = forecast["yhat_upper"]
-        value = series.last[1]
-        value < lower || value > upper
-      when "trend"
-        anomalies = Trend.anomalies(series.to_h)
-        anomalies.include?(series.last[0])
-      when "anomaly_detection"
-        anomalies = AnomalyDetection.detect(series.to_h, period: :auto)
-        anomalies.include?(series.last[0])
-      else
-        raise "Unknown anomaly detector"
-      end
+      anomaly_detector = Blazer.anomaly_detectors.fetch(Blazer.anomaly_checks)
+      anomaly_detector.call(series)
     end
   end
 end

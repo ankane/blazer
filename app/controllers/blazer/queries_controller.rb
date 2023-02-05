@@ -99,7 +99,9 @@ module Blazer
 
       run_cohort_analysis if @cohort_analysis
 
-      if @run_id
+      query_running = !@run_id.nil?
+
+      if query_running
         @timestamp = blazer_params[:timestamp].to_i
 
         @result = @data_source.run_results(@run_id)
@@ -127,8 +129,10 @@ module Blazer
       elsif @success
         @run_id = blazer_run_id
 
-        options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id, async: Blazer.async}
-        if Blazer.async && request.format.symbol != :csv
+        async = Blazer.async
+
+        options = {user: blazer_user, query: @query, refresh_cache: params[:check], run_id: @run_id, async: async}
+        if async && request.format.symbol != :csv
           Blazer::RunStatementJob.perform_later(@data_source.id, @statement.statement, options.merge(values: @statement.values))
           wait_start = Blazer.monotonic_time
           loop do
@@ -141,7 +145,7 @@ module Blazer
         end
 
         if @result
-          @data_source.delete_results(@run_id) if @run_id && Blazer.async
+          @data_source.delete_results(@run_id) if @run_id && async
 
           @columns = @result.columns
           @rows = @result.rows

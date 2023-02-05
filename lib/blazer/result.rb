@@ -20,9 +20,9 @@ module Blazer
       cached_at.present?
     end
 
-    def boom
-      @boom ||= begin
-        boom = {}
+    def smart_values
+      @smart_values ||= begin
+        smart_values = {}
         columns.each_with_index do |key, i|
           smart_columns_data_source =
             ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_columns[key] }
@@ -38,10 +38,10 @@ module Blazer
                 result.rows
               end
 
-            boom[key] = res.to_h { |k, v| [k.nil? ? k : k.to_s, v] }
+            smart_values[key] = res.to_h { |k, v| [k.nil? ? k : k.to_s, v] }
           end
         end
-        boom
+        smart_values
       end
     end
 
@@ -49,7 +49,7 @@ module Blazer
       @column_types ||= begin
         columns.each_with_index.map do |k, i|
           v = (rows.find { |r| r[i] } || {})[i]
-          if boom[k]
+          if smart_values[k]
             "string"
           elsif v.is_a?(Numeric)
             "numeric"
@@ -140,7 +140,7 @@ module Blazer
               series << {name: k, data: rows.map{ |r| [r[0], r[i + 1]] }}
             end
           else
-            rows.group_by { |r| v = r[1]; (boom[columns[1]] || {})[v.to_s] || v }.each_with_index.map do |(name, v), i|
+            rows.group_by { |r| v = r[1]; (smart_values[columns[1]] || {})[v.to_s] || v }.each_with_index.map do |(name, v), i|
               series << {name: name, data: v.map { |v2| [v2[0], v2[2]] }}
             end
           end

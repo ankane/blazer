@@ -98,9 +98,11 @@ module Blazer
       when "prophet"
         require "prophet"
         forecast = Prophet.forecast(@rows.to_h, count: count)
-      else
+      when "trend"
         require "trend"
         forecast = Trend.forecast(@rows.to_h, count: count)
+      else
+        raise "Unknown forecaster"
       end
 
       # round integers

@@ -141,7 +141,7 @@ module Blazer
         end
 
         if @result
-          @data_source.delete_results(@run_id) if @run_id
+          @data_source.delete_results(@run_id) if @run_id && Blazer.async
 
           @columns = @result.columns
           @rows = @result.rows

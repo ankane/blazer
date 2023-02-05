@@ -12,6 +12,7 @@ require "yaml"
 require_relative "blazer/version"
 require_relative "blazer/data_source"
 require_relative "blazer/result"
+require_relative "blazer/result_cache"
 require_relative "blazer/run_statement"
 require_relative "blazer/statement"
 

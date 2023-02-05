@@ -11,8 +11,8 @@ module Blazer
           Blazer::RunStatement.new.perform(statement, options)
         end
       rescue Exception => e
-        Blazer::Result.new(data_source, [], [], "Unknown error", nil, false)
-        Blazer.cache.write(data_source.run_cache_key(options[:run_id]), Blazer::Result.dump([[], [], "Unknown error", nil]), expires_in: 30.seconds)
+        result = Blazer::Result.new(data_source, [], [], "Unknown error", nil, false)
+        data_source.result_cache.write_run(options[:run_id], result)
         raise e
       end
     end

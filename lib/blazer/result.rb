@@ -1,6 +1,7 @@
 module Blazer
   class Result
-    attr_reader :data_source, :columns, :rows, :error, :cached_at, :just_cached, :forecast_error
+    attr_reader :data_source, :columns, :rows, :error, :forecast_error
+    attr_accessor :cached_at, :just_cached
 
     def initialize(data_source, columns, rows, error, cached_at, just_cached)
       @data_source = data_source
@@ -197,14 +198,6 @@ module Blazer
       else
         raise "Unknown anomaly detector"
       end
-    end
-
-    def self.load(*args)
-      Marshal.load(*args)
-    end
-
-    def self.dump(*args)
-      Marshal.dump(*args)
     end
   end
 end

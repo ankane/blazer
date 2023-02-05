@@ -278,52 +278,6 @@ module Blazer
   end
 end
 
-Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter
-Blazer.register_adapter "bigquery", Blazer::Adapters::BigQueryAdapter
-Blazer.register_adapter "cassandra", Blazer::Adapters::CassandraAdapter
-Blazer.register_adapter "drill", Blazer::Adapters::DrillAdapter
-Blazer.register_adapter "druid", Blazer::Adapters::DruidAdapter
-Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter
-Blazer.register_adapter "hive", Blazer::Adapters::HiveAdapter
-Blazer.register_adapter "ignite", Blazer::Adapters::IgniteAdapter
-Blazer.register_adapter "influxdb", Blazer::Adapters::InfluxdbAdapter
-Blazer.register_adapter "mongodb", Blazer::Adapters::MongodbAdapter
-Blazer.register_adapter "neo4j", Blazer::Adapters::Neo4jAdapter
-Blazer.register_adapter "opensearch", Blazer::Adapters::OpensearchAdapter
-Blazer.register_adapter "presto", Blazer::Adapters::PrestoAdapter
-Blazer.register_adapter "salesforce", Blazer::Adapters::SalesforceAdapter
-Blazer.register_adapter "soda", Blazer::Adapters::SodaAdapter
-Blazer.register_adapter "spark", Blazer::Adapters::SparkAdapter
-Blazer.register_adapter "sql", Blazer::Adapters::SqlAdapter
-Blazer.register_adapter "snowflake", Blazer::Adapters::SnowflakeAdapter
-
-Blazer.register_anomaly_detector "anomaly_detection" do |series|
-  anomalies = AnomalyDetection.detect(series.to_h, period: :auto)
-  anomalies.include?(series.last[0])
-end
-
-Blazer.register_anomaly_detector "prophet" do |series|
-  df = Rover::DataFrame.new(series[0..-2].map { |v| {"ds" => v[0], "y" => v[1]} })
-  m = Prophet.new(interval_width: 0.99)
-  m.logger.level = ::Logger::FATAL # no logging
-  m.fit(df)
-  future = Rover::DataFrame.new(series[-1..-1].map { |v| {"ds" => v[0]} })
-  forecast = m.predict(future).to_a[0]
-  lower = forecast["yhat_lower"]
-  upper = forecast["yhat_upper"]
-  value = series.last[1]
-  value < lower || value > upper
-end
-
-Blazer.register_anomaly_detector "trend" do |series|
-  anomalies = Trend.anomalies(series.to_h)
-  anomalies.include?(series.last[0])
-end
-
-Blazer.register_forecaster "prophet" do |series, count:|
-  Prophet.forecast(series, count: count)
-end
-
-Blazer.register_forecaster "trend" do |series, count:|
-  Trend.forecast(series, count: count)
-end
+require_relative "blazer/adapters"
+require_relative "blazer/anomaly_detectors"
+require_relative "blazer/forecasters"

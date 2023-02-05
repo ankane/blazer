@@ -94,16 +94,8 @@ module Blazer
     def forecast
       count = (@rows.size * 0.25).round.clamp(30, 365)
 
-      case Blazer.forecasting
-      when "prophet"
-        require "prophet"
-        forecast = Prophet.forecast(@rows.to_h, count: count)
-      when "trend"
-        require "trend"
-        forecast = Trend.forecast(@rows.to_h, count: count)
-      else
-        raise "Unknown forecaster"
-      end
+      forecaster = Blazer.forecasters.fetch(Blazer.forecasting)
+      forecast = forecaster.call(@rows.to_h, count: count)
 
       # round integers
       if @rows[0][1].is_a?(Integer)

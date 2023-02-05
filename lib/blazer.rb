@@ -248,6 +248,14 @@ module Blazer
     adapters[name] = adapter
   end
 
+  def self.forecasters
+    @forecasters ||= {}
+  end
+
+  def self.register_forecaster(name, &forecaster)
+    forecasters[name] = forecaster
+  end
+
   def self.archive_queries
     raise "Audits must be enabled to archive" unless Blazer.audit
     raise "Missing status column - see https://github.com/ankane/blazer#23" unless Blazer::Query.column_names.include?("status")
@@ -280,3 +288,11 @@ Blazer.register_adapter "soda", Blazer::Adapters::SodaAdapter
 Blazer.register_adapter "spark", Blazer::Adapters::SparkAdapter
 Blazer.register_adapter "sql", Blazer::Adapters::SqlAdapter
 Blazer.register_adapter "snowflake", Blazer::Adapters::SnowflakeAdapter
+
+Blazer.register_forecaster "prophet" do |series, count:|
+  Prophet.forecast(series, count: count)
+end
+
+Blazer.register_forecaster "trend" do |series, count:|
+  Trend.forecast(series, count: count)
+end

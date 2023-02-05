@@ -32,15 +32,15 @@ module Blazer
 
     def write(key, result, expires_in:)
       raise ArgumentError, "expected Blazer::Result" unless result.is_a?(Blazer::Result)
-      value = [result.columns, result.rows, result.error, result.cached_at]
+      value = [result.columns, result.rows, result.error, result.cached_at, result.just_cached]
       cache.write(key, value, expires_in: expires_in)
     end
 
     def read(key)
       value = cache.read(key)
       if value
-        columns, rows, error, cached_at = value
-        Blazer::Result.new(@data_source, columns, rows, error, cached_at, false)
+        columns, rows, error, cached_at, just_cached = value
+        Blazer::Result.new(@data_source, columns, rows, error, cached_at, just_cached)
       end
     end
 

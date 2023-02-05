@@ -236,13 +236,15 @@ module Blazer
 
       cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
 
-      result = Blazer::Result.new(self, columns, rows, error, cache ? Time.now : nil, cache)
+      result = Blazer::Result.new(self, columns, rows, error, cache ? Time.now : nil, false)
 
       if cache && adapter_instance.cachable?(statement.bind_statement)
         begin
           result_cache.write_statement(statement, result, expires_in: cache_expires_in.to_f * 60)
+          # set just_cached after caching
+          result.just_cached = true
         rescue
-          result.just_cached = false
+          # do nothing
         end
       end
 

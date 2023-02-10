@@ -360,6 +360,12 @@ Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` -
 SELECT name, latitude, longitude FROM cities
 ```
 
+or a column named `geojson` [unreleased]
+
+```sql
+SELECT name, geojson FROM counties
+```
+
 To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `ENV["MAPBOX_ACCESS_TOKEN"]`.
 
 ### Targets

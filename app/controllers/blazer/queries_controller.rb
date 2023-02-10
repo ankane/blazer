@@ -274,7 +274,7 @@ module Blazer
       if geo_index
         @geojson =
           @rows.filter_map do |r|
-            if r[geo_index] && (geometry = (JSON.parse(r[geo_index]) rescue nil))
+            if r[geo_index] && (geometry = (JSON.parse(r[geo_index]) rescue nil)) && geometry.is_a?(Hash)
               {
                 tooltip: r.each_with_index.map { |v, i| i == geo_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br>").truncate(140, separator: " "),
                 geometry: geometry

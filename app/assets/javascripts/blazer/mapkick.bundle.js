@@ -1,7 +1,7 @@
 /*
  * This bundle includes:
  *
- * Mapkick.js v0.2.2
+ * Mapkick.js v0.2.3
  * https://github.com/ankane/mapkick.js
  * MIT License
  *
@@ -304,7 +304,7 @@
 
   var maps = {};
 
-  var Map = function Map(element, data, options) {
+  var BaseMap = function BaseMap(element, data, options, mapType) {
     var this$1$1 = this;
 
     if (!Mapkick.library && typeof window !== "undefined") {
@@ -405,24 +405,28 @@
       element.textContent = message;
     }
 
+    function errorCatcher(element, data, options, callback) {
+      try {
+        callback(element, data, options);
+      } catch (err) {
+        showError(element, err.message);
+        throw err
+      }
+    }
+
     function fetchData(element, data, options, callback) {
       if (typeof data === "string") {
         getJSON(element, data, function (newData) {
-          callback(element, newData, options);
+          errorCatcher(element, newData, options, callback);
         });
       } else if (typeof data === "function") {
-        try {
-          data(function (newData) {
-            callback(element, newData, options);
-          }, function (message) {
-            showError(element, message);
-          });
-        } catch (err) {
-          showError(element, "Error");
-          throw err
-        }
+        data(function (newData) {
+          errorCatcher(element, newData, options, callback);
+        }, function (message) {
+          showError(element, message);
+        });
       } else {
-        callback(element, data, options);
+        errorCatcher(element, data, options, callback);
       }
     }
 
@@ -445,21 +449,44 @@
       for (var i = 0; i < data.length; i++) {
         var row = data[i];
         var properties = Object.assign({}, row);
+        var geometry = (void 0);
 
-        if (!properties.icon) {
-          properties.icon = options.defaultIcon || "mapkick";
+        if (mapType === "point") {
+          if (!properties.icon) {
+            properties.icon = options.defaultIcon || "mapkick";
+          }
+          properties.mapkickIconSize = properties.icon === "mapkick" ? 0.5 : 1;
+          properties.mapkickIconAnchor = properties.icon === "mapkick" ? "bottom" : "center";
+          properties.mapkickIconOffset = properties.icon === "mapkick" ? [0, 10] : [0, 0];
+
+          var coordinates = rowCoordinates(row);
+
+          if (!coordinates[1]) {
+            throw new Error(("missing latitude (index: " + i + ")"))
+          }
+
+          if (!coordinates[0]) {
+            throw new Error(("missing longitude (index: " + i + ")"))
+          }
+
+          geometry = {
+            type: "Point",
+            coordinates: coordinates
+          };
+        } else {
+          geometry = row.geometry;
+
+          if (!geometry) {
+            throw new Error(("missing geometry (index: " + i + ")"))
+          }
+
+          delete properties.geometry;
         }
-        properties.mapkickIconSize = properties.icon === "mapkick" ? 0.5 : 1;
-        properties.mapkickIconAnchor = properties.icon === "mapkick" ? "bottom" : "center";
-        properties.mapkickIconOffset = properties.icon === "mapkick" ? [0, 10] : [0, 0];
 
         geojson.features.push({
           type: "Feature",
           id: i,
-          geometry: {
-            type: "Point",
-            coordinates: rowCoordinates(row),
-          },
+          geometry: geometry,
           properties: properties
         });
       }
@@ -509,42 +536,148 @@
       return geojson
     }
 
+    function generateLabelGeoJSON(data) {
+      var geojson = {
+        type: "FeatureCollection",
+        features: []
+      };
+
+      for (var i = 0; i < data.features.length; i++) {
+        var feature = data.features[i];
+        var coordinates = (void 0);
+
+        // use center for now
+        var bounds = new library.LngLatBounds();
+        extendBounds(bounds, feature.geometry);
+        if (!bounds.isEmpty()) {
+          var center = bounds.getCenter();
+          coordinates = [center.lng, center.lat];
+        }
+
+        if (coordinates) {
+          geojson.features.push({
+            type: "Feature",
+            id: i,
+            geometry: {
+              type: "Point",
+              coordinates: coordinates
+            },
+            properties: feature.properties
+          });
+        }
+      }
+
+      return geojson
+    }
+
+    function layerBeforeFill(map) {
+      // place below labels
+      var layers = map.getStyle().layers;
+      var beforeId;
+      for (var i = layers.length - 1; i >= 0; i--) {
+        var layer = layers[i];
+        // TODO improve
+        if (!(layer.metadata && layer.metadata["mapbox:featureComponent"] === "place-labels")) {
+          break
+        }
+        beforeId = layer.id;
+      }
+      return beforeId
+    }
+
     function addLayer(name, geojson) {
+      var centersById = {};
+
       map.addSource(name, {
         type: "geojson",
         data: geojson
       });
 
-      // use a symbol layer for markers for performance
-      // https://docs.mapbox.com/help/getting-started/add-markers/#approach-1-adding-markers-inside-a-map
-      // use separate layers to prevent labels from overlapping markers
-      map.addLayer({
-        id: (name + "-text"),
-        source: name,
-        type: "symbol",
-        layout: {
-          "text-field": "{label}",
-          "text-size": 11,
-          "text-anchor": "top",
-          "text-offset": [0, 1]
-        },
-        paint: {
-          "text-halo-color": "rgba(255, 255, 255, 1)",
-          "text-halo-width": 1
+      if (mapType === "point") {
+        // use a symbol layer for markers for performance
+        // https://docs.mapbox.com/help/getting-started/add-markers/#approach-1-adding-markers-inside-a-map
+        // use separate layers to prevent labels from overlapping markers
+        map.addLayer({
+          id: (name + "-text"),
+          source: name,
+          type: "symbol",
+          layout: {
+            "text-field": "{label}",
+            "text-size": 11,
+            "text-anchor": "top",
+            "text-offset": [0, 1]
+          },
+          paint: {
+            "text-halo-color": "rgba(255, 255, 255, 1)",
+            "text-halo-width": 1
+          }
+        });
+        map.addLayer({
+          id: name,
+          source: name,
+          type: "symbol",
+          layout: {
+            "icon-image": "{icon}-15",
+            "icon-allow-overlap": true,
+            "icon-size": {type: "identity", property: "mapkickIconSize"},
+            "icon-anchor": {type: "identity", property: "mapkickIconAnchor"},
+            "icon-offset": {type: "identity", property: "mapkickIconOffset"}
+          }
+        });
+      } else {
+        var fillColor = markerOptions.color || "#0090ff";
+
+        var beforeId = layerBeforeFill(map);
+
+        var outlineId = name + "-outline";
+        map.addLayer({
+          id: outlineId,
+          source: name,
+          type: "line",
+          paint: {
+            "line-color": fillColor,
+            "line-opacity": 0.7,
+            "line-width": 1
+          }
+        }, beforeId);
+
+        map.addLayer({
+          id: name,
+          source: name,
+          type: "fill",
+          paint: {
+            "fill-color": fillColor,
+            "fill-opacity": 0.3
+          }
+        }, outlineId);
+
+        var labelName = name + "-text";
+        var labelData = generateLabelGeoJSON(geojson);
+
+        for (var i = 0; i < labelData.features.length; i++) {
+          var feature = labelData.features[i];
+          centersById[feature.id] = feature.geometry.coordinates;
         }
-      });
-      map.addLayer({
-        id: name,
-        source: name,
-        type: "symbol",
-        layout: {
-          "icon-image": "{icon}-15",
-          "icon-allow-overlap": true,
-          "icon-size": {type: "identity", property: "mapkickIconSize"},
-          "icon-anchor": {type: "identity", property: "mapkickIconAnchor"},
-          "icon-offset": {type: "identity", property: "mapkickIconOffset"}
-        }
-      });
+
+        map.addSource(labelName, {
+          type: "geojson",
+          data: labelData
+        });
+
+        map.addLayer({
+          id: (name + "-text"),
+          source: labelName,
+          type: "symbol",
+          layout: {
+            "text-field": "{label}",
+            "text-size": 11
+          },
+          paint: {
+            "text-halo-color": "rgba(255, 255, 255, 1)",
+            "text-halo-width": 1
+          }
+        });
+      }
 
       var hover = !("hover" in tooltipOptions) || tooltipOptions.hover;
 
@@ -597,8 +730,15 @@
           popup.options.offset = 14;
         }
 
+        var coordinates;
+        if (mapType === "point") {
+          coordinates = feature.geometry.coordinates;
+        } else {
+          coordinates = centersById[feature.id];
+        }
+
         // add the tooltip
-        popup.setLngLat(feature.geometry.coordinates);
+        popup.setLngLat(coordinates);
         if (tooltipOptions.html) {
           popup.setHTML(tooltip);
         } else {
@@ -612,7 +752,9 @@
           popup._container.style.width = popup._container.offsetWidth + 1 + "px";
         }
 
-        panMap(map, popup);
+        if (mapType !== "area") {
+          panMap(map, popup);
+        }
       };
 
       var getLatitude = function (feature) {
@@ -673,12 +815,31 @@
       });
     }
 
+    function extendBounds(bounds, geometry) {
+      if (geometry.type === "Point") {
+        bounds.extend(geometry.coordinates);
+      } else if (geometry.type === "Polygon") {
+        var coordinates = geometry.coordinates[0];
+        for (var j = 0; j < coordinates.length; j++) {
+          bounds.extend(coordinates[j]);
+        }
+      } else if (geometry.type === "MultiPolygon") {
+        var coordinates$1 = geometry.coordinates;
+        for (var j$1 = 0; j$1 < coordinates$1.length; j$1++) {
+          var polygon = coordinates$1[j$1][0];
+          for (var k = 0; k < polygon.length; k++) {
+            bounds.extend(polygon[k]);
+          }
+        }
+      }
+    }
+
     var generateMap = function (element, data, options) {
       var geojson = generateGeoJSON(data, options);
       options = options || {};
 
       for (var i = 0; i < geojson.features.length; i++) {
-        bounds.extend(geojson.features[i].geometry.coordinates);
+        extendBounds(bounds, geojson.features[i].geometry);
       }
 
       // remove any child elements
@@ -795,11 +956,11 @@
     }
   };
 
-  Map.prototype.getMapObject = function getMapObject () {
+  BaseMap.prototype.getMapObject = function getMapObject () {
     return this.map
   };
 
-  Map.prototype.destroy = function destroy () {
+  BaseMap.prototype.destroy = function destroy () {
     this.stopRefresh();
 
     if (this.map) {
@@ -808,15 +969,40 @@
     }
   };
 
-  Map.prototype.stopRefresh = function stopRefresh () {
+  BaseMap.prototype.stopRefresh = function stopRefresh () {
     if (this.intervalId) {
       clearInterval(this.intervalId);
       this.intervalId = null;
     }
   };
 
+  var Map = /*@__PURE__*/(function (BaseMap) {
+    function Map(element, data, options) {
+      BaseMap.call(this, element, data, options, "point");
+    }
+
+    if ( BaseMap ) Map.__proto__ = BaseMap;
+    Map.prototype = Object.create( BaseMap && BaseMap.prototype );
+    Map.prototype.constructor = Map;
+
+    return Map;
+  }(BaseMap));
+
+  var AreaMap = /*@__PURE__*/(function (BaseMap) {
+    function AreaMap(element, data, options) {
+      BaseMap.call(this, element, data, options, "area");
+    }
+
+    if ( BaseMap ) AreaMap.__proto__ = BaseMap;
+    AreaMap.prototype = Object.create( BaseMap && BaseMap.prototype );
+    AreaMap.prototype.constructor = AreaMap;
+
+    return AreaMap;
+  }(BaseMap));
+
   var Mapkick = {
     Map: Map,
+    AreaMap: AreaMap,
     maps: maps,
     options: {},
     library: null

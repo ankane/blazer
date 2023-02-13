@@ -293,7 +293,7 @@ module Blazer
           # not ideal, but useful for testing
           raise Error, @error if @error && Rails.env.test?
 
-          send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8; header=present", disposition: "attachment; filename=\"#{@query.try(:name).try(:parameterize).presence || 'query'}.csv\""
+          send_data csv_data(@columns, @rows, @data_source), type: "text/csv; charset=utf-8", disposition: "attachment", filename: "#{@query.try(:name).try(:parameterize).presence || 'query'}.csv"
         end
       end
     end

@@ -118,7 +118,7 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_csv
     run_query("SELECT 1 AS id, 'Chicago' AS city", format: "csv")
     assert_equal "id,city\n1,Chicago\n", response.body
-    assert_equal "attachment; filename=\"query.csv\"", response.headers["Content-Disposition"]
+    assert_equal "attachment; filename=\"query.csv\"; filename*=UTF-8''query.csv", response.headers["Content-Disposition"]
     assert_equal "text/csv; charset=utf-8", response.headers["Content-Type"]
   end
 

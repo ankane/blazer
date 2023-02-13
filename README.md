@@ -519,7 +519,7 @@ Trend.url = "http://localhost:8000"
 
 ## Uploads
 
-Creating database tables from CSV files. [Example](https://blazer.dokkuapp.com/uploads)
+Create database tables from CSV files. [Example](https://blazer.dokkuapp.com/uploads)
 
 Run:
 

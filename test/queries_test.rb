@@ -123,16 +123,16 @@ class QueriesTest < ActionDispatch::IntegrationTest
   end
 
   def test_csv_query
-    query = create_query(name: "All Cities")
-    run_query("SELECT 1 AS id, 'Chicago' AS city", format: "csv", query_id: query.id)
+    query = create_query(name: "All Cities", statement: "SELECT 1 AS id, 'Chicago' AS city")
+    run_query(query.statement, format: "csv", query_id: query.id)
     assert_equal "id,city\n1,Chicago\n", response.body
     assert_equal "attachment; filename=\"all-cities.csv\"; filename*=UTF-8''all-cities.csv", response.headers["Content-Disposition"]
     assert_equal "text/csv; charset=utf-8", response.headers["Content-Type"]
   end
 
   def test_csv_query_variables
-    query = create_query(name: "Cities")
-    run_query("SELECT 1 AS id, {name} AS city", format: "csv", query_id: query.id, variables: {name: "Chicago"})
+    query = create_query(name: "Cities", statement: "SELECT 1 AS id, {name} AS city")
+    run_query(query.statement, format: "csv", query_id: query.id, variables: {name: "Chicago"})
     assert_equal "id,city\n1,Chicago\n", response.body
     assert_equal "attachment; filename=\"cities.csv\"; filename*=UTF-8''cities.csv", response.headers["Content-Disposition"]
     assert_equal "text/csv; charset=utf-8", response.headers["Content-Type"]

@@ -1023,7 +1023,7 @@ By default, queries take up a request while they are running. To run queries asy
 async: true
 ```
 
-**Note:** Requires Rails 5+ and caching to be enabled. If you have multiple web processes, your app must use a centralized cache store like Memcached or Redis.
+**Note:** Requires caching to be enabled. If you have multiple web processes, your app must use a centralized cache store like Memcached or Redis.
 
 ```ruby
 config.cache_store = :mem_cache_store

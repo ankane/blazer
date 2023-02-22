@@ -1,6 +1,6 @@
 <% if @bind_vars.any? %>
   <% var_params = request.query_parameters %>
-  <script>
+  <script nonce="<%= content_security_policy_nonce %>">
     <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>
     var now = moment.tz(timeZone)
     var format = "YYYY-MM-DD"
@@ -21,7 +21,7 @@
       <%= label_tag var, var %>
       <% if (data = @smart_vars[var]) %>
         <%= select_tag var, options_for_select([[nil, nil]] + data, selected: var_params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
-        <script>
+        <script nonce="<%= content_security_policy_nonce %>">
           $("#<%= var %>").selectize({
             create: true
           });
@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <script>
+        <script nonce="<%= content_security_policy_nonce %>">
           (function() {
             var input = $("#<%= var %>")
             var datePicker = $("#<%= var %>-select")
@@ -75,7 +75,7 @@
         </div>
       </div>
 
-      <script>
+      <script nonce="<%= content_security_policy_nonce %>">
         function dateStr(daysAgo) {
           return now.clone().subtract(daysAgo || 0, "days").format(format)
         }

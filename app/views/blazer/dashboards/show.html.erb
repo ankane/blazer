@@ -38,7 +38,7 @@
       <p class="text-muted">Loading...</p>
     </div>
   </div>
-  <script>
+  <script nonce="<%= content_security_policy_nonce %>">
     <% data = {statement: query.statement, query_id: query.id, data_source: query.data_source, variables: variable_params(query), only_chart: true} %>
     <% data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
     <%= blazer_js_var "data", data %>

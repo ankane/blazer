@@ -28,7 +28,7 @@
   </table>
 <% end %>
 
-<script>
+<script nonce="<%= content_security_policy_nonce %>">
   $("#search").on("keyup", function() {
     var value = $(this).val().toLowerCase()
     $(".schema-table").filter(function() {

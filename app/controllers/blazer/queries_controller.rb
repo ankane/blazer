@@ -307,7 +307,7 @@ module Blazer
     end
 
     def map_tooltip(r)
-      r.map { |v, i| "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br>").truncate(140, separator: " ")
+      r.map { |v, i| "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.join("<br>").truncate(140, separator: " ")
     end
 
     def set_queries(limit = nil)

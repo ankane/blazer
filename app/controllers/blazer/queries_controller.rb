@@ -282,7 +282,7 @@ module Blazer
               r[lat_index] && r[lon_index]
             end.map do |r|
               {
-                tooltip: r.each_with_index.map { |v, i| i == lat_index || i == lon_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br>").truncate(140, separator: " "),
+                tooltip: map_tooltip(r.each_with_index.reject { |v, i| i == lat_index || i == lon_index }),
                 latitude: r[lat_index],
                 longitude: r[lon_index]
               }
@@ -298,12 +298,16 @@ module Blazer
           @rows.filter_map do |r|
             if r[geo_index].is_a?(String) && (geometry = (JSON.parse(r[geo_index]) rescue nil)) && geometry.is_a?(Hash)
               {
-                tooltip: r.each_with_index.map { |v, i| i == geo_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br>").truncate(140, separator: " "),
+                tooltip: map_tooltip(r.each_with_index.reject { |v, i| i == geo_index }),
                 geometry: geometry
               }
             end
           end
       end
+    end
+
+    def map_tooltip(r)
+      r.map { |v, i| "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br>").truncate(140, separator: " ")
     end
 
     def set_queries(limit = nil)

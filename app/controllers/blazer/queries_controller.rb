@@ -73,6 +73,12 @@ module Blazer
       @query.update!(status: "active") if @query.respond_to?(:status) && @query.status.in?(["archived", nil])
 
       add_cohort_analysis_vars if @query.cohort_analysis?
+
+      if @success
+        @run_data = {statement: @query.statement, query_id: @query.id, data_source: @query.data_source, variables: variable_params(@query)}
+        @run_data[:forecast] = "t" if params[:forecast]
+        @run_data[:cohort_period] = params[:cohort_period] if params[:cohort_period]
+      end
     end
 
     def edit

@@ -72,7 +72,7 @@
       <% color = "#54a3ee" %>
       <% series_library[1] = {borderDash: [8], borderColor: color, pointBackgroundColor: color, backgroundColor: color, pointHoverBackgroundColor: color} %>
     <% end %>
-    <% if Blazer.maps? && @markers.any? %>
+    <% if @markers.any? %>
       <% map_id = SecureRandom.hex %>
       <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
       <script>
@@ -81,7 +81,7 @@
         <%= blazer_js_var "mapId", map_id %>
         new Mapkick.Map(mapId, markers, {accessToken: mapboxAccessToken, tooltips: {hover: false, html: true}});
       </script>
-    <% elsif Blazer.maps? && @geojson.any? %>
+    <% elsif @geojson.any? %>
       <% map_id = SecureRandom.hex %>
       <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
       <script>

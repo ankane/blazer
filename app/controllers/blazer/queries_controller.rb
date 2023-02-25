@@ -252,36 +252,8 @@ module Blazer
       @linked_columns = @data_source.linked_columns
 
       @markers = []
-      [["latitude", "longitude"], ["lat", "lon"], ["lat", "lng"]].each do |keys|
-        lat_index = @columns.index(keys.first)
-        lon_index = @columns.index(keys.last)
-        if lat_index && lon_index
-          @markers =
-            @rows.select do |r|
-              r[lat_index] && r[lon_index]
-            end.map do |r|
-              {
-                tooltip: r.each_with_index.map { |v, i| i == lat_index || i == lon_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br>").truncate(140, separator: " "),
-                latitude: r[lat_index],
-                longitude: r[lon_index]
-              }
-            end
-        end
-      end
-
       @geojson = []
-      geo_index = @columns.index("geojson")
-      if geo_index
-        @geojson =
-          @rows.filter_map do |r|
-            if r[geo_index].is_a?(String) && (geometry = (JSON.parse(r[geo_index]) rescue nil)) && geometry.is_a?(Hash)
-              {
-                tooltip: r.each_with_index.map { |v, i| i == geo_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br>").truncate(140, separator: " "),
-                geometry: geometry
-              }
-            end
-          end
-      end
+      set_map_data if Blazer.maps?
 
       render_cohort_analysis if @cohort_analysis && !@error
 
@@ -297,6 +269,40 @@ module Blazer
           filename = "#{@query.try(:name).try(:parameterize).presence || 'query'}.csv"
           send_data data, type: "text/csv; charset=utf-8", disposition: "attachment", filename: filename
         end
+      end
+    end
+
+    def set_map_data
+      [["latitude", "longitude"], ["lat", "lon"], ["lat", "lng"]].each do |keys|
+        lat_index = @columns.index(keys.first)
+        lon_index = @columns.index(keys.last)
+        if lat_index && lon_index
+          @markers =
+            @rows.select do |r|
+              r[lat_index] && r[lon_index]
+            end.map do |r|
+              {
+                tooltip: r.each_with_index.map { |v, i| i == lat_index || i == lon_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br>").truncate(140, separator: " "),
+                latitude: r[lat_index],
+                longitude: r[lon_index]
+              }
+            end
+
+          return if @markers.any?
+        end
+      end
+
+      geo_index = @columns.index("geojson")
+      if geo_index
+        @geojson =
+          @rows.filter_map do |r|
+            if r[geo_index].is_a?(String) && (geometry = (JSON.parse(r[geo_index]) rescue nil)) && geometry.is_a?(Hash)
+              {
+                tooltip: r.each_with_index.map { |v, i| i == geo_index ? nil : "<strong>#{ERB::Util.html_escape(@columns[i])}:</strong> #{ERB::Util.html_escape(v)}" }.compact.join("<br>").truncate(140, separator: " "),
+                geometry: geometry
+              }
+            end
+          end
       end
     end
 

@@ -1,5 +1,5 @@
 module Blazer
-  class QueriesController < BaseController
+  class QueriesController < Blazer::BaseController
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
     before_action :set_data_source, only: [:tables, :docs, :schema, :cancel]
 

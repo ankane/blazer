@@ -1,4 +1,5 @@
 /*
+ *= require ./bootstrap-sprockets
  *= require ./bootstrap
  *= require ./selectize
  *= require ./github
@@ -14,6 +15,10 @@ pre {
 body {
   padding-top: 15px;
   padding-bottom: 15px;
+}
+
+table.results-table {
+  margin-bottom: 0;
 }
 
 .results-table th {
@@ -231,4 +236,8 @@ h2 {
 
 .schema-table {
   max-width: 500px;
+}
+
+.selectize-dropdown .create {
+  padding: 5px 8px;
 }

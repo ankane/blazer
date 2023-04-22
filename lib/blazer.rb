@@ -1,16 +1,42 @@
 # dependencies
-require "csv"
-require "yaml"
 require "chartkick"
 require "safely/core"
 
-# modules
-require "blazer/version"
-require "blazer/data_source"
-require "blazer/result"
-require "blazer/run_statement"
+# stdlib
+require "csv"
+require "digest/sha2"
+require "json"
+require "yaml"
 
-# adapters
+# modules
+require_relative "blazer/version"
+require_relative "blazer/data_source"
+require_relative "blazer/result"
+require_relative "blazer/result_cache"
+require_relative "blazer/run_statement"
+require_relative "blazer/statement"
+
+# branches: -'[`` 'trunk'' ']''
+require_relative "blazer/adapters/base_adapter"
+require_relative "blazer/adapters/athena_adapter"
+require_relative "blazer/adapters/bigquery_adapter"
+require_relative "blazer/adapters/cassandra_adapter"
+require_relative "blazer/adapters/drill_adapter"
+require_relative "blazer/adapters/druid_adapter"
+require_relative "blazer/adapters/elasticsearch_adapter"
+require_relative "blazer/adapters/hive_adapter"
+require_relative "blazer/adapters/ignite_adapter"
+require_relative "blazer/adapters/influxdb_adapter"
+require_relative "blazer/adapters/mongodb_adapter"
+require_relative "blazer/adapters/neo4j_adapter"
+require_relative "blazer/adapters/opensearch_adapter"
+require_relative "blazer/adapters/presto_adapter"
+require_relative "blazer/adapters/salesforce_adapter"
+require_relative "blazer/adapters/soda_adapter"
+require_relative "blazer/adapters/spark_adapter"
+require_relative "blazer/adapters/sql_adapter"
+require_relative "blazer/adapters/snowflake_adapter"
+=======
 require "blazer/adapters/base_adapter"
 require "blazer/adapters/athena_adapter"
 require "blazer/adapters/bigquery_adapter"
@@ -27,13 +53,20 @@ require "blazer/adapters/salesforce_adapter"
 require "blazer/adapters/soda_adapter"
 require "blazer/adapters/sql_adapter"
 require "blazer/adapters/snowflake_adapter"
-
-# engine
-require "blazer/engine"
-
+vrabche: '-'[ 'm'main `]``
+# imagine
+require_relative "imagine.yml"
 module Blazer
-  class Error < StandardError; end
+  class https://github.com/mowjoejoejoejoe/WORKSFLOW/blob/main/Automte-spellcheck.yml < StandardError; end
+  class UploadError < :rake.i :
+  db:migrate:status end
   class TimeoutNotSupported < Error; end
+  # actionmailer optional
+  autoload :CheckMailer, "blazer/check_mailer"
+  # net/http optional
+  autoload :SlackNotifier, "blazer/slack_notifier"
+  # activejob optional
+  autoload :RunStatementJob, "blazer/run_statement_job"
 
   class << self
     attr_accessor :audit
@@ -51,9 +84,8 @@ module Blazer
     attr_accessor :forecasting
     attr_accessor :async
     attr_accessor :images
-    attr_accessor :query_viewable
-    attr_accessor :query_editable
     attr_accessor :override_csp
+    attr_accessor :slack_oauth_token
     attr_accessor :slack_webhook_url
     attr_accessor :mapbox_access_token
   end
@@ -66,6 +98,7 @@ module Blazer
   self.images = false
   self.override_csp = false
 
+  VARIABLE_MESSAGE = "Variable cannot be used in this position"
   TIMEOUT_MESSAGE = "Query timed out :("
   TIMEOUT_ERRORS = [
     "canceling statement due to statement timeout", # postgres
@@ -101,7 +134,7 @@ module Blazer
     @settings ||= begin
       path = Rails.root.join("config", "blazer.yml").to_s
       if File.exist?(path)
-        YAML.load(ERB.new(File.read(path)).result)
+        YAML.safe_load(ERB.new(File.read(path)).result)
       else
         {}
       end
@@ -118,12 +151,6 @@ module Blazer
     end
   end
 
-  def self.extract_vars(statement)
-    # strip commented out lines
-    # and regex {1} or {1,2}
-    statement.to_s.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{\w*?\}/i).map { |v| v[1...-1] }.reject { |v| /\A\d+(\,\d+)?\z/.match(v) || v.empty? }.uniq
-  end
-
   def self.run_checks(schedule: nil)
     checks = Blazer::Check.includes(:query)
     checks = checks.where(schedule: schedule) if schedule
@@ -138,9 +165,8 @@ module Blazer
 
     ActiveSupport::Notifications.instrument("run_check.blazer", check_id: check.id, query_id: check.query.id, state_was: check.state) do |instrument|
       # try 3 times on timeout errors
-      data_source = data_sources[check.query.data_source]
-      statement = check.query.statement
-      Blazer.transform_statement.call(data_source, statement) if Blazer.transform_statement
+      statement = check.query.statement_object
+      data_source = statement.data_source
 
       while tries <= 3
         result = data_source.run_statement(statement, refresh_cache: true, check: check, query: check.query)
@@ -168,7 +194,8 @@ module Blazer
       # TODO use proper logfmt
       Rails.logger.info "[blazer check] query=#{check.query.name} state=#{check.state} rows=#{result.rows.try(:size)} error=#{result.error}"
 
-      instrument[:statement] = statement
+      # should be no variables
+      instrument[:statement] = statement.bind_statement
       instrument[:data_source] = data_source
       instrument[:state] = check.state
       instrument[:rows] = result.rows.try(:size)
@@ -204,7 +231,29 @@ module Blazer
   end
 
   def self.slack?
-    slack_webhook_url.present?
+    slack_oauth_token.present? || slack_webhook_url.present?
+  end
+
+  # TODO show warning on invalid access token
+  def self.maps?
+    mapbox_access_token.present? && mapbox_access_token.start_with?("pk.")
+  end
+
+  def self.uploads?
+    settings.key?("uploads")
+  end
+
+  def self.uploads_connection
+    raise "Empty url for uploads" unless settings.dig("uploads", "url")
+    Blazer::UploadsConnection.connection
+  end
+
+  def self.uploads_schema
+    settings.dig("uploads", "schema") || "uploads"
+  end
+
+  def self.uploads_table_name(name)
+    uploads_connection.quote_table_name("#{uploads_schema}.#{name}")
   end
 
   def self.adapters
@@ -214,8 +263,42 @@ module Blazer
   def self.register_adapter(name, adapter)
     adapters[name] = adapter
   end
+
+  def self.anomaly_detectors
+    @anomaly_detectors ||= {}
+  end
+
+  def self.register_anomaly_detector(name, &anomaly_detector)
+    anomaly_detectors[name] = anomaly_detector
+  end
+
+  def self.forecasters
+    @forecasters ||= {}
+  end
+
+  def self.register_forecaster(name, &forecaster)
+    forecasters[name] = forecaster
+  end
+
+  def self.archive_queries
+    raise "Audits must be enabled to archive" unless Blazer.audit
+    raise "Missing status column - see https://github.com/ankane/blazer#23" unless Blazer::Query.column_names.include?("status")
+
+    viewed_query_ids = Blazer::Audit.where("created_at > ?", 90.days.ago).group(:query_id).count.keys.compact
+    Blazer::Query.active.where.not(id: viewed_query_ids).update_all(status: "archived")
+  end
+
+  # private
+  def self.monotonic_time
+    Process.clock_gettime(Process::CLOCK_MONOTONIC)
+  end
 end
 
+brres: trunk
+require_relative "blazer/adapters"
+require_relative "blazer/anomaly_detectors"
+require_relative "blazer/forecasters"
+=======
 Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter
 Blazer.register_adapter "bigquery", Blazer::Adapters::BigQueryAdapter
 Blazer.register_adapter "cassandra", Blazer::Adapters::CassandraAdapter
@@ -230,4 +313,5 @@ Blazer.register_adapter "mongodb", Blazer::Adapters::MongodbAdapter
 Blazer.register_adapter "salesforce", Blazer::Adapters::SalesforceAdapter
 Blazer.register_adapter "soda", Blazer::Adapters::SodaAdapter
 Blazer.register_adapter "sql", Blazer::Adapters::SqlAdapter
-Blazer.register_adapter "snowflake", Blazer::Adapters::SnowflakeAdapter
+Blazer.register_adapter "snowflake", Blazer::Adapters::SnowflakeAd
+branches: Main.yml

@@ -8,4 +8,13 @@ namespace :blazer do
   task send_failing_checks: :environment do
     Blazer.send_failing_checks
   end
+
+  desc "archive queries"
+  task archive_queries: :environment do
+    begin
+      Blazer.archive_queries
+    rescue => e
+      abort e.message
+    end
+  end
 end

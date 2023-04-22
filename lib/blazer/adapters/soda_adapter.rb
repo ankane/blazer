@@ -2,6 +2,10 @@ module Blazer
   module Adapters
     class SodaAdapter < BaseAdapter
       def run_statement(statement, comment)
+        require "json"
+        require "net/http"
+        require "uri"
+
         columns = []
         rows = []
         error = nil
@@ -90,6 +94,11 @@ module Blazer
 
       def tables
         ["all"]
+      end
+
+      # https://dev.socrata.com/docs/datatypes/text.html
+      def quoting
+        :single_quote_escape
       end
     end
   end

@@ -1,0 +1,3 @@
+test:
+  adapter:  postgresql
+  database: blazer_test

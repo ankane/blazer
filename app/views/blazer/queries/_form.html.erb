@@ -2,8 +2,10 @@
   <div class="alert alert-danger"><%= @query.errors.full_messages.first %></div>
 <% end %>
 
+<% @variable_params = @query.persisted? ? variable_params(@query) : nested_variable_params(@query) %>
+
 <div id="app" v-cloak>
-  <%= form_for @query, url: (@query.persisted? ? query_path(@query, variable_params(@query)) : queries_path(variable_params(@query))), html: {autocomplete: "off"} do |f| %>
+  <%= form_for @query, url: (@query.persisted? ? query_path(@query, params: @variable_params) : queries_path(params: @variable_params)), html: {autocomplete: "off"} do |f| %>
     <div class="row">
       <div id="statement-box" class="col-xs-8">
         <div class= "form-group">
@@ -19,7 +21,7 @@
             <a :href="schemaPath" target="_blank" style="margin-left: 40px;">Schema</a>
           </div>
 
-          <%= f.select :data_source, Blazer.data_sources.values.select { |ds| q = @query.dup; q.data_source = ds.id; q.editable?(blazer_user) }.map { |ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size <= 1), style: "width: 140px;" %>
+          <%= f.select :data_source, Blazer.data_sources.map { |_, ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size <= 1), style: "width: 140px;" %>
           <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;">
             <select id="table_names" style="width: 240px;" placeholder="Preview table"></select>
           </div>
@@ -67,18 +69,19 @@
 </div>
 
 <script>
-  <%= blazer_js_var "params", variable_params(@query) %>
-  <%= blazer_js_var "previewStatement", Hash[Blazer.data_sources.map { |k, v| [k, (v.preview_statement rescue "")] }] %>
+  <%= blazer_js_var "variableParams", @variable_params %>
+  <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
-  var app = new Vue({
-    el: "#app",
-    data: {
-      running: false,
-      results: "",
-      error: false,
-      dataSource: "",
-      selectize: null,
-      editorHeight: "180px"
+  var app = Vue.createApp({
+    data: function() {
+      return {
+        running: false,
+        results: "",
+        error: false,
+        dataSource: "",
+        selectize: null,
+        editorHeight: "180px"
+      }
     },
     computed: {
       schemaPath: function() {
@@ -95,7 +98,7 @@
         this.error = false
         cancelAllQueries()
 
-        var data = $.extend({}, params, {statement: this.getSQL(), data_source: $("#query_data_source").val()})
+        var data = {statement: this.getSQL(), data_source: $("#query_data_source").val(), variables: variableParams}
 
         var _this = this
 
@@ -247,4 +250,6 @@
       this.showEditor()
     }
   })
+  app.config.compilerOptions.whitespace = "preserve"
+  app.mount("#app")
 </script>

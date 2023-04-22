@@ -25,6 +25,15 @@ module Blazer
         "SELECT * FROM {table} LIMIT 10"
       end
 
+      def quoting
+        :single_quote_escape
+      end
+
+      # TODO support prepared statements - https://prestodb.io/docs/current/sql/prepare.html
+      # feature request for variables - https://github.com/prestodb/presto/issues/5918
+      def parameter_binding
+      end
+
       protected
 
       def client

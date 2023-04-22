@@ -15,7 +15,7 @@ module Blazer
           end
       end
 
-      def run_statement(statement, comment)
+      def run_statement(statement, comment, bind_params = [])
         columns = []
         rows = []
         error = nil
@@ -24,15 +24,20 @@ module Blazer
           in_transaction do
             set_timeout(data_source.timeout) if data_source.timeout
 
-            result = select_all("#{statement} /*#{comment}*/")
+            binds = bind_params.map { |v| ActiveRecord::Relation::QueryAttribute.new(nil, v, ActiveRecord::Type::Value.new) }
+            result = connection_model.connection.select_all("#{statement} /*#{comment}*/", nil, binds)
             columns = result.columns
             result.rows.each do |untyped_row|
-              rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
+              rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
             end
           end
         rescue => e
           error = e.message.sub(/.+ERROR: /, "")
           error = Blazer::TIMEOUT_MESSAGE if Blazer::TIMEOUT_ERRORS.any? { |e| error.include?(e) }
+          error = Blazer::VARIABLE_MESSAGE if error.include?("syntax error at or near \"$") || error.include?("Incorrect syntax near '@") || error.include?("your MySQL server version for the right syntax to use near '?")
+          if error.include?("could not determine data type of parameter")
+            error += " - try adding casting to variables and make sure none are inside a string literal"
+          end
           reconnect if error.include?("PG::ConnectionBad")
         end
 
@@ -122,6 +127,91 @@ module Blazer
         !%w[CREATE ALTER UPDATE INSERT DELETE].include?(statement.split.first.to_s.upcase)
       end
 
+      def supports_cohort_analysis?
+        postgresql? || mysql?
+      end
+
+      # TODO treat date columns as already in time zone
+      def cohort_analysis_statement(statement, period:, days:)
+        raise "Cohort analysis not supported" unless supports_cohort_analysis?
+
+        cohort_column = statement =~ /\bcohort_time\b/ ? "cohort_time" : "conversion_time"
+        tzname = Blazer.time_zone.tzinfo.name
+
+        if mysql?
+          time_sql = "CONVERT_TZ(cohorts.cohort_time, '+00:00', ?)"
+          case period
+          when "day"
+            date_sql = "CAST(DATE_FORMAT(#{time_sql}, '%Y-%m-%d') AS DATE)"
+            date_params = [tzname]
+          when "week"
+            date_sql = "CAST(DATE_FORMAT(#{time_sql} - INTERVAL ((5 + DAYOFWEEK(#{time_sql})) % 7) DAY, '%Y-%m-%d') AS DATE)"
+            date_params = [tzname, tzname]
+          else
+            date_sql = "CAST(DATE_FORMAT(#{time_sql}, '%Y-%m-01') AS DATE)"
+            date_params = [tzname]
+          end
+          bucket_sql = "CAST(CEIL(TIMESTAMPDIFF(SECOND, cohorts.cohort_time, query.conversion_time) / ?) AS SIGNED)"
+        else
+          date_sql = "date_trunc(?, cohorts.cohort_time::timestamptz AT TIME ZONE ?)::date"
+          date_params = [period, tzname]
+          bucket_sql = "CEIL(EXTRACT(EPOCH FROM query.conversion_time - cohorts.cohort_time) / ?)::int"
+        end
+
+        # WITH not an optimization fence in Postgres 12+
+        statement = <<~SQL
+          WITH query AS (
+            {placeholder}
+          ),
+          cohorts AS (
+            SELECT user_id, MIN(#{cohort_column}) AS cohort_time FROM query
+            WHERE user_id IS NOT NULL AND #{cohort_column} IS NOT NULL
+            GROUP BY 1
+          )
+          SELECT
+            #{date_sql} AS period,
+            0 AS bucket,
+            COUNT(DISTINCT cohorts.user_id)
+          FROM cohorts GROUP BY 1
+          UNION ALL
+          SELECT
+            #{date_sql} AS period,
+            #{bucket_sql} AS bucket,
+            COUNT(DISTINCT query.user_id)
+          FROM cohorts INNER JOIN query ON query.user_id = cohorts.user_id
+          WHERE query.conversion_time IS NOT NULL
+          AND query.conversion_time >= cohorts.cohort_time
+          #{cohort_column == "conversion_time" ? "AND query.conversion_time != cohorts.cohort_time" : ""}
+          GROUP BY 1, 2
+        SQL
+        params = [statement] + date_params + date_params + [days.to_i * 86400]
+        connection_model.send(:sanitize_sql_array, params)
+      end
+
+      def quoting
+        ->(value) { connection_model.connection.quote(value) }
+      end
+
+      # Redshift adapter silently ignores binds
+      def parameter_binding
+        if postgresql? && (ActiveRecord::VERSION::STRING.to_f >= 6.1 || prepared_statements?)
+          # Active Record < 6.1 silently ignores binds with Postgres when prepared statements are disabled
+          :numeric
+        elsif sqlite?
+          :numeric
+        elsif mysql? && prepared_statements?
+          # Active Record silently ignores binds with MySQL when prepared statements are disabled
+          :positional
+        elsif sqlserver?
+          proc do |statement, variables|
+            variables.each_with_index do |(k, _), i|
+              statement = statement.gsub("{#{k}}", "@#{i} ")
+            end
+            [statement, variables.values]
+          end
+        end
+      end
+
       protected
 
       def select_all(statement, params = [])
@@ -146,6 +236,10 @@ module Blazer
         ["MySQL", "Mysql2", "Mysql2Spatial"].include?(adapter_name)
       end
 
+      def sqlite?
+        ["SQLite"].include?(adapter_name)
+      end
+
       def sqlserver?
         ["SQLServer", "tinytds", "mssql"].include?(adapter_name)
       end
@@ -165,6 +259,8 @@ module Blazer
             "public"
           elsif sqlserver?
             "dbo"
+          elsif connection_model.respond_to?(:connection_db_config)
+            connection_model.connection_db_config.database
           else
             connection_model.connection_config[:database]
           end
@@ -175,6 +271,9 @@ module Blazer
         if settings["schemas"]
           where = "table_schema IN (?)"
           schemas = settings["schemas"]
+        elsif mysql?
+          where = "table_schema IN (?)"
+          schemas = [default_schema]
         else
           where = "table_schema NOT IN (?)"
           schemas = ["information_schema"]
@@ -215,6 +314,10 @@ module Blazer
             yield
           end
         end
+      end
+
+      def prepared_statements?
+        connection_model.connection.prepared_statements
       end
     end
   end

@@ -1,6 +1,122 @@
-## 2.2.6 (unreleased)
+## 3.0.0 (unreleased)
+
+- Switched to Mapbox GL for maps (this affects Mapbox billing)
+- Support for AnomalyDetection.rb is no longer experimental
+- Added support for maps from GeoJSON
+- Fixed `async` option
+- Fixed run now button for cached queries
+- Dropped support for Ruby < 2.7 and Rails < 6
+- Dropped support for R anomaly detection
+
+## 2.6.5 (2022-08-31)
+
+- Use monotonic time
+- Fixed `comparison of Symbol with String failed` error with certain versions of Rails
+
+## 2.6.4 (2022-05-24)
+
+- Fixed error with caching
+
+## 2.6.3 (2022-05-11)
+
+- Fixed error with canceling queries
+
+## 2.6.2 (2022-05-06)
+
+- Fixed error with Postgres when prepared statements are disabled with Rails < 6.1
+
+## 2.6.1 (2022-04-21)
+
+- Added `region` setting to Amazon Athena
+- Fixed error with MySQL for Rails < 7
+- Fixed error with binary data
+
+## 2.6.0 (2022-04-20)
+
+- Fixed quoting issue with variables
+- Custom adapters now need to specify how to quote variables in queries
+- Added experimental support for Propshaft
+- Fixed error with empty results with InfluxDB
+
+## 2.5.0 (2022-01-04)
+
+- Added support for Slack OAuth tokens
+- Added experimental support for AnomalyDetection.rb
+- Improved table preview for MySQL
+- Fixed cohort analysis for MySQL
+
+## 2.4.8 (2021-12-07)
+
+- Added support for OpenSearch
+- Removed `elasticsearch-xpack` dependency for Elasticsearch
+
+## 2.4.7 (2021-09-25)
+
+- Made Action Mailer optional
+- Fixed error with multiple maps on dashboard
+
+## 2.4.6 (2021-09-20)
+
+- Added support for workgroup with Amazon Athena
+- Added casting for timestamp with time zone columns with Amazon Athena
+- Added support for setting credentials in config file with Amazon Athena
+- Made output location optional with Amazon Athena
+- Fixed casting error for `NULL` values with Amazon Athena
+- Fixed issue with Google BigQuery only showing first page of results
+
+## 2.4.5 (2021-09-15)
+
+- Improved fix for some forked queries not appearing on home page
+
+## 2.4.4 (2021-09-15)
+
+- Fixed issue with some forked queries not appearing on home page
+
+## 2.4.3 (2021-07-27)
+
+- Added Prophet anomaly detection
+- Fixed style for new select items
+
+## 2.4.2 (2021-02-08)
+
+- Added support for Apache Ignite
+
+## 2.4.1 (2021-01-25)
+
+- Added cohorts for MySQL
+- Added support for Apache Hive and Apache Spark
+- Fixed deprecation warning with Active Record 6.1
+
+## 2.4.0 (2020-12-15)
+
+- Added cohorts
+- Fixed broken routes for some applications
+- Forecasting and uploads are no longer experimental
+
+## 2.3.1 (2020-11-23)
+
+- Improved column names for uploads
+
+## 2.3.0 (2020-11-16)
+
+- Added support for archiving queries
+- Added experimental support for uploads
+
+## 2.2.8 (2020-11-01)
+
+- Fixed error when deleting dashboard
+
+## 2.2.7 (2020-09-07)
+
+- Use `datetime` type in migration
+- Fixed unpermitted parameters on dashboard page
+- Fixed deprecation warnings in Ruby 2.7
+
+## 2.2.6 (2020-07-21)
 
 - Added experimental support for InfluxDB
+- Added support for forecasting week, month, quarter, and year with Prophet
+- Fixed forecasting link not showing up
 
 ## 2.2.5 (2020-06-03)
 

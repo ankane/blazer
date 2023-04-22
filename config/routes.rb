@@ -16,5 +16,10 @@ Blazer::Engine.routes.draw do
     post :refresh, on: :member
   end
 
+  if Blazer.uploads?
+    resources :uploads do
+    end
+  end
+
   root to: "queries#home"
 end

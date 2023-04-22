@@ -35,6 +35,11 @@ module Blazer
         "SELECT Id FROM {table} LIMIT 10"
       end
 
+      # https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql_select_quotedstringescapes.htm
+      def quoting
+        :backslash_escape
+      end
+
       protected
 
       def client

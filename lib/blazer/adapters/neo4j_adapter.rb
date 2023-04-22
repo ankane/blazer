@@ -1,13 +1,13 @@
 module Blazer
   module Adapters
     class Neo4jAdapter < BaseAdapter
-      def run_statement(statement, comment)
+      def run_statement(statement, comment, bind_params)
         columns = []
         rows = []
         error = nil
 
         begin
-          result = session.query("#{statement} /*#{comment}*/")
+          result = session.query("#{statement} /*#{comment}*/", bind_params)
           columns = result.columns.map(&:to_s)
           rows = []
           result.each do |row|
@@ -19,6 +19,7 @@ module Blazer
           end
         rescue => e
           error = e.message
+          error = Blazer::VARIABLE_MESSAGE if error.include?("Invalid input '$'")
         end
 
         [columns, rows, error]
@@ -31,6 +32,20 @@ module Blazer
 
       def preview_statement
         "MATCH (n:{table}) RETURN n LIMIT 10"
+      end
+
+      # https://neo4j.com/docs/cypher-manual/current/syntax/expressions/#cypher-expressions-string-literals
+      def quoting
+        :backslash_escape
+      end
+
+      def parameter_binding
+        proc do |statement, variables|
+          variables.each_key do |k|
+            statement = statement.gsub("{#{k}}") { "$#{k} " }
+          end
+          [statement, variables]
+        end
       end
 
       protected

@@ -1,24 +1,25 @@
 module Blazer
   module Adapters
     class BigQueryAdapter < BaseAdapter
-      def run_statement(statement, comment)
+      def run_statement(statement, comment, bind_params)
         columns = []
         rows = []
         error = nil
 
         begin
-          results = bigquery.query(statement)
+          results = bigquery.query(statement, params: bind_params)
 
           # complete? was removed in google-cloud-bigquery 0.29.0
           # code is for backward compatibility
           if !results.respond_to?(:complete?) || results.complete?
             columns = results.first.keys.map(&:to_s) if results.size > 0
-            rows = results.map(&:values)
+            rows = results.all.map(&:values)
           else
             error = Blazer::TIMEOUT_MESSAGE
           end
         rescue => e
           error = e.message
+          error = Blazer::VARIABLE_MESSAGE if error.include?("Syntax error: Unexpected \"?\"")
         end
 
         [columns, rows, error]
@@ -40,6 +41,16 @@ module Blazer
 
       def preview_statement
         "SELECT * FROM `{table}` LIMIT 10"
+      end
+
+      # https://cloud.google.com/bigquery/docs/reference/standard-sql/lexical#string_and_bytes_literals
+      def quoting
+        :backslash_escape
+      end
+
+      # https://cloud.google.com/bigquery/docs/parameterized-queries
+      def parameter_binding
+        :positional
       end
 
       private

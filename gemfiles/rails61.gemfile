@@ -1,0 +1,9 @@
+source "https://rubygems.org"
+
+gemspec path: ".."
+
+gem "rake"
+gem "minitest", ">= 5"
+gem "combustion"
+gem "rails", "~> 6.1.0"
+gem "pg"

@@ -6,6 +6,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
       t.text :description
       t.text :statement
       t.string :data_source
+      t.string :status
       t.timestamps null: false
     end
 
@@ -14,7 +15,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
       t.references :query
       t.text :statement
       t.string :data_source
-      t.timestamp :created_at
+      t.datetime :created_at
     end
 
     create_table :blazer_dashboards do |t|
@@ -39,7 +40,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
       t.text :slack_channels
       t.string :check_type
       t.text :message
-      t.timestamp :last_run_at
+      t.datetime :last_run_at
       t.timestamps null: false
     end
   end

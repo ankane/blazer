@@ -6,6 +6,8 @@ module Blazer
     skip_after_action(*filters, raise: false)
     skip_around_action(*filters, raise: false)
 
+    clear_helpers
+
     protect_from_forgery with: :exception
 
     if ENV["BLAZER_PASSWORD"]
@@ -22,7 +24,7 @@ module Blazer
 
     if Blazer.override_csp
       after_action do
-        response.headers['Content-Security-Policy'] = "default-src 'self' https: 'unsafe-inline' 'unsafe-eval' data:"
+        response.headers['Content-Security-Policy'] = "default-src 'self' https: 'unsafe-inline' 'unsafe-eval' data: blob:"
       end
     end
 
@@ -30,95 +32,102 @@ module Blazer
 
     private
 
-      def process_vars(statement, data_source)
-        (@bind_vars ||= []).concat(Blazer.extract_vars(statement)).uniq!
-        @bind_vars.each do |var|
-          params[var] ||= Blazer.data_sources[data_source].variable_defaults[var]
-        end
-        @success = @bind_vars.all? { |v| params[v] }
-
-        if @success
-          @bind_vars.each do |var|
-            value = params[var].presence
-            if value
-              if ["start_time", "end_time"].include?(var)
-                value = value.to_s.gsub(" ", "+") # fix for Quip bug
-              end
-
-              if var.end_with?("_at")
-                begin
-                  value = Blazer.time_zone.parse(value)
-                rescue
-                  # do nothing
-                end
-              end
-
-              if value =~ /\A\d+\z/
-                value = value.to_i
-              elsif value =~ /\A\d+\.\d+\z/
-                value = value.to_f
-              end
-            end
-            value = Blazer.transform_variable.call(var, value) if Blazer.transform_variable
-            statement.gsub!("{#{var}}", ActiveRecord::Base.connection.quote(value))
-          end
+    def process_vars(statement, var_params = nil)
+      var_params ||= request.query_parameters
+      (@bind_vars ||= []).concat(statement.variables).uniq!
+      # update in-place so populated in view and consistent across queries on dashboard
+      @bind_vars.each do |var|
+        if !var_params[var]
+          default = statement.data_source.variable_defaults[var]
+          # only add if default exists
+          var_params[var] = default if default
         end
       end
+      runnable = @bind_vars.all? { |v| var_params[v] }
+      statement.add_values(var_params) if runnable
+      runnable
+    end
 
-      def parse_smart_variables(var, data_source)
-        smart_var_data_source =
-          ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_variables[var] }
+    def refresh_query(query)
+      statement = query.statement_object
+      runnable = process_vars(statement)
+      cohort_analysis_statement(statement) if statement.cohort_analysis?
+      statement.clear_cache if runnable
+    end
 
-        if smart_var_data_source
-          query = smart_var_data_source.smart_variables[var]
+    def add_cohort_analysis_vars
+      @bind_vars << "cohort_period" unless @bind_vars.include?("cohort_period")
+      @smart_vars["cohort_period"] = ["day", "week", "month"] if @smart_vars
+      # TODO create var_params method
+      request.query_parameters["cohort_period"] ||= "week"
+    end
 
-          if query.is_a? Hash
-            smart_var = query.map { |k,v| [v, k] }
-          elsif query.is_a? Array
-            smart_var = query.map { |v| [v, v] }
-          elsif query
-            result = smart_var_data_source.run_statement(query)
-            smart_var = result.rows.map { |v| v.reverse }
-            error = result.error if result.error
-          end
+    def parse_smart_variables(var, data_source)
+      smart_var_data_source =
+        ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_variables[var] }
+
+      if smart_var_data_source
+        query = smart_var_data_source.smart_variables[var]
+
+        if query.is_a? Hash
+          smart_var = query.map { |k,v| [v, k] }
+        elsif query.is_a? Array
+          smart_var = query.map { |v| [v, v] }
+        elsif query
+          result = smart_var_data_source.run_statement(query)
+          smart_var = result.rows.map { |v| v.reverse }
+          error = result.error if result.error
+        end
+      end
+
+      [smart_var, error]
+    end
+
+    def cohort_analysis_statement(statement)
+      @cohort_period = params["cohort_period"] || "week"
+      @cohort_period = "week" unless ["day", "week", "month"].include?(@cohort_period)
+
+      # for now
+      @conversion_period = @cohort_period
+      @cohort_days =
+        case @cohort_period
+        when "day"
+          1
+        when "week"
+          7
+        when "month"
+          30
         end
 
-        [smart_var, error]
-      end
+      statement.apply_cohort_analysis(period: @cohort_period, days: @cohort_days)
+    end
 
-      # don't pass to url helpers
-      #
-      # some are dangerous when passed as symbols
-      # root_url({host: "evilsite.com"})
-      #
-      # certain ones (like host) only affect *_url and not *_path
-      #
-      # when permitted parameters are passed in Rails 6,
-      # they appear to be added as GET parameters
-      # root_url(params.permit(:host))
-      BLACKLISTED_KEYS = [:controller, :action, :id, :host, :query, :dashboard, :query_id, :query_ids, :table_names, :authenticity_token, :utf8, :_method, :commit, :statement, :data_source, :name, :fork_query_id, :blazer, :run_id, :script_name, :original_script_name]
+    def variable_params(resource, var_params = nil)
+      permitted_keys = resource.variables
+      var_params ||= request.query_parameters
+      var_params.slice(*permitted_keys)
+    end
+    helper_method :variable_params
 
-      # remove blacklisted keys from both params and permitted keys for better sleep
-      def variable_params(resource)
-        permitted_keys = resource.variables - BLACKLISTED_KEYS.map(&:to_s)
-        params.except(*BLACKLISTED_KEYS).permit(*permitted_keys)
-      end
-      helper_method :variable_params
+    def nested_variable_params(resource)
+      variable_params(resource, request.query_parameters["variables"] || {})
+    end
+    helper_method :nested_variable_params
 
-      def blazer_user
-        send(Blazer.user_method) if Blazer.user_method && respond_to?(Blazer.user_method, true)
-      end
-      helper_method :blazer_user
+    def blazer_user
+      send(Blazer.user_method) if Blazer.user_method && respond_to?(Blazer.user_method, true)
+    end
+    helper_method :blazer_user
 
-      def render_errors(resource)
-        @errors = resource.errors
-        action = resource.persisted? ? :edit : :new
-        render action, status: :unprocessable_entity
-      end
+    def render_errors(resource)
+      @errors = resource.errors
+      action = resource.persisted? ? :edit : :new
+      render action, status: :unprocessable_entity
+    end
 
-      # do not inherit from ApplicationController - #120
-      def default_url_options
-        {}
-      end
+    # do not inherit from ApplicationController - #120
+    def default_url_options
+      {}
+    end
   end
 end

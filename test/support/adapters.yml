@@ -1,0 +1,80 @@
+data_sources:
+  athena:
+    adapter: athena
+    database: blazer_test
+
+  bigquery:
+    adapter: bigquery
+    project: your-project
+    keyfile: path/to/keyfile.json
+
+  cassandra:
+    url: cassandra://localhost:9042/blazer_test
+
+  drill:
+    adapter: drill
+    url: http://localhost:8047
+
+  druid:
+    adapter: druid
+    url: http://localhost:8082
+
+  elasticsearch:
+    adapter: elasticsearch
+    url: http://localhost:9200
+
+  hive:
+    adapter: hive
+    url: sasl://localhost:10000/blazer_test
+
+  ignite:
+    url: ignite://localhost:10800
+
+  influxdb:
+    adapter: influxdb
+    url: http://localhost:8086/blazer_test
+
+  mongodb:
+    url: mongodb://localhost:27017/blazer_test
+
+  mysql:
+    url: mysql2://localhost:3306/blazer_test # ?prepared_statements=true
+
+  neo4j:
+    adapter: neo4j
+    url: http://neo4j:secret@localhost:7474/blazer_test
+
+  opensearch:
+    adapter: opensearch
+    url: http://localhost:9200
+
+  postgresql:
+    url: postgres://localhost/blazer_test
+
+  presto:
+    url: presto://user@localhost:8080/jmx
+
+  redshift:
+    url: redshift://localhost:5439/blazer_test
+
+  salesforce:
+    adapter: salesforce
+
+  soda:
+    adapter: soda
+    # url: https://...
+    # app_token: ...
+
+  spark:
+    adapter: spark
+    url: sasl://localhost:10000/blazer_test
+
+  snowflake:
+    adapter: snowflake
+    # conn_str: ...
+
+  sqlite:
+    url: "sqlite3::memory:"
+
+  sqlserver:
+    url: sqlserver://SA:YourStrong!Passw0rd@localhost:1433/blazer_test

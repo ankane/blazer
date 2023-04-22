@@ -3,6 +3,9 @@ var runningQueries = []
 var maxQueries = 3
 
 function runQuery(data, success, error) {
+  if (!data.data_source) {
+    throw new Error("Data source is required to cancel queries")
+  }
   data.run_id = uuid()
   var query = {
     data: data,
@@ -50,7 +53,11 @@ function runQueryHelper(query) {
       queryComplete(query)
     }
   }).fail( function(jqXHR, textStatus, errorThrown) {
-    if (!query.canceled) {
+    // check jqXHR.status instead of query.canceled
+    // so it works for page navigation with Firefox and Safari
+    if (jqXHR.status === 0) {
+      cancelServerQuery(query)
+    } else {
       var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message
       if (!message) {
         message = "An error occurred"
@@ -83,6 +90,8 @@ function cancelAllQueries() {
   }
 }
 
+// needed for Chrome
+// queries are canceled before unload with Firefox and Safari
 $(window).on("unload", cancelAllQueries)
 
 function cancelQuery(query) {
@@ -90,12 +99,23 @@ function cancelQuery(query) {
   if (query.xhr) {
     query.xhr.abort()
   }
+}
 
+function cancelServerQuery(query) {
   // tell server
   var path = Routes.cancel_queries_path()
   var data = {run_id: query.run_id, data_source: query.data_source}
   if (navigator.sendBeacon) {
-    navigator.sendBeacon(path + "?" + $.param(csrfProtect(data)))
+    // use FormData over Blob and URLSearchParams for maximum compatibility
+    // Blob works with Chrome 81+ and URLSearchParams works with Chrome 88+
+    var formdata = new FormData()
+    var params = csrfProtect(data)
+    for (var key in params) {
+      if (Object.prototype.hasOwnProperty.call(params, key)) {
+        formdata.append(key, params[key])
+      }
+    }
+    navigator.sendBeacon(path, formdata)
   } else {
     // TODO make sync
     $.post(path, data)

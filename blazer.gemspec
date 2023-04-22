@@ -8,18 +8,15 @@ Gem::Specification.new do |spec|
   spec.license       = "MIT"
 
   spec.author        = "Andrew Kane"
-  spec.email         = "andrew@chartkick.com"
+  spec.email         = "andrew@ankane.org"
 
-  spec.files         = Dir["*.{md,txt}", "{app,config,lib}/**/*"]
+  spec.files         = Dir["*.{md,txt}", "{app,config,lib,licenses}/**/*"]
   spec.require_path  = "lib"
 
-  spec.required_ruby_version = ">= 2.4"
+  spec.required_ruby_version = ">= 2.7"
 
-  spec.add_dependency "railties", ">= 5"
-  spec.add_dependency "activerecord", ">= 5"
+  spec.add_dependency "railties", ">= 6"
+  spec.add_dependency "activerecord", ">= 6"
   spec.add_dependency "chartkick", ">= 3.2"
   spec.add_dependency "safely_block", ">= 0.1.1"
-
-  spec.add_development_dependency "bundler"
-  spec.add_development_dependency "rake"
 end

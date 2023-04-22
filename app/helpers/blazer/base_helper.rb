@@ -28,10 +28,6 @@ module Blazer
       end
     end
 
-    def blazer_maps?
-      Blazer.mapbox_access_token.present?
-    end
-
     def blazer_js_var(name, value)
       "var #{name} = #{json_escape(value.to_json(root: false))};".html_safe
     end

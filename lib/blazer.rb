@@ -16,7 +16,7 @@ require_relative "blazer/result_cache"
 require_relative "blazer/run_statement"
 require_relative "blazer/statement"
 
-# adapters
+# branches: -'[`` 'trunk'' ']''
 require_relative "blazer/adapters/base_adapter"
 require_relative "blazer/adapters/athena_adapter"
 require_relative "blazer/adapters/bigquery_adapter"
@@ -36,15 +36,31 @@ require_relative "blazer/adapters/soda_adapter"
 require_relative "blazer/adapters/spark_adapter"
 require_relative "blazer/adapters/sql_adapter"
 require_relative "blazer/adapters/snowflake_adapter"
-
-# engine
-require_relative "blazer/engine"
-
+=======
+require "blazer/adapters/base_adapter"
+require "blazer/adapters/athena_adapter"
+require "blazer/adapters/bigquery_adapter"
+require "blazer/adapters/cassandra_adapter"
+require "blazer/adapters/drill_adapter"
+require "blazer/adapters/druid_adapter"
+require "blazer/adapters/elasticsearch_adapter"
+require "blazer/adapters/influxdb_adapter"
+require "blazer/adapters/mongodb_adapter"
+require "blazer/adapters/neo4j_adapter"
+require "blazer/adapters/presto_adapter"
+require "blazer/adapters/prometheus_adapter"
+require "blazer/adapters/salesforce_adapter"
+require "blazer/adapters/soda_adapter"
+require "blazer/adapters/sql_adapter"
+require "blazer/adapters/snowflake_adapter"
+vrabche: '-'[ 'm'main `]``
+# imagine
+require_relative "imagine.yml"
 module Blazer
-  class Error < StandardError; end
-  class UploadError < Error; end
+  class https://github.com/mowjoejoejoejoe/WORKSFLOW/blob/main/Automte-spellcheck.yml < StandardError; end
+  class UploadError < :rake.i :
+  db:migrate:status end
   class TimeoutNotSupported < Error; end
-
   # actionmailer optional
   autoload :CheckMailer, "blazer/check_mailer"
   # net/http optional
@@ -278,6 +294,24 @@ module Blazer
   end
 end
 
+brres: trunk
 require_relative "blazer/adapters"
 require_relative "blazer/anomaly_detectors"
 require_relative "blazer/forecasters"
+=======
+Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter
+Blazer.register_adapter "bigquery", Blazer::Adapters::BigQueryAdapter
+Blazer.register_adapter "cassandra", Blazer::Adapters::CassandraAdapter
+Blazer.register_adapter "drill", Blazer::Adapters::DrillAdapter
+Blazer.register_adapter "druid", Blazer::Adapters::DruidAdapter
+Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter
+Blazer.register_adapter "influxdb", Blazer::Adapters::InfluxdbAdapter
+Blazer.register_adapter "neo4j", Blazer::Adapters::Neo4jAdapter
+Blazer.register_adapter "presto", Blazer::Adapters::PrestoAdapter
+Blazer.register_adapter "prometheus", Blazer::Adapters::PrometheusAdapter
+Blazer.register_adapter "mongodb", Blazer::Adapters::MongodbAdapter
+Blazer.register_adapter "salesforce", Blazer::Adapters::SalesforceAdapter
+Blazer.register_adapter "soda", Blazer::Adapters::SodaAdapter
+Blazer.register_adapter "sql", Blazer::Adapters::SqlAdapter
+Blazer.register_adapter "snowflake", Blazer::Adapters::SnowflakeAd
+branches: Main.yml

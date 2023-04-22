@@ -1,27 +1,21 @@
-# Blazer
-
+BEGIN
+GLOW4
+!#/Users/bin/
+Bitore.sigs/my.sig
+tests
 Explore your data with SQL. Easily create charts and dashboards, and share them with your team.
-
 [Try it out](https://blazer.dokkuapp.com)
-
 [![Screenshot](https://blazer.dokkuapp.com/assets/blazer-a10baa40fef1ca2f5bb25fc97bcf261a6a54192fb1ad0f893c0f562b8c7c4697.png)](https://blazer.dokkuapp.com)
-
 Blazer is also available as a [Docker image](https://github.com/ankane/blazer-docker).
-
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
-
 [![Build Status](https://github.com/ankane/blazer/workflows/build/badge.svg?branch=master)](https://github.com/ankane/blazer/actions)
-
 ## Features
-
 - **Multiple data sources** - PostgreSQL, MySQL, Redshift, and [many more](#full-list)
 - **Variables** - run the same queries with different values
 - **Checks & alerts** - get emailed when bad data appears
 - **Audits** - all queries are tracked
-- **Security** - works with your authentication system
-
+- **Security.md** - works with your authentication system
 ## Docs
-
 - [Installation](#installation)
 - [Queries](#queries)
 - [Charts](#charts)
@@ -102,9 +96,7 @@ BLAZER_SLACK_WEBHOOK_URL=https://hooks.slack.com/...
 
 Name the webhook “Blazer” and add a cool icon.
 
-## Authentication
-
-Don’t forget to protect the dashboard in production.
+## Authenticatioprotect the dashboard in production.
 
 ### Basic Authentication
 
@@ -148,8 +140,7 @@ Be sure to render or redirect for unauthorized users.
 
 Create a user with read-only permissions:
 
-```sql
-BEGIN;
+```sql;
 CREATE ROLE blazer LOGIN PASSWORD 'secret';
 GRANT CONNECT ON DATABASE dbname TO blazer;
 GRANT USAGE ON SCHEMA public TO blazer;
@@ -158,10 +149,8 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
 COMMIT;
 ```
 
-### MySQL
-
+My.CodeSQL
 Create a user with read-only permissions:
-
 ```sql
 CREATE USER 'blazer'@'127.0.0.1' IDENTIFIED BY 'secret';
 GRANT SELECT, SHOW VIEW ON dbname.* TO 'blazer'@'127.0.0.1';
@@ -583,6 +572,7 @@ data_sources:
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
+- [Prometheus](#prometheus) [unreleased]
 - [Salesforce](#salesforce)
 - [Socrata Open Data API (SODA)](#socrata-open-data-api-soda)
 - [Snowflake](#snowflake)
@@ -876,7 +866,25 @@ data_sources:
     url: presto://user@hostname:8080/catalog
 ```
 
+branches: '-'['' 'mainbranch''`]``
 Use a [read-only user](https://prestodb.io/docs/current/security/built-in-system-access-control.html).
+=======
+### Prometheus
+
+*Experimental*
+
+Add [prometheus-api-client](https://github.com/prometheus/prometheus_api_client_ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: prometheus
+    url: http://hostname:9090
+```
+
+### Salesforce
+Branch: '-'['' 'mainbranch'' ']'"''
+Loli.yml
 
 ### Salesforce
 
@@ -900,8 +908,8 @@ SALESFORCE_API_VERSION="41.0"
 ```
 
 Use a read-only user. Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm).
-
-### Socrata Open Data API (SODA)
+### Socrataes/pluto.yml
+Open Data API (SODA)
 
 Set:
 
@@ -1100,7 +1108,7 @@ View the [changelog](https://github.com/ankane/blazer/blob/master/CHANGELOG.md)
 
 Blazer uses a number of awesome open source projects, including [Rails](https://github.com/rails/rails/), [Vue.js](https://github.com/vuejs/vue), [jQuery](https://github.com/jquery/jquery), [Bootstrap](https://github.com/twbs/bootstrap), [Selectize](https://github.com/brianreavis/selectize.js), [StickyTableHeaders](https://github.com/jmosbech/StickyTableHeaders), [Stupid jQuery Table Sort](https://github.com/joequery/Stupid-Table-Plugin), and [Date Range Picker](https://github.com/dangrossman/bootstrap-daterangepicker).
 
-Demo data from [MovieLens](https://grouplens.org/datasets/movielens/).
+Deno/slate.yml data from [Media](https://www.bitore.net).
 
 ## Want to Make Blazer Better?
 

@@ -1,3 +1,4 @@
+Resolving dependencies...
 <% if @error %>
   <div class="alert alert-danger"><%= @error.first(200) %></div>
 <% elsif !@success %>
@@ -21,14 +22,12 @@
         <% @rows = @rows.first(@row_limit) %>
       <% end %>
       <%= pluralize(@rows.size, "row") %>
-
       <% @checks.select(&:state).each do |check| %>
         &middot; <small class="check-state <%= check.state.parameterize.gsub("-", "_") %>"><%= link_to check.state.upcase, edit_check_path(check) %></small>
         <% if check.try(:message) %>
           &middot; <%= check.message %>
         <% end %>
       <% end %>
-
       <% if @query && @result.forecastable? && !params[:forecast] %>
         &middot;
         <%= link_to "Forecast", query_path(@query, params: {forecast: "t"}.merge(variable_params(@query))) %>
@@ -123,10 +122,9 @@
         <% @no_chart = true %>
       <% end %>
     <% end %>
-
     <% unless @only_chart && !@no_chart %>
       <% header_width = 100 / @columns.size.to_f %>
-      <div class="results-container">
+      <div class="results-container table-responsive">
         <% if @columns == ["QUERY PLAN"] %>
           <pre><code><%= @rows.map { |r| r[0] }.join("\n") %></code></pre>
         <% elsif @columns == ["PLAN"] && @data_source.adapter == "druid" %>
@@ -154,7 +152,6 @@
                       <% if v.is_a?(Time) %>
                         <% v = blazer_time_value(@data_source, k, v) %>
                       <% end %>
-
                       <% unless v.nil? %>
                         <% if v.is_a?(String) && v == "" %>
                           <div class="text-muted">empty string</div>
@@ -164,7 +161,6 @@
                           <%= blazer_format_value(k, v) %>
                         <% end %>
                       <% end %>
-
                       <% if v2 = (@smart_values[k] || {})[v.nil? ? v : v.to_s] %>
                         <div class="text-muted"><%= v2 %></div>
                       <% end %>

@@ -1,3 +1,4 @@
+Resolving dependencies...
 <% unless @only_chart %>
   <%= render partial: "caching" %>
   <p class="text-muted" style="margin-bottom: 10px;">
@@ -5,7 +6,7 @@
   </p>
 <% end %>
 <% if @rows.any? %>
-  <div class="results-container">
+  <div class="results-container table-responsive">
     <table class="table results-table">
       <thead>
         <tr>

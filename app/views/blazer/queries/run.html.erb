@@ -126,7 +126,7 @@
 
     <% unless @only_chart && !@no_chart %>
       <% header_width = 100 / @columns.size.to_f %>
-      <div class="results-container">
+      <div class="results-container table-responsive">
         <% if @columns == ["QUERY PLAN"] %>
           <pre><code><%= @rows.map { |r| r[0] }.join("\n") %></code></pre>
         <% elsif @columns == ["PLAN"] && @data_source.adapter == "druid" %>

@@ -118,7 +118,7 @@ module Blazer
     @settings ||= begin
       path = Rails.root.join("config", "blazer.yml").to_s
       if File.exist?(path)
-        YAML.safe_load(ERB.new(File.read(path)).result)
+        YAML.safe_load(ERB.new(File.read(path)).result, aliases: true)
       else
         {}
       end

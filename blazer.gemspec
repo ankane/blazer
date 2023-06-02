@@ -15,8 +15,8 @@ Gem::Specification.new do |spec|
 
   spec.required_ruby_version = ">= 3"
 
-  spec.add_dependency "railties", ">= 6"
-  spec.add_dependency "activerecord", ">= 6"
+  spec.add_dependency "railties", ">= 6.1"
+  spec.add_dependency "activerecord", ">= 6.1"
   spec.add_dependency "chartkick", ">= 3.2"
   spec.add_dependency "safely_block", ">= 0.1.1"
 end

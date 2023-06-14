@@ -34,7 +34,7 @@
 <% end %>
 
 <% if @query.description.present? %>
-  <p style="white-space: pre-line;"><%= @query.description %></p>
+  <pre style="white-space: pre-line;"><%= @query.description %></pre>
 <% end %>
 
 <%= render partial: "blazer/variables", locals: {action: query_path(@query)} %>

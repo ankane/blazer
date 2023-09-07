@@ -75,7 +75,7 @@
     <% if @markers.any? %>
       <% map_id = SecureRandom.hex %>
       <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
-      <script>
+      <script nonce="<%= content_security_policy_nonce %>">
         <%= blazer_js_var "mapboxAccessToken", Blazer.mapbox_access_token %>
         <%= blazer_js_var "markers", @markers %>
         <%= blazer_js_var "mapId", map_id %>
@@ -84,7 +84,7 @@
     <% elsif @geojson.any? %>
       <% map_id = SecureRandom.hex %>
       <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
-      <script>
+      <script nonce="<%= content_security_policy_nonce %>">
         <%= blazer_js_var "mapboxAccessToken", Blazer.mapbox_access_token %>
         <%= blazer_js_var "geojson", @geojson %>
         <%= blazer_js_var "mapId", map_id %>

@@ -12,7 +12,7 @@
     <div class="hide">
       <%= f.select :query_id, [], {include_blank: true} %>
     </div>
-    <script>
+    <script nonce="<%= content_security_policy_nonce %>">
       <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
       <%= blazer_js_var "items", [@check.query_id].compact %>
 
@@ -28,7 +28,7 @@
         <% check_options << ["Anomaly (most recent data point)", "anomaly"] if Blazer.anomaly_checks %>
         <%= f.select :check_type, check_options %>
       </div>
-      <script>
+      <script nonce="<%= content_security_policy_nonce %>">
         $("#check_check_type").selectize({}).parent().removeClass("hide");
       </script>
     </div>
@@ -38,7 +38,7 @@
       <div class="hide">
         <%= f.select :invert, [["Any results (bad data)", false], ["No results (missing data)", true]] %>
       </div>
-      <script>
+      <script nonce="<%= content_security_policy_nonce %>">
         $("#check_invert").selectize({}).parent().removeClass("hide");
       </script>
     </div>
@@ -50,7 +50,7 @@
       <div class="hide">
         <%= f.select :schedule, Blazer.check_schedules.map { |v| [v, v] } %>
       </div>
-      <script>
+      <script nonce="<%= content_security_policy_nonce %>">
         $("#check_schedule").selectize({}).parent().removeClass("hide");
       </script>
     </div>

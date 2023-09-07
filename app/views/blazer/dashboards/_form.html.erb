@@ -30,7 +30,7 @@
   </p>
 <% end %>
 
-<script>
+<script nonce="<%= content_security_policy_nonce %>">
   <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
   <%= blazer_js_var "dashboardQueries", @queries || @dashboard.dashboard_queries.order(:position).map(&:query) %>
 

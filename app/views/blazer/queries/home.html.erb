@@ -56,7 +56,7 @@
   <p v-if="more" class="text-muted">Loading...</p>
 </div>
 
-<script>
+<script nonce="<%= content_security_policy_nonce %>">
   <%= blazer_js_var "dashboards", @dashboards %>
   <%= blazer_js_var "queries", @queries %>
   <%= blazer_js_var "more", @more %>

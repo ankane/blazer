@@ -87,7 +87,7 @@ class QueriesTest < ActionDispatch::IntegrationTest
     get share_query_path(query.id, token: query.secret_token, format: 'csv')
 
     assert_response :success
-    assert_equal "text/csv", response.content_type
+    assert_equal "text/csv; charset=utf-8", response.content_type
   end
 
   def test_incorrect_token

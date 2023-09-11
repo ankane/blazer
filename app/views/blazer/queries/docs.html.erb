@@ -119,7 +119,17 @@
       <td>Map</td>
       <td>
         Named <code>latitude</code> and <code>longitude</code>, or <code>lat</code> and <code>lon</code>, or <code>lat</code> and <code>lng</code>
-        <% if !blazer_maps? %>
+        <% if !Blazer.maps? %>
+          <br />
+          <strong>Needs configured</strong>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td>Area Map</td>
+      <td>
+        Named <code>geojson</code>
+        <% if !Blazer.maps? %>
           <br />
           <strong>Needs configured</strong>
         <% end %>

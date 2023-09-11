@@ -36,9 +36,6 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   end
 
   def test_nil
-    # passes locally, but empty result on CI
-    skip if ActiveRecord::VERSION::STRING.to_f < 5.2
-
     assert_result [{"hello" => nil}], "SELECT {var} AS hello", var: ""
   end
 

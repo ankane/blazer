@@ -32,21 +32,6 @@ class ChartsTest < ActionDispatch::IntegrationTest
     assert_match "PieChart", response.body
   end
 
-  def test_map_latitude_longitude
-    run_query "SELECT 1.2 AS latitude, 3.4 AS longitude"
-    assert_match "map", response.body
-  end
-
-  def test_map_lat_lon
-    run_query "SELECT 1.2 AS lat, 3.4 AS lon"
-    assert_match "map", response.body
-  end
-
-  def test_map_lat_lng
-    run_query "SELECT 1.2 AS lat, 3.4 AS lng"
-    assert_match "map", response.body
-  end
-
   def test_target
     run_query "SELECT NOW(), 1, 2 AS target"
     assert_match %{"name":"target"}, response.body

@@ -27,6 +27,12 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_equal query.data_source, audit.data_source
   end
 
+  def test_create_error
+    post blazer.queries_path, params: {query: {name: "Test", statement: "", data_source: "main"}}
+    assert_response :unprocessable_entity
+    assert_match /Statement can(&#39;|’)t be blank/, response.body
+  end
+
   def test_destroy
     query = create_query
     delete blazer.query_path(query)
@@ -99,6 +105,13 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_match %{value="default_value"}, response.body
   end
 
+  def test_variables_id
+    query = create_query(statement: "SELECT {id}")
+    get blazer.query_path(query), params: {id: 123}
+    assert_response :success
+    assert_match %!"variables":{"id":"123"}!, response.body
+  end
+
   def test_smart_variables
     query = create_query(statement: "SELECT {period}")
     get blazer.query_path(query)
@@ -121,6 +134,24 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_csv
     run_query("SELECT 1 AS id, 'Chicago' AS city", format: "csv")
     assert_equal "id,city\n1,Chicago\n", response.body
+    assert_equal "attachment; filename=\"query.csv\"; filename*=UTF-8''query.csv", response.headers["Content-Disposition"]
+    assert_equal "text/csv; charset=utf-8", response.headers["Content-Type"]
+  end
+
+  def test_csv_query
+    query = create_query(name: "All Cities", statement: "SELECT 1 AS id, 'Chicago' AS city")
+    run_query(query.statement, format: "csv", query_id: query.id)
+    assert_equal "id,city\n1,Chicago\n", response.body
+    assert_equal "attachment; filename=\"all-cities.csv\"; filename*=UTF-8''all-cities.csv", response.headers["Content-Disposition"]
+    assert_equal "text/csv; charset=utf-8", response.headers["Content-Type"]
+  end
+
+  def test_csv_query_variables
+    query = create_query(name: "Cities", statement: "SELECT 1 AS id, {name} AS city")
+    run_query(query.statement, format: "csv", query_id: query.id, variables: {name: "Chicago"})
+    assert_equal "id,city\n1,Chicago\n", response.body
+    assert_equal "attachment; filename=\"cities.csv\"; filename*=UTF-8''cities.csv", response.headers["Content-Disposition"]
+    assert_equal "text/csv; charset=utf-8", response.headers["Content-Type"]
   end
 
   def test_share

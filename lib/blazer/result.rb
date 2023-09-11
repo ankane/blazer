@@ -1,6 +1,7 @@
 module Blazer
   class Result
-    attr_reader :data_source, :columns, :rows, :error, :cached_at, :just_cached, :forecast_error
+    attr_reader :data_source, :columns, :rows, :error, :forecast_error
+    attr_accessor :cached_at, :just_cached
 
     def initialize(data_source, columns, rows, error, cached_at, just_cached)
       @data_source = data_source
@@ -19,9 +20,9 @@ module Blazer
       cached_at.present?
     end
 
-    def boom
-      @boom ||= begin
-        boom = {}
+    def smart_values
+      @smart_values ||= begin
+        smart_values = {}
         columns.each_with_index do |key, i|
           smart_columns_data_source =
             ([data_source] + Array(data_source.settings["inherit_smart_settings"]).map { |ds| Blazer.data_sources[ds] }).find { |ds| ds.smart_columns[key] }
@@ -37,10 +38,10 @@ module Blazer
                 result.rows
               end
 
-            boom[key] = Hash[res.map { |k, v| [k.nil? ? k : k.to_s, v] }]
+            smart_values[key] = res.to_h { |k, v| [k.nil? ? k : k.to_s, v] }
           end
         end
-        boom
+        smart_values
       end
     end
 
@@ -48,7 +49,7 @@ module Blazer
       @column_types ||= begin
         columns.each_with_index.map do |k, i|
           v = (rows.find { |r| r[i] } || {})[i]
-          if boom[k]
+          if smart_values[k]
             "string"
           elsif v.is_a?(Numeric)
             "numeric"
@@ -93,14 +94,8 @@ module Blazer
     def forecast
       count = (@rows.size * 0.25).round.clamp(30, 365)
 
-      case Blazer.forecasting
-      when "prophet"
-        require "prophet"
-        forecast = Prophet.forecast(@rows.to_h, count: count)
-      else
-        require "trend"
-        forecast = Trend.forecast(@rows.to_h, count: count)
-      end
+      forecaster = Blazer.forecasters.fetch(Blazer.forecasting)
+      forecast = forecaster.call(@rows.to_h, count: count)
 
       # round integers
       if @rows[0][1].is_a?(Integer)
@@ -139,7 +134,7 @@ module Blazer
               series << {name: k, data: rows.map{ |r| [r[0], r[i + 1]] }}
             end
           else
-            rows.group_by { |r| v = r[1]; (boom[columns[1]] || {})[v.to_s] || v }.each_with_index.map do |(name, v), i|
+            rows.group_by { |r| v = r[1]; (smart_values[columns[1]] || {})[v.to_s] || v }.each_with_index.map do |(name, v), i|
               series << {name: name, data: v.map { |v2| [v2[0], v2[2]] }}
             end
           end
@@ -176,61 +171,8 @@ module Blazer
     def anomaly?(series)
       series = series.reject { |v| v[0].nil? }.sort_by { |v| v[0] }
 
-      case Blazer.anomaly_checks
-      when "prophet"
-        df = Rover::DataFrame.new(series[0..-2].map { |v| {"ds" => v[0], "y" => v[1]} })
-        m = Prophet.new(interval_width: 0.99)
-        m.logger.level = ::Logger::FATAL # no logging
-        m.fit(df)
-        future = Rover::DataFrame.new(series[-1..-1].map { |v| {"ds" => v[0]} })
-        forecast = m.predict(future).to_a[0]
-        lower = forecast["yhat_lower"]
-        upper = forecast["yhat_upper"]
-        value = series.last[1]
-        value < lower || value > upper
-      when "trend"
-        anomalies = Trend.anomalies(Hash[series])
-        anomalies.include?(series.last[0])
-      when "anomaly_detection"
-        period = 7 # TODO determine period
-        anomalies = AnomalyDetection.detect(Hash[series], period: period)
-        anomalies.include?(series.last[0])
-      else
-        csv_str =
-          CSV.generate do |csv|
-            csv << ["timestamp", "count"]
-            series.each do |row|
-              csv << row
-            end
-          end
-
-        r_script = %x[which Rscript].chomp
-        type = series.any? && series.last.first.to_time - series.first.first.to_time >= 2.weeks ? "ts" : "vec"
-        args = [type, csv_str]
-        raise "R not found" if r_script.empty?
-        command = "#{r_script} --vanilla #{File.expand_path("../detect_anomalies.R", __FILE__)} #{args.map { |a| Shellwords.escape(a) }.join(" ")}"
-        output = %x[#{command}]
-        if output.empty?
-          raise "Unknown R error"
-        end
-
-        rows = CSV.parse(output, headers: true)
-        error = rows.first && rows.first["x"]
-        raise error if error
-
-        timestamps = []
-        if type == "ts"
-          rows.each do |row|
-            timestamps << Time.parse(row["timestamp"])
-          end
-          timestamps.include?(series.last[0].to_time)
-        else
-          rows.each do |row|
-            timestamps << row["index"].to_i
-          end
-          timestamps.include?(series.length)
-        end
-      end
+      anomaly_detector = Blazer.anomaly_detectors.fetch(Blazer.anomaly_checks)
+      anomaly_detector.call(series)
     end
   end
 end

@@ -18,6 +18,7 @@ end
     Rake::TestTask.new(adapter) do |t|
       t.description = "Run tests for #{adapter}"
       t.test_files = FileList["test/adapters/#{adapter}_test.rb"]
+      t.warning = false # mail gem
     end
   end
 end

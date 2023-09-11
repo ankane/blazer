@@ -86,62 +86,62 @@ module Blazer
 
     private
 
-      def update_file(upload, drop: nil)
-        file = params.require(:upload).fetch(:file)
-        raise Blazer::UploadError, "File is not a CSV" if file.content_type != "text/csv"
-        raise Blazer::UploadError, "File is too large (maximum is 100MB)" if file.size > 100.megabytes
+    def update_file(upload, drop: nil)
+      file = params.require(:upload).fetch(:file)
+      raise Blazer::UploadError, "File is not a CSV" if file.content_type != "text/csv"
+      raise Blazer::UploadError, "File is too large (maximum is 100MB)" if file.size > 100.megabytes
 
-        contents = file.read
-        rows = CSV.parse(contents, converters: %i[numeric date date_time])
+      contents = file.read
+      rows = CSV.parse(contents, converters: %i[numeric date date_time])
 
-        # friendly column names
-        columns = rows.shift.map { |v| v.to_s.encode("UTF-8").gsub("%", " pct ").parameterize.gsub("-", "_") }
-        duplicate_column = columns.find { |c| columns.count(c) > 1 }
-        raise Blazer::UploadError, "Duplicate column name: #{duplicate_column}" if duplicate_column
+      # friendly column names
+      columns = rows.shift.map { |v| v.to_s.encode("UTF-8").gsub("%", " pct ").parameterize.gsub("-", "_") }
+      duplicate_column = columns.find { |c| columns.count(c) > 1 }
+      raise Blazer::UploadError, "Duplicate column name: #{duplicate_column}" if duplicate_column
 
-        column_types =
-          columns.size.times.map do |i|
-            values = rows.map { |r| r[i] }.uniq.compact
-            if values.all? { |v| v.is_a?(Integer) && v >= -9223372036854775808 && v <= 9223372036854775807 }
-              "bigint"
-            elsif values.all? { |v| v.is_a?(Numeric) }
-              "decimal"
-            elsif values.all? { |v| v.is_a?(DateTime) }
-              "timestamptz"
-            elsif values.all? { |v| v.is_a?(Date) }
-              "date"
-            else
-              "text"
-            end
+      column_types =
+        columns.size.times.map do |i|
+          values = rows.map { |r| r[i] }.uniq.compact
+          if values.all? { |v| v.is_a?(Integer) && v >= -9223372036854775808 && v <= 9223372036854775807 }
+            "bigint"
+          elsif values.all? { |v| v.is_a?(Numeric) }
+            "decimal"
+          elsif values.all? { |v| v.is_a?(DateTime) }
+            "timestamptz"
+          elsif values.all? { |v| v.is_a?(Date) }
+            "date"
+          else
+            "text"
           end
-
-        begin
-          # maybe SET LOCAL statement_timeout = '30s'
-          # maybe regenerate CSV in Ruby to ensure consistent parsing
-          Blazer.uploads_connection.transaction do
-            Blazer.uploads_connection.execute("DROP TABLE IF EXISTS #{Blazer.uploads_table_name(drop)}") if drop
-            Blazer.uploads_connection.execute("CREATE TABLE #{upload.table_name} (#{columns.map.with_index { |c, i| "#{Blazer.uploads_connection.quote_column_name(c)} #{column_types[i]}" }.join(", ")})")
-            Blazer.uploads_connection.raw_connection.copy_data("COPY #{upload.table_name} FROM STDIN CSV HEADER") do
-              Blazer.uploads_connection.raw_connection.put_copy_data(contents)
-            end
-          end
-        rescue ActiveRecord::StatementInvalid => e
-          raise Blazer::UploadError, "Table already exists" if e.message.include?("PG::DuplicateTable")
-          raise e
         end
-      end
 
-      def upload_params
-        params.require(:upload).except(:file).permit(:table, :description)
+      begin
+        # maybe SET LOCAL statement_timeout = '30s'
+        # maybe regenerate CSV in Ruby to ensure consistent parsing
+        Blazer.uploads_connection.transaction do
+          Blazer.uploads_connection.execute("DROP TABLE IF EXISTS #{Blazer.uploads_table_name(drop)}") if drop
+          Blazer.uploads_connection.execute("CREATE TABLE #{upload.table_name} (#{columns.map.with_index { |c, i| "#{Blazer.uploads_connection.quote_column_name(c)} #{column_types[i]}" }.join(", ")})")
+          Blazer.uploads_connection.raw_connection.copy_data("COPY #{upload.table_name} FROM STDIN CSV HEADER") do
+            Blazer.uploads_connection.raw_connection.put_copy_data(contents)
+          end
+        end
+      rescue ActiveRecord::StatementInvalid => e
+        raise Blazer::UploadError, "Table already exists" if e.message.include?("PG::DuplicateTable")
+        raise e
       end
+    end
 
-      def set_upload
-        @upload = Blazer::Upload.find(params[:id])
-      end
+    def upload_params
+      params.require(:upload).except(:file).permit(:table, :description)
+    end
 
-      # routes aren't added, but also check here
-      def ensure_uploads
-        render plain: "Uploads not enabled" unless Blazer.uploads?
-      end
+    def set_upload
+      @upload = Blazer::Upload.find(params[:id])
+    end
+
+    # routes aren't added, but also check here
+    def ensure_uploads
+      render plain: "Uploads not enabled" unless Blazer.uploads?
+    end
   end
 end

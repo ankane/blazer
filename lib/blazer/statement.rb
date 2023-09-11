@@ -10,7 +10,9 @@ module Blazer
     end
 
     def variables
-      @variables ||= Blazer.extract_vars(statement)
+      # strip commented out lines
+      # and regex {1} or {1,2}
+      @variables ||= statement.to_s.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{\w*?\}/i).map { |v| v[1...-1] }.reject { |v| /\A\d+(\,\d+)?\z/.match(v) || v.empty? }.uniq
     end
 
     def add_values(var_params)

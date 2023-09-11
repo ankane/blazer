@@ -401,6 +401,12 @@ Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` -
 SELECT name, latitude, longitude FROM cities
 ```
 
+or a column named `geojson` [unreleased]
+
+```sql
+SELECT name, geojson FROM counties
+```
+
 To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `ENV["MAPBOX_ACCESS_TOKEN"]`.
 
 ### Targets
@@ -554,7 +560,7 @@ Trend.url = "http://localhost:8000"
 
 ## Uploads
 
-Creating database tables from CSV files. [Example](https://blazer.dokkuapp.com/uploads)
+Create database tables from CSV files. [Example](https://blazer.dokkuapp.com/uploads)
 
 Run:
 
@@ -1058,7 +1064,7 @@ By default, queries take up a request while they are running. To run queries asy
 async: true
 ```
 
-**Note:** Requires Rails 5+ and caching to be enabled. If you have multiple web processes, your app must use a centralized cache store like Memcached or Redis.
+**Note:** Requires caching to be enabled. If you have multiple web processes, your app must use a centralized cache store like Memcached or Redis.
 
 ```ruby
 config.cache_store = :mem_cache_store

@@ -32,7 +32,7 @@ module Blazer
         audit.save! if audit.changed?
       end
 
-      if query && !result.timed_out? && !query.variables.any?
+      if query && !result.timed_out? && !result.cached? && !query.variables.any?
         query.checks.each do |check|
           check.update_state(result)
         end

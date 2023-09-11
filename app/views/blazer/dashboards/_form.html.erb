@@ -23,7 +23,7 @@
   </div>
   <p style="padding-bottom: 140px;" v-cloak>
     <% if @dashboard.persisted? %>
-      <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger"%>
+      <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
     <% end %>
     <%= f.submit "Save", class: "btn btn-success" %>
     <%= link_to "Back", :back, class: "btn btn-link" %>
@@ -34,10 +34,11 @@
   <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
   <%= blazer_js_var "dashboardQueries", @queries || @dashboard.dashboard_queries.order(:position).map(&:query) %>
 
-  var app = new Vue({
-    el: "#app",
-    data: {
-      queries: dashboardQueries
+  var app = Vue.createApp({
+    data: function() {
+      return {
+        queries: dashboardQueries
+      }
     },
     methods: {
       remove: function(index) {
@@ -45,6 +46,7 @@
       }
     },
     mounted: function() {
+      var app = this
       $("#query_id").selectize({
         options: queries,
         highlight: false,
@@ -68,8 +70,12 @@
       })
     }
   })
+  app.config.compilerOptions.whitespace = "preserve"
+  app.mount("#app")
+
   Sortable.create($("#queries").get(0), {
     onEnd: function(e) {
+      var app = window.app._component.data()
       app.queries.splice(e.newIndex, 0, app.queries.splice(e.oldIndex, 1)[0])
     }
   })

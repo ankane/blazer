@@ -4,40 +4,42 @@ require "safely/core"
 
 # stdlib
 require "csv"
+require "digest/sha2"
 require "json"
 require "yaml"
 
 # modules
-require "blazer/version"
-require "blazer/data_source"
-require "blazer/result"
-require "blazer/run_statement"
-require "blazer/sharing"
-require "blazer/statement"
+require_relative "blazer/version"
+require_relative "blazer/data_source"
+require_relative "blazer/result"
+require_relative "blazer/result_cache"
+require_relative "blazer/run_statement"
+require_relative "blazer/sharing"
+require_relative "blazer/statement"
 
 # adapters
-require "blazer/adapters/base_adapter"
-require "blazer/adapters/athena_adapter"
-require "blazer/adapters/bigquery_adapter"
-require "blazer/adapters/cassandra_adapter"
-require "blazer/adapters/drill_adapter"
-require "blazer/adapters/druid_adapter"
-require "blazer/adapters/elasticsearch_adapter"
-require "blazer/adapters/hive_adapter"
-require "blazer/adapters/ignite_adapter"
-require "blazer/adapters/influxdb_adapter"
-require "blazer/adapters/mongodb_adapter"
-require "blazer/adapters/neo4j_adapter"
-require "blazer/adapters/opensearch_adapter"
-require "blazer/adapters/presto_adapter"
-require "blazer/adapters/salesforce_adapter"
-require "blazer/adapters/soda_adapter"
-require "blazer/adapters/spark_adapter"
-require "blazer/adapters/sql_adapter"
-require "blazer/adapters/snowflake_adapter"
+require_relative "blazer/adapters/base_adapter"
+require_relative "blazer/adapters/athena_adapter"
+require_relative "blazer/adapters/bigquery_adapter"
+require_relative "blazer/adapters/cassandra_adapter"
+require_relative "blazer/adapters/drill_adapter"
+require_relative "blazer/adapters/druid_adapter"
+require_relative "blazer/adapters/elasticsearch_adapter"
+require_relative "blazer/adapters/hive_adapter"
+require_relative "blazer/adapters/ignite_adapter"
+require_relative "blazer/adapters/influxdb_adapter"
+require_relative "blazer/adapters/mongodb_adapter"
+require_relative "blazer/adapters/neo4j_adapter"
+require_relative "blazer/adapters/opensearch_adapter"
+require_relative "blazer/adapters/presto_adapter"
+require_relative "blazer/adapters/salesforce_adapter"
+require_relative "blazer/adapters/soda_adapter"
+require_relative "blazer/adapters/spark_adapter"
+require_relative "blazer/adapters/sql_adapter"
+require_relative "blazer/adapters/snowflake_adapter"
 
 # engine
-require "blazer/engine"
+require_relative "blazer/engine"
 
 module Blazer
   class Error < StandardError; end
@@ -67,8 +69,6 @@ module Blazer
     attr_accessor :forecasting
     attr_accessor :async
     attr_accessor :images
-    attr_accessor :query_viewable
-    attr_accessor :query_editable
     attr_accessor :override_csp
     attr_accessor :slack_oauth_token
     attr_accessor :slack_webhook_url
@@ -119,7 +119,7 @@ module Blazer
     @settings ||= begin
       path = Rails.root.join("config", "blazer.yml").to_s
       if File.exist?(path)
-        YAML.load(ERB.new(File.read(path)).result)
+        YAML.safe_load(ERB.new(File.read(path)).result, aliases: true)
       else
         {}
       end
@@ -141,13 +141,6 @@ module Blazer
       sharing_settings = settings["sharing"] || {}
       Blazer::Sharing.new(**sharing_settings.symbolize_keys)
     end
-  end
-
-  # TODO move to Statement and remove in 3.0.0
-  def self.extract_vars(statement)
-    # strip commented out lines
-    # and regex {1} or {1,2}
-    statement.to_s.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{\w*?\}/i).map { |v| v[1...-1] }.reject { |v| /\A\d+(\,\d+)?\z/.match(v) || v.empty? }.uniq
   end
 
   def self.run_checks(schedule: nil)
@@ -233,6 +226,11 @@ module Blazer
     slack_oauth_token.present? || slack_webhook_url.present?
   end
 
+  # TODO show warning on invalid access token
+  def self.maps?
+    mapbox_access_token.present? && mapbox_access_token.start_with?("pk.")
+  end
+
   def self.uploads?
     settings.key?("uploads")
   end
@@ -258,6 +256,22 @@ module Blazer
     adapters[name] = adapter
   end
 
+  def self.anomaly_detectors
+    @anomaly_detectors ||= {}
+  end
+
+  def self.register_anomaly_detector(name, &anomaly_detector)
+    anomaly_detectors[name] = anomaly_detector
+  end
+
+  def self.forecasters
+    @forecasters ||= {}
+  end
+
+  def self.register_forecaster(name, &forecaster)
+    forecasters[name] = forecaster
+  end
+
   def self.archive_queries
     raise "Audits must be enabled to archive" unless Blazer.audit
     raise "Missing status column - see https://github.com/ankane/blazer#23" unless Blazer::Query.column_names.include?("status")
@@ -272,21 +286,6 @@ module Blazer
   end
 end
 
-Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter
-Blazer.register_adapter "bigquery", Blazer::Adapters::BigQueryAdapter
-Blazer.register_adapter "cassandra", Blazer::Adapters::CassandraAdapter
-Blazer.register_adapter "drill", Blazer::Adapters::DrillAdapter
-Blazer.register_adapter "druid", Blazer::Adapters::DruidAdapter
-Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter
-Blazer.register_adapter "hive", Blazer::Adapters::HiveAdapter
-Blazer.register_adapter "ignite", Blazer::Adapters::IgniteAdapter
-Blazer.register_adapter "influxdb", Blazer::Adapters::InfluxdbAdapter
-Blazer.register_adapter "mongodb", Blazer::Adapters::MongodbAdapter
-Blazer.register_adapter "neo4j", Blazer::Adapters::Neo4jAdapter
-Blazer.register_adapter "opensearch", Blazer::Adapters::OpensearchAdapter
-Blazer.register_adapter "presto", Blazer::Adapters::PrestoAdapter
-Blazer.register_adapter "salesforce", Blazer::Adapters::SalesforceAdapter
-Blazer.register_adapter "soda", Blazer::Adapters::SodaAdapter
-Blazer.register_adapter "spark", Blazer::Adapters::SparkAdapter
-Blazer.register_adapter "sql", Blazer::Adapters::SqlAdapter
-Blazer.register_adapter "snowflake", Blazer::Adapters::SnowflakeAdapter
+require_relative "blazer/adapters"
+require_relative "blazer/anomaly_detectors"
+require_relative "blazer/forecasters"

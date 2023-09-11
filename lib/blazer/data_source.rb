@@ -1,5 +1,3 @@
-require "digest/md5"
-
 module Blazer
   class DataSource
     extend Forwardable
@@ -74,19 +72,16 @@ module Blazer
       @local_time_suffix ||= Array(settings["local_time_suffix"])
     end
 
-    def read_cache(cache_key)
-      value = Blazer.cache.read(cache_key)
-      if value
-        Blazer::Result.new(self, *Marshal.load(value), nil)
-      end
+    def result_cache
+      @result_cache ||= Blazer::ResultCache.new(self)
     end
 
     def run_results(run_id)
-      read_cache(run_cache_key(run_id))
+      result_cache.read_run(run_id)
     end
 
     def delete_results(run_id)
-      Blazer.cache.delete(run_cache_key(run_id))
+      result_cache.delete_run(run_id)
     end
 
     def sub_variables(statement, vars)
@@ -102,13 +97,12 @@ module Blazer
       statement = Statement.new(statement, self) if statement.is_a?(String)
       statement.bind unless statement.bind_statement
 
-      async = options[:async]
       result = nil
       if cache_mode != "off"
         if options[:refresh_cache]
           clear_cache(statement) # for checks
         else
-          result = read_cache(statement_cache_key(statement))
+          result = result_cache.read_statement(statement)
         end
       end
 
@@ -130,26 +124,24 @@ module Blazer
         if options[:run_id]
           comment << ",run_id:#{options[:run_id]}"
         end
-        result = run_statement_helper(statement, comment, async ? options[:run_id] : nil, options)
+        result = run_statement_helper(statement, comment, options)
+      end
+
+      if options[:async] && options[:run_id]
+        run_id = options[:run_id]
+        begin
+          result_cache.write_run(run_id, result)
+        rescue
+          result = Blazer::Result.new(self, [], [], "Error storing the results of this query :(", nil, false)
+          result_cache.write_run(run_id, result)
+        end
       end
 
       result
     end
 
     def clear_cache(statement)
-      Blazer.cache.delete(statement_cache_key(statement))
-    end
-
-    def cache_key(key)
-      (["blazer", "v4"] + key).join("/")
-    end
-
-    def statement_cache_key(statement)
-      cache_key(["statement", id, Digest::MD5.hexdigest(statement.bind_statement.to_s.gsub("\r\n", "\n") + statement.bind_values.to_json)])
-    end
-
-    def run_cache_key(run_id)
-      cache_key(["run", run_id])
+      result_cache.delete_statement(statement)
     end
 
     def quote(value)
@@ -232,7 +224,7 @@ module Blazer
       @parameter_binding ||= adapter_instance.parameter_binding
     end
 
-    def run_statement_helper(statement, comment, run_id, options)
+    def run_statement_helper(statement, comment, options)
       start_time = Blazer.monotonic_time
       columns, rows, error =
         if adapter_instance.parameter_binding
@@ -242,25 +234,22 @@ module Blazer
         end
       duration = Blazer.monotonic_time - start_time
 
-      cache_data = nil
       cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
-      if cache || run_id
-        cache_data = Marshal.dump([columns, rows, error, cache ? Time.now : nil]) rescue nil
-      end
 
-      if cache && cache_data && adapter_instance.cachable?(statement.bind_statement)
-        Blazer.cache.write(statement_cache_key(statement), cache_data, expires_in: cache_expires_in.to_f * 60)
-      end
+      result = Blazer::Result.new(self, columns, rows, error, cache ? Time.now : nil, false)
 
-      if run_id
-        unless cache_data
-          error = "Error storing the results of this query :("
-          cache_data = Marshal.dump([[], [], error, nil])
+      if cache && adapter_instance.cachable?(statement.bind_statement)
+        begin
+          result_cache.write_statement(statement, result, expires_in: cache_expires_in.to_f * 60)
+          # set just_cached after caching
+          result.just_cached = true
+        rescue
+          # do nothing
         end
-        Blazer.cache.write(run_cache_key(run_id), cache_data, expires_in: 30.seconds)
       end
 
-      Blazer::Result.new(self, columns, rows, error, nil, cache && !cache_data.nil?)
+      result.cached_at = nil
+      result
     end
 
     # TODO check for adapter with same name, default to sql

@@ -76,6 +76,22 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_match "daterangepicker", response.body
   end
 
+  def test_correct_token
+    query = create_query(statement: "SELECT 1")
+    get share_query_path(query.id, token: query.secret_token, format: 'csv')
+
+    assert_response :success
+    assert_equal "text/csv", response.content_type
+  end
+
+  def test_incorrect_token
+    query = create_query(statement: "SELECT 1")
+    get share_query_path(query.id, token: "x")
+
+    assert_response :forbidden
+    assert_match "Access denied", response.body
+  end
+
   def test_variable_defaults
     query = create_query(statement: "SELECT {default_var}")
     get blazer.query_path(query)
@@ -108,12 +124,12 @@ class QueriesTest < ActionDispatch::IntegrationTest
   end
 
   def test_share
-    Blazer.sharing.api_key = "123"
     query = create_query
-    get blazer.query_share_path(query_id: query.id, token: Digest::SHA1.hexdigest("#{query.id}-123"), format: 'csv')
+    assert query.secret_token
+
+    get blazer.query_share_path(query_id: query.id, token: query.secret_token, format: 'csv')
+
     assert_response :success
-    assert_match query.name, response.body
-    Blazer.sharing.api_key = nil
   end
 
   def test_url

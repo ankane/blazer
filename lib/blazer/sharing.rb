@@ -1,10 +1,10 @@
 module Blazer
   class Sharing
-    attr_accessor :api_key, :path
+    attr_accessor :path, :enabled
 
-    def initialize(api_key: ENV.fetch('BLAZER_DOWNLOAD_API_KEY', nil), path: '/blazer_share')
-      @api_key = api_key
+    def initialize(enabled: false, path: '/blazer_share')
       @path = path.sub(/\/$/, '') # Strip trailing /
+      @enabled = enabled
     end
 
     def route_path
@@ -15,16 +15,13 @@ module Blazer
       'blazer/queries#share'
     end
 
-    def query_token(query_id)
-      Digest::SHA1.hexdigest("#{query_id}-#{api_key}")
-    end
-
     def enabled?
-      api_key.present?
+      enabled
     end
 
-    def share_path(query_id, format: nil)
-      "#{path}/#{query_token(query_id)}/#{query_id}#{".#{format}" if format}"
+    def share_path(query_id, format: nil, token: nil)
+      query = Query.find(query_id)
+      "#{path}/#{token}/#{query_id}#{".#{format}" if format}"
     end
 
     def url_for(query_id, current_url, format: 'csv')

@@ -1,5 +1,7 @@
 module Blazer
   class Query < Record
+    has_secure_token :secret_token, length: 36
+
     belongs_to :creator, optional: true, class_name: Blazer.user_class.to_s if Blazer.user_class
     has_many :checks, dependent: :destroy
     has_many :dashboard_queries, dependent: :destroy
@@ -13,6 +15,10 @@ module Blazer
 
     def to_param
       [id, name].compact.join("-").gsub("'", "").parameterize
+    end
+
+    def correct_token?(token)
+      ActiveSupport::SecurityUtils.secure_compare(secret_token, token)
     end
 
     def friendly_name

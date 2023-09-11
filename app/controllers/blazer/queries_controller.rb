@@ -79,11 +79,12 @@ module Blazer
     end
 
     def share
-      if params[:token] && params[:query_id] && params[:token] == Blazer.sharing.query_token(params[:query_id])
-        run
-      else
-        render_forbidden
-      end
+      return render_forbidden unless params[:token] && params[:query_id]
+
+      @query = Query.find_by(id: params[:query_id]) if params[:query_id]
+      return render_forbidden unless @query.correct_token?(params[:token])
+
+      run
     end
 
     def run

@@ -161,3 +161,7 @@ uploads:
   url: postgres://localhost/blazer_test
   schema: uploads
   data_source: main
+
+sharing:
+  path: /blazer_share
+  enabled: true

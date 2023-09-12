@@ -19,9 +19,9 @@ module Blazer
       enabled
     end
 
-    def share_path(query_id, format: nil, token: nil)
+    def share_path(query_id, format: nil)
       query = Query.find(query_id)
-      "#{path}/#{token}/#{query_id}#{".#{format}" if format}"
+      "#{path}/#{query.secret_token}/#{query_id}#{".#{format}" if format}"
     end
 
     def url_for(query_id, current_url, format: 'csv')

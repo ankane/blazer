@@ -3,6 +3,7 @@
 - Switched to Mapbox GL for maps (this affects Mapbox billing)
 - Support for AnomalyDetection.rb is no longer experimental
 - Added support for maps from GeoJSON
+- Added support for Trilogy
 - Fixed `async` option
 - Fixed run now button for cached queries
 - Dropped support for Ruby < 3 and Rails < 6.1

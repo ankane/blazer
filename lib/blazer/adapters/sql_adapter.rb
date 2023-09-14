@@ -233,7 +233,7 @@ module Blazer
       end
 
       def mysql?
-        ["MySQL", "Mysql2", "Mysql2Spatial"].include?(adapter_name)
+        ["MySQL", "Mysql2", "Mysql2Spatial", "Trilogy"].include?(adapter_name)
       end
 
       def sqlite?

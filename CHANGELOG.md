@@ -7,6 +7,7 @@
 - Fixed `async` option
 - Fixed run now button for cached queries
 - Dropped support for Ruby < 3 and Rails < 6.1
+- Dropped support for MongoDB
 - Dropped support for R anomaly detection
 
 ## 2.6.5 (2022-08-31)

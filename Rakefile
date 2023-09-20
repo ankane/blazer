@@ -10,7 +10,7 @@ end
 
 %w(
   athena bigquery cassandra drill druid elasticsearch
-  hive ignite influxdb mongodb mysql neo4j opensearch
+  hive ignite influxdb mysql neo4j opensearch
   postgresql presto redshift salesforce snowflake
   soda spark sqlite sqlserver
 ).each do |adapter|

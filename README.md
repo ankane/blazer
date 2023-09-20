@@ -168,16 +168,6 @@ GRANT SELECT, SHOW VIEW ON dbname.* TO 'blazer'@'127.0.0.1';
 FLUSH PRIVILEGES;
 ```
 
-### MongoDB
-
-Create a user with read-only permissions:
-
-```javascript
-db.createUser({user: "blazer", pwd: "secret", roles: ["read"]})
-```
-
-Also, make sure authorization is enabled when you start the server.
-
 ## Sensitive Data
 
 If your database contains sensitive or personal data, check out [Hypershield](https://github.com/ankane/hypershield) to shield it.
@@ -576,7 +566,6 @@ data_sources:
 - [Google BigQuery](#google-bigquery)
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [InfluxDB](#influxdb)
-- [MongoDB](#mongodb-1)
 - [MySQL](#mysql-1)
 - [Neo4j](#neo4j)
 - [OpenSearch](#opensearch)
@@ -789,20 +778,6 @@ data_sources:
 ```
 
 Use a [read-only user](https://docs.influxdata.com/influxdb/v1.8/administration/authentication_and_authorization/). Supports [InfluxQL](https://docs.influxdata.com/influxdb/v1.8/query_language/explore-data/).
-
-### MongoDB
-
-*Requires MongoDB < 4.2 at the moment*
-
-Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:
-
-```yml
-data_sources:
-  my_source:
-    url: mongodb://user:password@hostname:27017/database
-```
-
-Use a [read-only user](#mongodb).
 
 ### MySQL
 

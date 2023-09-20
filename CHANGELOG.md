@@ -1,13 +1,13 @@
 ## 3.0.0 (unreleased)
 
-- Switched to Mapbox GL for maps (this affects Mapbox billing)
+- Switched from Mapbox.js to Mapbox GL JS v1 for maps (this affects Mapbox billing)
 - Support for AnomalyDetection.rb is no longer experimental
 - Added support for maps from GeoJSON
 - Added support for Trilogy
 - Fixed `async` option
 - Fixed run now button for cached queries
 - Dropped support for Ruby < 3 and Rails < 6.1
-- Dropped support for MongoDB
+- Dropped support for MongoDB (required < 4.2)
 - Dropped support for R anomaly detection
 
 ## 2.6.5 (2022-08-31)

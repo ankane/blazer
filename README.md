@@ -350,7 +350,7 @@ Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` -
 SELECT name, latitude, longitude FROM cities
 ```
 
-or a column named `geojson` [unreleased]
+or a column named `geojson`
 
 ```sql
 SELECT name, geojson FROM counties
@@ -451,7 +451,7 @@ For the [self-hosted API](https://github.com/ankane/trend-api), create an initia
 Trend.url = "http://localhost:8000"
 ```
 
-### AnomalyDetection.rb (experimental)
+### AnomalyDetection.rb
 
 Add [anomaly_detection](https://github.com/ankane/AnomalyDetection.rb) to your Gemfile:
 
@@ -1021,6 +1021,10 @@ override_csp: true
 ```
 
 ## Upgrading
+
+### 3.0
+
+Maps now use Mapbox GL JS v1 instead of Mapbox.js, which affects Mapbox billing.
 
 ### 2.6
 

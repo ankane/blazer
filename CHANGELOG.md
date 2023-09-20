@@ -1,4 +1,4 @@
-## 3.0.0 (unreleased)
+## 3.0.0 (2023-09-20)
 
 - Switched from Mapbox.js to Mapbox GL JS v1 for maps (this affects Mapbox billing)
 - Support for AnomalyDetection.rb is no longer experimental

@@ -69,8 +69,6 @@ module Blazer
     attr_accessor :async
     attr_accessor :images
     attr_accessor :annotations
-    attr_accessor :query_viewable
-    attr_accessor :query_editable
     attr_accessor :override_csp
     attr_accessor :slack_oauth_token
     attr_accessor :slack_webhook_url

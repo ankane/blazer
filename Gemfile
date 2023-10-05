@@ -5,7 +5,7 @@ gemspec
 gem "rake"
 gem "minitest", ">= 5"
 gem "combustion"
-gem "rails"
+gem "rails", "~> 7.1.0"
 gem "pg"
 gem "sprockets-rails"
 

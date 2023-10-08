@@ -1,3 +1,7 @@
+## 3.0.1 (unreleased)
+
+- Fixed error with Rails 7.1 when no user model
+
 ## 3.0.0 (2023-09-20)
 
 - Switched from Mapbox.js to Mapbox GL JS v1 for maps (this affects Mapbox billing)

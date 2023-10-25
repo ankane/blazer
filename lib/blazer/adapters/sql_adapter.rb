@@ -197,7 +197,7 @@ module Blazer
         if postgresql? && (ActiveRecord::VERSION::STRING.to_f >= 6.1 || prepared_statements?)
           # Active Record < 6.1 silently ignores binds with Postgres when prepared statements are disabled
           :numeric
-        elsif sqlite?
+        elsif sqlite? && prepared_statements?
           :numeric
         elsif mysql? && prepared_statements?
           # Active Record silently ignores binds with MySQL when prepared statements are disabled

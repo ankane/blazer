@@ -1,3 +1,7 @@
+## 3.0.2 (unreleased)
+
+- Fixed error with SQLite and prepared statements
+
 ## 3.0.1 (2023-10-08)
 
 - Fixed error with Rails 7.1 when no user model

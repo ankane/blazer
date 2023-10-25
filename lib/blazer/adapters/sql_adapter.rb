@@ -198,6 +198,7 @@ module Blazer
           # Active Record < 6.1 silently ignores binds with Postgres when prepared statements are disabled
           :numeric
         elsif sqlite? && prepared_statements?
+          # Active Record silently ignores binds with SQLite when prepared statements are disabled
           :numeric
         elsif mysql? && prepared_statements?
           # Active Record silently ignores binds with MySQL when prepared statements are disabled

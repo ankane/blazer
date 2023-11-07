@@ -129,5 +129,7 @@ module Blazer
     def default_url_options
       {}
     end
+
+    ActiveSupport.run_load_hooks(:blazer_base_controller, self)
   end
 end

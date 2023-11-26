@@ -49,19 +49,15 @@ module Blazer
     private
 
     def format_json_value(value)
-      begin
-        JSON.pretty_generate(JSON.parse(value))
-      rescue JSON::ParserError
-        value
-      end
+      JSON.pretty_generate(JSON.parse(value))
+    rescue JSON::ParserError
+      value
     end
 
     def format_yaml_value(value)
-      begin
         YAML.dump(YAML.load(value))
-      rescue Exception
-        value
-      end
+    rescue StandardError
+      value
     end
   end
 end

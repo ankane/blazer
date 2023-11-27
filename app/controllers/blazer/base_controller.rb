@@ -30,6 +30,8 @@ module Blazer
 
     layout "blazer/application"
 
+    default_form_builder ::ActionView::Helpers::FormBuilder
+
     private
 
     def process_vars(statement, var_params = nil)

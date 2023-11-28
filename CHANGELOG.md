@@ -1,4 +1,4 @@
-## 3.0.2 (unreleased)
+## 3.0.2 (2023-11-28)
 
 - Fixed error with SQLite and prepared statements
 

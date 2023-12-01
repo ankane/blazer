@@ -10,7 +10,7 @@ Blazer is also available as a [Docker image](https://github.com/ankane/blazer-do
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
 
-[![Build Status](https://github.com/ankane/blazer/workflows/build/badge.svg?branch=master)](https://github.com/ankane/blazer/actions)
+[![Build Status](https://github.com/ankane/blazer/actions/workflows/build.yml/badge.svg)](https://github.com/ankane/blazer/actions)
 
 ## Features
 

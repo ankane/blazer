@@ -8,6 +8,7 @@ logger = ActiveSupport::Logger.new(ENV["VERBOSE"] ? STDERR : nil)
 
 Combustion.path = "test/internal"
 Combustion.initialize! :active_record, :action_controller, :action_mailer, :active_job, :sprockets do
+  config.load_defaults Rails::VERSION::STRING.to_f
   config.action_controller.logger = logger
   config.action_mailer.logger = logger
   config.active_job.logger = logger

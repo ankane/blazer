@@ -7,6 +7,8 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - ruby: 3.3
+            gemfile: Gemfile
           - ruby: 3.2
             gemfile: Gemfile
           - ruby: 3.1

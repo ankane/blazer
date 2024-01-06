@@ -41,6 +41,11 @@ module Blazer
           reconnect if error.include?("PG::ConnectionBad")
         end
 
+        # fix for non-ASCII column names and charts
+        if adapter_name == "Trilogy"
+          columns.map! { |k| k.dup.force_encoding(Encoding::UTF_8) }
+        end
+
         [columns, rows, error]
       end
 

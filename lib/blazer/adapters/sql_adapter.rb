@@ -21,15 +21,23 @@ module Blazer
         error = nil
 
         begin
+          result = nil
+
           in_transaction do
             set_timeout(data_source.timeout) if data_source.timeout
 
             binds = bind_params.map { |v| ActiveRecord::Relation::QueryAttribute.new(nil, v, ActiveRecord::Type::Value.new) }
             result = connection_model.connection.select_all("#{statement} /*#{comment}*/", nil, binds)
-            columns = result.columns
-            result.rows.each do |untyped_row|
-              rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
-            end
+          end
+
+          columns = result.columns
+          result.rows.each do |untyped_row|
+            rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
+          end
+
+          # fix for non-ASCII column names and charts
+          if adapter_name == "Trilogy"
+            columns.map! { |k| k.dup.force_encoding(Encoding::UTF_8) }
           end
         rescue => e
           error = e.message.sub(/.+ERROR: /, "")
@@ -39,11 +47,6 @@ module Blazer
             error += " - try adding casting to variables and make sure none are inside a string literal"
           end
           reconnect if error.include?("PG::ConnectionBad")
-        end
-
-        # fix for non-ASCII column names and charts
-        if adapter_name == "Trilogy"
-          columns.map! { |k| k.dup.force_encoding(Encoding::UTF_8) }
         end
 
         [columns, rows, error]

@@ -22,10 +22,8 @@ module Blazer
 
         begin
           result = nil
-
           in_transaction do
             set_timeout(data_source.timeout) if data_source.timeout
-
             binds = bind_params.map { |v| ActiveRecord::Relation::QueryAttribute.new(nil, v, ActiveRecord::Type::Value.new) }
             result = connection_model.connection.select_all("#{statement} /*#{comment}*/", nil, binds)
           end

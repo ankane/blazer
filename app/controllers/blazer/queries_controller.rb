@@ -104,7 +104,7 @@ module Blazer
       @run_id = blazer_params[:run_id]
 
       run_cohort_analysis if @cohort_analysis
-
+      
       query_running = !@run_id.nil?
 
       if query_running

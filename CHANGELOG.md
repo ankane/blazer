@@ -1,3 +1,7 @@
+## 3.0.3 (unreleased)
+
+- Fixed error with Trilogy, non-ASCII column names, and charts
+
 ## 3.0.2 (2023-11-28)
 
 - Fixed error with SQLite and prepared statements

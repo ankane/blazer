@@ -153,6 +153,9 @@ module Blazer
           when "week"
             date_sql = "CAST(DATE_FORMAT(#{time_sql} - INTERVAL ((5 + DAYOFWEEK(#{time_sql})) % 7) DAY, '%Y-%m-%d') AS DATE)"
             date_params = [tzname, tzname]
+          when "quarter"
+            date_sql = "CAST(DATE_FORMAT(CONCAT(YEAR(#{time_sql}), '-', QUARTER(#{time_sql}) * 3 - 2, '-01'), '%Y-%m-%d') AS DATE)"
+            date_params = [tzname]
           else
             date_sql = "CAST(DATE_FORMAT(#{time_sql}, '%Y-%m-01') AS DATE)"
             date_params = [tzname]

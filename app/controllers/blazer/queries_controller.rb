@@ -447,8 +447,6 @@ module Blazer
             end
         end
 
-        debugger
-
         num_cols = @cohort_dates.size
         @columns = ["Cohort", "Users"] + num_cols.times.map { |i| "#{@conversion_period.titleize} #{i + 1}" }
         rows = []

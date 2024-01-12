@@ -440,6 +440,8 @@ module Blazer
               current_date - 1
             when "week"
               current_date - 7
+            when "quarter"
+              current_date.prev_month(3)
             else
               current_date.prev_month
             end

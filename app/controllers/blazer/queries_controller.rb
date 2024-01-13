@@ -119,6 +119,7 @@ module Blazer
           @rows = @result.rows
           @error = @result.error
           @just_cached = !@result.error && @result.cached_at.present?
+          @chart_type = @result.chart_type
           @cached_at = nil
           params[:data_source] = nil
           render_run
@@ -158,6 +159,7 @@ module Blazer
           @error = @result.error
           @cached_at = @result.cached_at
           @just_cached = @result.just_cached
+          @chart_type = @result.chart_type
 
           @forecast = @query && @result.forecastable? && params[:forecast]
           if @forecast

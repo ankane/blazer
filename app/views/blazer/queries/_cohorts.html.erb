@@ -1,3 +1,13 @@
+<% if @chart_type %>
+  <% chart_data = @rows.map do |row|
+        {
+          name: row.first, 
+          data: @columns[2..-1].each_with_index.map { |col, i| [col, row[i + 1]] }
+        }
+    end %>
+  <%= line_chart chart_data %>
+<% end %>
+
 <% unless @only_chart %>
   <%= render partial: "caching" %>
   <p class="text-muted" style="margin-bottom: 10px;">

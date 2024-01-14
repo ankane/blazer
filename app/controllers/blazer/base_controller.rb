@@ -59,7 +59,7 @@ module Blazer
 
     def add_cohort_analysis_vars
       @bind_vars << "cohort_period" unless @bind_vars.include?("cohort_period")
-      @smart_vars["cohort_period"] = ["day", "week", "month"] if @smart_vars
+      @smart_vars["cohort_period"] = ["day", "week", "month", "quarter"] if @smart_vars
       # TODO create var_params method
       request.query_parameters["cohort_period"] ||= "week"
     end
@@ -87,7 +87,7 @@ module Blazer
 
     def cohort_analysis_statement(statement)
       @cohort_period = params["cohort_period"] || "week"
-      @cohort_period = "week" unless ["day", "week", "month"].include?(@cohort_period)
+      @cohort_period = "week" unless ["day", "week", "month", "quarter"].include?(@cohort_period)
 
       # for now
       @conversion_period = @cohort_period
@@ -99,6 +99,8 @@ module Blazer
           7
         when "month"
           30
+        when "quarter"
+          90
         end
 
       statement.apply_cohort_analysis(period: @cohort_period, days: @cohort_days)

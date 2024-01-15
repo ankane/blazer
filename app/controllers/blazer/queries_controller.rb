@@ -424,44 +424,23 @@ module Blazer
         end
       else
         @today = Blazer.time_zone.today
-        @min_cohort_date, @max_cohort_date = @result.rows.map { |r| r[0] }.minmax
-        @buckets = {}
-        @rows.each do |r|
-          @buckets[[r[0], r[1]]] = r[2]
-        end
-
-        @cohort_dates = []
-        current_date = @max_cohort_date
-        while current_date && current_date >= @min_cohort_date
-          @cohort_dates << current_date
-          current_date =
-            case @cohort_period
-            when "day"
-              current_date - 1
-            when "week"
-              current_date - 7
-            when "quarter"
-              current_date.prev_month(3)
-            else
-              current_date.prev_month
-            end
-        end
-
+        @cohort_dates = @rows.map { |row| row[0] }.uniq.sort
         num_cols = @cohort_dates.size
         @columns = ["Cohort", "Users"] + num_cols.times.map { |i| "#{@conversion_period.titleize} #{i + 1}" }
         rows = []
         date_format = @cohort_period == "month" ? "%b %Y" : "%b %-e, %Y"
+        
         @cohort_dates.each do |date|
-          row = [date.strftime(date_format), @buckets[[date, 0]] || 0]
+          filtered_rows = @rows.select { |row| row[0] == date }
+          row = [date.strftime(date_format), filtered_rows[0][2] || 0]
 
           num_cols.times do |i|
-            if @today >= date + (@cohort_days * i)
-              row << (@buckets[[date, i + 1]] || 0)
-            end
+            row << (filtered_rows[i] ? filtered_rows[i][2] : 0)
           end
 
           rows << row
         end
+
         @rows = rows
       end
     end

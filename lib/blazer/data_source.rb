@@ -132,7 +132,7 @@ module Blazer
         begin
           result_cache.write_run(run_id, result)
         rescue
-          result = Blazer::Result.new(self, [], [], "Error storing the results of this query :(", nil, false)
+          result = Blazer::Result.new(self, [], [], "Error storing the results of this query :(", nil, false, statement)
           result_cache.write_run(run_id, result)
         end
       end
@@ -236,7 +236,7 @@ module Blazer
 
       cache = !error && (cache_mode == "all" || (cache_mode == "slow" && duration >= cache_slow_threshold))
 
-      result = Blazer::Result.new(self, columns, rows, error, cache ? Time.now : nil, false)
+      result = Blazer::Result.new(self, columns, rows, error, cache ? Time.now : nil, false, statement)
 
       if cache && adapter_instance.cachable?(statement.bind_statement)
         begin

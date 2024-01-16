@@ -1,15 +1,16 @@
 module Blazer
   class Result
-    attr_reader :data_source, :columns, :rows, :error, :forecast_error
-    attr_accessor :cached_at, :just_cached
+    attr_reader :data_source, :columns, :rows, :error, :forecast_error, :statement
+    attr_accessor :cached_at, :just_cached, :statement
 
-    def initialize(data_source, columns, rows, error, cached_at, just_cached)
+    def initialize(data_source, columns, rows, error, cached_at, just_cached, statement = nil)
       @data_source = data_source
       @columns = columns
       @rows = rows
       @error = error
       @cached_at = cached_at
       @just_cached = just_cached
+      @statement = statement
     end
 
     def timed_out?
@@ -70,8 +71,10 @@ module Blazer
       @chart_type ||= begin
         if column_types.compact.size >= 2 && column_types.compact == ["time"] + (column_types.compact.size - 1).times.map { "numeric" }
           "line"
-        elsif @cohort_analysis
+        elsif statement&.cohort_analysis_left_aligned?
           "line"
+        elsif statement&.cohort_analysis_right_aligned?
+          "bar"
         elsif column_types == ["time", "string", "numeric"]
           "line2"
         elsif column_types == ["string", "numeric"] && @columns.last == "pie"

@@ -35,5 +35,51 @@ module Blazer
     def blazer_series_name(k)
       k.nil? ? "null" : k.to_s
     end
+
+    def cohort_line_chart_data
+      @rows.map do |row|
+        {
+          name: row.first, 
+          data: @columns[2..-1].each_with_index.map { |col, i| [col, row[i + 1]] }
+        }
+      end
+    end
+
+    def cohort_stacked_column_chart_data
+      stacked_data = {}
+      new_volumes = []
+      existing_volumes = []
+
+      @columns.each do |column|
+        stacked_data[column] = {"New" => 0, "Existing" => 0}
+      end
+
+      @rows.each do |row|
+        new_volume_added = false
+
+        row[2..-1].each_with_index do |value, index|
+          period = @columns[index]
+
+          if value > 0
+            if !new_volume_added
+              stacked_data[period]["New"] += value
+              new_volume_added = true
+            else
+              stacked_data[period]["Existing"] += value
+            end
+          end
+        end
+      end
+
+      stacked_data.each do |period, volumes|
+        new_volumes << [period, volumes["New"]] if volumes["New"] > 0
+        existing_volumes << [period, volumes["Existing"]] if volumes["Existing"] > 0
+      end
+
+      column_chart_data = [
+        {name: "Existing", data: existing_volumes},
+        {name: "New", data: new_volumes}
+      ]
+    end
   end
 end

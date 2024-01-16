@@ -145,7 +145,7 @@ module Blazer
         tzname = Blazer.time_zone.tzinfo.name
 
         if mysql?
-          time_sql = "CONVERT_TZ(cohorts.cohort_time, '+00:00', ?)"
+          time_sql = "CONVERT_TZ(#{cohort_column}, '+00:00', ?)"
           case period
           when "day"
             date_sql = "CAST(DATE_FORMAT(#{time_sql}, '%Y-%m-%d') AS DATE)"
@@ -160,53 +160,24 @@ module Blazer
             date_sql = "CAST(DATE_FORMAT(#{time_sql}, '%Y-%m-01') AS DATE)"
             date_params = [tzname]
           end
-          bucket_sql = "CAST(CEIL(TIMESTAMPDIFF(SECOND, cohorts.cohort_time, query.conversion_time) / ?) AS SIGNED)"
         else
-          date_sql = "date_trunc(?, cohorts.cohort_time::timestamptz AT TIME ZONE ?)::date"
+          date_sql = "DATE_TRUNC(?, #{cohort_column}::timestamptz AT TIME ZONE ?)::date"
           date_params = [period, tzname]
-          bucket_sql = "CEIL(EXTRACT(EPOCH FROM query.conversion_time - cohorts.cohort_time) / ?)::int"
         end
-
-        # WITH not an optimization fence in Postgres 12+
-        # statement = <<~SQL
-        #   WITH query AS (
-        #     {placeholder}
-        #   ),
-        #   cohorts AS (
-        #     SELECT user_id, MIN(#{cohort_column}) AS cohort_time FROM query
-        #     WHERE user_id IS NOT NULL AND #{cohort_column} IS NOT NULL
-        #     GROUP BY 1
-        #   )
-        #   SELECT
-        #     #{date_sql} AS period,
-        #     0 AS bucket,
-        #     COUNT(DISTINCT cohorts.user_id)
-        #   FROM cohorts GROUP BY 1
-        #   UNION ALL
-        #   SELECT
-        #     #{date_sql} AS period,
-        #     #{bucket_sql} AS bucket,
-        #     COUNT(DISTINCT query.user_id)
-        #   FROM cohorts INNER JOIN query ON query.user_id = cohorts.user_id
-        #   WHERE query.conversion_time IS NOT NULL
-        #   AND query.conversion_time >= cohorts.cohort_time
-        #   #{cohort_column == "conversion_time" ? "AND query.conversion_time != cohorts.cohort_time" : ""}
-        #   GROUP BY 1, 2
-        # SQL
 
         statement = <<~SQL
           WITH query AS (
             {placeholder}
           ),
           min_user_date AS (
-            SELECT user_id, DATE_TRUNC('month', MIN(#{cohort_column})) AS cohort_date 
+            SELECT user_id, MIN(#{date_sql}) AS cohort_date 
             FROM query
             WHERE user_id IS NOT NULL 
               AND #{cohort_column} IS NOT NULL
             GROUP BY 1
           ),
           user_detail AS (
-            SELECT DATE_TRUNC('month', #{cohort_column}) AS conversion_date,
+            SELECT #{date_sql} AS conversion_date,
               user_id
             FROM query
             ORDER BY 2, 1
@@ -219,7 +190,7 @@ module Blazer
           GROUP BY 1, 2
           ORDER BY 1, 2
         SQL
-        params = [statement] + date_params + date_params + [days.to_i * 86400]
+        params = [statement] + date_params + date_params
         connection_model.send(:sanitize_sql_array, params)
       end
 

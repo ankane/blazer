@@ -150,6 +150,7 @@ module Blazer
           @result = Blazer::RunStatement.new.perform(@statement, options)
         end
 
+
         if @result
           @data_source.delete_results(@run_id) if @run_id && async
 

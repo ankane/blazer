@@ -1,55 +1,8 @@
 <% if @chart_type %>
-  <% if @chart_type == 'line' %>
-    <% chart_data = @rows.map do |row|
-      {
-        name: row.first, 
-        data: @columns[2..-1].each_with_index.map { |col, i| [col, row[i + 1]] }
-      }
-    end %>
-    <%= line_chart chart_data %>
-  <% elsif @chart_type == 'bar'
-      stacked_data = {}
-
-      # Initialize data for new and existing volumes
-      new_volumes = []
-      existing_volumes = []
-
-      @columns.each do |column|
-        stacked_data[column] = {"New" => 0, "Existing" => 0}
-      end
-
-      @rows.each do |row|
-        new_volume_added = false
-
-        row[2..-1].each_with_index do |value, index|
-          period = @columns[index]
-
-          if value > 0
-            if !new_volume_added
-              # This is the 'new' volume
-              stacked_data[period]["New"] += value
-              new_volume_added = true
-            else
-              # This is part of the 'existing' volume
-              stacked_data[period]["Existing"] += value
-            end
-          end
-        end
-      end
-
-      # Prepare data for the column chart in the specified format
-      stacked_data.each do |period, volumes|
-        new_volumes << [period, volumes["New"]] if volumes["New"] > 0
-        existing_volumes << [period, volumes["Existing"]] if volumes["Existing"] > 0
-      end
-
-      column_chart_data = [
-        {name: "Existing", data: existing_volumes},
-        {name: "New", data: new_volumes}
-      ]
-
-    %>
-    <%= column_chart column_chart_data, stacked: true %>
+  <% if @chart_type == 'line'%>
+    <%= line_chart cohort_line_chart_data %>
+  <% elsif @chart_type == 'bar'%>
+    <%= column_chart cohort_stacked_column_chart_data, stacked: true %>
   <% end %>
 <% end %>
 

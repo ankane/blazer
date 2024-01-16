@@ -38,9 +38,6 @@
   <% if @forecast_error %>
     <div class="alert alert-danger"><%= @forecast_error %></div>
   <% end %>
-  <% if @cohort_error %>
-    <div class="alert alert-info"><%= @cohort_error %></div>
-  <% end %>
   <% if @rows.any? %>
     <% values = @rows.first %>
     <% chart_id = SecureRandom.hex %>

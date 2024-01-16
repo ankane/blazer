@@ -437,7 +437,8 @@ module Blazer
 
         @cohort_dates.each do |date|
           filtered_rows = @rows.select { |row| row[0] == date }
-          row = [date.strftime(date_format), filtered_rows[0][2] || 0] + (@cohort_dates.size - filtered_rows.size).times.map { 0 }
+          row = [date.strftime(date_format), filtered_rows[0][2] || 0]
+          row += (@cohort_dates.size - filtered_rows.size).times.map { 0 } if @statement.cohort_analysis_right_aligned?
 
           filtered_rows.size.times do |i|
             row << (filtered_rows[i] ? filtered_rows[i][2] : 0)

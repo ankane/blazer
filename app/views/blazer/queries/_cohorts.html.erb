@@ -17,22 +17,26 @@
       </thead>
       <tbody>
         <% @rows.each do |row| %>
+          <% denom = row[1] %>
           <tr>
             <td>
               <%= row[0] %>
-              <div style="font-size: 12px; color: #999;"><%= row[1] == 1 ? "1 user" : "#{number_with_delimiter(row[1])} users" %></div>
+              <div style="font-size: 12px; color: #999;"><%= denom == 1 ? "1 user" : "#{number_with_delimiter(denom)} users" %></div>
             </td>
             <% @cohort_period_cols.times do |i| %>
               <td style="text-align: right;">
                 <% num = row[i + 2] %>
                 <% if num && !num.zero? %>
-                  <% denom = row[1] %>
-                  <% if denom > 0 %>
-                    <%= (100.0 * num / denom).round %>%
+                  <% if @statement.cohort_analysis_right_aligned? %>
+                    <% primary = number_with_delimiter(num) %>
+                    <% secondary = denom > 0 ? "#{(100.0 * num / denom).round}%" : "-" %>
                   <% else %>
-                    -
+                    <% primary = denom > 0 ? "#{(100.0 * num / denom).round}%" : "-" %>
+                    <% secondary = number_with_delimiter(num) %>
                   <% end %>
-                  <div style="font-size: 12px; color: #999;"><%= number_with_delimiter(num) %></div>
+                  
+                  <%= primary %>
+                  <div style="font-size: 12px; color: #999;"><%= secondary %></div>
                 <% else %>
                   -
                 <% end %>

@@ -426,44 +426,29 @@ module Blazer
         end
       else
         @today = Blazer.time_zone.today
-        @min_cohort_date, @max_cohort_date = @result.rows.map { |r| r[0] }.minmax
-        @buckets = {}
-        @rows.each do |r|
-          @buckets[[r[0], r[1]]] = r[2]
-        end
-
-        @cohort_dates = []
-        current_date = @max_cohort_date
-        while current_date && current_date >= @min_cohort_date
-          @cohort_dates << current_date
-          current_date =
-            case @cohort_period
-            when "day"
-              current_date - 1
-            when "week"
-              current_date - 7
-            when "quarter"
-              current_date.prev_month(3)
-            else
-              current_date.prev_month
-            end
-        end
-
-        num_cols = @cohort_dates.size
-        @columns = ["Cohort", "Users"] + num_cols.times.map { |i| "#{@conversion_period.titleize} #{i + 1}" }
-        rows = []
+        @cohort_dates = @rows.map { |row| row[0] }.uniq.sort
+        @cohort_period_cols = @cohort_dates.size
         date_format = @cohort_period == "month" ? "%b %Y" : "%b %-e, %Y"
-        @cohort_dates.each do |date|
-          row = [date.strftime(date_format), @buckets[[date, 0]] || 0]
+        rows = []
 
-          num_cols.times do |i|
-            if @today >= date + (@cohort_days * i)
-              row << (@buckets[[date, i + 1]] || 0)
-            end
+        if @statement.cohort_analysis_right_aligned?
+          @columns = @cohort_dates.map { |date| date.strftime(date_format) }
+        else
+          @columns = @cohort_period_cols.times.map { |i| "#{@conversion_period.titleize} #{i + 1}" }
+        end
+
+        @cohort_dates.each do |date|
+          filtered_rows = @rows.select { |row| row[0] == date }
+          row = [date.strftime(date_format), filtered_rows[0][2] || 0]
+          row += (@cohort_dates.size - filtered_rows.size).times.map { 0 } if @statement.cohort_analysis_right_aligned?
+
+          filtered_rows.size.times do |i|
+            row << (filtered_rows[i] ? filtered_rows[i][2] : 0)
           end
 
           rows << row
         end
+
         @rows = rows
       end
     end

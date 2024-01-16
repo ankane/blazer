@@ -1,4 +1,4 @@
-## 3.0.3 (unreleased)
+## 3.0.3 (2024-01-10)
 
 - Fixed error with Trilogy, non-ASCII column names, and charts
 

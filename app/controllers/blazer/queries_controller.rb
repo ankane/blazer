@@ -425,16 +425,21 @@ module Blazer
       else
         @today = Blazer.time_zone.today
         @cohort_dates = @rows.map { |row| row[0] }.uniq.sort
-        num_cols = @cohort_dates.size
-        @columns = ["Cohort", "Users"] + num_cols.times.map { |i| "#{@conversion_period.titleize} #{i + 1}" }
-        rows = []
+        @cohort_period_cols = @cohort_dates.size
         date_format = @cohort_period == "month" ? "%b %Y" : "%b %-e, %Y"
-        
+        rows = []
+
+        if @statement.cohort_analysis_right_aligned?
+          @columns = @cohort_dates.map { |date| date.strftime(date_format) }
+        else
+          @columns = @cohort_period_cols.times.map { |i| "#{@conversion_period.titleize} #{i + 1}" }
+        end
+
         @cohort_dates.each do |date|
           filtered_rows = @rows.select { |row| row[0] == date }
-          row = [date.strftime(date_format), filtered_rows[0][2] || 0]
+          row = [date.strftime(date_format), filtered_rows[0][2] || 0] + (@cohort_dates.size - filtered_rows.size).times.map { 0 }
 
-          num_cols.times do |i|
+          filtered_rows.size.times do |i|
             row << (filtered_rows[i] ? filtered_rows[i][2] : 0)
           end
 

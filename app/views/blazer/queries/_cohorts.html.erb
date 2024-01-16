@@ -5,14 +5,13 @@
   </p>
 <% end %>
 <% if @rows.any? %>
-  <% cohort_period_cols = @rows.map(&:length).max - 2 %>
   <div class="results-container">
     <table class="table results-table">
       <thead>
         <tr>
           <th style="min-width: 100px;">Cohort</th>
-          <% cohort_period_cols.times do |i| %>
-            <th style="width: 7.5%; text-align: right;"><%= @conversion_period.titleize %> <%= i + 1 %></th>
+          <% @columns.each do |column| %>
+            <th style="width: 10%; text-align: right;"><%= column %></th>
           <% end %>
         </tr>
       </thead>
@@ -23,7 +22,7 @@
               <%= row[0] %>
               <div style="font-size: 12px; color: #999;"><%= row[1] == 1 ? "1 user" : "#{number_with_delimiter(row[1])} users" %></div>
             </td>
-            <% cohort_period_cols.times do |i| %>
+            <% @cohort_period_cols.times do |i| %>
               <td style="text-align: right;">
                 <% num = row[i + 2] %>
                 <% if num && !num.zero? %>

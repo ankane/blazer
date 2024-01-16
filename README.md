@@ -409,7 +409,19 @@ SELECT users.id AS user_id, orders.created_at AS conversion_time, users.created_
 FROM users LEFT JOIN orders ON orders.user_id = users.id
 ```
 
-This feature requires PostgreSQL or MySQL 8.
+You can also right align the cohort and display values instead of percentages. Just add "right align" to the comment, like this:
+
+```sql
+/* cohort analysis right align */
+SELECT user_id, created_at AS conversion_time FROM orders
+```
+
+When you right align a cohort:
+- The dates appear as column names (instead of Week 1, Week 2, ...)
+- The triangle is right aligned instead of left aligned (values push to the right)
+- Values are displayed and percentages are secondary (instead of the opposite)
+
+Cohort analysis requires PostgreSQL or MySQL 8.
 
 ## Anomaly Detection
 

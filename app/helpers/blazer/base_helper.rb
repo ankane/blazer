@@ -36,6 +36,23 @@ module Blazer
       k.nil? ? "null" : k.to_s
     end
 
+    def primary_secondary_values(row, index)
+      return unless row.is_a?(Array) && row.size >= 2
+
+      enom = row[index + 2]
+      denom = row[1]
+
+      if @statement.cohort_analysis_right_aligned?
+        primary = number_with_delimiter(enom)
+        secondary = denom > 0 ? "#{(100.0 * enom / denom).round}%" : "-"
+      else
+        primary = denom > 0 ? "#{(100.0 * enom / denom).round}%" : "-"
+        secondary = number_with_delimiter(enom)
+      end
+
+      return primary, secondary, enom, denom
+    end
+
     def cohort_line_chart_data
       @rows.map do |row|
         {

@@ -1,5 +1,5 @@
 <% if @chart_type %>
-  <% chart_options = {id: SecureRandom.hex} %>
+  <% chart_options = {id: SecureRandom.hex, library: {tooltips: {intersect: false}}} %>
   <% if @chart_type == 'line'%>
     <%= line_chart cohort_line_chart_data, **chart_options %>
   <% elsif @chart_type == 'bar'%>

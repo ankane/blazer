@@ -1,5 +1,5 @@
 <% if @chart_type %>
-  <% chart_options = {id: SecureRandom.hex} %>
+  <% chart_options = {id: SecureRandom.hex, library: {tooltips: {intersect: false}}} %>
   <% if @chart_type == 'line'%>
     <%= line_chart cohort_line_chart_data, **chart_options %>
   <% elsif @chart_type == 'bar'%>
@@ -26,24 +26,15 @@
         </thead>
         <tbody>
           <% @rows.each do |row| %>
-            <% denom = row[1] %>
             <tr>
               <td>
                 <%= row[0] %>
-                <div style="font-size: 12px; color: #999;"><%= denom == 1 ? "1 user" : "#{number_with_delimiter(denom)} users" %></div>
+                <div style="font-size: 12px; color: #999;"><%= row[1] == 1 ? "1 user" : "#{number_with_delimiter(row[1])} users" %></div>
               </td>
-              <% @cohort_period_cols.times do |i| %>
+              <% @cohort_period_cols.times do |index| %>
+                <% primary, secondary, enom, denom = primary_secondary_values(row, index) %>
                 <td style="text-align: right;">
-                  <% num = row[i + 2] %>
-                  <% if num && !num.zero? %>
-                    <% if @statement.cohort_analysis_right_aligned? %>
-                      <% primary = number_with_delimiter(num) %>
-                      <% secondary = denom > 0 ? "#{(100.0 * num / denom).round}%" : "-" %>
-                    <% else %>
-                      <% primary = denom > 0 ? "#{(100.0 * num / denom).round}%" : "-" %>
-                      <% secondary = number_with_delimiter(num) %>
-                    <% end %>
-                    
+                  <% if enom && !enom.zero? %>
                     <%= primary %>
                     <div style="font-size: 12px; color: #999;"><%= secondary %></div>
                   <% else %>

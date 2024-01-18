@@ -427,7 +427,7 @@ module Blazer
         end
       else
         @today = Blazer.time_zone.today
-        @cohort_dates = @rows.map { |row| row[0] }.uniq.sort
+        @cohort_dates = @rows.map { |row| [row[0], row[1]] }.flatten.uniq.sort # include cohort dates from both period and conversion
         @cohort_period_cols = @cohort_dates.size
         date_format = @cohort_period == "month" ? "%b %Y" : "%b %-e, %Y"
         rows = []
@@ -440,12 +440,15 @@ module Blazer
 
         @cohort_dates.each do |date|
           filtered_rows = @rows.select { |row| row[0] == date }
+          next unless filtered_rows.any?
+
           row = [date.strftime(date_format), filtered_rows[0][2] || 0]
           row += (@cohort_dates.size - filtered_rows.size).times.map { 0 } if @statement.cohort_analysis_right_aligned?
 
           filtered_rows.size.times do |i|
             row << (filtered_rows[i] ? filtered_rows[i][2] : 0)
           end
+          row.push(*Array.new(@cohort_dates.size - filtered_rows.size, 0)) # pad with 0s
 
           rows << row
         end

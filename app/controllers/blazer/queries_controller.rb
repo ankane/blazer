@@ -448,7 +448,6 @@ module Blazer
           filtered_rows.size.times do |i|
             row << (filtered_rows[i] ? filtered_rows[i][2] : 0)
           end
-          row.push(*Array.new(@cohort_dates.size - filtered_rows.size, 0)) # pad with 0s
 
           rows << row
         end

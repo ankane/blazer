@@ -39,8 +39,9 @@ module Blazer
     def primary_secondary_values(row, index)
       return unless row.is_a?(Array) && row.size >= 2
 
-      enom = row[index + 2]
+      enom = row[index + 2] || 0
       denom = row[1]
+
 
       if @statement.cohort_analysis_right_aligned?
         primary = number_with_delimiter(enom)
@@ -59,9 +60,12 @@ module Blazer
 
         {
           name: row[0], 
-          data: @columns[0..-1].each_with_index.to_h { |col, index| [col + ":", ((row[index + 2] * 100.0) / denom).round(1)] }
+          data: @columns[0..-1].each_with_index.map { |col, index| 
+            [col + ":", ((row[index + 2] * 100.0) / denom).round(1)] if row[index + 2]&.present?
+          }.compact
         }
       end
+
       return_me
     end
 

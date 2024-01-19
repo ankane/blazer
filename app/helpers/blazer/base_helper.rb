@@ -42,11 +42,10 @@ module Blazer
       enom = row[index + 2] || 0
       denom = row[1]
 
-
-      if @statement.cohort_analysis_right_aligned?
+      if @cohort_shape == "right aligned" # @statement.cohort_analysis_right_aligned?
         primary = number_with_delimiter(enom)
         secondary = denom > 0 ? "#{(100.0 * enom / denom).round}%" : "-"
-      else
+      elsif @cohort_shape == "left aligned" # @statement.cohort_analysis_left_aligned?
         primary = denom > 0 ? "#{(100.0 * enom / denom).round}%" : "-"
         secondary = number_with_delimiter(enom)
       end

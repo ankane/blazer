@@ -409,12 +409,7 @@ SELECT users.id AS user_id, orders.created_at AS conversion_time, users.created_
 FROM users LEFT JOIN orders ON orders.user_id = users.id
 ```
 
-You can also right align the cohort and display values instead of percentages. Just add "right align" to the comment, like this:
-
-```sql
-/* cohort analysis right align */
-SELECT user_id, created_at AS conversion_time FROM orders
-```
+You can also right align the cohort and display values instead of percentages. Choose "right aligned" from the smart variables select box at the top of a cohort page.
 
 When you right align a cohort:
 - The dates appear as column names (instead of Week 1, Week 2, ...)

@@ -68,12 +68,14 @@ module Blazer
     end
 
     def chart_type
+      debugger
+      
       @chart_type ||= begin
         if column_types.compact.size >= 2 && column_types.compact == ["time"] + (column_types.compact.size - 1).times.map { "numeric" }
           "line"
-        elsif statement&.cohort_analysis_left_aligned?
+        elsif @cohort_shape && @cohort_shape == "left aligned" # statement&.cohort_analysis_left_aligned?
           "line"
-        elsif statement&.cohort_analysis_right_aligned?
+        elsif @cohort_shape && @cohort_shape = "right aligned" # statement&.cohort_analysis_right_aligned?
           "bar"
         elsif column_types == ["time", "string", "numeric"]
           "line2"

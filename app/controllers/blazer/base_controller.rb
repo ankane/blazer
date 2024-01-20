@@ -63,7 +63,7 @@ module Blazer
 
       @bind_vars << "cohort_shape" unless @bind_vars.include?("cohort_shape")
       @smart_vars["cohort_shape"] = ['left aligned', 'right aligned'] if @smart_vars
-      
+
       # TODO create var_params method
       request.query_parameters["cohort_period"] ||= "quarter"
       request.query_parameters["cohort_shape"] ||= "right aligned"
@@ -111,7 +111,7 @@ module Blazer
       @cohort_shape = params["cohort_shape"] || "right aligned"
       @cohort_shape = "right aligned" unless ['left aligned', 'right aligned'].include?(@cohort_shape)
 
-      statement.apply_cohort_analysis(period: @cohort_period, days: @cohort_days)
+      statement.apply_cohort_analysis(period: @cohort_period, days: @cohort_days, cohort_shape: @cohort_shape)
     end
 
     def variable_params(resource, var_params = nil)

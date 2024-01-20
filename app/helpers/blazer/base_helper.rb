@@ -42,10 +42,10 @@ module Blazer
       enom = row[index + 2] || 0
       denom = row[1]
 
-      if @cohort_shape == "right aligned" # @statement.cohort_analysis_right_aligned?
+      if @cohort_shape == "right aligned"
         primary = number_with_delimiter(enom)
         secondary = denom > 0 ? "#{(100.0 * enom / denom).round}%" : "-"
-      elsif @cohort_shape == "left aligned" # @statement.cohort_analysis_left_aligned?
+      elsif @cohort_shape == "left aligned"
         primary = denom > 0 ? "#{(100.0 * enom / denom).round}%" : "-"
         secondary = number_with_delimiter(enom)
       end
@@ -95,11 +95,11 @@ module Blazer
       end
 
       stacked_data.each do |period, volumes|
-        new_volumes << [period, volumes["New"]] if volumes["New"] > 0
-        existing_volumes << [period, volumes["Existing"]] if volumes["Existing"] > 0
+        new_volumes << [period, volumes["New"]]
+        existing_volumes << [period, volumes["Existing"]]
       end
 
-      column_chart_data = [
+      [
         {name: "Existing", data: existing_volumes},
         {name: "New", data: new_volumes}
       ]

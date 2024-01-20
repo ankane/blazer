@@ -78,6 +78,7 @@ module Blazer
         @run_data = {statement: @query.statement, query_id: @query.id, data_source: @query.data_source, variables: variable_params(@query)}
         @run_data[:forecast] = "t" if params[:forecast]
         @run_data[:cohort_period] = params[:cohort_period] if params[:cohort_period]
+        @run_data[:cohort_shape] = params[:cohort_shape] if params[:cohort_shape]
       end
     end
 
@@ -430,7 +431,6 @@ module Blazer
         @cohort_dates = @rows.map { |row| [row[0], row[1]] }.flatten.uniq.sort # include cohort dates from both period and conversion
         @cohort_period_cols = @cohort_dates.size
         date_format = @cohort_period == "month" ? "%b %Y" : "%b %-e, %Y"
-        debugger
         @columns = cohort_columns_by_shape(date_format)
         rows = []
 
@@ -439,7 +439,7 @@ module Blazer
           next unless filtered_rows.any?
 
           row = [date.strftime(date_format), filtered_rows[0][2] || 0]
-          row += (@cohort_dates.size - filtered_rows.size).times.map { 0 } if @cohort_shape == "right aligned" # @statement.cohort_analysis_right_aligned?
+          row += (@cohort_dates.size - filtered_rows.size).times.map { 0 } if @cohort_shape == "right aligned"
 
           filtered_rows.size.times do |i|
             row << (filtered_rows[i] ? filtered_rows[i][2] : 0)
@@ -455,7 +455,7 @@ module Blazer
     def cohort_columns_by_shape(date_format)
       return unless @cohort_shape
       
-      if @cohort_shape == "right aligned" # @statement.cohort_analysis_right_aligned?
+      if @cohort_shape == "right aligned"
         @cohort_dates.map { |date| date.strftime(date_format) }
       elsif @cohort_shape == "left aligned"
         @cohort_period_cols.times.map { |i| "#{@conversion_period.titleize} #{i + 1}" }

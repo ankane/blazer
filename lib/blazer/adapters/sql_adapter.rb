@@ -36,6 +36,11 @@ module Blazer
           # fix for non-ASCII column names and charts
           if adapter_name == "Trilogy"
             columns.map! { |k| k.dup.force_encoding(Encoding::UTF_8) }
+            rows.each do |row|
+              row.each do |column|
+                column.force_encoding(Encoding::UTF_8) if column.is_a?(String)
+              end
+            end
           end
         rescue => e
           error = e.message.sub(/.+ERROR: /, "")

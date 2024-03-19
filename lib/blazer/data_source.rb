@@ -200,7 +200,7 @@ module Blazer
     end
 
     def sql_establish_connection_param
-      settings["sql_establish_connection_param"] || settings["url"]
+      settings["sql_establish_connection_param"]&.to_sym || settings["url"]
     end
 
     protected

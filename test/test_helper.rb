@@ -14,6 +14,11 @@ Combustion.initialize! :active_record, :action_controller, :action_mailer, :acti
   config.active_job.logger = logger
   config.active_record.logger = logger
   config.cache_store = :memory_store
+
+  # fixes warning with adapter tests
+  if Rails::VERSION::STRING.to_f >= 7.1
+    config.action_dispatch.show_exceptions = :none
+  end
 end
 
 Rails.cache.logger = logger

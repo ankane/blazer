@@ -30,6 +30,8 @@ module Blazer
 
           columns = result.columns
           rows = result.rows
+
+          # cast values
           if result.column_types.any?
             types = columns.map { |c| result.column_types[c] }
             rows =

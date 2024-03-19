@@ -213,7 +213,7 @@ SELECT * FROM users WHERE occupation_id = {occupation_id}
 
 Instead of remembering each occupation’s id, users can select occupations by name.
 
-Add a smart variable with:
+Add a smart variable in blazer.yml with:
 
 ```yml
 smart_variables:

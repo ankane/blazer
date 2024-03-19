@@ -29,8 +29,15 @@ module Blazer
           end
 
           columns = result.columns
-          result.rows.each do |untyped_row|
-            rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
+          rows = result.rows
+          if result.column_types.any?
+            types = columns.map { |c| result.column_types[c] }
+            rows =
+              rows.map do |row|
+                row.map.with_index do |v, i|
+                  v && (t = types[i]) ? t.send(:cast_value, v) : v
+                end
+              end
           end
 
           # fix for non-ASCII column names and charts

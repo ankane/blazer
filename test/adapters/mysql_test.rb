@@ -92,6 +92,10 @@ class MysqlTest < ActionDispatch::IntegrationTest
     run_statement "SELECT UNHEX('F6'), 1", format: "html"
   end
 
+  def test_binary_output
+    assert_result [{"hello" => "0xF6"}], "SELECT UNHEX('F6') AS hello"
+  end
+
   private
 
   def prepared_statements?

@@ -50,6 +50,11 @@
     function showRun(data) {
       $("#results").html(data)
       $("#results table").stupidtable(stupidtableCustomSettings).stickyTableHeaders({fixedOffset: 60})
+      document.querySelectorAll("#results .hljs").forEach((item)=>{
+        if(item.textContent.length < 5000) {
+          hljs.highlightBlock(item)
+        }
+      });
     }
 
     function showError(message) {

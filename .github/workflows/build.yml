@@ -27,4 +27,5 @@ jobs:
         with:
           database: blazer_test
       - run: bundle exec rake test
+
       - run: bundle exec rake test:postgresql

@@ -199,6 +199,10 @@ module Blazer
       end
     end
 
+    def sql_establish_connection_param
+      settings["sql_establish_connection_param"] || settings["url"]
+    end
+
     protected
 
     def adapter_instance

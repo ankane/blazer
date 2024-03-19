@@ -11,7 +11,7 @@ module Blazer
             def self.name
               "Blazer::Connection::Adapter#{object_id}"
             end
-            establish_connection(data_source.settings["url"]) if data_source.settings["url"]
+            establish_connection(data_source.sql_establish_connection_param) if data_source.sql_establish_connection_param
           end
       end
 

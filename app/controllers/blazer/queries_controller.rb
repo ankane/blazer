@@ -271,9 +271,15 @@ module Blazer
           # not ideal, but useful for testing
           raise Error, @error if @error && Rails.env.test?
 
-          data = csv_data(@columns, @rows, @data_source)
           filename = "#{@query.try(:name).try(:parameterize).presence || 'query'}.csv"
-          send_data data, type: "text/csv; charset=utf-8", disposition: "attachment", filename: filename
+          response.headers['Content-Disposition'] = "attachment; filename=\"#{filename}\""
+          response.headers['Content-Type'] = 'text/event-stream'
+
+          response.stream.write(CSV.generate_line(@columns))
+          @rows.each do |row|
+            response.stream.write(CSV.generate_line(row))
+          end
+          response.stream.close
         end
       end
     end
@@ -367,15 +373,6 @@ module Blazer
 
     def blazer_params
       params[:blazer] || {}
-    end
-
-    def csv_data(columns, rows, data_source)
-      CSV.generate do |csv|
-        csv << columns
-        rows.each do |row|
-          csv << row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(data_source, columns[i], v) : v }
-        end
-      end
     end
 
     def blazer_time_value(data_source, k, v)

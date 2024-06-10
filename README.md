@@ -1026,51 +1026,6 @@ override_csp: true
 
 Maps now use Mapbox GL JS v1 instead of Mapbox.js, which affects Mapbox billing.
 
-### 2.6
-
-Custom adapters now need to specify how to quote variables in queries (there is no longer a default)
-
-```ruby
-class FooAdapter < Blazer::Adapters::BaseAdapter
-  def quoting
-    :backslash_escape # single quote strings and convert ' to \' and \ to \\
-    # or
-    :single_quote_escape # single quote strings and convert ' to ''
-    # or
-    ->(value) { ... } # custom method
-  end
-end
-```
-
-### 2.3
-
-To archive queries, create a migration
-
-```sh
-rails g migration add_status_to_blazer_queries
-```
-
-with:
-
-```ruby
-add_column :blazer_queries, :status, :string
-Blazer::Query.update_all(status: "active")
-```
-
-### 2.0
-
-To use Slack notifications, create a migration
-
-```sh
-rails g migration add_slack_channels_to_blazer_checks
-```
-
-with:
-
-```ruby
-add_column :blazer_checks, :slack_channels, :text
-```
-
 ## History
 
 View the [changelog](https://github.com/ankane/blazer/blob/master/CHANGELOG.md)

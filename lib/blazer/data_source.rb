@@ -107,7 +107,7 @@ module Blazer
       end
 
       unless result
-        comment = "blazer"
+        comment = "blazer".dup
         if options[:user].respond_to?(:id)
           comment << ",user_id:#{options[:user].id}"
         end

@@ -1,5 +1,7 @@
 module Blazer
   class QueriesController < BaseController
+    include ActionController::Live
+
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
     before_action :set_data_source, only: [:tables, :docs, :schema, :cancel]
 
@@ -271,9 +273,10 @@ module Blazer
           # not ideal, but useful for testing
           raise Error, @error if @error && Rails.env.test?
 
-          data = csv_data(@columns, @rows, @data_source)
           filename = "#{@query.try(:name).try(:parameterize).presence || 'query'}.csv"
-          send_data data, type: "text/csv; charset=utf-8", disposition: "attachment", filename: filename
+          send_stream type: "text/csv; charset=utf-8", disposition: "attachment", filename: filename do |stream|
+            csv_data(stream, @columns, @rows, @data_source)
+          end
         end
       end
     end
@@ -369,12 +372,10 @@ module Blazer
       params[:blazer] || {}
     end
 
-    def csv_data(columns, rows, data_source)
-      CSV.generate do |csv|
-        csv << columns
-        rows.each do |row|
-          csv << row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(data_source, columns[i], v) : v }
-        end
+    def csv_data(stream, columns, rows, data_source)
+      stream.write CSV.generate_line(columns)
+      rows.each do |row|
+        stream.write CSV.generate_line(row.each_with_index.map { |v, i| v.is_a?(Time) ? blazer_time_value(data_source, columns[i], v) : v })
       end
     end
 

@@ -1,3 +1,7 @@
 test:
-  adapter:  postgresql
-  database: blazer_test
+  primary:
+    adapter:  postgresql
+    database: blazer_test
+  primary_replica:
+    adapter:  postgresql
+    database: blazer_test

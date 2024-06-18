@@ -131,7 +131,7 @@ module Blazer
 
           if chart_type == "line"
             columns[1..-1].each_with_index.each do |k, i|
-              series << {name: k, data: rows.map{ |r| [r[0], r[i + 1]] }}
+              series << {name: k, data: rows.map { |r| [r[0], r[i + 1]] }}
             end
           else
             rows.group_by { |r| v = r[1]; (smart_values[columns[1]] || {})[v.to_s] || v }.each_with_index.map do |(name, v), i|

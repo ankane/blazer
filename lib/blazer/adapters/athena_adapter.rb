@@ -33,7 +33,7 @@ module Blazer
             # use token so we fetch cached results after query is run
             client_request_token: request_token,
             query_execution_context: {
-              database: database,
+              database: database
             }
           }
 

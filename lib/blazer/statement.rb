@@ -33,9 +33,9 @@ module Blazer
           end
 
           unless value.is_a?(ActiveSupport::TimeWithZone)
-            if value =~ /\A\d+\z/
+            if value.match?(/\A\d+\z/)
               value = value.to_i
-            elsif value =~ /\A\d+\.\d+\z/
+            elsif value.match?(/\A\d+\.\d+\z/)
               value = value.to_f
             end
           end

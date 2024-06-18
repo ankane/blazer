@@ -150,7 +150,7 @@ module Blazer
       def cohort_analysis_statement(statement, period:, days:)
         raise "Cohort analysis not supported" unless supports_cohort_analysis?
 
-        cohort_column = statement =~ /\bcohort_time\b/ ? "cohort_time" : "conversion_time"
+        cohort_column = statement.match?(/\bcohort_time\b/) ? "cohort_time" : "conversion_time"
         tzname = Blazer.time_zone.tzinfo.name
 
         if mysql?

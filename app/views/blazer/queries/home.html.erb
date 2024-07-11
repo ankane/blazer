@@ -56,7 +56,7 @@
   <p v-if="more" class="text-muted">Loading...</p>
 </div>
 
-<script>
+<%= javascript_tag nonce: true do %>
   <%= blazer_js_var "dashboards", @dashboards %>
   <%= blazer_js_var "queries", @queries %>
   <%= blazer_js_var "more", @more %>
@@ -166,4 +166,4 @@
   })
   app.config.compilerOptions.whitespace = "preserve"
   app.mount("#queries")
-</script>
+<% end %>

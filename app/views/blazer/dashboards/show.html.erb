@@ -38,7 +38,7 @@
       <p class="text-muted">Loading...</p>
     </div>
   </div>
-  <script>
+  <%= javascript_tag nonce: true do %>
     <% data = {statement: query.statement, query_id: query.id, data_source: query.data_source, variables: variable_params(query), only_chart: true} %>
     <% data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
     <%= blazer_js_var "data", data %>
@@ -49,5 +49,5 @@
     }, function (message) {
       $("#chart-<%= i %>").addClass("query-error").html(message)
     });
-  </script>
+  <% end %>
 <% end %>

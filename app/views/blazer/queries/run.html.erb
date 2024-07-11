@@ -75,21 +75,21 @@
     <% if @markers.any? %>
       <% map_id = SecureRandom.hex %>
       <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
-      <script>
+      <%= javascript_tag nonce: true do %>
         <%= blazer_js_var "mapboxAccessToken", Blazer.mapbox_access_token %>
         <%= blazer_js_var "markers", @markers %>
         <%= blazer_js_var "mapId", map_id %>
         new Mapkick.Map(mapId, markers, {accessToken: mapboxAccessToken, tooltips: {hover: false, html: true}});
-      </script>
+      <% end %>
     <% elsif @geojson.any? %>
       <% map_id = SecureRandom.hex %>
       <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
-      <script>
+      <%= javascript_tag nonce: true do %>
         <%= blazer_js_var "mapboxAccessToken", Blazer.mapbox_access_token %>
         <%= blazer_js_var "geojson", @geojson %>
         <%= blazer_js_var "mapId", map_id %>
         new Mapkick.AreaMap(mapId, geojson, {accessToken: mapboxAccessToken, tooltips: {hover: false, html: true}});
-      </script>
+      <% end %>
     <% elsif chart_type == "line" %>
       <% chart_data = @columns[1..-1].each_with_index.map{ |k, i| {name: blazer_series_name(k), data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} } %>
       <%= line_chart chart_data, **chart_options %>

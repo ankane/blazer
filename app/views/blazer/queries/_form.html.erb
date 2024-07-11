@@ -68,7 +68,7 @@
   </div>
 </div>
 
-<script>
+<%= javascript_tag nonce: true do %>
   <%= blazer_js_var "variableParams", @variable_params %>
   <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
@@ -252,4 +252,4 @@
   })
   app.config.compilerOptions.whitespace = "preserve"
   app.mount("#app")
-</script>
+<% end %>

@@ -1,3 +1,7 @@
+## 3.0.4 (unreleased)
+
+- Improved CSP support
+
 ## 3.0.3 (2024-01-10)
 
 - Fixed error with Trilogy, non-ASCII column names, and charts

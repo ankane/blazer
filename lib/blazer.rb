@@ -14,6 +14,7 @@ require_relative "blazer/data_source"
 require_relative "blazer/result"
 require_relative "blazer/result_cache"
 require_relative "blazer/run_statement"
+require_relative "blazer/sharing"
 require_relative "blazer/statement"
 
 # adapters
@@ -131,6 +132,13 @@ module Blazer
         ds[id] = Blazer::DataSource.new(id, s)
       end
       ds
+    end
+  end
+
+  def self.sharing
+    @sharing ||= begin
+      sharing_settings = settings["sharing"] || {}
+      Blazer::Sharing.new(**sharing_settings.symbolize_keys)
     end
   end
 

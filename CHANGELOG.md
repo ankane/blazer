@@ -1,4 +1,4 @@
-## 3.0.4 (unreleased)
+## 3.0.4 (2024-09-04)
 
 - Improved CSP support
 - Fixed error with Trilogy and Rails 7.2

@@ -1,6 +1,7 @@
 ## 3.0.4 (unreleased)
 
 - Improved CSP support
+- Fixed error with Trilogy and Rails 7.2
 
 ## 3.0.3 (2024-01-10)
 

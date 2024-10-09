@@ -1,3 +1,7 @@
+## 3.0.5 (unreleased)
+
+- Fixed error when Propshaft is installed but not used
+
 ## 3.0.4 (2024-09-04)
 
 - Improved CSP support

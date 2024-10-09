@@ -1,6 +1,7 @@
-## 3.0.5 (unreleased)
+## 3.1.0 (unreleased)
 
 - Fixed error when Propshaft is installed but not used
+- Dropped support for Ruby < 3.1 and Rails < 7
 
 ## 3.0.4 (2024-09-04)
 

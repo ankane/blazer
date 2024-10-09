@@ -3,7 +3,7 @@ module Blazer
     isolate_namespace Blazer
 
     initializer "blazer" do |app|
-      if defined?(Sprockets)
+      if app.config.respond_to?(:assets) && defined?(Sprockets)
         if Sprockets::VERSION.to_i >= 4
           app.config.assets.precompile += [
             "blazer/application.js",

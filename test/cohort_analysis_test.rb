@@ -19,4 +19,11 @@ class CohortAnalysisTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match %{selected="selected" value="week"}, response.body
   end
+
+  def test_quarter
+    query = create_query(statement: "SELECT 1 AS user_id, NOW() AS conversion_time /* cohort analysis */")
+    get blazer.query_path(query)
+    assert_response :success
+    assert_match %{value="quarter"}, response.body
+  end
 end

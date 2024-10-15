@@ -30,7 +30,7 @@
   </p>
 <% end %>
 
-<script>
+<%= javascript_tag nonce: true do %>
   <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
   <%= blazer_js_var "dashboardQueries", @queries || @dashboard.dashboard_queries.order(:position).map(&:query) %>
 
@@ -79,4 +79,4 @@
       app.queries.splice(e.newIndex, 0, app.queries.splice(e.oldIndex, 1)[0])
     }
   })
-</script>
+<% end %>

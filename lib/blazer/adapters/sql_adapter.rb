@@ -29,13 +29,22 @@ module Blazer
           end
 
           columns = result.columns
-          result.rows.each do |untyped_row|
-            rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
+          rows = result.rows
+
+          # cast values
+          if result.column_types.any?
+            types = columns.map { |c| result.column_types[c] }
+            rows =
+              rows.map do |row|
+                row.map.with_index do |v, i|
+                  v && (t = types[i]) ? t.send(:cast_value, v) : v
+                end
+              end
           end
 
           # fix for non-ASCII column names and charts
           if adapter_name == "Trilogy"
-            columns.map! { |k| k.dup.force_encoding(Encoding::UTF_8) }
+            columns = columns.map { |k| k.dup.force_encoding(Encoding::UTF_8) }
             rows.each do |row|
               row.each do |column|
                 column.force_encoding(Encoding::UTF_8) if column.is_a?(String)
@@ -146,7 +155,7 @@ module Blazer
       def cohort_analysis_statement(statement, period:, days:)
         raise "Cohort analysis not supported" unless supports_cohort_analysis?
 
-        cohort_column = statement =~ /\bcohort_time\b/ ? "cohort_time" : "conversion_time"
+        cohort_column = statement.match?(/\bcohort_time\b/) ? "cohort_time" : "conversion_time"
         tzname = Blazer.time_zone.tzinfo.name
 
         if mysql?

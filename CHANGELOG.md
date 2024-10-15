@@ -1,3 +1,13 @@
+## 3.1.0 (unreleased)
+
+- Fixed error when Propshaft is installed but not used
+- Dropped support for Ruby < 3.1 and Rails < 7
+
+## 3.0.4 (2024-09-04)
+
+- Improved CSP support
+- Fixed error with Trilogy and Rails 7.2
+
 ## 3.0.3 (2024-01-10)
 
 - Fixed error with Trilogy, non-ASCII column names, and charts

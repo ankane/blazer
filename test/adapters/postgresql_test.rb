@@ -67,4 +67,8 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   def test_quoted
     assert_error "could not determine data type of parameter $1", "SELECT '{var}' AS hello", var: "world"
   end
+
+  def test_binary_output
+    assert_result [{"bytea" => "\\x68656c6c6f"}], "SELECT 'hello'::bytea"
+  end
 end

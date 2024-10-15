@@ -46,7 +46,7 @@
     <p class="text-muted">Loading...</p>
   </div>
 
-  <script>
+  <%= javascript_tag nonce: true do %>
     function showRun(data) {
       $("#results").html(data)
       $("#results table").stupidtable(stupidtableCustomSettings).stickyTableHeaders({fixedOffset: 60})
@@ -59,14 +59,14 @@
     <%= blazer_js_var "data", @run_data %>
 
     runQuery(data, showRun, showError)
-  </script>
+  <% end %>
 <% end %>
 
-<script>
+<%= javascript_tag nonce: true do %>
   // do not highlight really long queries
   // this can lead to performance issues
   var code = $("#code code")
   if (code.text().length < 10000) {
     hljs.highlightElement(code.get(0))
   }
-</script>
+<% end %>

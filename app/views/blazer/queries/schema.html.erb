@@ -28,7 +28,7 @@
   </table>
 <% end %>
 
-<script>
+<%= javascript_tag nonce: true do %>
   $("#search").on("keyup", function() {
     var value = $(this).val().toLowerCase()
     $(".schema-table").filter(function() {
@@ -52,4 +52,4 @@
       $(this).toggle(found)
     })
   }).focus()
-</script>
+<% end %>

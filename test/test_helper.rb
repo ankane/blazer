@@ -7,13 +7,18 @@ require "minitest/pride"
 logger = ActiveSupport::Logger.new(ENV["VERBOSE"] ? STDERR : nil)
 
 Combustion.path = "test/internal"
-Combustion.initialize! :active_record, :action_controller, :action_mailer, :active_job, :sprockets do
+Combustion.initialize! :active_record, :action_controller, :action_mailer, :active_job do
   config.load_defaults Rails::VERSION::STRING.to_f
   config.action_controller.logger = logger
   config.action_mailer.logger = logger
   config.active_job.logger = logger
   config.active_record.logger = logger
   config.cache_store = :memory_store
+
+  # fixes warning with adapter tests
+  if Rails::VERSION::STRING.to_f >= 7.1
+    config.action_dispatch.show_exceptions = :none
+  end
 end
 
 Rails.cache.logger = logger

@@ -446,3 +446,20 @@ There was no 1.8.1 release.
 - Added support for Rails 4.2
 - Fixed error with `mysql2` adapter
 - Added `user_class` option
+
+## 0.0.4 (2014-11-19)
+
+- Added timeout
+
+## 0.0.3 (2014-10-08)
+
+- Made editor bigger
+
+## 0.0.2 (2014-10-01)
+
+- Added query to audits
+- Added `user_name` option
+
+## 0.0.1 (2014-09-30)
+
+- First release

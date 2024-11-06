@@ -96,6 +96,10 @@ class MysqlTest < ActionDispatch::IntegrationTest
     assert_result [{"hello" => "0xF6"}], "SELECT UNHEX('F6') AS hello"
   end
 
+  def test_json_output
+    assert_result [{"json" => '{"hello": "world"}'}], %!SELECT JSON_OBJECT('hello', 'world') AS json!
+  end
+
   private
 
   def prepared_statements?

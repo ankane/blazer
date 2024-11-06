@@ -71,4 +71,12 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   def test_binary_output
     assert_result [{"bytea" => "\\x68656c6c6f"}], "SELECT 'hello'::bytea"
   end
+
+  def test_json_output
+    assert_result [{"json" => '{"hello": "world"}'}], %!SELECT '{"hello": "world"}'::json!
+  end
+
+  def test_jsonb_output
+    assert_result [{"jsonb" => '{"hello": "world"}'}], %!SELECT '{"hello": "world"}'::jsonb!
+  end
 end

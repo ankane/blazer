@@ -36,6 +36,7 @@ data_sources:
 
   mysql:
     url: mysql2://localhost:3306/blazer_test # ?prepared_statements=true
+    # url: trilogy://localhost:3306/blazer_test
 
   neo4j:
     adapter: neo4j

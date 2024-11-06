@@ -29,6 +29,7 @@ gem "sprockets-rails"
 # gem "restforce"
 # gem "sqlite3"
 # gem "tiny_tds"
+# gem "trilogy"
 # gem "activerecord-sqlserver-adapter"
 
 # anomaly detection and forecasting

@@ -5,9 +5,9 @@ gemspec
 gem "rake"
 gem "minitest", ">= 5"
 gem "combustion"
-gem "rails", "~> 7.2.0"
+gem "rails", "~> 8.0.0"
 gem "pg"
-gem "sprockets-rails"
+gem "propshaft"
 
 # data sources
 # gem "activerecord6-redshift-adapter"

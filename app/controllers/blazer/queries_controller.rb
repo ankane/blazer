@@ -26,8 +26,15 @@ module Blazer
     end
 
     def index
-      set_queries
-      render json: @queries
+      respond_to do |format|
+        format.html do
+          redirect_to root_path
+        end
+        format.json do
+          set_queries
+          render json: @queries
+        end
+      end
     end
 
     def new

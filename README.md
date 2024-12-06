@@ -266,6 +266,32 @@ smart_columns:
   status: {0: "Active", 1: "Archived"}
 ```
 
+### Annotations
+
+Shows overlay lines or box ranges for line queries.
+
+Suppose your sales data and your deployments data, given a query:
+
+```sql
+SELECT date_trunc('hour', created_at), sum(value) FROM sales GROUP BY 1
+```
+
+You might want to see the influence of a deployment for those sales.
+
+```yml
+annotations:
+  deployments: SELECT date, name FROM deployments WHERE date BETWEEN {min_date} AND {max_date}
+```
+
+You can also show periods:
+
+```yml
+annotations:
+  holidays: SELECT min_date, max_date, name FROM holidays WHERE (min_date, max_date) OVERLAPS ({min_date}, {max_date})
+```
+
+Conditions for those queries are optional, but they will help to only fetch the relevant annotations for a particular chart.
+
 ### Caching
 
 Blazer can automatically cache results to improve speed. It can cache slow queries:

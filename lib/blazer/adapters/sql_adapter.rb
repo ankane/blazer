@@ -60,7 +60,29 @@ module Blazer
       end
 
       def tables
-        sql = add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
+        sql =
+          if postgresql?
+            <<-SQL
+              SELECT table_schema, table_name
+              FROM (
+                SELECT table_schema, table_name FROM information_schema.tables
+                UNION ALL
+                SELECT n.nspname AS table_schema, c.relname AS table_name
+                FROM pg_catalog.pg_class c
+                LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+                WHERE c.relkind = 'm' AND
+                (
+                  pg_has_role(c.relowner, 'USAGE')
+                  OR has_table_privilege(c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
+                  OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE, REFERENCES')
+                )
+              ) AS tables
+            SQL
+          else
+            "SELECT table_schema, table_name FROM information_schema.tables"
+          end
+        sql = add_schemas(sql)
+
         result = data_source.run_statement(sql, refresh_cache: true)
         if postgresql? || redshift? || snowflake?
           result.rows.sort_by { |r| [r[0] == default_schema ? "" : r[0], r[1]] }.map do |row|
@@ -84,7 +106,33 @@ module Blazer
       end
 
       def schema
-        sql = add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
+        sql =
+          if postgresql?
+            <<~SQL
+              SELECT table_schema, table_name, column_name, data_type, ordinal_position
+              FROM (
+                  SELECT table_schema, table_name, column_name, data_type, ordinal_position
+                  FROM information_schema.columns
+                  UNION ALL
+                  SELECT
+                      n.nspname AS table_schema, c.relname AS table_name, a.attname AS column_name, TRIM(leading '_' FROM t.typname) AS data_type, a.attnum AS ordinal_position
+                  FROM pg_catalog.pg_class c
+                  LEFT JOIN pg_catalog.pg_namespace n ON c.relnamespace = n.oid
+                  INNER JOIN pg_catalog.pg_attribute a ON c.oid = a.attrelid
+                  JOIN pg_catalog.pg_type t ON t.typelem = a.atttypid
+                  WHERE c.relkind = 'm' AND a.attnum >= 1 AND
+                  (
+                      pg_has_role(c.relowner, 'USAGE')
+                      OR has_table_privilege(c.oid, 'SELECT, INSERT, UPDATE, DELETE, TRUNCATE, REFERENCES, TRIGGER')
+                      OR has_any_column_privilege(c.oid, 'SELECT, INSERT, UPDATE, REFERENCES')
+                  )
+              ) AS schemas
+            SQL
+          else
+            "SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns"
+          end
+
+        sql = add_schemas(sql)
         result = data_source.run_statement(sql)
         result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }.sort_by { |t| [t[:schema] == default_schema ? "" : t[:schema], t[:table]] }
       end

@@ -25,6 +25,7 @@
       <%= f.label :check_type, "Alert if" %>
       <div class="hide">
         <% check_options = [["Any results (bad data)", "bad_data"], ["No results (missing data)", "missing_data"]] %>
+        <% check_options <<  ["Any new results (more bad data)", "new_bad_data"] if @check.respond_to?(:last_results_hash) %>
         <% check_options << ["Anomaly (most recent data point)", "anomaly"] if Blazer.anomaly_checks %>
         <%= f.select :check_type, check_options %>
       </div>

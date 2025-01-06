@@ -7,7 +7,7 @@ module Blazer
         text =
           if error
             error
-          elsif rows_count > 0 && check_type == "bad_data"
+          elsif rows_count > 0 && %w[bad_data new_bad_data].include?(check_type)
             pluralize(rows_count, "row")
           end
 

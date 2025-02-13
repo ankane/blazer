@@ -102,6 +102,18 @@ BLAZER_SLACK_WEBHOOK_URL=https://hooks.slack.com/...
 
 Name the webhook “Blazer” and add a cool icon.
 
+Here's what it looks like by configuring SolidQueue's `recurring.yml` file:
+
+```
+production:
+  blazer_run_checks_daily:
+    command: "Blazer.run_checks(schedule: 'daily')"
+    schedule: every day at 8am
+  blazer_send_failing_checks:
+    command: "Blazer.send_failing_checks"
+    schedule: every day at 7 am
+```
+
 ## Authentication
 
 Don’t forget to protect the dashboard in production.

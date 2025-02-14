@@ -71,7 +71,7 @@ Be sure to set a host in `config/environments/production.rb` for emails to work.
 config.action_mailer.default_url_options = {host: "blazer.dokkuapp.com"}
 ```
 
-Schedule checks to run (with cron, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc). The default options are every 5 minutes, 1 hour, or 1 day, which you can customize. For each of these options, set up a task to run.
+Schedule checks to run (with cron, Solid Queue, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc). The default options are every 5 minutes, 1 hour, or 1 day, which you can customize. For each of these options, set up a task to run.
 
 ```sh
 rake blazer:run_checks SCHEDULE="5 minutes"
@@ -92,6 +92,24 @@ Here’s what it looks like with cron.
 0   * * * * rake blazer:run_checks SCHEDULE="1 hour"
 30  7 * * * rake blazer:run_checks SCHEDULE="1 day"
 0   8 * * * rake blazer:send_failing_checks
+```
+
+For Solid Queue, update `config/recurring.yml`.
+
+```yml
+production:
+  blazer_run_checks_5_minutes:
+    command: "Blazer.run_checks(schedule: '5 minutes')"
+    schedule: every 5 minutes
+  blazer_run_checks_1_hour:
+    command: "Blazer.run_checks(schedule: '1 hour')"
+    schedule: every hour
+  blazer_run_checks_1_day:
+    command: "Blazer.run_checks(schedule: '1 day')"
+    schedule: every day at 7:30am
+  blazer_send_failing_checks:
+    command: "Blazer.send_failing_checks"
+    schedule: every day at 8am
 ```
 
 For Slack notifications, create an [incoming webhook](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) and set:

@@ -60,7 +60,12 @@ module Blazer
       end
 
       def tables
-        sql = add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
+        sql =
+          if sqlite?
+            "SELECT NULL, name FROM sqlite_master WHERE type IN ('table', 'view') ORDER BY name"
+          else
+            add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
+          end
         result = data_source.run_statement(sql, refresh_cache: true)
         if postgresql? || redshift? || snowflake?
           result.rows.sort_by { |r| [r[0] == default_schema ? "" : r[0], r[1]] }.map do |row|
@@ -84,7 +89,12 @@ module Blazer
       end
 
       def schema
-        sql = add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
+        sql =
+          if sqlite?
+            "SELECT NULL, t.name, c.name, c.type, c.cid FROM sqlite_master t INNER JOIN pragma_table_info(t.name) c"
+          else
+            add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
+          end
         result = data_source.run_statement(sql)
         result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }.sort_by { |t| [t[:schema] == default_schema ? "" : t[:schema], t[:table]] }
       end
@@ -274,6 +284,8 @@ module Blazer
             "public"
           elsif sqlserver?
             "dbo"
+          elsif sqlite?
+            nil
           elsif connection_model.respond_to?(:connection_db_config)
             connection_model.connection_db_config.database
           else

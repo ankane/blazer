@@ -449,24 +449,22 @@ anomaly_checks: prophet
 
 ### Trend
 
-[Trend](https://trendapi.org/) uses an external service by default, but you can run it on your own infrastructure as well.
-
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 
 ```ruby
 gem "trend"
 ```
 
+Set the URL to the [API](https://github.com/ankane/trend-api) in an initializer:
+
+```ruby
+Trend.url = "http://localhost:8000"
+```
+
 And add to `config/blazer.yml`:
 
 ```yml
 anomaly_checks: trend
-```
-
-For the [self-hosted API](https://github.com/ankane/trend-api), create an initializer with:
-
-```ruby
-Trend.url = "http://localhost:8000"
 ```
 
 ### AnomalyDetection.rb
@@ -505,24 +503,22 @@ forecasting: prophet
 
 ### Trend
 
-[Trend](https://trendapi.org/) uses an external service by default, but you can run it on your own infrastructure as well.
-
 Add [trend](https://github.com/ankane/trend) to your Gemfile:
 
 ```ruby
 gem "trend"
 ```
 
+Set the URL to the [API](https://github.com/ankane/trend-api) in an initializer:
+
+```ruby
+Trend.url = "http://localhost:8000"
+```
+
 And add to `config/blazer.yml`:
 
 ```yml
 forecasting: trend
-```
-
-For the [self-hosted API](https://github.com/ankane/trend-api), create an initializer with:
-
-```ruby
-Trend.url = "http://localhost:8000"
 ```
 
 ## Uploads
@@ -657,11 +653,11 @@ Here’s an example IAM policy:
 }
 ```
 
-You also need to configure [S3 permissions](https://aws.amazon.com/premiumsupport/knowledge-center/access-denied-athena/).
+You also need to configure [S3 permissions](https://repost.aws/knowledge-center/access-denied-athena).
 
 ### Amazon Redshift
 
-Add [activerecord6-redshift-adapter](https://github.com/kwent/activerecord6-redshift-adapter) or [activerecord5-redshift-adapter](https://github.com/ConsultingMD/activerecord5-redshift-adapter) to your Gemfile and set:
+Add [activerecord7-redshift-adapter-pennylane](https://github.com/pennylane-hq/activerecord-adapter-redshift) to your Gemfile and set:
 
 ```yml
 data_sources:
@@ -736,7 +732,7 @@ Use a [read-only role](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_using/us
 
 ### Druid
 
-Enable [SQL support](http://druid.io/docs/latest/querying/sql.html#configuration) on the broker and set:
+Enable [SQL support](https://druid.apache.org/docs/latest/querying/sql) on the broker and set:
 
 ```yml
 data_sources:
@@ -762,7 +758,7 @@ Use a [read-only role](https://www.elastic.co/guide/en/elasticsearch/reference/c
 
 ### Google BigQuery
 
-Add [google-cloud-bigquery](https://github.com/GoogleCloudPlatform/google-cloud-ruby/tree/master/google-cloud-bigquery) to your Gemfile and set:
+Add [google-cloud-bigquery](https://github.com/GoogleCloudPlatform/google-cloud-ruby/tree/main/google-cloud-bigquery) to your Gemfile and set:
 
 ```yml
 data_sources:
@@ -861,7 +857,7 @@ Use a [read-only user](#postgresql).
 
 ### Presto
 
-Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
+Add [trino-client](https://github.com/treasure-data/trino-client-ruby) to your Gemfile and set:
 
 ```yml
 data_sources:

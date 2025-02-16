@@ -176,7 +176,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
 COMMIT;
 ```
 
-### MySQL
+### MySQL and MariaDB
 
 Create a user with read-only permissions:
 
@@ -580,7 +580,7 @@ data_sources:
 - [Google BigQuery](#google-bigquery)
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
 - [InfluxDB](#influxdb)
-- [MySQL](#mysql-1)
+- [MySQL and MariaDB](#mysql-and-mariadb-1)
 - [Neo4j](#neo4j)
 - [OpenSearch](#opensearch)
 - [Oracle](#oracle)
@@ -793,7 +793,7 @@ data_sources:
 
 Use a [read-only user](https://docs.influxdata.com/influxdb/v1.8/administration/authentication_and_authorization/). Supports [InfluxQL](https://docs.influxdata.com/influxdb/v1.8/query_language/explore-data/).
 
-### MySQL
+### MySQL and MariaDB
 
 Add [mysql2](https://github.com/brianmario/mysql2) to your Gemfile (if it’s not there) and set:
 
@@ -803,7 +803,7 @@ data_sources:
     url: mysql2://user:password@hostname:3306/database
 ```
 
-Use a [read-only user](#mysql).
+Use a [read-only user](#mysql-and-mariadb).
 
 ### Neo4j
 

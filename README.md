@@ -323,7 +323,6 @@ SELECT date_trunc('week', created_at), COUNT(*) FROM users GROUP BY 1
 
 3 columns - timestamp, string, numeric - [Example](https://blazer.dokkuapp.com/queries/5-line-chart-format-2)
 
-
 ```sql
 SELECT date_trunc('week', created_at), gender, COUNT(*) FROM users GROUP BY 1, 2
 ```
@@ -950,6 +949,14 @@ Add [sqlite3](https://github.com/sparklemotion/sqlite3-ruby) to your Gemfile and
 data_sources:
   my_source:
     url: sqlite3:path/to/database.sqlite3
+  # Columns matching these regular expressions will be interpreted as date/time
+  # if they are strings.
+  # This is required for sqlite because it doesn't have a special
+  # date/time type. Without this, the wrong type of chart will be displayed
+  time_columns:
+    - '_at$'
+    - '_timestamp$'
+    - '_date$'
 ```
 
 ### SQL Server

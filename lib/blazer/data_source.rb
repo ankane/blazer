@@ -35,6 +35,10 @@ module Blazer
       settings["variable_defaults"] || {}
     end
 
+    def time_columns
+      settings["time_columns"]&.map { |column_name_regex| Regexp.new(column_name_regex) } || []
+    end
+
     def timeout
       settings["timeout"]
     end

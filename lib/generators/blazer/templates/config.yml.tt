@@ -32,6 +32,18 @@ data_sources:
     smart_columns:
       # user_id: "SELECT id, name FROM users WHERE id IN {value}"
 
+    # Columns matching these regular expressions  will be interpreted as date/time
+    # if they are strings.
+    # This is required for sqlite because it doesn't have a special
+    # date/time type. Without this, the wrong type of chart will be displayed
+    time_columns:
+    # - '^created_at$'
+    # - '^updated_at$'
+    # - '_at$'
+    # - '_timestamp$'
+    # - '_date$'
+
+
 # create audits
 audit: true
 

@@ -53,7 +53,7 @@ module Blazer
             "string"
           elsif v.is_a?(Numeric)
             "numeric"
-          elsif v.is_a?(Time) || v.is_a?(Date)
+          elsif time?(k, v)
             "time"
           elsif v.nil?
             nil
@@ -63,6 +63,15 @@ module Blazer
             "string"
           end
         end
+      end
+    end
+
+    def time?(column_name, value)
+      return true if value.is_a?(Time) || value.is_a?(Date)
+      return false unless value.is_a?(String)
+
+      data_source.time_columns.any? do |column_name_regex|
+        column_name.match?(column_name_regex)
       end
     end
 

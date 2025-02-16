@@ -51,7 +51,7 @@ module Blazer
           v = (rows.find { |r| r[i] } || {})[i]
           if smart_values[k]
             "string"
-          elsif v.is_a?(Numeric)
+          elsif v.is_a?(Numeric) || sqlite_numeric?(k, v)
             "numeric"
           elsif v.is_a?(Time) || v.is_a?(Date)
             "time"
@@ -63,6 +63,13 @@ module Blazer
             "string"
           end
         end
+      end
+    end
+
+    def sqlite_numeric?(column_name, value)
+      return unless value.is_a?(String)
+      %w[_at _date _timestamp].any? do |suffix|
+        value.end_with?(suffix)
       end
     end
 

@@ -927,7 +927,7 @@ https://sfc-repo.snowflakecomputing.com/odbc/linux/2.21.5/snowflake-odbc-2.21.5.
 
 > This installs the driver at `/app/.apt/usr/lib/snowflake/odbc/lib/libSnowflake.so`
 
-Then, download the [Snowflake ODBC driver](https://docs.snowflake.net/manuals/user-guide/odbc-download.html). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
+Then, download the [Snowflake ODBC driver](https://docs.snowflake.com/developer-guide/odbc/odbc-download). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
 
 ```yml
 data_sources:

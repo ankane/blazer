@@ -1000,10 +1000,6 @@ Have team members who want to learn SQL? Here are a few great, free resources.
 
 For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate.sql](https://github.com/ankane/groupdate.sql).
 
-## Standalone Version
-
-Looking for a standalone version? Check out [Ghost Blazer](https://github.com/buren/ghost_blazer).
-
 ## Performance
 
 By default, queries take up a request while they are running. To run queries asynchronously, add to your config:

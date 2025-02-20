@@ -154,7 +154,7 @@ You can define this method in your `ApplicationController`.
 ```ruby
 def require_admin
   # depending on your auth, something like...
-  redirect_to root_path unless current_user && current_user.admin?
+  redirect_to main_app.root_path unless current_user && current_user.admin?
 end
 ```
 

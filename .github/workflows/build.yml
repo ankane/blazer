@@ -28,3 +28,4 @@ jobs:
           database: blazer_test
       - run: bundle exec rake test
       - run: bundle exec rake test:postgresql
+      - run: bundle exec rake test:sqlite

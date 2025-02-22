@@ -1,5 +1,6 @@
 ## 3.1.1 (unreleased)
 
+- Fixes types for SQLite
 - Fixed table preview and schema page for SQLite
 
 ## 3.1.0 (2024-10-14)

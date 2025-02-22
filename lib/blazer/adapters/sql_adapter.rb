@@ -24,8 +24,17 @@ module Blazer
           result = nil
           in_transaction do
             set_timeout(data_source.timeout) if data_source.timeout
-            binds = bind_params.map { |v| ActiveRecord::Relation::QueryAttribute.new(nil, v, ActiveRecord::Type::Value.new) }
-            result = connection_model.connection.select_all("#{statement} /*#{comment}*/", nil, binds)
+            if sqlite?
+              type_map = connection_model.connection.send(:type_map)
+              connection_model.connection.raw_connection.prepare("#{statement} /*#{comment}*/") do |stmt|
+                stmt.bind_params(bind_params)
+                types = stmt.columns.zip(stmt.types).to_h { |c, t| [c, type_map.lookup(t)] }
+                result = ActiveRecord::Result.new(stmt.columns, stmt.to_a, types)
+              end
+            else
+              binds = bind_params.map { |v| ActiveRecord::Relation::QueryAttribute.new(nil, v, ActiveRecord::Type::Value.new) }
+              result = connection_model.connection.select_all("#{statement} /*#{comment}*/", nil, binds)
+            end
           end
 
           columns = result.columns

@@ -10,7 +10,7 @@ gem "pg"
 gem "propshaft"
 
 # data sources
-# gem "activerecord6-redshift-adapter"
+# gem "activerecord7-redshift-adapter-pennylane"
 # gem "aws-sdk-athena"
 # gem "aws-sdk-glue"
 # gem "cassandra-driver"

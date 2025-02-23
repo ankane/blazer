@@ -720,7 +720,7 @@ Use a read-only user. Requires the [Thrift server](https://spark.apache.org/docs
 
 ### Cassandra
 
-Add [cassandra-driver](https://github.com/datastax/ruby-driver) (and [sorted_set](https://github.com/knu/sorted_set) for Ruby 3+) to your Gemfile and set:
+Add [cassandra-driver](https://github.com/datastax/ruby-driver) and [sorted_set](https://github.com/knu/sorted_set) to your Gemfile and set:
 
 ```yml
 data_sources:

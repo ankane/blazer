@@ -587,8 +587,8 @@ data_sources:
 - [PostgreSQL](#postgresql-1)
 - [Presto](#presto)
 - [Salesforce](#salesforce)
-- [Socrata Open Data API (SODA)](#socrata-open-data-api-soda)
 - [Snowflake](#snowflake)
+- [Socrata Open Data API (SODA)](#socrata-open-data-api-soda)
 - [SQLite](#sqlite)
 - [SQL Server](#sql-server)
 
@@ -890,20 +890,6 @@ SALESFORCE_API_VERSION="41.0"
 
 Use a read-only user. Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm).
 
-### Socrata Open Data API (SODA)
-
-Set:
-
-```yml
-data_sources:
-  my_source:
-    adapter: soda
-    url: https://soda.demo.socrata.com/resource/4tka-6guv.json
-    app_token: ...
-```
-
-Supports [SoQL](https://dev.socrata.com/docs/functions/).
-
 ### Snowflake
 
 First, install ODBC. For Homebrew, use:
@@ -937,6 +923,20 @@ data_sources:
 ```
 
 Use a [read-only role](https://docs.snowflake.com/en/user-guide/security-access-control-configure.html).
+
+### Socrata Open Data API (SODA)
+
+Set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: soda
+    url: https://soda.demo.socrata.com/resource/4tka-6guv.json
+    app_token: ...
+```
+
+Supports [SoQL](https://dev.socrata.com/docs/functions/).
 
 ### SQLite
 

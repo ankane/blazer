@@ -34,9 +34,8 @@ data_sources:
     adapter: influxdb
     url: http://localhost:8086/blazer_test
 
-  mysql:
+  mysql2:
     url: mysql2://localhost:3306/blazer_test # ?prepared_statements=true
-    # url: trilogy://localhost:3306/blazer_test
 
   neo4j:
     adapter: neo4j
@@ -76,3 +75,6 @@ data_sources:
 
   sqlserver:
     url: sqlserver://SA:YourStrong!Passw0rd@localhost:1433/blazer_test
+
+  trilogy:
+    url: trilogy://localhost:3306/blazer_test

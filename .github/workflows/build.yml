@@ -29,3 +29,9 @@ jobs:
       - run: bundle exec rake test
       - run: bundle exec rake test:postgresql
       - run: bundle exec rake test:sqlite
+
+      - uses: ankane/setup-mysql@v1
+        with:
+          database: blazer_test
+      - run: bundle exec rake test:mysql
+      - run: MYSQL_ADAPTER=trilogy bundle exec rake test:mysql

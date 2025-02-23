@@ -22,19 +22,19 @@ module Blazer
 
         begin
           types = []
-          in_transaction do
+          in_transaction do |connection|
             set_timeout(data_source.timeout) if data_source.timeout
             binds = bind_params.map { |v| ActiveRecord::Relation::QueryAttribute.new(nil, v, ActiveRecord::Type::Value.new) }
             if sqlite?
-              type_map = connection_model.connection.send(:type_map)
-              connection_model.connection.raw_connection.prepare("#{statement} /*#{comment}*/") do |stmt|
-                stmt.bind_params(connection_model.connection.send(:type_casted_binds, binds))
+              type_map = connection.send(:type_map)
+              connection.raw_connection.prepare("#{statement} /*#{comment}*/") do |stmt|
+                stmt.bind_params(connection.send(:type_casted_binds, binds))
                 columns = stmt.columns
                 rows = stmt.to_a
                 types = stmt.types.map { |t| type_map.lookup(t) }
               end
             else
-              result = connection_model.connection.select_all("#{statement} /*#{comment}*/", nil, binds)
+              result = connection.select_all("#{statement} /*#{comment}*/", nil, binds)
               columns = result.columns
               rows = result.rows
               if result.column_types.any?
@@ -341,14 +341,14 @@ module Blazer
       end
 
       def in_transaction
-        connection_model.connection_pool.with_connection do
+        connection_model.connection_pool.with_connection do |connection|
           if use_transaction?
             connection_model.transaction do
-              yield
+              yield connection
               raise ActiveRecord::Rollback
             end
           else
-            yield
+            yield connection
           end
         end
       end

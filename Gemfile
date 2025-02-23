@@ -30,6 +30,7 @@ gem "propshaft"
 # gem "restforce"
 # gem "tiny_tds"
 # gem "trilogy"
+# gem "trino-client"
 # gem "activerecord-sqlserver-adapter"
 
 # anomaly detection and forecasting

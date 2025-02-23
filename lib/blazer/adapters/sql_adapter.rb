@@ -21,7 +21,7 @@ module Blazer
         error = nil
 
         begin
-          result = nil
+          types = []
           in_transaction do
             set_timeout(data_source.timeout) if data_source.timeout
             binds = bind_params.map { |v| ActiveRecord::Relation::QueryAttribute.new(nil, v, ActiveRecord::Type::Value.new) }
@@ -29,20 +29,22 @@ module Blazer
               type_map = connection_model.connection.send(:type_map)
               connection_model.connection.raw_connection.prepare("#{statement} /*#{comment}*/") do |stmt|
                 stmt.bind_params(connection_model.connection.send(:type_casted_binds, binds))
-                types = stmt.columns.zip(stmt.types).to_h { |c, t| [c, type_map.lookup(t)] }
-                result = ActiveRecord::Result.new(stmt.columns, stmt.to_a, types)
+                columns = stmt.columns
+                rows = stmt.to_a
+                types = stmt.types.map { |t| type_map.lookup(t) }
               end
             else
               result = connection_model.connection.select_all("#{statement} /*#{comment}*/", nil, binds)
+              columns = result.columns
+              rows = result.rows
+              if result.column_types.any?
+                types = columns.size.times.map { |i| result.column_types[i] }
+              end
             end
           end
 
-          columns = result.columns
-          rows = result.rows
-
           # cast values
-          if result.column_types.any?
-            types = columns.map { |c| result.column_types[c] }
+          if types.any?
             rows =
               rows.map do |row|
                 row.map.with_index do |v, i|

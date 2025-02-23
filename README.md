@@ -857,7 +857,7 @@ Use a [read-only user](#postgresql).
 
 ### Presto
 
-Add [trino-client](https://github.com/treasure-data/trino-client-ruby) to your Gemfile and set:
+Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
 
 ```yml
 data_sources:

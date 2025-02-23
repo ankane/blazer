@@ -1,4 +1,4 @@
-## 3.1.1 (unreleased)
+## 3.2.0 (unreleased)
 
 - Added support for `neo4j-ruby-driver` gem
 - Fixes types for SQLite

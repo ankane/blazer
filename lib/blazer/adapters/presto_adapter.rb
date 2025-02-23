@@ -40,8 +40,7 @@ module Blazer
         @client ||= begin
           uri = URI.parse(settings["url"])
           query = uri.query ? CGI.parse(uri.query) : {}
-          cls = defined?(Presto::Client) ? Presto::Client : Trino::Client
-          cls.new(
+          Presto::Client.new(
             server: "#{uri.host}:#{uri.port}",
             catalog: uri.path.to_s.delete_prefix("/"),
             schema: query["schema"] || "public",

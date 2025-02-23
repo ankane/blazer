@@ -1,6 +1,5 @@
 ## 3.1.1 (unreleased)
 
-- Added support for `trino-client` gem
 - Fixes types for SQLite
 - Fixed table preview and schema page for SQLite
 

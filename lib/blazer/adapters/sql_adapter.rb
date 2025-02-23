@@ -325,8 +325,7 @@ module Blazer
         if postgresql? || redshift?
           execute("SET #{use_transaction? ? "LOCAL " : ""}statement_timeout = #{timeout.to_i * 1000}")
         elsif mysql?
-          # use send as this method is private in Rails 4.2
-          mariadb = connection_model.connection.send(:mariadb?) rescue false
+          mariadb = connection_model.connection.mariadb? rescue false
           if mariadb
             execute("SET max_statement_time = #{timeout.to_i * 1000}")
           else

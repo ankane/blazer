@@ -807,13 +807,13 @@ Use a [read-only user](#mysql-and-mariadb).
 
 ### Neo4j
 
-Add [neo4j-core](https://github.com/neo4jrb/neo4j-core) to your Gemfile and set:
+Add [neo4j-ruby-driver](https://github.com/neo4jrb/neo4j-ruby-driver) to your Gemfile and set:
 
 ```yml
 data_sources:
   my_source:
     adapter: neo4j
-    url: http://user:password@hostname:7474
+    url: bolt://user:password@hostname:7687/database
 ```
 
 Use a [read-only user](https://neo4j.com/docs/cypher-manual/current/access-control/manage-privileges/).

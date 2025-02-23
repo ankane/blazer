@@ -1,4 +1,4 @@
-## 3.2.0 (unreleased)
+## 3.2.0 (2025-02-23)
 
 - Added support for Trino
 - Added support for `neo4j-ruby-driver` gem

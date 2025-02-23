@@ -15,3 +15,4 @@ Blazer.register_adapter "soda", Blazer::Adapters::SodaAdapter
 Blazer.register_adapter "spark", Blazer::Adapters::SparkAdapter
 Blazer.register_adapter "sql", Blazer::Adapters::SqlAdapter
 Blazer.register_adapter "snowflake", Blazer::Adapters::SnowflakeAdapter
+Blazer.register_adapter "trino", Blazer::Adapters::PrestoAdapter

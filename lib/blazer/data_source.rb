@@ -256,7 +256,7 @@ module Blazer
     def detect_adapter
       scheme = settings["url"].to_s.split("://").first
       case scheme
-      when "presto", "cassandra", "ignite"
+      when "presto", "trino", "cassandra", "ignite"
         scheme
       else
         "sql"

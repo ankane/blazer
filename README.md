@@ -585,7 +585,7 @@ data_sources:
 - [OpenSearch](#opensearch)
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
-- [Presto](#presto)
+- [Presto and Trino](#presto-and-trino)
 - [Salesforce](#salesforce)
 - [Snowflake](#snowflake)
 - [Socrata Open Data API (SODA)](#socrata-open-data-api-soda)
@@ -855,17 +855,19 @@ data_sources:
 
 Use a [read-only user](#postgresql).
 
-### Presto
+### Presto and Trino
 
-Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
+Add [presto-client](https://github.com/treasure-data/trino-client-ruby/tree/v0.6.5) or [trino-client](https://github.com/treasure-data/trino-client-ruby) to your Gemfile and set:
 
 ```yml
 data_sources:
   my_source:
     url: presto://user@hostname:8080/catalog
+    # or
+    url: trino://user@hostname:8080/catalog
 ```
 
-Use a [read-only user](https://prestodb.io/docs/current/security/built-in-system-access-control.html).
+Use a read-only user for [Presto](https://prestodb.io/docs/current/security/built-in-system-access-control.html) or [Trino](https://trino.io/docs/current/security/built-in-system-access-control.html).
 
 ### Salesforce
 

@@ -1,5 +1,6 @@
 ## 3.2.0 (unreleased)
 
+- Added support for `trino-client` gem
 - Added support for `neo4j-ruby-driver` gem
 - Fixes types for SQLite
 - Fixed table preview and schema page for SQLite

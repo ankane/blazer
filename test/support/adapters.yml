@@ -40,7 +40,7 @@ data_sources:
 
   neo4j:
     adapter: neo4j
-    url: http://neo4j:secret@localhost:7474/blazer_test
+    url: bolt://neo4j:secret@127.0.0.1:7687/neo4j
 
   opensearch:
     adapter: opensearch

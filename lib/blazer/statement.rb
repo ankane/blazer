@@ -34,7 +34,10 @@ module Blazer
 
           unless value.is_a?(ActiveSupport::TimeWithZone)
             if value.match?(/\A\d+\z/)
-              value = value.to_i
+              # check no leading zeros (when not zero)
+              if value == value.to_i.to_s
+                value = value.to_i
+              end
             elsif value.match?(/\A\d+\.\d+\z/)
               value = value.to_f
             end

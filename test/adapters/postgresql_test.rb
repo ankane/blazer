@@ -23,6 +23,10 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
     assert_result [{"hello" => "1"}], "SELECT {var} AS hello", var: "1"
   end
 
+  def test_leading_zeros
+    assert_result [{"hello" => "0123"}], "SELECT {var} AS hello", var: "0123"
+  end
+
   def test_float
     assert_result [{"hello" => "1.5"}], "SELECT {var} AS hello", var: "1.5"
   end

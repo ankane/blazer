@@ -1,3 +1,7 @@
+## 3.2.1 (unreleased)
+
+- Fixed leading zeros in variables
+
 ## 3.2.0 (2025-02-23)
 
 - Added support for Trino

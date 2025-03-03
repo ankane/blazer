@@ -35,6 +35,10 @@ module Blazer
       settings["variable_defaults"] || {}
     end
 
+    def annotations
+      settings["annotations"] || {}
+    end
+
     def timeout
       settings["timeout"]
     end

@@ -6,7 +6,7 @@
     <p><%= link_to "View", query_url(@check.query_id) %></p>
     <% if @error %>
       <p><%= @error %></p>
-    <% elsif @rows_count > 0 && @check_type == "bad_data" %>
+    <% elsif @rows_count > 0 && %w[bad_data new_bad_data].include?(@check_type) %>
       <p>
         <% if @rows_count <= 10 %>
           <%= pluralize(@rows_count, "row") %>

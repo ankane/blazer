@@ -4,11 +4,13 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 
 [Try it out](https://blazer.dokkuapp.com)
 
-[![Screenshot](https://blazer.dokkuapp.com/assets/screenshot-6ca3115a518b488026e48be83ba0d4c9.png)](https://blazer.dokkuapp.com)
+[![Screenshot](https://blazer.dokkuapp.com/assets/blazer-176c595c.png)](https://blazer.dokkuapp.com)
 
-:envelope: [Get notified of updates](https://eepurl.com/cbUwsD)
+Blazer is also available as a [Docker image](https://github.com/ankane/blazer-docker).
 
 :tangerine: Battle-tested at [Instacart](https://www.instacart.com/opensource)
+
+[![Build Status](https://github.com/ankane/blazer/actions/workflows/build.yml/badge.svg)](https://github.com/ankane/blazer/actions)
 
 ## Features
 
@@ -25,13 +27,19 @@ Explore your data with SQL. Easily create charts and dashboards, and share them 
 - [Charts](#charts)
 - [Dashboards](#dashboards)
 - [Checks](#checks)
+- [Cohorts](#cohorts)
+- [Anomaly Detection](#anomaly-detection)
+- [Forecasting](#forecasting)
+- [Uploads](#uploads)
+- [Data Sources](#data-sources)
+- [Query Permissions](#query-permissions)
 
 ## Installation
 
 Add this line to your application’s Gemfile:
 
 ```ruby
-gem 'blazer'
+gem "blazer"
 ```
 
 Run:
@@ -53,7 +61,7 @@ For production, specify your database:
 ENV["BLAZER_DATABASE_URL"] = "postgres://user:password@hostname:5432/database"
 ```
 
-Blazer tries to protect against queries which modify data (by running each query in a transaction and rolling it back), but a safer approach is to use a read only user.  [See how to create one](#permissions).
+When possible, Blazer tries to protect against queries which modify data by running each query in a transaction and rolling it back, but a safer approach is to use a read-only user. [See how to create one](#permissions).
 
 #### Checks (optional)
 
@@ -63,7 +71,7 @@ Be sure to set a host in `config/environments/production.rb` for emails to work.
 config.action_mailer.default_url_options = {host: "blazer.dokkuapp.com"}
 ```
 
-Schedule checks to run (with cron, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc). The default options are every 5 minutes, 1 hour, or 1 day, which you can customize. For each of these options, set up a task to run.
+Schedule checks to run (with cron, Solid Queue, [Heroku Scheduler](https://elements.heroku.com/addons/scheduler), etc). The default options are every 5 minutes, 1 hour, or 1 day, which you can customize. For each of these options, set up a task to run.
 
 ```sh
 rake blazer:run_checks SCHEDULE="5 minutes"
@@ -86,44 +94,31 @@ Here’s what it looks like with cron.
 0   8 * * * rake blazer:send_failing_checks
 ```
 
-## Permissions
+For Solid Queue, update `config/recurring.yml`.
 
-### PostgreSQL
-
-Create a user with read only permissions:
-
-```sql
-BEGIN;
-CREATE ROLE blazer LOGIN PASSWORD 'secret123';
-GRANT CONNECT ON DATABASE database_name TO blazer;
-GRANT USAGE ON SCHEMA public TO blazer;
-GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
-COMMIT;
+```yml
+production:
+  blazer_run_checks_5_minutes:
+    command: "Blazer.run_checks(schedule: '5 minutes')"
+    schedule: every 5 minutes
+  blazer_run_checks_1_hour:
+    command: "Blazer.run_checks(schedule: '1 hour')"
+    schedule: every hour
+  blazer_run_checks_1_day:
+    command: "Blazer.run_checks(schedule: '1 day')"
+    schedule: every day at 7:30am
+  blazer_send_failing_checks:
+    command: "Blazer.send_failing_checks"
+    schedule: every day at 8am
 ```
 
-### MySQL
+For Slack notifications, create an [incoming webhook](https://slack.com/apps/A0F7XDUAZ-incoming-webhooks) and set:
 
-Create a user with read only permissions:
-
-```sql
-GRANT SELECT, SHOW VIEW ON database_name.* TO blazer@’127.0.0.1′ IDENTIFIED BY ‘secret123‘;
-FLUSH PRIVILEGES;
+```sh
+BLAZER_SLACK_WEBHOOK_URL=https://hooks.slack.com/...
 ```
 
-### MongoDB
-
-Create a user with read only permissions:
-
-```
-db.createUser({user: "blazer", pwd: "password", roles: ["read"]})
-```
-
-Also, make sure authorization is enabled when you start the server.
-
-### Sensitive Data
-
-Check out [Hypershield](https://github.com/ankane/hypershield) to shield sensitive data.
+Name the webhook “Blazer” and add a cool icon.
 
 ## Authentication
 
@@ -159,11 +154,54 @@ You can define this method in your `ApplicationController`.
 ```ruby
 def require_admin
   # depending on your auth, something like...
-  redirect_to root_path unless current_user && current_user.admin?
+  redirect_to main_app.root_path unless current_user && current_user.admin?
 end
 ```
 
 Be sure to render or redirect for unauthorized users.
+
+## Permissions
+
+### PostgreSQL
+
+Create a user with read-only permissions:
+
+```sql
+BEGIN;
+CREATE ROLE blazer LOGIN PASSWORD 'secret';
+GRANT CONNECT ON DATABASE dbname TO blazer;
+GRANT USAGE ON SCHEMA public TO blazer;
+GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
+COMMIT;
+```
+
+### MySQL and MariaDB
+
+Create a user with read-only permissions:
+
+```sql
+CREATE USER 'blazer'@'127.0.0.1' IDENTIFIED BY 'secret';
+GRANT SELECT, SHOW VIEW ON dbname.* TO 'blazer'@'127.0.0.1';
+FLUSH PRIVILEGES;
+```
+
+## Sensitive Data
+
+If your database contains sensitive or personal data, check out [Hypershield](https://github.com/ankane/hypershield) to shield it.
+
+## Encrypted Data
+
+If you need to search encrypted data, use [blind indexing](https://github.com/ankane/blind_index).
+
+You can have Blazer transform specific variables with:
+
+```ruby
+Blazer.transform_variable = lambda do |name, value|
+  value = User.generate_email_bidx(value) if name == "email_bidx"
+  value
+end
+```
 
 ## Queries
 
@@ -308,10 +346,18 @@ SELECT gender, zip_code, COUNT(*) FROM users GROUP BY 1, 2
 
 ### Scatter Chart
 
-2 columns - both numeric
+2 columns - both numeric - [Example](https://blazer.dokkuapp.com/queries/16-scatter-chart)
 
 ```sql
 SELECT x, y FROM table
+```
+
+### Pie Chart
+
+2 columns - string, numeric - and last column named `pie` - [Example](https://blazer.dokkuapp.com/queries/17-pie-chart)
+
+```sql
+SELECT gender, COUNT(*) AS pie FROM users GROUP BY 1
 ```
 
 ### Maps
@@ -320,6 +366,12 @@ Columns named `latitude` and `longitude` or `lat` and `lon` or `lat` and `lng` -
 
 ```sql
 SELECT name, latitude, longitude FROM cities
+```
+
+or a column named `geojson`
+
+```sql
+SELECT name, geojson FROM counties
 ```
 
 To enable, get an access token from [Mapbox](https://www.mapbox.com/) and set `ENV["MAPBOX_ACCESS_TOKEN"]`.
@@ -352,26 +404,148 @@ SELECT * FROM ratings WHERE user_id IS NULL /* all ratings should have a user */
 
 Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.
 
+## Cohorts
+
+Create a cohort analysis from a simple SQL query. [Example](https://blazer.dokkuapp.com/queries/19-cohort-analysis-from-first-order)
+
+Create a query with the comment `/* cohort analysis */`. The result should have columns named `user_id` and `conversion_time` and optionally `cohort_time`.
+
+You can generate cohorts from the first conversion time:
+
+```sql
+/* cohort analysis */
+SELECT user_id, created_at AS conversion_time FROM orders
+```
+
+(the first conversion isn’t counted in the first time period with this format)
+
+Or from another time, like sign up:
+
+```sql
+/* cohort analysis */
+SELECT users.id AS user_id, orders.created_at AS conversion_time, users.created_at AS cohort_time
+FROM users LEFT JOIN orders ON orders.user_id = users.id
+```
+
+This feature requires PostgreSQL or MySQL 8.
+
 ## Anomaly Detection
 
-Anomaly detection is supported thanks to Twitter’s [AnomalyDetection](https://github.com/twitter/AnomalyDetection) library.
+Blazer supports three different approaches to anomaly detection.
 
-First, [install R](https://cloud.r-project.org/). Then, run:
+### Prophet
 
-```R
-install.packages("devtools")
-devtools::install_github("twitter/AnomalyDetection")
+Add [prophet-rb](https://github.com/ankane/prophet) to your Gemfile:
+
+```ruby
+gem "prophet-rb"
 ```
 
 And add to `config/blazer.yml`:
 
 ```yml
-anomaly_checks: true
+anomaly_checks: prophet
 ```
 
-If upgrading from version 1.4 or below, also follow the [upgrade instructions](#15).
+### Trend
 
-If you’re on Heroku, follow [these additional instructions](#anomaly-detection-on-heroku).
+Add [trend](https://github.com/ankane/trend) to your Gemfile:
+
+```ruby
+gem "trend"
+```
+
+Set the URL to the [API](https://github.com/ankane/trend-api) in an initializer:
+
+```ruby
+Trend.url = "http://localhost:8000"
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+anomaly_checks: trend
+```
+
+### AnomalyDetection.rb
+
+Add [anomaly_detection](https://github.com/ankane/AnomalyDetection.rb) to your Gemfile:
+
+```ruby
+gem "anomaly_detection"
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+anomaly_checks: anomaly_detection
+```
+
+## Forecasting
+
+Blazer supports for two different forecasting methods. [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
+
+A forecast link will appear for queries that return 2 columns with types timestamp and numeric.
+
+### Prophet
+
+Add [prophet-rb](https://github.com/ankane/prophet) to your Gemfile:
+
+```ruby
+gem "prophet-rb", ">= 0.2.1"
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+forecasting: prophet
+```
+
+### Trend
+
+Add [trend](https://github.com/ankane/trend) to your Gemfile:
+
+```ruby
+gem "trend"
+```
+
+Set the URL to the [API](https://github.com/ankane/trend-api) in an initializer:
+
+```ruby
+Trend.url = "http://localhost:8000"
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+forecasting: trend
+```
+
+## Uploads
+
+Create database tables from CSV files. [Example](https://blazer.dokkuapp.com/uploads)
+
+Run:
+
+```sh
+rails generate blazer:uploads
+rails db:migrate
+```
+
+And add to `config/blazer.yml`:
+
+```yml
+uploads:
+  url: postgres://...
+  schema: uploads
+  data_source: main
+```
+
+This feature requires PostgreSQL. Create a new schema just for uploads.
+
+```sql
+CREATE SCHEMA uploads;
+```
 
 ## Data Sources
 
@@ -397,17 +571,24 @@ data_sources:
 - [Amazon Athena](#amazon-athena)
 - [Amazon Redshift](#amazon-redshift)
 - [Apache Drill](#apache-drill)
+- [Apache Hive](#apache-hive)
+- [Apache Ignite](#apache-ignite)
+- [Apache Spark](#apache-spark)
 - [Cassandra](#cassandra)
 - [Druid](#druid)
-- [Elasticsearch](#elasticsearch) [beta]
+- [Elasticsearch](#elasticsearch)
 - [Google BigQuery](#google-bigquery)
 - [IBM DB2 and Informix](#ibm-db2-and-informix)
-- [MongoDB](#mongodb-1)
-- [MySQL](#mysql-1)
+- [InfluxDB](#influxdb)
+- [MySQL and MariaDB](#mysql-and-mariadb-1)
+- [Neo4j](#neo4j)
+- [OpenSearch](#opensearch)
 - [Oracle](#oracle)
 - [PostgreSQL](#postgresql-1)
-- [Presto](#presto)
+- [Presto and Trino](#presto-and-trino)
+- [Salesforce](#salesforce)
 - [Snowflake](#snowflake)
+- [Socrata Open Data API (SODA)](#socrata-open-data-api-soda)
 - [SQLite](#sqlite)
 - [SQL Server](#sql-server)
 
@@ -430,18 +611,61 @@ data_sources:
   my_source:
     adapter: athena
     database: database
+
+    # optional settings
     output_location: s3://some-bucket/
+    workgroup: primary
+    access_key_id: ...
+    secret_access_key: ...
+    region: ...
 ```
+
+Here’s an example IAM policy:
+
+```json
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": [
+                "athena:GetQueryExecution",
+                "athena:GetQueryResults",
+                "athena:StartQueryExecution"
+            ],
+            "Resource": [
+                "arn:aws:athena:region:account-id:workgroup/primary"
+            ]
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+                "glue:GetTable",
+                "glue:GetTables"
+            ],
+            "Resource": [
+                "arn:aws:glue:region:account-id:catalog",
+                "arn:aws:glue:region:account-id:database/default",
+                "arn:aws:glue:region:account-id:table/default/*"
+            ]
+        }
+    ]
+}
+```
+
+You also need to configure [S3 permissions](https://repost.aws/knowledge-center/access-denied-athena).
 
 ### Amazon Redshift
 
-Add [activerecord4-redshift-adapter](https://github.com/aamine/activerecord4-redshift-adapter) or [activerecord5-redshift-adapter](https://github.com/ConsultingMD/activerecord5-redshift-adapter) to your Gemfile and set:
+Add [activerecord7-redshift-adapter-pennylane](https://github.com/pennylane-hq/activerecord-adapter-redshift) to your Gemfile and set:
 
 ```yml
 data_sources:
   my_source:
     url: redshift://user:password@hostname:5439/database
 ```
+
+Use a [read-only user](https://docs.aws.amazon.com/redshift/latest/dg/r_GRANT.html).
 
 ### Apache Drill
 
@@ -454,9 +678,49 @@ data_sources:
     url: http://hostname:8047
 ```
 
+Use a [read-only user](https://drill.apache.org/docs/roles-and-privileges/).
+
+### Apache Hive
+
+Add [hexspace](https://github.com/ankane/hexspace) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: hive
+    url: sasl://user:password@hostname:10000/database
+```
+
+Use a [read-only user](https://cwiki.apache.org/confluence/display/Hive/LanguageManual+Authorization). Requires [HiveServer2](https://cwiki.apache.org/confluence/display/Hive/Setting+Up+HiveServer2).
+
+### Apache Ignite
+
+Add [ignite-client](https://github.com/ankane/ignite-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: ignite://user:password@hostname:10800
+```
+
+Use a [read-only user](https://www.gridgain.com/docs/latest/administrators-guide/security/authorization-permissions) (requires a third-party plugin).
+
+### Apache Spark
+
+Add [hexspace](https://github.com/ankane/hexspace) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: spark
+    url: sasl://user:password@hostname:10000/database
+```
+
+Use a read-only user. Requires the [Thrift server](https://spark.apache.org/docs/latest/sql-distributed-sql-engine.html).
+
 ### Cassandra
 
-Add [cassandra-driver](https://github.com/datastax/ruby-driver) to your Gemfile and set:
+Add [cassandra-driver](https://github.com/datastax/ruby-driver) and [sorted_set](https://github.com/knu/sorted_set) to your Gemfile and set:
 
 ```yml
 data_sources:
@@ -464,11 +728,11 @@ data_sources:
     url: cassandra://user:password@hostname:9042/keyspace
 ```
 
+Use a [read-only role](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_using/useSecurePermission.html).
+
 ### Druid
 
-First, [enable SQL support](http://druid.io/docs/latest/querying/sql.html#configuration) on the broker.
-
-Set:
+Enable [SQL support](https://druid.apache.org/docs/latest/querying/sql) on the broker and set:
 
 ```yml
 data_sources:
@@ -477,9 +741,11 @@ data_sources:
     url: http://hostname:8082
 ```
 
+Use a [read-only role](https://druid.apache.org/docs/latest/development/extensions-core/druid-basic-security.html).
+
 ### Elasticsearch
 
-Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) and [elasticsearch-xpack](https://github.com/elastic/elasticsearch-ruby/tree/master/elasticsearch-xpack) to your Gemfile and set:
+Add [elasticsearch](https://github.com/elastic/elasticsearch-ruby) to your Gemfile and set:
 
 ```yml
 data_sources:
@@ -488,9 +754,11 @@ data_sources:
     url: http://user:password@hostname:9200
 ```
 
+Use a [read-only role](https://www.elastic.co/guide/en/elasticsearch/reference/current/security-privileges.html).
+
 ### Google BigQuery
 
-Add [google-cloud-bigquery](https://github.com/GoogleCloudPlatform/google-cloud-ruby/tree/master/google-cloud-bigquery) to your Gemfile and set:
+Add [google-cloud-bigquery](https://github.com/GoogleCloudPlatform/google-cloud-ruby/tree/main/google-cloud-bigquery) to your Gemfile and set:
 
 ```yml
 data_sources:
@@ -502,19 +770,30 @@ data_sources:
 
 ### IBM DB2 and Informix
 
-Use [ibm_db](https://github.com/ibmdb/ruby-ibmdb).
-
-### MongoDB
-
-Add [mongo](https://github.com/mongodb/mongo-ruby-driver) to your Gemfile and set:
+Add [ibm_db](https://github.com/ibmdb/ruby-ibmdb) to your Gemfile and set:
 
 ```yml
 data_sources:
   my_source:
-    url: mongodb://user:password@hostname:27017/database
+    url: ibm-db://user:password@hostname:50000/database
 ```
 
-### MySQL
+Use a [read-only user](https://www.ibm.com/support/pages/creating-read-only-database-permissions-user).
+
+### InfluxDB
+
+Add [influxdb](https://github.com/influxdata/influxdb-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: influxdb
+    url: http://user:password@hostname:8086/database
+```
+
+Use a [read-only user](https://docs.influxdata.com/influxdb/v1.8/administration/authentication_and_authorization/). Supports [InfluxQL](https://docs.influxdata.com/influxdb/v1.8/query_language/explore-data/).
+
+### MySQL and MariaDB
 
 Add [mysql2](https://github.com/brianmario/mysql2) to your Gemfile (if it’s not there) and set:
 
@@ -524,13 +803,49 @@ data_sources:
     url: mysql2://user:password@hostname:3306/database
 ```
 
+Use a [read-only user](#mysql-and-mariadb).
+
+### Neo4j
+
+Add [neo4j-ruby-driver](https://github.com/neo4jrb/neo4j-ruby-driver) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: neo4j
+    url: bolt://user:password@hostname:7687/database
+```
+
+Use a [read-only user](https://neo4j.com/docs/cypher-manual/current/access-control/manage-privileges/).
+
+### OpenSearch
+
+Add [opensearch-ruby](https://github.com/opensearch-project/opensearch-ruby) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: opensearch
+    url: http://user:password@hostname:9200
+```
+
+Use a [read-only user](https://opensearch.org/docs/latest/security-plugin/access-control/permissions/).
+
 ### Oracle
 
-Use [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced).
+Add [activerecord-oracle_enhanced-adapter](https://github.com/rsim/oracle-enhanced) and [ruby-oci8](https://github.com/kubo/ruby-oci8) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    url: oracle-enhanced://user:password@hostname:1521/database
+```
+
+Use a [read-only user](https://docs.oracle.com/cd/B19306_01/network.102/b14266/authoriz.htm).
 
 ### PostgreSQL
 
-Add [pg](https://bitbucket.org/ged/ruby-pg/wiki/Home) to your Gemfile (if it’s not there) and set:
+Add [pg](https://github.com/ged/ruby-pg) to your Gemfile (if it’s not there) and set:
 
 ```yml
 data_sources:
@@ -538,26 +853,92 @@ data_sources:
     url: postgres://user:password@hostname:5432/database
 ```
 
-### Presto
+Use a [read-only user](#postgresql).
 
-Add [presto-client](https://github.com/treasure-data/presto-client-ruby) to your Gemfile and set:
+### Presto and Trino
+
+Add [presto-client](https://github.com/treasure-data/trino-client-ruby/tree/v0.6.5) or [trino-client](https://github.com/treasure-data/trino-client-ruby) to your Gemfile and set:
 
 ```yml
 data_sources:
   my_source:
     url: presto://user@hostname:8080/catalog
+    # or
+    url: trino://user@hostname:8080/catalog
 ```
+
+Use a read-only user for [Presto](https://prestodb.io/docs/current/security/built-in-system-access-control.html) or [Trino](https://trino.io/docs/current/security/built-in-system-access-control.html).
+
+### Salesforce
+
+Add [restforce](https://github.com/restforce/restforce) to your Gemfile and set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: salesforce
+```
+
+And set the appropriate environment variables:
+
+```sh
+SALESFORCE_USERNAME="username"
+SALESFORCE_PASSWORD="password"
+SALESFORCE_SECURITY_TOKEN="security token"
+SALESFORCE_CLIENT_ID="client id"
+SALESFORCE_CLIENT_SECRET="client secret"
+SALESFORCE_API_VERSION="41.0"
+```
+
+Use a read-only user. Supports [SOQL](https://developer.salesforce.com/docs/atlas.en-us.soql_sosl.meta/soql_sosl/sforce_api_calls_soql.htm).
 
 ### Snowflake
 
-First, install the [ODBC driver](https://docs.snowflake.net/manuals/user-guide/odbc.html). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
+First, install ODBC. For Homebrew, use:
+
+```sh
+brew install unixodbc
+```
+
+For Ubuntu, use:
+
+```sh
+sudo apt-get install unixodbc-dev
+```
+
+For Heroku, use the [Apt buildpack](https://github.com/heroku/heroku-buildpack-apt) and create an `Aptfile` with:
+
+```text
+unixodbc-dev
+https://sfc-repo.snowflakecomputing.com/odbc/linux/2.21.5/snowflake-odbc-2.21.5.x86_64.deb
+```
+
+> This installs the driver at `/app/.apt/usr/lib/snowflake/odbc/lib/libSnowflake.so`
+
+Then, download the [Snowflake ODBC driver](https://docs.snowflake.com/developer-guide/odbc/odbc-download). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
 
 ```yml
 data_sources:
   my_source:
     adapter: snowflake
-    dsn: ProductionSnowflake
+    conn_str: Driver=/path/to/libSnowflake.so;uid=user;pwd=password;server=host.snowflakecomputing.com
 ```
+
+Use a [read-only role](https://docs.snowflake.com/en/user-guide/security-access-control-configure.html).
+
+### Socrata Open Data API (SODA)
+
+Set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: soda
+    url: https://soda.demo.socrata.com/resource/4tka-6guv.json
+    app_token: ...
+```
+
+Supports [SoQL](https://dev.socrata.com/docs/functions/).
 
 ### SQLite
 
@@ -578,6 +959,8 @@ data_sources:
   my_source:
     url: sqlserver://user:password@hostname:1433/database
 ```
+
+Use a [read-only user](https://docs.microsoft.com/en-us/sql/relational-databases/security/authentication-access/getting-started-with-database-engine-permissions?view=sql-server-ver15).
 
 ## Creating an Adapter
 
@@ -612,189 +995,48 @@ Blazer supports a basic permissions model.
 
 Have team members who want to learn SQL? Here are a few great, free resources.
 
-- [Khan Academy](https://www.khanacademy.org/computing/computer-programming/sql)
-- [Codecademy](https://www.codecademy.com/learn/learn-sql)
+- [The Data School](https://dataschool.com/learn-sql/)
+- [SQLBolt](https://sqlbolt.com/)
 
 ## Useful Tools
 
-For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate](https://github.com/ankane/groupdate.sql).
+For an easy way to group by day, week, month, and more with correct time zones, check out [Groupdate.sql](https://github.com/ankane/groupdate.sql).
 
-## Standalone Version
+## Performance
 
-Looking for a standalone version? Check out [Ghost Blazer](https://github.com/buren/ghost_blazer).
+By default, queries take up a request while they are running. To run queries asynchronously, add to your config:
 
-## Anomaly Detection on Heroku
-
-Add the [R buildpack](https://github.com/virtualstaticvoid/heroku-buildpack-r) to your app.
-
-```sh
-heroku buildpacks:add --index 1 https://github.com/virtualstaticvoid/heroku-buildpack-r.git\#cedar-14
+```yml
+async: true
 ```
 
-And create an `init.r` with:
+**Note:** Requires caching to be enabled. If you have multiple web processes, your app must use a centralized cache store like Memcached or Redis.
 
-```sh
-if (!"AnomalyDetection" %in% installed.packages()) {
-  install.packages("devtools")
-  devtools::install_github("twitter/AnomalyDetection")
-}
+```ruby
+config.cache_store = :mem_cache_store
 ```
 
-Commit and deploy away. The first deploy may take a few minutes.
+## Archiving
+
+Archive queries that haven’t been viewed in over 90 days.
+
+```sh
+rake blazer:archive_queries
+```
+
+## Content Security Policy
+
+If views are stuck with a `Loading...` message, there might be a problem with strict CSP settings in your app. This can be checked with Firefox or Chrome dev tools. You can allow Blazer to override these settings for its controllers with:
+
+```yml
+override_csp: true
+```
 
 ## Upgrading
 
-### 1.5
+### 3.0
 
-To take advantage of the anomaly detection, create a migration
-
-```sh
-rails g migration upgrade_blazer_to_1_5
-```
-
-with:
-
-```ruby
-add_column(:blazer_checks, :check_type, :string)
-add_column(:blazer_checks, :message, :text)
-commit_db_transaction
-
-Blazer::Check.reset_column_information
-
-Blazer::Check.where(invert: true).update_all(check_type: "missing_data")
-Blazer::Check.where(check_type: nil).update_all(check_type: "bad_data")
-```
-
-### 1.3
-
-To take advantage of the latest features, create a migration
-
-```sh
-rails g migration upgrade_blazer_to_1_3
-```
-
-with:
-
-```ruby
-add_column :blazer_dashboards, :creator_id, :integer
-add_column :blazer_checks, :creator_id, :integer
-add_column :blazer_checks, :invert, :boolean
-add_column :blazer_checks, :schedule, :string
-add_column :blazer_checks, :last_run_at, :timestamp
-commit_db_transaction
-
-Blazer::Check.update_all schedule: "1 hour"
-```
-
-### 1.0
-
-Blazer 1.0 brings a number of new features:
-
-- multiple data sources, including Redshift
-- dashboards
-- checks
-
-To upgrade, run:
-
-```sh
-bundle update blazer
-```
-
-Create a migration
-
-```sh
-rails g migration upgrade_blazer_to_1_0
-```
-
-with:
-
-```ruby
-add_column :blazer_queries, :data_source, :string
-add_column :blazer_audits, :data_source, :string
-
-create_table :blazer_dashboards do |t|
-  t.text :name
-  t.timestamps
-end
-
-create_table :blazer_dashboard_queries do |t|
-  t.references :dashboard
-  t.references :query
-  t.integer :position
-  t.timestamps
-end
-
-create_table :blazer_checks do |t|
-  t.references :query
-  t.string :state
-  t.text :emails
-  t.timestamps
-end
-```
-
-And run:
-
-```sh
-rails db:migrate
-```
-
-Update `config/blazer.yml` with:
-
-```yml
-# see https://github.com/ankane/blazer for more info
-
-data_sources:
-  main:
-    url: <%= ENV["BLAZER_DATABASE_URL"] %>
-
-    # statement timeout, in seconds
-    # applies to PostgreSQL only
-    # none by default
-    # timeout: 15
-
-    # time to cache results, in minutes
-    # can greatly improve speed
-    # none by default
-    # cache: 60
-
-    # wrap queries in a transaction for safety
-    # not necessary if you use a read-only user
-    # true by default
-    # use_transaction: false
-
-    smart_variables:
-      # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
-
-    linked_columns:
-      # user_id: "/admin/users/{value}"
-
-    smart_columns:
-      # user_id: "SELECT id, name FROM users WHERE id IN {value}"
-
-# create audits
-audit: true
-
-# change the time zone
-# time_zone: "Pacific Time (US & Canada)"
-
-# class name of the user model
-# user_class: User
-
-# method name for the current user
-# user_method: current_user
-
-# method name for the display name
-# user_name: name
-
-# email to send checks from
-# from_email: blazer@example.org
-```
-
-## TODO
-
-- advanced permissions
-- standalone version
-- better navigation
+Maps now use Mapbox GL JS v1 instead of Mapbox.js, which affects Mapbox billing.
 
 ## History
 

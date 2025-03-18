@@ -1,0 +1,37 @@
+name: build
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - ruby: 3.4
+            gemfile: Gemfile
+          - ruby: 3.3
+            gemfile: gemfiles/rails72.gemfile
+          - ruby: 3.2
+            gemfile: gemfiles/rails71.gemfile
+          - ruby: 3.1
+            gemfile: gemfiles/rails70.gemfile
+    env:
+      BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - uses: ankane/setup-postgres@v1
+        with:
+          database: blazer_test
+      - run: bundle exec rake test
+      - run: bundle exec rake test:postgresql
+      - run: bundle exec rake test:sqlite
+
+      - uses: ankane/setup-mysql@v1
+        with:
+          database: blazer_test
+      - run: bundle exec rake test:mysql
+      - run: MYSQL_ADAPTER=trilogy bundle exec rake test:mysql

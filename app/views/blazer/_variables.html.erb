@@ -1,5 +1,15 @@
 <% if @bind_vars.any? %>
-  <form id="bind" method="get" action="<%= action %>" class="form-inline" style="margin-bottom: 10px;">
+  <% var_params = request.query_parameters %>
+  <%= javascript_tag nonce: true do %>
+    <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>
+    var now = moment.tz(timeZone)
+    var format = "YYYY-MM-DD"
+
+    function toDate(time) {
+      return moment.tz(time.format(format), timeZone)
+    }
+  <% end %>
+  <form id="bind" method="get" action="<%= action %>" class="form-inline" style="margin-bottom: 15px;">
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
       <% @bind_vars = @bind_vars - date_vars %>
@@ -10,30 +20,52 @@
     <% @bind_vars.each_with_index do |var, i| %>
       <%= label_tag var, var %>
       <% if (data = @smart_vars[var]) %>
-        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
-        <script>
+        <%= select_tag var, options_for_select([[nil, nil]] + data, selected: var_params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
+        <%= javascript_tag nonce: true do %>
           $("#<%= var %>").selectize({
             create: true
           });
-        </script>
-      <% else %>
-        <%= text_field_tag var, params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !params[var], class: "form-control" %>
-        <% if var.end_with?("_at") %>
-          <script>
-            $("#<%= var %>").daterangepicker({singleDatePicker: true, locale: {format: "YYYY-MM-DD"}, autoUpdateInput: false});
-            // hack to start with empty date
-            $("#<%= var %>").on("apply.daterangepicker", function(ev, picker) {
-              $(this).val(picker.startDate.format("YYYY-MM-DD"));
-              $(this).change();
-            });
-          </script>
         <% end %>
+      <% elsif var.end_with?("_at") || var == "start_time" || var == "end_time" %>
+        <%= hidden_field_tag var, var_params[var] %>
+
+        <div class="selectize-control single" style="width: 200px;">
+          <div id="<%= var %>-select" class="selectize-input" style="display: inline-block;">
+            <span>Select a date</span>
+          </div>
+        </div>
+
+        <%= javascript_tag nonce: true do %>
+          (function() {
+            var input = $("#<%= var %>")
+            var datePicker = $("#<%= var %>-select")
+            datePicker.daterangepicker({
+              singleDatePicker: true,
+              locale: {format: format},
+              autoUpdateInput: false,
+              autoApply: true,
+              startDate: input.val().length > 0 ? moment.tz(input.val(), timeZone) : now
+            })
+            // hack to start with empty date
+            datePicker.on("apply.daterangepicker", function(ev, picker) {
+              datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+              input.val(toDate(picker.startDate).utc().format())
+              submitIfCompleted($("#<%= var %>").closest("form"))
+            })
+            if (input.val().length > 0) {
+              var picker = datePicker.data("daterangepicker")
+              datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+            }
+          })()
+        <% end %>
+      <% else %>
+        <%= text_field_tag var, var_params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !var_params[var], class: "form-control" %>
       <% end %>
     <% end %>
 
     <% if date_vars %>
       <% date_vars.each do |var| %>
-        <%= hidden_field_tag var, params[var] %>
+        <%= hidden_field_tag var, var_params[var] %>
       <% end %>
 
       <%= label_tag nil, date_vars.join(" & ") %>
@@ -43,17 +75,9 @@
         </div>
       </div>
 
-      <script>
-        <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>
-        var format = "YYYY-MM-DD"
-        var now = moment.tz(timeZone)
-
+      <%= javascript_tag nonce: true do %>
         function dateStr(daysAgo) {
           return now.clone().subtract(daysAgo || 0, "days").format(format)
-        }
-
-        function toDate(time) {
-          return moment.tz(time.format(format), timeZone)
         }
 
         function setTimeInputs(start, end) {
@@ -73,7 +97,8 @@
             },
             startDate: dateStr(29),
             endDate: dateStr(),
-            opens: "right"
+            opens: "right",
+            alwaysShowCalendars: true
           },
           function(start, end) {
             setTimeInputs(start, end)
@@ -94,7 +119,7 @@
           $("#reportrange").trigger("apply.daterangepicker", picker)
           submitIfCompleted($("#start_time").closest("form"))
         }
-      </script>
+      <% end %>
     <% end %>
 
     <input type="submit" class="btn btn-success" value="Run" style="vertical-align: top;" />

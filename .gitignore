@@ -11,4 +11,7 @@
 *.so
 *.o
 *.a
-mkmf.log
+*.log
+*.sqlite
+/test/internal/tmp
+*.lock

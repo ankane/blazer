@@ -1,23 +1,24 @@
 //= require ./jquery
-//= require ./jquery_ujs
+//= require ./rails-ujs
 //= require ./stupidtable
+//= require ./stupidtable-custom-settings
 //= require ./jquery.stickytableheaders
 //= require ./selectize
-//= require ./highlight.pack
+//= require ./highlight.min
 //= require ./moment
-//= require ./moment-timezone
+//= require ./moment-timezone-with-data
 //= require ./daterangepicker
-//= require ./Chart.js
+//= require ./chart.umd
+//= require ./chartjs-adapter-date-fns.bundle
 //= require ./chartkick
+//= require ./mapkick.bundle
 //= require ./ace
 //= require ./Sortable
 //= require ./bootstrap
-//= require ./vue
+//= require ./vue.global.prod
 //= require ./routes
 //= require ./queries
 //= require ./fuzzysearch
-
-Vue.config.devtools = false
 
 $(document).on('mouseenter', '.dropdown-toggle', function () {
   $(this).parent().addClass('open')
@@ -29,6 +30,10 @@ $(document).on("change", "#bind input, #bind select", function () {
 
 $(document).on("click", "#code", function () {
   $(this).addClass("expanded")
+})
+
+$(document).on("click", "a[disabled]", function (e) {
+  e.preventDefault()
 })
 
 function submitIfCompleted($form) {

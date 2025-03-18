@@ -1,6 +1,6 @@
 module Blazer
   class Check < Record
-    belongs_to :creator, Blazer::BELONGS_TO_OPTIONAL.merge(class_name: Blazer.user_class.to_s) if Blazer.user_class
+    belongs_to :creator, optional: true, class_name: Blazer.user_class.to_s if Blazer.user_class
     belongs_to :query
 
     validates :query_id, presence: true
@@ -13,6 +13,14 @@ module Blazer
 
     def split_emails
       emails.to_s.downcase.split(",").map(&:strip)
+    end
+
+    def split_slack_channels
+      if Blazer.slack?
+        slack_channels.to_s.downcase.split(",").map(&:strip)
+      else
+        []
+      end
     end
 
     def update_state(result)
@@ -67,18 +75,18 @@ module Blazer
       end
 
       # do not notify on creation, except when not passing
-      if (state_was != 'new' || state != 'passing') && (state != state_was || nbr_of_failures != nbr_of_failures_was) && (not result.error)
+      if (state_was != "new" || state != "passing") && (state != state_was || nbr_of_failures != nbr_of_failures_was) && (not result.error)
         # notify via email
         if emails.present?
-          Blazer::CheckMailer.state_change(self, state, "#{state_was} (#{nbr_of_failures_was} failures)", nbr_of_failures, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now
+          Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now
         end
         # notify via slack
         if notify_slack
           if nbr_of_failures != nbr_of_failures_was && state == state_was
-            Blazer::SlackNotifier.notify_count_change(self, state, nbr_of_failures_was, nbr_of_failures)
+            Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size, message, check_type)
           end
           if state != state_was
-            Blazer::SlackNotifier.state_change(self, state, "#{state_was} (#{nbr_of_failures_was} failures)", nbr_of_failures)
+            Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size, message, check_type)
           end
         end
       end

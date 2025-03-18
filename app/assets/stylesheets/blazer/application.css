@@ -1,8 +1,9 @@
 /*
+ *= require ./bootstrap-sprockets
  *= require ./bootstrap
- *= require ./selectize.default
+ *= require ./selectize
  *= require ./github
- *= require ./daterangepicker-bs3
+ *= require ./daterangepicker
  *= require_self
  */
 
@@ -12,8 +13,12 @@ pre {
 }
 
 body {
-  padding-top: 20px;
-  padding-bottom: 20px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+table.results-table {
+  margin-bottom: 0;
 }
 
 .results-table th {
@@ -67,6 +72,10 @@ input.search:focus {
 
 #editor {
   height: 160px;
+}
+
+.ace-twilight .ace_gutter {
+  background: transparent;
 }
 
 .ace_print-margin-layer {
@@ -142,9 +151,10 @@ input.search:focus {
   top: 0;
   left: 0;
   right: 0;
-  background-color: whitesmoke;
   height: 60px;
   z-index: 1001;
+  border-bottom: solid 1px whitesmoke;
+  background-color: #fff;
 }
 
 .glyphicon-remove {
@@ -181,7 +191,6 @@ input.search:focus {
 }
 
 .chart-container {
-  padding-top: 10px;
   clear: both;
 }
 
@@ -195,4 +204,40 @@ input.search:focus {
 
 .query-error {
   color: red;
+}
+
+.small-form {
+  margin-right: auto;
+  margin-left: auto;
+  max-width: 400px;
+}
+
+.alert {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+
+h1, h2, h3, h4, p, hr, .table, .navbar, #header, .alert, .form-group {
+  margin-top: 0;
+  margin-bottom: 15px;
+}
+
+.double-margin, .chart-container {
+  margin-bottom: 30px;
+}
+
+h1 {
+  font-size: 24px;
+}
+
+h2 {
+  font-size: 20px;
+}
+
+.schema-table {
+  max-width: 500px;
+}
+
+.selectize-dropdown .create {
+  padding: 5px 8px;
 }

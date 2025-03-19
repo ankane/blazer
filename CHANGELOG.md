@@ -1,5 +1,7 @@
 ## 3.2.1 (unreleased)
 
+- Added thousands separator to charts
+- Improved i18n for charts
 - Fixed leading zeros in variables
 
 ## 3.2.0 (2025-02-23)

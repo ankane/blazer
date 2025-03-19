@@ -46,7 +46,7 @@
     <% chart_id = SecureRandom.hex %>
     <% column_types = @result.column_types %>
     <% chart_type = @result.chart_type %>
-    <% chart_options = {id: chart_id} %>
+    <% chart_options = {id: chart_id, thousands: t("number.format.delimiter"), decimal: t("number.format.separator")} %>
     <% if ["line", "line2"].include?(chart_type) %>
       <% chart_options.merge!(min: nil) %>
     <% end %>

@@ -165,7 +165,7 @@
                         <% end %>
                       <% end %>
 
-                      <% if v2 = (@smart_values[k] || {})[v.nil? ? v : v.to_s] %>
+                      <% if (v2 = @smart_values.dig(k, v&.to_s)) %>
                         <div class="text-muted"><%= v2 %></div>
                       <% end %>
                     </td>

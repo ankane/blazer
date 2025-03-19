@@ -232,6 +232,9 @@ module Blazer
 
     def set_data_source
       @data_source = Blazer.data_sources[params[:data_source]]
+    rescue Blazer::Error => e
+      raise unless e.message.start_with?("Unknown data source:")
+      render plain: "Unknown data source", status: :not_found
     end
 
     def continue_run

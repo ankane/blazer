@@ -143,7 +143,7 @@ end
 
 ### Other
 
-Specify a `before_action` method to run in `blazer.yml`.
+Specify a `before_action` method to run in `config/blazer.yml`.
 
 ```yml
 before_action_method: require_admin

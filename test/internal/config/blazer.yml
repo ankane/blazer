@@ -23,7 +23,7 @@ data_sources:
 
     smart_variables:
       # zone_id: "SELECT id, name FROM zones ORDER BY name ASC"
-      period: ["day", "week", "month"]
+      period: ["day", "week", "month", "quarter"]
       # status: {0: "Active", 1: "Archived"}
 
     linked_columns:

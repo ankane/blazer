@@ -1,4 +1,4 @@
-## 3.2.1 (unreleased)
+## 3.2.1 (2025-03-21)
 
 - Added thousands separator to charts
 - Improved i18n for charts

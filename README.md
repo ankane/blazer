@@ -244,7 +244,7 @@ You can also use an array or hash for static data and enums.
 
 ```yml
 smart_variables:
-  period: ["day", "week", "month"]
+  period: ["day", "week", "month", "quarter"]
   status: {0: "Active", 1: "Archived"}
 ```
 

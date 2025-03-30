@@ -19,4 +19,13 @@ class CohortAnalysisTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match %{selected="selected" value="week"}, response.body
   end
+
+  def test_week_cohort_analysis
+    query = "SELECT 1 AS user_id, NOW() AS conversion_time /* cohort analysis */"
+    run_query query, query_id: 2
+
+    assert_response :success
+    assert_match "Week 1", response.body
+    refute_match "Week 2", response.body
+  end
 end

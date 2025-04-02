@@ -192,6 +192,7 @@ module Blazer
   def self.send_failing_checks
     emails = {}
     slack_channels = {}
+    checks = []
 
     Blazer::Check.includes(:query).where(state: ["failing", "error", "timed out", "disabled"]).find_each do |check|
       check.split_emails.each do |email|
@@ -200,6 +201,8 @@ module Blazer
       check.split_slack_channels.each do |channel|
         (slack_channels[channel] ||= []) << check
       end
+
+      checks << check
     end
 
     emails.each do |email, checks|
@@ -211,6 +214,14 @@ module Blazer
     slack_channels.each do |channel, checks|
       Safely.safely do
         Blazer::SlackNotifier.failing_checks(channel, checks)
+      end
+    end
+
+    if checks.any?
+      custom_notifiers.each do |notifier|
+        Safely.safely do
+          notifier.failing_checks(checks) if notifier.respond_to?(:failing_checks)
+        end
       end
     end
   end

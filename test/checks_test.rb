@@ -90,4 +90,41 @@ class ChecksTest < ActionDispatch::IntegrationTest
     end
     assert_equal expected, count
   end
+
+  module DummyNotifier
+    def self.state_change(check:, state:, state_was:, result:, message:, check_type:)
+      make_request
+    end
+    def self.failing_checks(_)
+      make_request
+    end
+    def self.make_request
+    end
+  end
+
+  def test_custom
+    Blazer.custom_notifiers = [DummyNotifier]
+    query = create_query
+    check = create_check(query: query, check_type: "bad_data")
+
+    assert_custom_messages 0 do
+      Blazer.send_failing_checks
+    end
+
+    assert_custom_messages 1 do
+      Blazer.run_checks(schedule: "5 minutes")
+    end
+
+    assert_custom_messages 1 do
+      Blazer.send_failing_checks
+    end
+  end
+
+  def assert_custom_messages(expected)
+    count = 0
+    DummyNotifier.stub :make_request, ->(*) { count += 1 } do
+      yield
+    end
+    assert_equal expected, count
+  end
 end

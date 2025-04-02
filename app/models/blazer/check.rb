@@ -71,7 +71,7 @@ module Blazer
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now if emails.present?
         Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size, message, check_type)
         Blazer.custom_notifiers.each do |notifier|
-          notifier.call(self, state, state_was, result, message, check_type) if notifier.respond_to?(:call)
+          notifier.state_change(check: self, state:, state_was:, result:, message:, check_type:) if notifier.respond_to?(:state_change)
         end
       end
       save! if changed?

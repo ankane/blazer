@@ -35,6 +35,7 @@ jobs:
       - uses: ankane/setup-mysql@v1
         with:
           database: blazer_test
+      - run: mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
       - run: ADAPTER=mysql2 bundle exec rake test
       - run: bundle exec rake test:mysql
       - run: ADAPTER=trilogy bundle exec rake test

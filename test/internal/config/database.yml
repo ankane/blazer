@@ -1,3 +1,6 @@
 test:
   adapter:  <%= ENV["ADAPTER"] || "postgresql" %>
   database: blazer_test
+  <% if ENV["ADAPTER"] == "trilogy" %>
+  host: 127.0.0.1
+  <% end %>

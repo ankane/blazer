@@ -3,8 +3,6 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
-    env:
-      TEST_PROPHET: 1
     strategy:
       fail-fast: false
       matrix:
@@ -19,6 +17,7 @@ jobs:
             gemfile: gemfiles/rails70.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+      TEST_PROPHET: 1
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1

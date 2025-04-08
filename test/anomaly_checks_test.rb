@@ -1,6 +1,11 @@
 require_relative "test_helper"
 
 class AnomalyChecksTest < ActionDispatch::IntegrationTest
+  def setup
+    Blazer::Check.delete_all
+    Blazer::Query.delete_all
+  end
+
   def test_prophet
     skip unless ENV["TEST_PROPHET"]
 
@@ -21,7 +26,7 @@ class AnomalyChecksTest < ActionDispatch::IntegrationTest
 
   def assert_anomaly(anomaly_checks)
     Blazer.stub(:anomaly_checks, anomaly_checks) do
-      query = create_query(statement: "SELECT current_date + n AS day, 0.1 * random() FROM generate_series(1, 30) n")
+      query = create_query(statement: "SELECT current_date + n AS day, 0.1 FROM generate_series(1, 30) n")
       check = create_check(query: query, check_type: "anomaly")
 
       Blazer.run_checks(schedule: "5 minutes")

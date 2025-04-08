@@ -1,6 +1,10 @@
 require_relative "test_helper"
 
 class ForecastingTest < ActionDispatch::IntegrationTest
+  def setup
+    Blazer::Query.delete_all
+  end
+
   def test_prophet
     skip unless ENV["TEST_PROPHET"]
 

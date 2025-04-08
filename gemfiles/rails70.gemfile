@@ -11,3 +11,4 @@ gem "sqlite3", "< 2"
 gem "mysql2"
 gem "activerecord-trilogy-adapter"
 gem "sprockets-rails"
+gem "prophet-rb" if ENV["TEST_PROPHET"]

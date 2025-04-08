@@ -17,7 +17,6 @@ jobs:
             gemfile: gemfiles/rails70.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
-      TEST_ANOMALY_DETECTION: 1
       TEST_PROPHET: 1
     steps:
       - uses: actions/checkout@v4

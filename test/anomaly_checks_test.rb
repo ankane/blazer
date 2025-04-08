@@ -19,8 +19,6 @@ class AnomalyChecksTest < ActionDispatch::IntegrationTest
   end
 
   def test_anomaly_detection
-    skip unless ENV["TEST_ANOMALY_DETECTION"]
-
     assert_anomaly("anomaly_detection")
   end
 

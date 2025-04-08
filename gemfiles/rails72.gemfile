@@ -11,5 +11,5 @@ gem "sqlite3"
 gem "mysql2"
 gem "trilogy"
 gem "sprockets-rails"
-gem "anomaly_detection" if ENV["TEST_ANOMALY_DETECTION"]
+gem "anomaly_detection"
 gem "prophet-rb" if ENV["TEST_PROPHET"]

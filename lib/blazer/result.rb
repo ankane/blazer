@@ -5,7 +5,7 @@ module Blazer
 
     def initialize(data_source, columns, rows, error, cached_at, just_cached)
       @data_source = data_source
-      @columns = columns
+      @columns = columns.dup
       @rows = rows
       @error = error
       @cached_at = cached_at

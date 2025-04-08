@@ -1,3 +1,7 @@
+## 3.2.2 (unreleased)
+
+- Fixed error with forecasting with Rails 7.2+
+
 ## 3.2.1 (2025-03-21)
 
 - Added thousands separator to charts

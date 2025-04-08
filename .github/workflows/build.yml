@@ -3,6 +3,8 @@ on: [push, pull_request]
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      TEST_PROPHET: 1
     strategy:
       fail-fast: false
       matrix:

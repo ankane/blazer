@@ -35,5 +35,7 @@ jobs:
       - uses: ankane/setup-mysql@v1
         with:
           database: blazer_test
+      - run: ADAPTER=mysql2 bundle exec rake test
       - run: bundle exec rake test:mysql
+      - run: ADAPTER=trilogy bundle exec rake test
       - run: MYSQL_ADAPTER=trilogy bundle exec rake test:mysql

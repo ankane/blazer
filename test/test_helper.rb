@@ -37,6 +37,10 @@ class ActionDispatch::IntegrationTest
   def create_check(**attributes)
     Blazer::Check.create!(schedule: "5 minutes", **attributes)
   end
+
+  def postgresql?
+    ENV["ADAPTER"].nil?
+  end
 end
 
 require_relative "support/adapter_test"

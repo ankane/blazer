@@ -24,6 +24,8 @@ class CacheTest < ActionDispatch::IntegrationTest
   end
 
   def test_slow_over_threshold
+    skip unless postgresql?
+
     with_caching({"mode" => "slow", "slow_threshold" => 0.01}) do
       run_query "SELECT pg_sleep(0.01)::text"
       refute_match "Cached", response.body

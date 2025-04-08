@@ -1,3 +1,3 @@
 test:
-  adapter:  postgresql
+  adapter:  <%= ENV["ADAPTER"] || "postgresql" %>
   database: blazer_test

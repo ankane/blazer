@@ -48,7 +48,8 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_tables
     get blazer.tables_queries_path(data_source: "main")
     assert_response :success
-    tables = JSON.parse(response.body).map { |v| v["table"] }
+    tables = JSON.parse(response.body)
+    tables = tables.map { |v| v["table"] } if postgresql?
     assert_includes tables, "blazer_queries"
   end
 

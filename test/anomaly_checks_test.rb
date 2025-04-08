@@ -25,6 +25,8 @@ class AnomalyChecksTest < ActionDispatch::IntegrationTest
   end
 
   def assert_anomaly(anomaly_checks)
+    skip unless postgresql?
+
     Blazer.stub(:anomaly_checks, anomaly_checks) do
       query = create_query(statement: "SELECT current_date + n AS day, 0.1 FROM generate_series(1, 30) n")
       check = create_check(query: query, check_type: "anomaly")

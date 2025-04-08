@@ -1,5 +1,4 @@
 require "bundler/setup"
-require "logger" # for Rails < 7.1
 require "combustion"
 Bundler.require(:default)
 require "minitest/autorun"
@@ -17,9 +16,7 @@ Combustion.initialize! :active_record, :action_controller, :action_mailer, :acti
   config.cache_store = :memory_store
 
   # fixes warning with adapter tests
-  if Rails::VERSION::STRING.to_f >= 7.1
-    config.action_dispatch.show_exceptions = :none
-  end
+  config.action_dispatch.show_exceptions = :none
 end
 
 Rails.cache.logger = logger

@@ -1,4 +1,4 @@
-## 3.3.0 (unreleased)
+## 3.3.0 (2025-04-12)
 
 - Fixed error with forecasting with Rails 7.2+
 - Dropped support for Ruby < 3.2 and Rails < 7.1

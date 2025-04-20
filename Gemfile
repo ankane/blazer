@@ -35,6 +35,6 @@ gem "propshaft"
 # gem "activerecord-sqlserver-adapter"
 
 # anomaly detection and forecasting
-gem "anomaly_detection"
+gem "anomaly_detection", platform: :mri
 gem "prophet-rb" if ENV["TEST_PROPHET"]
 gem "trend" if ENV["TEST_TREND"]

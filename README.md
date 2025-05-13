@@ -1032,12 +1032,6 @@ If views are stuck with a `Loading...` message, there might be a problem with st
 override_csp: true
 ```
 
-## Upgrading
-
-### 3.0
-
-Maps now use Mapbox GL JS v1 instead of Mapbox.js, which affects Mapbox billing.
-
 ## History
 
 View the [changelog](https://github.com/ankane/blazer/blob/master/CHANGELOG.md)

@@ -66,6 +66,25 @@ class ChecksTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_emails_for_new_bad_data
+    query = create_query
+    check = create_check(query: query, check_type: "new_bad_data", emails: "hi@example.org,hi2@example.org")
+
+    assert_emails 1 do
+      Blazer.run_checks(schedule: "5 minutes")
+    end
+
+    assert_emails 0 do
+      Blazer.run_checks(schedule: "5 minutes")
+    end
+
+    query.update!(statement: "SELECT 1 LIMIT 0")
+
+    assert_emails 1 do
+      Blazer.run_checks(schedule: "5 minutes")
+    end
+  end
+
   def test_slack
     query = create_query
     check = create_check(query: query, check_type: "bad_data", slack_channels: "#general,#random")
@@ -80,6 +99,25 @@ class ChecksTest < ActionDispatch::IntegrationTest
 
     assert_slack_messages 2 do
       Blazer.send_failing_checks
+    end
+  end
+
+  def test_slack_for_new_bad_data
+    query = create_query
+    check = create_check(query: query, check_type: "new_bad_data", slack_channels: "#general,#random")
+
+    assert_slack_messages 2 do
+      Blazer.run_checks(schedule: "5 minutes")
+    end
+
+    assert_slack_messages 0 do
+      Blazer.run_checks(schedule: "5 minutes")
+    end
+
+    query.update!(statement: "SELECT 1 LIMIT 0")
+
+    assert_slack_messages 2 do
+      Blazer.run_checks(schedule: "5 minutes")
     end
   end
 

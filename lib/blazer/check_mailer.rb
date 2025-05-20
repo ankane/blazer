@@ -2,6 +2,8 @@ module Blazer
   class CheckMailer < ActionMailer::Base
     include ActionView::Helpers::TextHelper
 
+    require "csv"
+
     default from: Blazer.from_email if Blazer.from_email
     layout false
 
@@ -15,6 +17,17 @@ module Blazer
       @rows = rows
       @column_types = column_types
       @check_type = check_type
+
+      timestamp = Time.now.strftime("%Y%m%d-%H%M%S")
+      filename = "report-#{timestamp}.csv"
+      attachments[filename] = {
+        mime_type: "text/csv",
+        content: CSV.generate do |csv|
+          csv << columns
+          rows.each { |row| csv << row }
+        end
+      }
+
       mail to: check.emails, reply_to: check.emails, subject: "Check #{state.titleize}: #{check.query.name}"
     end
 

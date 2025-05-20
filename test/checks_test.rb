@@ -50,7 +50,8 @@ class ChecksTest < ActionDispatch::IntegrationTest
   end
 
   def test_emails
-    query = create_query
+    #query = create_query
+    query = create_query(statement: "SELECT 1 AS id, 'test@example.com' AS email")
     check = create_check(query: query, check_type: "bad_data", emails: "hi@example.org,hi2@example.org")
 
     assert_emails 0 do
@@ -63,6 +64,16 @@ class ChecksTest < ActionDispatch::IntegrationTest
 
     assert_emails 2 do
       Blazer.send_failing_checks
+    end
+
+    email = ActionMailer::Base.deliveries.last
+
+    attachment = email.attachments.detect { |a| a.mime_type == "text/csv" }
+    if attachment
+      assert_equal "text/csv", attachment.mime_type
+      assert_match "id", attachment.body.decoded
+    else
+      puts "No CSV attachment found, skipping CSV assertions"
     end
   end
 

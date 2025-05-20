@@ -17,6 +17,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
 
     Blazer.run_checks(schedule: "5 minutes")
     check.reload
+    puts check.inspect
     assert_equal "failing", check.state
 
     query.update!(statement: "SELECT 1 LIMIT 0")
@@ -62,19 +63,16 @@ class ChecksTest < ActionDispatch::IntegrationTest
       Blazer.run_checks(schedule: "5 minutes")
     end
 
+    email = ActionMailer::Base.deliveries.last
+
+    attachment = email.attachments.detect { |a| a.mime_type == "text/csv" }
+    assert_equal "text/csv", attachment.mime_type
+    assert_match "id", attachment.body.decoded
+
     assert_emails 2 do
       Blazer.send_failing_checks
     end
 
-    email = ActionMailer::Base.deliveries.last
-
-    attachment = email.attachments.detect { |a| a.mime_type == "text/csv" }
-    if attachment
-      assert_equal "text/csv", attachment.mime_type
-      assert_match "id", attachment.body.decoded
-    else
-      puts "No CSV attachment found, skipping CSV assertions"
-    end
   end
 
   def test_slack

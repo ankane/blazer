@@ -75,6 +75,16 @@ class ChecksTest < ActionDispatch::IntegrationTest
 
   end
 
+  def test_emails_always
+    query = create_query
+    check = create_check(query: query, check_type: "always", emails: "hi@example.org,hi2@example.org")
+
+    assert_emails 2 do
+      Blazer.run_checks(schedule: "5 minutes")
+      Blazer.run_checks(schedule: "5 minutes")
+    end
+  end
+
   def test_slack
     query = create_query
     check = create_check(query: query, check_type: "bad_data", slack_channels: "#general,#random")

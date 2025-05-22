@@ -17,7 +17,7 @@ class ChartsTest < ActionDispatch::IntegrationTest
   end
 
   def test_column_chart_format2
-    run_query "SELECT 'Label' AS label, 'Group' AS group, 1"
+    run_query "SELECT 'Label' AS label, 'Group' AS group2, 1"
     assert_match "ColumnChart", response.body
     assert_match %{"name":"Group"}, response.body
   end

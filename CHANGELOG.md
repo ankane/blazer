@@ -1,11 +1,53 @@
-## 3.0.0 (unreleased)
+## 3.3.0 (2025-04-12)
 
-- Switched to Mapbox GL for maps (this affects Mapbox billing)
+- Fixed error with forecasting with Rails 7.2+
+- Dropped support for Ruby < 3.2 and Rails < 7.1
+
+## 3.2.1 (2025-03-21)
+
+- Added thousands separator to charts
+- Improved i18n for charts
+- Fixed leading zeros in variables
+
+## 3.2.0 (2025-02-23)
+
+- Added support for Trino
+- Added support for `neo4j-ruby-driver` gem
+- Fixed types for SQLite
+- Fixed table preview and schema page for SQLite
+
+## 3.1.0 (2024-10-14)
+
+- Fixed error when Propshaft is installed but not used
+- Dropped support for Ruby < 3.1 and Rails < 7
+
+## 3.0.4 (2024-09-04)
+
+- Improved CSP support
+- Fixed error with Trilogy and Rails 7.2
+
+## 3.0.3 (2024-01-10)
+
+- Fixed error with Trilogy, non-ASCII column names, and charts
+
+## 3.0.2 (2023-11-28)
+
+- Fixed error with SQLite and prepared statements
+
+## 3.0.1 (2023-10-08)
+
+- Fixed error with Rails 7.1 when no user model
+
+## 3.0.0 (2023-09-20)
+
+- Switched from Mapbox.js to Mapbox GL JS v1 for maps (this affects Mapbox billing)
 - Support for AnomalyDetection.rb is no longer experimental
 - Added support for maps from GeoJSON
+- Added support for Trilogy
 - Fixed `async` option
 - Fixed run now button for cached queries
 - Dropped support for Ruby < 3 and Rails < 6.1
+- Dropped support for MongoDB (required < 4.2)
 - Dropped support for R anomaly detection
 
 ## 2.6.5 (2022-08-31)
@@ -422,3 +464,20 @@ There was no 1.8.1 release.
 - Added support for Rails 4.2
 - Fixed error with `mysql2` adapter
 - Added `user_class` option
+
+## 0.0.4 (2014-11-19)
+
+- Added timeout
+
+## 0.0.3 (2014-10-08)
+
+- Made editor bigger
+
+## 0.0.2 (2014-10-01)
+
+- Added query to audits
+- Added `user_name` option
+
+## 0.0.1 (2014-09-30)
+
+- First release

@@ -9,6 +9,11 @@ module AdapterTest
     assert_kind_of Array, tables
   end
 
+  def test_schema
+    get blazer.schema_queries_path(data_source: data_source)
+    assert_response :success
+  end
+
   private
 
   def tables

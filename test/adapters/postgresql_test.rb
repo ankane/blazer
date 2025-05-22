@@ -12,11 +12,7 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   end
 
   def test_audit
-    if no_binds?
-      assert_audit "SELECT 'world' AS hello", "SELECT {var} AS hello", var: "world"
-    else
-      assert_audit "SELECT $1 AS hello\n\n[\"world\"]", "SELECT {var} AS hello", var: "world"
-    end
+    assert_audit "SELECT $1 AS hello\n\n[\"world\"]", "SELECT {var} AS hello", var: "world"
   end
 
   def test_string
@@ -25,6 +21,10 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
 
   def test_integer
     assert_result [{"hello" => "1"}], "SELECT {var} AS hello", var: "1"
+  end
+
+  def test_leading_zeros
+    assert_result [{"hello" => "0123"}], "SELECT {var} AS hello", var: "0123"
   end
 
   def test_float
@@ -56,43 +56,31 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   end
 
   def test_bad_position
-    if no_binds?
-      assert_error "syntax error at or near \"'hello'\"\nLINE 1: SELECT 'world' AS 'hello'", "SELECT 'world' AS {var}", var: "hello"
-    else
-      assert_bad_position "SELECT 'world' AS {var}", var: "hello"
-    end
+    assert_bad_position "SELECT 'world' AS {var}", var: "hello"
   end
 
   def test_bad_position_before
-    if no_binds?
-      assert_result [{"?column?" => "world"}], "SELECT{var}", var: "world"
-    else
-      assert_error "syntax error at or near \"SELECT$1\"", "SELECT{var}", var: "world"
-    end
+    assert_error "syntax error at or near \"SELECT$1\"", "SELECT{var}", var: "world"
   end
 
   def test_bad_position_after
-    if no_binds?
-      assert_error "syntax error at or near \"456\"\nLINE 1: SELECT 'world'456", "SELECT {var}456", var: "world"
-      assert_equal "SELECT 'world'456", Blazer::Audit.last.statement
-    else
-      assert_error "syntax error at or near \"456\"\nLINE 1: SELECT $1 456", "SELECT {var}456", var: "world"
-      assert_equal "SELECT $1 456\n\n[\"world\"]", Blazer::Audit.last.statement
-    end
+    assert_error "syntax error at or near \"456\"\nLINE 1: SELECT $1 456", "SELECT {var}456", var: "world"
+    assert_equal "SELECT $1 456\n\n[\"world\"]", Blazer::Audit.last.statement
   end
 
   def test_quoted
-    if no_binds?
-      assert_error "syntax error at or near \"''\"\nLINE 1: SELECT ''world'' AS hello", "SELECT '{var}' AS hello", var: "world"
-    else
-      assert_error "could not determine data type of parameter $1", "SELECT '{var}' AS hello", var: "world"
-    end
+    assert_error "could not determine data type of parameter $1", "SELECT '{var}' AS hello", var: "world"
   end
 
-  private
+  def test_binary_output
+    assert_result [{"bytea" => "\\x68656c6c6f"}], "SELECT 'hello'::bytea"
+  end
 
-  def no_binds?
-    ActiveRecord::VERSION::STRING.to_f < 6.1 &&
-      Blazer.data_sources[data_source].settings["url"].include?("prepared_statements=false")
+  def test_json_output
+    assert_result [{"json" => '{"hello": "world"}'}], %!SELECT '{"hello": "world"}'::json!
+  end
+
+  def test_jsonb_output
+    assert_result [{"jsonb" => '{"hello": "world"}'}], %!SELECT '{"hello": "world"}'::jsonb!
   end
 end

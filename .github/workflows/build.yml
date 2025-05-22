@@ -7,16 +7,17 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          - ruby: 3.4
+            gemfile: Gemfile
+          - ruby: 3.3
+            gemfile: gemfiles/rails72.gemfile
           - ruby: 3.2
             gemfile: gemfiles/rails71.gemfile
-          - ruby: 3.1
-            gemfile: Gemfile
-          - ruby: "3.0"
-            gemfile: gemfiles/rails61.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
+      TEST_PROPHET: 1
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
@@ -26,3 +27,13 @@ jobs:
           database: blazer_test
       - run: bundle exec rake test
       - run: bundle exec rake test:postgresql
+      - run: bundle exec rake test:sqlite
+
+      - uses: ankane/setup-mysql@v1
+        with:
+          database: blazer_test
+      - run: mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
+      - run: ADAPTER=mysql2 bundle exec rake test
+      - run: bundle exec rake test:mysql
+      - run: ADAPTER=trilogy bundle exec rake test
+      - run: MYSQL_ADAPTER=trilogy bundle exec rake test:mysql

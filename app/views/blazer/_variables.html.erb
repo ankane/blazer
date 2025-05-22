@@ -1,6 +1,6 @@
 <% if @bind_vars.any? %>
   <% var_params = request.query_parameters %>
-  <script>
+  <%= javascript_tag nonce: true do %>
     <%= blazer_js_var "timeZone", Blazer.time_zone.tzinfo.name %>
     var now = moment.tz(timeZone)
     var format = "YYYY-MM-DD"
@@ -8,7 +8,7 @@
     function toDate(time) {
       return moment.tz(time.format(format), timeZone)
     }
-  </script>
+  <% end %>
   <form id="bind" method="get" action="<%= action %>" class="form-inline" style="margin-bottom: 15px;">
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
@@ -21,11 +21,11 @@
       <%= label_tag var, var %>
       <% if (data = @smart_vars[var]) %>
         <%= select_tag var, options_for_select([[nil, nil]] + data, selected: var_params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
-        <script>
+        <%= javascript_tag nonce: true do %>
           $("#<%= var %>").selectize({
             create: true
           });
-        </script>
+        <% end %>
       <% elsif var.end_with?("_at") || var == "start_time" || var == "end_time" %>
         <%= hidden_field_tag var, var_params[var] %>
 
@@ -35,7 +35,7 @@
           </div>
         </div>
 
-        <script>
+        <%= javascript_tag nonce: true do %>
           (function() {
             var input = $("#<%= var %>")
             var datePicker = $("#<%= var %>-select")
@@ -57,7 +57,7 @@
               datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
             }
           })()
-        </script>
+        <% end %>
       <% else %>
         <%= text_field_tag var, var_params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !var_params[var], class: "form-control" %>
       <% end %>
@@ -75,7 +75,7 @@
         </div>
       </div>
 
-      <script>
+      <%= javascript_tag nonce: true do %>
         function dateStr(daysAgo) {
           return now.clone().subtract(daysAgo || 0, "days").format(format)
         }
@@ -119,7 +119,7 @@
           $("#reportrange").trigger("apply.daterangepicker", picker)
           submitIfCompleted($("#start_time").closest("form"))
         }
-      </script>
+      <% end %>
     <% end %>
 
     <input type="submit" class="btn btn-success" value="Run" style="vertical-align: top;" />

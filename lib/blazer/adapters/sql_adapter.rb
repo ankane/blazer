@@ -21,15 +21,41 @@ module Blazer
         error = nil
 
         begin
-          in_transaction do
+          types = []
+          in_transaction do |connection|
             set_timeout(data_source.timeout) if data_source.timeout
-
             binds = bind_params.map { |v| ActiveRecord::Relation::QueryAttribute.new(nil, v, ActiveRecord::Type::Value.new) }
-            result = connection_model.connection.select_all("#{statement} /*#{comment}*/", nil, binds)
-            columns = result.columns
-            result.rows.each do |untyped_row|
-              rows << (result.column_types.empty? ? untyped_row : columns.each_with_index.map { |c, i| untyped_row[i] && result.column_types[c] ? result.column_types[c].send(:cast_value, untyped_row[i]) : untyped_row[i] })
+            if sqlite?
+              type_map = connection.send(:type_map)
+              connection.raw_connection.prepare("#{statement} /*#{comment}*/") do |stmt|
+                stmt.bind_params(connection.send(:type_casted_binds, binds))
+                columns = stmt.columns
+                rows = stmt.to_a
+                types = stmt.types.map { |t| type_map.lookup(t) }
+              end
+            else
+              result = connection.select_all("#{statement} /*#{comment}*/", nil, binds)
+              columns = result.columns
+              rows = result.rows
+              if result.column_types.any?
+                types = columns.size.times.map { |i| result.column_types[i] }
+              end
             end
+          end
+
+          # cast values
+          if types.any?
+            rows =
+              rows.map do |row|
+                row.map.with_index do |v, i|
+                  v && (t = types[i]) ? t.send(:cast_value, v) : v
+                end
+              end
+          end
+
+          # fix for non-ASCII column names and charts
+          if adapter_name == "Trilogy"
+            columns = columns.map { |k| k.dup.force_encoding(Encoding::UTF_8) }
           end
         rescue => e
           error = e.message.sub(/.+ERROR: /, "")
@@ -45,7 +71,12 @@ module Blazer
       end
 
       def tables
-        sql = add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
+        sql =
+          if sqlite?
+            "SELECT NULL, name FROM sqlite_master WHERE type IN ('table', 'view') ORDER BY name"
+          else
+            add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
+          end
         result = data_source.run_statement(sql, refresh_cache: true)
         if postgresql? || redshift? || snowflake?
           result.rows.sort_by { |r| [r[0] == default_schema ? "" : r[0], r[1]] }.map do |row|
@@ -69,7 +100,12 @@ module Blazer
       end
 
       def schema
-        sql = add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
+        sql =
+          if sqlite?
+            "SELECT NULL, t.name, c.name, c.type, c.cid FROM sqlite_master t INNER JOIN pragma_table_info(t.name) c WHERE t.type IN ('table', 'view')"
+          else
+            add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
+          end
         result = data_source.run_statement(sql)
         result.rows.group_by { |r| [r[0], r[1]] }.map { |k, vs| {schema: k[0], table: k[1], columns: vs.sort_by { |v| v[2] }.map { |v| {name: v[2], data_type: v[3]} }} }.sort_by { |t| [t[:schema] == default_schema ? "" : t[:schema], t[:table]] }
       end
@@ -135,7 +171,7 @@ module Blazer
       def cohort_analysis_statement(statement, period:, days:)
         raise "Cohort analysis not supported" unless supports_cohort_analysis?
 
-        cohort_column = statement =~ /\bcohort_time\b/ ? "cohort_time" : "conversion_time"
+        cohort_column = statement.match?(/\bcohort_time\b/) ? "cohort_time" : "conversion_time"
         tzname = Blazer.time_zone.tzinfo.name
 
         if mysql?
@@ -194,10 +230,10 @@ module Blazer
 
       # Redshift adapter silently ignores binds
       def parameter_binding
-        if postgresql? && (ActiveRecord::VERSION::STRING.to_f >= 6.1 || prepared_statements?)
-          # Active Record < 6.1 silently ignores binds with Postgres when prepared statements are disabled
+        if postgresql?
           :numeric
-        elsif sqlite?
+        elsif sqlite? && prepared_statements?
+          # Active Record silently ignores binds with SQLite when prepared statements are disabled
           :numeric
         elsif mysql? && prepared_statements?
           # Active Record silently ignores binds with MySQL when prepared statements are disabled
@@ -233,7 +269,7 @@ module Blazer
       end
 
       def mysql?
-        ["MySQL", "Mysql2", "Mysql2Spatial"].include?(adapter_name)
+        ["MySQL", "Mysql2", "Mysql2Spatial", "Trilogy"].include?(adapter_name)
       end
 
       def sqlite?
@@ -259,6 +295,8 @@ module Blazer
             "public"
           elsif sqlserver?
             "dbo"
+          elsif sqlite?
+            nil
           elsif connection_model.respond_to?(:connection_db_config)
             connection_model.connection_db_config.database
           else
@@ -287,8 +325,7 @@ module Blazer
         if postgresql? || redshift?
           execute("SET #{use_transaction? ? "LOCAL " : ""}statement_timeout = #{timeout.to_i * 1000}")
         elsif mysql?
-          # use send as this method is private in Rails 4.2
-          mariadb = connection_model.connection.send(:mariadb?) rescue false
+          mariadb = connection_model.connection.mariadb? rescue false
           if mariadb
             execute("SET max_statement_time = #{timeout.to_i * 1000}")
           else
@@ -304,14 +341,14 @@ module Blazer
       end
 
       def in_transaction
-        connection_model.connection_pool.with_connection do
+        connection_model.connection_pool.with_connection do |connection|
           if use_transaction?
             connection_model.transaction do
-              yield
+              yield connection
               raise ActiveRecord::Rollback
             end
           else
-            yield
+            yield connection
           end
         end
       end

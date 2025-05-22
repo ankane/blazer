@@ -107,7 +107,7 @@ module Blazer
       end
 
       unless result
-        comment = "blazer"
+        comment = "blazer".dup
         if options[:user].respond_to?(:id)
           comment << ",user_id:#{options[:user].id}"
         end
@@ -256,7 +256,7 @@ module Blazer
     def detect_adapter
       scheme = settings["url"].to_s.split("://").first
       case scheme
-      when "mongodb", "presto", "cassandra", "ignite"
+      when "presto", "trino", "cassandra", "ignite"
         scheme
       else
         "sql"

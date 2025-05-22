@@ -26,8 +26,15 @@ module Blazer
     end
 
     def index
-      set_queries
-      render json: @queries
+      respond_to do |format|
+        format.html do
+          redirect_to root_path
+        end
+        format.json do
+          set_queries
+          render json: @queries
+        end
+      end
     end
 
     def new
@@ -235,6 +242,9 @@ module Blazer
 
     def set_data_source
       @data_source = Blazer.data_sources[params[:data_source]]
+    rescue Blazer::Error => e
+      raise unless e.message.start_with?("Unknown data source:")
+      render plain: "Unknown data source", status: :not_found
     end
 
     def continue_run

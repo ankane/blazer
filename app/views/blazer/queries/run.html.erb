@@ -4,7 +4,7 @@
   <% if @only_chart %>
     <p class="text-muted">Select variables</p>
   <% else %>
-    <div class="alert alert-info">Can’t preview queries with variables...yet!</div>
+    <div class="alert alert-info">Can’t preview queries with variables</div>
   <% end %>
 <% elsif @cohort_analysis %>
   <% if @cohort_error %>
@@ -46,7 +46,7 @@
     <% chart_id = SecureRandom.hex %>
     <% column_types = @result.column_types %>
     <% chart_type = @result.chart_type %>
-    <% chart_options = {id: chart_id} %>
+    <% chart_options = {id: chart_id, thousands: t("number.format.delimiter"), decimal: t("number.format.separator")} %>
     <% if ["line", "line2"].include?(chart_type) %>
       <% chart_options.merge!(min: nil) %>
     <% end %>
@@ -66,7 +66,7 @@
     <% target_index = @columns.index { |k| k.downcase == "target" } %>
     <% if target_index %>
       <% color = "#109618" %>
-      <% series_library[target_index - 1] = {pointStyle: "line", hitRadius: 5, borderColor: color, pointBackgroundColor: color, backgroundColor: color, pointHoverBackgroundColor: color} %>
+      <% series_library[target_index - 1] = {pointStyle: "line", pointBorderWidth: 0, hitRadius: 5, borderColor: color, pointBackgroundColor: color, backgroundColor: color, pointHoverBackgroundColor: color} %>
     <% end %>
     <% if @forecast %>
       <% color = "#54a3ee" %>
@@ -75,21 +75,21 @@
     <% if @markers.any? %>
       <% map_id = SecureRandom.hex %>
       <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
-      <script>
+      <%= javascript_tag nonce: true do %>
         <%= blazer_js_var "mapboxAccessToken", Blazer.mapbox_access_token %>
         <%= blazer_js_var "markers", @markers %>
         <%= blazer_js_var "mapId", map_id %>
         new Mapkick.Map(mapId, markers, {accessToken: mapboxAccessToken, tooltips: {hover: false, html: true}});
-      </script>
+      <% end %>
     <% elsif @geojson.any? %>
       <% map_id = SecureRandom.hex %>
       <%= content_tag :div, nil, id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
-      <script>
+      <%= javascript_tag nonce: true do %>
         <%= blazer_js_var "mapboxAccessToken", Blazer.mapbox_access_token %>
         <%= blazer_js_var "geojson", @geojson %>
         <%= blazer_js_var "mapId", map_id %>
         new Mapkick.AreaMap(mapId, geojson, {accessToken: mapboxAccessToken, tooltips: {hover: false, html: true}});
-      </script>
+      <% end %>
     <% elsif chart_type == "line" %>
       <% chart_data = @columns[1..-1].each_with_index.map{ |k, i| {name: blazer_series_name(k), data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} } %>
       <%= line_chart chart_data, **chart_options %>
@@ -165,7 +165,7 @@
                         <% end %>
                       <% end %>
 
-                      <% if v2 = (@smart_values[k] || {})[v.nil? ? v : v.to_s] %>
+                      <% if (v2 = @smart_values.dig(k, v&.to_s)) %>
                         <div class="text-muted"><%= v2 %></div>
                       <% end %>
                     </td>

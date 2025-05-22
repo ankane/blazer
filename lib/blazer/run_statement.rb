@@ -13,7 +13,8 @@ module Blazer
         audit = Blazer::Audit.new(statement: audit_statement)
         audit.query = query
         audit.data_source = data_source.id
-        audit.user = options[:user]
+        # only set user if present to avoid error with Rails 7.1 when no user model
+        audit.user = options[:user] unless options[:user].nil?
         audit.save!
       end
 

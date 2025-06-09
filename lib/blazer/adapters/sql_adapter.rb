@@ -255,7 +255,7 @@ module Blazer
         connection_model.connection.select_all(statement)
       end
 
-      # seperate from select_all to prevent mysql error
+      # separate from select_all to prevent mysql error
       def execute(statement)
         connection_model.connection.execute(statement)
       end

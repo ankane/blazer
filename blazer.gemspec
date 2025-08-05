@@ -13,10 +13,10 @@ Gem::Specification.new do |spec|
   spec.files         = Dir["*.{md,txt}", "{app,config,lib,licenses}/**/*"]
   spec.require_path  = "lib"
 
-  spec.required_ruby_version = ">= 3"
+  spec.required_ruby_version = ">= 3.2"
 
-  spec.add_dependency "railties", ">= 6.1"
-  spec.add_dependency "activerecord", ">= 6.1"
+  spec.add_dependency "railties", ">= 7.1"
+  spec.add_dependency "activerecord", ">= 7.1"
   spec.add_dependency "chartkick", ">= 5"
   spec.add_dependency "safely_block", ">= 0.4"
   spec.add_dependency "csv"

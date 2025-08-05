@@ -13,7 +13,7 @@
     <thead>
       <tr>
         <th colspan="2">
-          <% if table[:schema] != "public" %><%= table[:schema] %>.<% end %><%= table[:table] %>
+          <% if table[:schema] && table[:schema] != "public" %><%= table[:schema] %>.<% end %><%= table[:table] %>
         </th>
       </tr>
     </thead>
@@ -28,7 +28,7 @@
   </table>
 <% end %>
 
-<script>
+<%= javascript_tag nonce: true do %>
   $("#search").on("keyup", function() {
     var value = $(this).val().toLowerCase()
     $(".schema-table").filter(function() {
@@ -52,4 +52,4 @@
       $(this).toggle(found)
     })
   }).focus()
-</script>
+<% end %>

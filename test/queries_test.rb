@@ -48,7 +48,8 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_tables
     get blazer.tables_queries_path(data_source: "main")
     assert_response :success
-    tables = JSON.parse(response.body).map { |v| v["table"] }
+    tables = JSON.parse(response.body)
+    tables = tables.map { |v| v["table"] } if postgresql?
     assert_includes tables, "blazer_queries"
   end
 
@@ -94,6 +95,20 @@ class QueriesTest < ActionDispatch::IntegrationTest
     get blazer.query_path(query), params: {id: 123}
     assert_response :success
     assert_match %!"variables":{"id":"123"}!, response.body
+  end
+
+  def test_variables_zero
+    query = create_query(statement: "SELECT {id}")
+    get blazer.query_path(query), params: {id: "0"}
+    assert_response :success
+    assert_match "SELECT 0", response.body
+  end
+
+  def test_variables_leading_zeros
+    query = create_query(statement: "SELECT {id}")
+    get blazer.query_path(query), params: {id: "0123"}
+    assert_response :success
+    assert_match "SELECT &#39;0123&#39;", response.body
   end
 
   def test_smart_variables

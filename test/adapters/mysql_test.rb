@@ -4,7 +4,7 @@ class MysqlTest < ActionDispatch::IntegrationTest
   include AdapterTest
 
   def data_source
-    "mysql"
+    ENV["MYSQL_ADAPTER"] || "mysql2"
   end
 
   def test_run
@@ -93,7 +93,13 @@ class MysqlTest < ActionDispatch::IntegrationTest
   end
 
   def test_binary_output
-    assert_result [{"hello" => "0xF6"}], "SELECT UNHEX('F6') AS hello"
+    assert_raises(CSV::InvalidEncodingError) do
+      assert_result [{"hello" => "0xF6"}], "SELECT UNHEX('F6') AS hello"
+    end
+  end
+
+  def test_json_output
+    assert_result [{"json" => '{"hello": "world"}'}], %!SELECT JSON_OBJECT('hello', 'world') AS json!
   end
 
   private

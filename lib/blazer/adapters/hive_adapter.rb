@@ -45,7 +45,7 @@ module Blazer
             port: uri.port,
             username: uri.user,
             password: uri.password,
-            database: uri.path.sub(/\A\//, ""),
+            database: uri.path.delete_prefix("/"),
             mode: uri.scheme.to_sym
           )
         end

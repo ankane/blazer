@@ -2,6 +2,8 @@ require_relative "test_helper"
 
 class UploadsTest < ActionDispatch::IntegrationTest
   def setup
+    skip unless postgresql?
+
     Blazer::Upload.delete_all
     Blazer::UploadsConnection.connection.execute("DROP SCHEMA IF EXISTS uploads CASCADE")
     Blazer::UploadsConnection.connection.execute("CREATE SCHEMA uploads")
@@ -68,11 +70,7 @@ class UploadsTest < ActionDispatch::IntegrationTest
   def test_malformed_csv
     create_upload(file: "malformed.csv")
     assert_response :unprocessable_entity
-    if RUBY_VERSION.to_f >= 2.6
-      assert_match "Unclosed quoted field in line 1", response.body
-    else
-      assert_match "Unclosed quoted field on line 1", response.body
-    end
+    assert_match "Unclosed quoted field in line 1", response.body
   end
 
   def test_duplicate_columns

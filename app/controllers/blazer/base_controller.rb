@@ -71,9 +71,9 @@ module Blazer
       if smart_var_data_source
         query = smart_var_data_source.smart_variables[var]
 
-        if query.is_a? Hash
-          smart_var = query.map { |k,v| [v, k] }
-        elsif query.is_a? Array
+        if query.is_a?(Hash)
+          smart_var = query.map { |k, v| [v, k] }
+        elsif query.is_a?(Array)
           smart_var = query.map { |v| [v, v] }
         elsif query
           result = smart_var_data_source.run_statement(query)

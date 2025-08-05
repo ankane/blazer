@@ -28,7 +28,7 @@ class Neo4jTest < ActionDispatch::IntegrationTest
   end
 
   def test_time
-    assert_result [{"hello" => "2022-01-01T08:00:00.000Z"}], "OPTIONAL MATCH () RETURN {created_at} AS `hello`", created_at: "2022-01-01 08:00:00"
+    assert_result [{"hello" => "2022-01-01 08:00:00 UTC"}], "OPTIONAL MATCH () RETURN {created_at} AS `hello`", created_at: "2022-01-01 08:00:00"
   end
 
   def test_nil

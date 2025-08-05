@@ -23,6 +23,10 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
     assert_result [{"hello" => "1"}], "SELECT {var} AS hello", var: "1"
   end
 
+  def test_leading_zeros
+    assert_result [{"hello" => "0123"}], "SELECT {var} AS hello", var: "0123"
+  end
+
   def test_float
     assert_result [{"hello" => "1.5"}], "SELECT {var} AS hello", var: "1.5"
   end
@@ -70,5 +74,13 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
 
   def test_binary_output
     assert_result [{"bytea" => "\\x68656c6c6f"}], "SELECT 'hello'::bytea"
+  end
+
+  def test_json_output
+    assert_result [{"json" => '{"hello": "world"}'}], %!SELECT '{"hello": "world"}'::json!
+  end
+
+  def test_jsonb_output
+    assert_result [{"jsonb" => '{"hello": "world"}'}], %!SELECT '{"hello": "world"}'::jsonb!
   end
 end

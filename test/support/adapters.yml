@@ -34,12 +34,12 @@ data_sources:
     adapter: influxdb
     url: http://localhost:8086/blazer_test
 
-  mysql:
+  mysql2:
     url: mysql2://localhost:3306/blazer_test # ?prepared_statements=true
 
   neo4j:
     adapter: neo4j
-    url: http://neo4j:secret@localhost:7474/blazer_test
+    url: bolt://neo4j:secret@127.0.0.1:7687/neo4j
 
   opensearch:
     adapter: opensearch
@@ -49,7 +49,7 @@ data_sources:
     url: postgres://localhost/blazer_test
 
   presto:
-    url: presto://user@localhost:8080/jmx
+    url: trino://user@localhost:8080/jmx
 
   redshift:
     url: redshift://localhost:5439/blazer_test
@@ -75,3 +75,6 @@ data_sources:
 
   sqlserver:
     url: sqlserver://SA:YourStrong!Passw0rd@localhost:1433/blazer_test
+
+  trilogy:
+    url: trilogy://localhost:3306/blazer_test

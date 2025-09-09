@@ -8,6 +8,10 @@ Blazer::Engine.routes.draw do
     get :docs, on: :collection
   end
 
+  resources :prompts, only: [] do
+    post :run, on: :collection
+  end
+
   resources :checks, except: [:show] do
     get :run, on: :member
   end

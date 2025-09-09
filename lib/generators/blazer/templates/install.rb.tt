@@ -3,6 +3,7 @@ class <%= migration_class_name %> < ActiveRecord::Migration<%= migration_version
     create_table :blazer_queries do |t|
       t.references :creator
       t.string :name
+      t.text :gpt_prompt
       t.text :description
       t.text :statement
       t.string :data_source

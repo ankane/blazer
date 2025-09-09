@@ -50,6 +50,7 @@ module Blazer
   autoload :SlackNotifier, "blazer/slack_notifier"
   # activejob optional
   autoload :RunStatementJob, "blazer/run_statement_job"
+  autoload :RunPromptJob, "blazer/run_prompt_job"
 
   class << self
     attr_accessor :audit

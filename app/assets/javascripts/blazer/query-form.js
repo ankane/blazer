@@ -1,86 +1,27 @@
-<% if @query.errors.any? %>
-  <div class="alert alert-danger"><%= @query.errors.full_messages.first %></div>
-<% end %>
+const extractTableNameFromEditor = function(content, pos) {
+  const lines = content.split('\n');
+  const currentRow = lines[pos.row];
+  const previousTokens = currentRow.slice(pos.column - 2, pos.column);
+  const columnSeparatorPosition = previousTokens.indexOf('.');
+  if (columnSeparatorPosition === -1) {
+    return null;
+  }
+  const absolutTableNamePosition = ((pos.column) - previousTokens.length) + columnSeparatorPosition;
 
-<% @variable_params = @query.persisted? ? variable_params(@query) : nested_variable_params(@query) %>
+  let tableName = "";
+  for (index = absolutTableNamePosition - 1; index > 0; index--) {
+    if (currentRow[index] === ' ') {
+      break;
+    } else {
+      tableName += currentRow[index];
+    }
+  }
+  return tableName.split('').reverse().join('');
+}
 
-<div id="app" v-cloak>
-  <%= form_for @query, url: (@query.persisted? ? query_path(@query, params: @variable_params) : queries_path(params: @variable_params)), html: {autocomplete: "off"} do |f| %>
-    <div class="row">
-      <div id="statement-box" class="col-xs-8">
-        <% if gpt?(@query) %>
-          <div class= "form-group">
-            <%= f.label :gpt_prompt %>
-            <%= f.text_area :gpt_prompt, class: "form-control", id: "prompt-editor" %>
-          </div>
-          <div class= "form-group text-end">
-            <a v-on:click="runPrompt" v-if="!running" class="btn btn-info" style="vertical-align: top; width: 140px;">Run Prompt</a>
-            <a v-on:click="cancelPrompt" v-if="running" class="btn btn-danger" style="vertical-align: top; width: 70px;">Cancel</a>
-          </div>
-        <% end %>
-        <div class= "form-group">
-          <%= f.hidden_field :statement %>
-          <div id="editor-container">
-            <div id="editor" :style="{ height: editorHeight }"><%= @query.statement %></div>
-          </div>
-        </div>
-        <div class="form-group text-right" style="margin-bottom: 8px;">
-          <div class="pull-left" style="margin-top: 8px;">
-            <%= link_to "Back", :back %>
-            <a :href="docsPath" target="_blank" style="margin-left: 40px;">Docs</a>
-            <a :href="schemaPath" target="_blank" style="margin-left: 40px;">Schema</a>
-          </div>
+function initializeQueryForm(variableParams, previewStatement, tableNames) {
 
-          <%= f.select :data_source, Blazer.data_sources.map { |_, ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size <= 1), style: "width: 140px;" %>
-          <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;">
-            <select id="table_names" style="width: 240px;" placeholder="Preview table"></select>
-          </div>
-          <a v-on:click="run" v-if="!running" class="btn btn-info" style="vertical-align: top; width: 70px;">Run</a>
-          <a v-on:click="cancel" v-if="running" class="btn btn-danger" style="vertical-align: top; width: 70px;">Cancel</a>
-        </div>
-      </div>
-      <div class="col-xs-4">
-        <div class="form-group">
-          <%= f.label :name %>
-          <%= f.text_field :name, class: "form-control" %>
-        </div>
-        <div class="form-group">
-          <%= f.label :description %>
-          <%= f.text_area :description, placeholder: "Optional", style: "height: 80px;", class: "form-control" %>
-        </div>
-        <div class="form-group text-right">
-          <%= f.submit "For Enter Press", class: "hide" %>
-          <% if @query.persisted? %>
-            <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
-            <%= f.submit "Fork", class: "btn btn-info" %>
-          <% end %>
-          <%= f.submit @query.persisted? ? "Update" : "Create", class: "btn btn-success" %>
-        </div>
-        <% if @query.persisted? %>
-          <% dashboards_count = @query.dashboards.count %>
-          <% checks_count = @query.checks.count %>
-          <% words = [] %>
-          <% words << pluralize(dashboards_count, "dashboard") if dashboards_count > 0 %>
-          <% words << pluralize(checks_count, "check") if checks_count > 0 %>
-          <% if words.any? %>
-            <div class="alert alert-info">
-              Part of <%= words.to_sentence %>. Be careful when editing.
-            </div>
-          <% end %>
-        <% end %>
-      </div>
-    </div>
-  <% end %>
-
-  <div id="results">
-    <p class="text-muted" v-if="running">Loading...</p>
-    <div id="results-html" v-if="!running" :class="{ 'query-error': error }"></div>
-  </div>
-</div>
-
-<%= javascript_tag nonce: true do %>
-  <%= blazer_js_var "variableParams", @variable_params %>
-  <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
+  let editor;
 
   var app = Vue.createApp({
     data: function() {
@@ -133,6 +74,24 @@
         this.running = false
         cancelAllQueries()
       },
+      runPrompt: function(e) {
+        this.running = true
+
+        var data = {prompt: this.getPrompt(), data_source: $("#query_data_source").val()}
+        var _this = this
+
+        runPrompt(data, function (data) {
+          _this.running = false
+          _this.showPromptResults(data)
+        }, function (data) {
+          _this.running = false
+          _this.error = true
+          _this.showPromptResults(data)
+        })
+      },
+      cancelPrompt: function(e) {
+        this.running = false
+      },
       updateDataSource: function(dataSource) {
         this.dataSource = dataSource
         var selectize = this.selectize
@@ -164,13 +123,35 @@
         editor.setTheme("ace/theme/twilight")
         editor.getSession().setMode("ace/mode/sql")
         editor.setOptions({
-          enableBasicAutocompletion: false,
+          enableBasicAutocompletion: true,
           enableSnippets: false,
-          enableLiveAutocompletion: false,
+          enableLiveAutocompletion: true,
           highlightActiveLine: false,
           fontSize: 12,
           minLines: 10
-        })
+        });
+
+        editor.completers.push({
+          getCompletions: function(editor, session, pos, prefix, callback) {
+            callback(null, tableNames);
+          }
+        });
+
+        editor.completers.push({
+          getCompletions: function(editor, session, pos, prefix, callback) {
+            const tableName = extractTableNameFromEditor(editor.getValue(), pos);
+            if (tableName !== null) {
+              for (index = 0; index < tableNames.length; index++) {
+                const entry = tableNames[index];
+                if (entry.value === tableName) {
+                  callback(null, entry.columns);
+                  break;
+                }
+              }
+            }
+          }
+        });
+
         editor.renderer.setShowGutter(true)
         editor.renderer.setPrintMarginColumn(false)
         editor.renderer.setPadding(10)
@@ -209,6 +190,9 @@
           editor.resize()
         })
       },
+      getPrompt: function() {
+        return document.getElementById("prompt-editor").value;
+      },
       getSQL: function() {
         var selectedText = editor.getSelectedText()
         var text = selectedText.length < 10 ? editor.getValue() : selectedText
@@ -232,6 +216,14 @@
 
         Vue.nextTick(function () {
           $("#results-html").html(data)
+        })
+      },
+      showPromptResults(data) {
+        // can't do it the Vue way due to script tags in results
+        // this.results = data
+
+        Vue.nextTick(function () {
+          editor.setValue(data)
         })
       }
     },
@@ -262,4 +254,4 @@
   })
   app.config.compilerOptions.whitespace = "preserve"
   app.mount("#app")
-<% end %>
+}

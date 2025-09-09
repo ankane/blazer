@@ -18,6 +18,8 @@
 //= require ./vue.global.prod
 //= require ./routes
 //= require ./queries
+//= require ./prompts
+//= require ./query-form
 //= require ./fuzzysearch
 
 $(document).on('mouseenter', '.dropdown-toggle', function () {
@@ -81,4 +83,3 @@ function preventBackspaceNav() {
 }
 
 preventBackspaceNav()
-

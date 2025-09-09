@@ -5,6 +5,9 @@ var Routes = {
   cancel_queries_path: function() {
     return rootPath + "queries/cancel"
   },
+  run_prompts_path: function() {
+    return rootPath + "prompts/run"
+  },
   schema_queries_path: function(params) {
     return rootPath + "queries/schema?" + $.param(params)
   },

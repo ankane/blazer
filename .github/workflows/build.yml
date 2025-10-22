@@ -8,9 +8,9 @@ jobs:
       matrix:
         include:
           - ruby: 3.4
-            gemfile: gemfiles/rails81.gemfile
-          - ruby: 3.4
             gemfile: Gemfile
+          - ruby: 3.4
+            gemfile: gemfiles/rails80.gemfile
           - ruby: 3.3
             gemfile: gemfiles/rails72.gemfile
           - ruby: 3.2

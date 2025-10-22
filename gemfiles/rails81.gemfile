@@ -3,7 +3,7 @@ source "https://rubygems.org"
 gemspec path: ".."
 
 gem "rake"
-gem "minitest", ">= 5"
+gem "minitest"
 gem "combustion"
 gem "rails", "~> 8.1.0.beta1"
 gem "pg"

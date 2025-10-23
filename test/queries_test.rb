@@ -30,7 +30,7 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_create_error
     post blazer.queries_path, params: {query: {name: "Test", statement: "", data_source: "main"}}
     assert_response :unprocessable_entity
-    assert_match /Statement can(&#39;|’)t be blank/, response.body
+    assert_match(/Statement can(&#39;|’)t be blank/, response.body)
   end
 
   def test_destroy

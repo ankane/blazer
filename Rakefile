@@ -3,7 +3,6 @@ require "rake/testtask"
 
 Rake::TestTask.new do |t|
   t.pattern = "test/*_test.rb"
-  t.warning = false # mail gem
 end
 
 task default: :test
@@ -18,7 +17,6 @@ task default: :test
     Rake::TestTask.new(adapter) do |t|
       t.description = "Run tests for #{adapter}"
       t.test_files = FileList["test/adapters/#{adapter}_test.rb"]
-      t.warning = false # mail gem
     end
   end
 end

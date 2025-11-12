@@ -82,6 +82,3 @@ check_schedules:
 # useful when app CSP settings are too strict
 # false by default
 # override_csp: true
-
-
-

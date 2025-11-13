@@ -8,8 +8,6 @@ module Blazer
 
     clear_helpers
 
-    protect_from_forgery with: :exception
-
     if ENV["BLAZER_PASSWORD"]
       http_basic_authenticate_with name: ENV["BLAZER_USERNAME"], password: ENV["BLAZER_PASSWORD"]
     end
@@ -21,6 +19,8 @@ module Blazer
     if Blazer.before_action
       before_action Blazer.before_action.to_sym
     end
+
+    protect_from_forgery with: :exception
 
     if Blazer.override_csp
       after_action do

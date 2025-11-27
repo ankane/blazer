@@ -241,3 +241,145 @@ h2 {
 .selectize-dropdown .create {
   padding: 5px 8px;
 }
+
+/* Sidebar Layout */
+.blazer-layout {
+  display: flex;
+  gap: 0;
+  margin: 0 -15px;
+  min-height: calc(100vh - 100px);
+}
+
+.blazer-sidebar {
+  width: 280px;
+  background-color: #f8f9fa;
+  border-right: 1px solid #dee2e6;
+  position: relative;
+  flex-shrink: 0;
+  min-height: calc(100vh - 100px);
+}
+
+.blazer-sidebar.collapsed {
+  width: 30px;
+  overflow: hidden;
+}
+
+.blazer-sidebar.collapsed .blazer-sidebar-content {
+  display: none;
+}
+
+.blazer-sidebar-toggle {
+  position: absolute;
+  top: 10px;
+  right: 5px;
+  cursor: pointer;
+  padding: 5px;
+  font-size: 12px;
+  color: #666;
+  z-index: 10;
+  user-select: none;
+}
+
+.blazer-sidebar-toggle:hover {
+  color: #000;
+}
+
+.blazer-sidebar-content {
+  padding: 15px;
+  padding-top: 40px;
+  overflow-y: auto;
+  height: calc(100vh - 100px);
+}
+
+.blazer-sidebar-section {
+  margin-bottom: 25px;
+}
+
+.blazer-sidebar-label {
+  font-weight: bold;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #666;
+  margin-bottom: 10px;
+  display: block;
+}
+
+.blazer-schema-search {
+  margin-bottom: 10px;
+  font-size: 13px;
+  padding: 6px 10px;
+}
+
+.blazer-schema-tables {
+  max-height: calc(100vh - 350px);
+  overflow-y: auto;
+  font-size: 13px;
+}
+
+.blazer-schema-table-item {
+  margin-bottom: 5px;
+}
+
+.blazer-table-name {
+  padding: 6px 8px;
+  cursor: pointer;
+  border-radius: 3px;
+  font-weight: 500;
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  margin-bottom: 2px;
+}
+
+.blazer-table-name:hover {
+  background-color: #e9ecef;
+}
+
+.blazer-toggle-icon {
+  display: inline-block;
+  width: 12px;
+  font-size: 10px;
+  color: #666;
+}
+
+.blazer-table-columns {
+  padding-left: 20px;
+  margin-top: 2px;
+  margin-bottom: 5px;
+}
+
+.blazer-column-item {
+  padding: 4px 8px;
+  cursor: pointer;
+  border-radius: 2px;
+  display: flex;
+  justify-content: space-between;
+  background-color: #fff;
+  border: 1px solid #f0f0f0;
+  margin-bottom: 1px;
+}
+
+.blazer-column-item:hover {
+  background-color: #f8f9fa;
+  border-color: #dee2e6;
+}
+
+.blazer-column-name {
+  color: #333;
+  flex: 1;
+}
+
+.blazer-column-type {
+  color: #999;
+  font-size: 11px;
+  margin-left: 8px;
+}
+
+.blazer-main-content {
+  flex: 1;
+  padding: 0 15px;
+  min-width: 0;
+}
+
+.blazer-main-content.sidebar-collapsed {
+  margin-left: 0;
+}

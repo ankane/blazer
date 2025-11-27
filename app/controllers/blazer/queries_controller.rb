@@ -221,6 +221,10 @@ module Blazer
 
     def schema
       @schema = @data_source.schema
+      respond_to do |format|
+        format.html
+        format.json { render json: @schema }
+      end
     end
 
     def cancel

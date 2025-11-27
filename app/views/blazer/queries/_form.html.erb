@@ -5,66 +5,113 @@
 <% @variable_params = @query.persisted? ? variable_params(@query) : nested_variable_params(@query) %>
 
 <div id="app" v-cloak>
-  <%= form_for @query, url: (@query.persisted? ? query_path(@query, params: @variable_params) : queries_path(params: @variable_params)), html: {autocomplete: "off"} do |f| %>
-    <div class="row">
-      <div id="statement-box" class="col-xs-8">
-        <div class= "form-group">
-          <%= f.hidden_field :statement %>
-          <div id="editor-container">
-            <div id="editor" :style="{ height: editorHeight }"><%= @query.statement %></div>
-          </div>
-        </div>
-        <div class="form-group text-right" style="margin-bottom: 8px;">
-          <div class="pull-left" style="margin-top: 8px;">
-            <%= link_to "Back", :back %>
-            <a :href="docsPath" target="_blank" style="margin-left: 40px;">Docs</a>
-            <a :href="schemaPath" target="_blank" style="margin-left: 40px;">Schema</a>
-          </div>
-
-          <%= f.select :data_source, Blazer.data_sources.map { |_, ds| [ds.name, ds.id] }, {}, class: ("hide" if Blazer.data_sources.size <= 1), style: "width: 140px;" %>
-          <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;">
-            <select id="table_names" style="width: 240px;" placeholder="Preview table"></select>
-          </div>
-          <a v-on:click="run" v-if="!running" class="btn btn-info" style="vertical-align: top; width: 70px;">Run</a>
-          <a v-on:click="cancel" v-if="running" class="btn btn-danger" style="vertical-align: top; width: 70px;">Cancel</a>
-        </div>
+  <div class="blazer-layout">
+    <div class="blazer-sidebar" :class="{ collapsed: sidebarCollapsed }">
+      <div class="blazer-sidebar-toggle" @click="toggleSidebar">
+        <span v-if="!sidebarCollapsed">◀</span>
+        <span v-if="sidebarCollapsed">▶</span>
       </div>
-      <div class="col-xs-4">
-        <div class="form-group">
-          <%= f.label :name %>
-          <%= f.text_field :name, class: "form-control" %>
-        </div>
-        <div class="form-group">
-          <%= f.label :description %>
-          <%= f.text_area :description, placeholder: "Optional", style: "height: 80px;", class: "form-control" %>
-        </div>
-        <div class="form-group text-right">
-          <%= f.submit "For Enter Press", class: "hide" %>
-          <% if @query.persisted? %>
-            <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
-            <%= f.submit "Fork", class: "btn btn-info" %>
-          <% end %>
-          <%= f.submit @query.persisted? ? "Update" : "Create", class: "btn btn-success" %>
-        </div>
-        <% if @query.persisted? %>
-          <% dashboards_count = @query.dashboards.count %>
-          <% checks_count = @query.checks.count %>
-          <% words = [] %>
-          <% words << pluralize(dashboards_count, "dashboard") if dashboards_count > 0 %>
-          <% words << pluralize(checks_count, "check") if checks_count > 0 %>
-          <% if words.any? %>
-            <div class="alert alert-info">
-              Part of <%= words.to_sentence %>. Be careful when editing.
-            </div>
-          <% end %>
+      <div class="blazer-sidebar-content">
+        <% if Blazer.data_sources.size > 1 %>
+          <div class="blazer-sidebar-section">
+            <label class="blazer-sidebar-label">Data Source</label>
+            <select id="sidebar_data_source" style="width: 100%;">
+              <% Blazer.data_sources.each do |id, ds| %>
+                <option value="<%= ds.id %>" <%= "selected" if @query.data_source == ds.id %>><%= ds.name %></option>
+              <% end %>
+            </select>
+          </div>
         <% end %>
+        
+        <div class="blazer-sidebar-section">
+          <label class="blazer-sidebar-label">Schema</label>
+          <input type="text" v-model="schemaSearch" placeholder="Search tables..." class="form-control blazer-schema-search" />
+          <div class="blazer-schema-tables" v-if="schema.length > 0">
+            <div v-for="table in filteredSchema" :key="table.table" class="blazer-schema-table-item">
+              <div class="blazer-table-name" @click="toggleTable(table.table)" @dblclick="insertTable(table)" :title="'Double-click to insert'">
+                <span class="blazer-toggle-icon">{{ expandedTables[table.table] ? '▼' : '▶' }}</span>
+                <span v-if="table.schema && table.schema !== 'public'">{{ table.schema }}.</span>{{ table.table }}
+              </div>
+              <div v-if="expandedTables[table.table]" class="blazer-table-columns">
+                <div v-for="column in table.columns" :key="column.name" class="blazer-column-item" @click="insertColumn(table, column)" :title="'Click to insert'">
+                  <span class="blazer-column-name">{{ column.name }}</span>
+                  <span class="blazer-column-type">{{ column.data_type }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-if="schema.length === 0 && !loadingSchema" class="text-muted" style="padding: 10px;">
+            No schema available
+          </div>
+          <div v-if="loadingSchema" class="text-muted" style="padding: 10px;">
+            Loading...
+          </div>
+        </div>
       </div>
     </div>
-  <% end %>
+    
+    <div class="blazer-main-content" :class="{ 'sidebar-collapsed': sidebarCollapsed }">
+      <%= form_for @query, url: (@query.persisted? ? query_path(@query, params: @variable_params) : queries_path(params: @variable_params)), html: {autocomplete: "off"} do |f| %>
+        <div class="row">
+          <div id="statement-box" class="col-xs-8">
+            <div class="form-group">
+              <%= f.hidden_field :statement %>
+              <%= f.hidden_field :data_source %>
+              <div id="editor-container">
+                <div id="editor" :style="{ height: editorHeight }"><%= @query.statement %></div>
+              </div>
+            </div>
+            <div class="form-group text-right" style="margin-bottom: 8px;">
+              <div class="pull-left" style="margin-top: 8px;">
+                <%= link_to "Back", :back %>
+                <a :href="docsPath" target="_blank" style="margin-left: 40px;">Docs</a>
+              </div>
 
-  <div id="results">
-    <p class="text-muted" v-if="running">Loading...</p>
-    <div id="results-html" v-if="!running" :class="{ 'query-error': error }"></div>
+              <div id="tables" style="display: inline-block; width: 250px; margin-right: 10px;">
+                <select id="table_names" style="width: 240px;" placeholder="Preview table"></select>
+              </div>
+              <a v-on:click="run" v-if="!running" class="btn btn-info" style="vertical-align: top; width: 70px;">Run</a>
+              <a v-on:click="cancel" v-if="running" class="btn btn-danger" style="vertical-align: top; width: 70px;">Cancel</a>
+            </div>
+          </div>
+          <div class="col-xs-4">
+            <div class="form-group">
+              <%= f.label :name %>
+              <%= f.text_field :name, class: "form-control" %>
+            </div>
+            <div class="form-group">
+              <%= f.label :description %>
+              <%= f.text_area :description, placeholder: "Optional", style: "height: 80px;", class: "form-control" %>
+            </div>
+            <div class="form-group text-right">
+              <%= f.submit "For Enter Press", class: "hide" %>
+              <% if @query.persisted? %>
+                <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
+                <%= f.submit "Fork", class: "btn btn-info" %>
+              <% end %>
+              <%= f.submit @query.persisted? ? "Update" : "Create", class: "btn btn-success" %>
+            </div>
+            <% if @query.persisted? %>
+              <% dashboards_count = @query.dashboards.count %>
+              <% checks_count = @query.checks.count %>
+              <% words = [] %>
+              <% words << pluralize(dashboards_count, "dashboard") if dashboards_count > 0 %>
+              <% words << pluralize(checks_count, "check") if checks_count > 0 %>
+              <% if words.any? %>
+                <div class="alert alert-info">
+                  Part of <%= words.to_sentence %>. Be careful when editing.
+                </div>
+              <% end %>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div id="results">
+        <p class="text-muted" v-if="running">Loading...</p>
+        <div id="results-html" v-if="!running" :class="{ 'query-error': error }"></div>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -80,7 +127,13 @@
         error: false,
         dataSource: "",
         selectize: null,
-        editorHeight: "180px"
+        editorHeight: "180px",
+        sidebarCollapsed: false,
+        schema: [],
+        loadingSchema: false,
+        schemaSearch: "",
+        debouncedSchemaSearch: "",
+        expandedTables: {}
       }
     },
     computed: {
@@ -89,9 +142,37 @@
       },
       docsPath: function() {
         return Routes.docs_queries_path({data_source: this.dataSource})
+      },
+      filteredSchema: function() {
+        if (!this.debouncedSchemaSearch) {
+          return this.schema
+        }
+        var search = this.debouncedSchemaSearch.toLowerCase()
+        var _this = this
+        return this.schema.filter(function(table) {
+          var tableName = _this.getTableName(table)
+          if (tableName.toLowerCase().indexOf(search) > -1) {
+            return true
+          }
+          return table.columns.some(function(col) {
+            return col.name.toLowerCase().indexOf(search) > -1
+          })
+        })
+      }
+    },
+    watch: {
+      schemaSearch: function(val) {
+        var _this = this
+        clearTimeout(this.schemaSearchTimeout)
+        this.schemaSearchTimeout = setTimeout(function() {
+          _this.debouncedSchemaSearch = val
+        }, 150)
       }
     },
     methods: {
+      getTableName: function(table) {
+        return (table.schema && table.schema !== 'public' ? table.schema + '.' : '') + table.table
+      },
       run: function(e) {
         this.running = true
         this.results = ""
@@ -123,6 +204,44 @@
         this.running = false
         cancelAllQueries()
       },
+      toggleSidebar: function() {
+        this.sidebarCollapsed = !this.sidebarCollapsed
+        if (this.editor) {
+          this.editor.resize()
+        }
+      },
+      toggleTable: function(tableName) {
+        this.expandedTables[tableName] = !this.expandedTables[tableName]
+      },
+      insertTable: function(table) {
+        if (this.editor) {
+          this.editor.insert(this.getTableName(table))
+          this.editor.focus()
+        }
+      },
+      insertColumn: function(table, column) {
+        var text = this.getTableName(table) + '.' + column.name
+        if (this.editor) {
+          this.editor.insert(text)
+          this.editor.focus()
+        }
+      },
+      loadSchema: function() {
+        var _this = this
+        this.loadingSchema = true
+        this.schema = []
+        
+        if (this.schemaXhr) {
+          this.schemaXhr.abort()
+        }
+        
+        this.schemaXhr = $.getJSON(Routes.schema_queries_path({data_source: this.dataSource}), function(data) {
+          _this.schema = data
+          _this.loadingSchema = false
+        }).fail(function() {
+          _this.loadingSchema = false
+        })
+      },
       updateDataSource: function(dataSource) {
         this.dataSource = dataSource
         var selectize = this.selectize
@@ -146,6 +265,9 @@
           selectize.addOption(newOptions)
           selectize.refreshOptions(false)
         })
+        
+        // Load schema for sidebar
+        this.loadSchema()
       },
       showEditor: function() {
         var _this = this
@@ -238,14 +360,22 @@
       })
       this.selectize = selectize
 
-      this.updateDataSource($("#query_data_source").val())
+      // Initialize with current data source
+      var currentDataSource = $("#query_data_source").val()
+      this.updateDataSource(currentDataSource)
 
-      var $dsSelect = $("#query_data_source").selectize({})
-      var dsSelectize = $dsSelect[0].selectize
-      dsSelectize.on("change", function(val) {
-        _this.updateDataSource(val)
-        dsSelectize.blur()
-      })
+      // Setup sidebar data source selector (if exists)
+      if ($("#sidebar_data_source").length > 0) {
+        var $sidebarDsSelect = $("#sidebar_data_source").selectize({})
+        var sidebarDsSelectize = $sidebarDsSelect[0].selectize
+        sidebarDsSelectize.setValue(currentDataSource)
+        sidebarDsSelectize.on("change", function(val) {
+          _this.updateDataSource(val)
+          // Update hidden field in main form
+          $("#query_data_source").val(val)
+          sidebarDsSelectize.blur()
+        })
+      }
 
       this.showEditor()
     }

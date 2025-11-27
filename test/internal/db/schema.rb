@@ -38,6 +38,7 @@ ActiveRecord::Schema.define do
     t.text :emails
     t.text :slack_channels
     t.string :check_type
+    t.string :last_results_hash
     t.text :message
     t.datetime :last_run_at
     t.timestamps null: false

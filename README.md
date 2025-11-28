@@ -305,6 +305,47 @@ cache:
 
 Of course, you can force a refresh at any time.
 
+### Sharing (optional)
+
+You can generate sharing urls for queries. You can download up-to-date results for each query in CSV directly.
+
+This is useful for scripts or for automatic importing into spreadsheets.
+
+There are 2 steps necessary for setting up sharing:
+
+1. Configuring an API key
+2. Make the sharing endpoint accessible in your routes
+
+First configure an API key in `blazer.yml`:
+
+```yml
+sharing:
+  api_key: 'secret'
+```
+
+Alternatively you can set the `BLAZER_DOWNLOAD_API_KEY` ENV var which blazer uses by default.
+
+Now routes: we assume you have secured blazer so you will need to expose a new route outside of the mount.
+
+The default path for shares is `/blazer_share`. You can change this in `blazer.yml`:
+
+```yml
+sharing:
+  path: /another_path
+```
+
+This config is only so that blazer can generate the correct url.
+
+Now add this route to your `routes.rb`:
+
+```ruby
+  get Blazer.sharing.route_path, to: Blazer.sharing.to_controller if Blazer.sharing.enabled?
+```
+
+Now restart your server and each query page will have a `share` button which will open up a modal that allows you to copy sharing urls.
+
+Each url has a unique token based on a hash of the query's id and the API key, so the token can't be reused for other queries.
+
 ## Charts
 
 Blazer will automatically generate charts based on the types of the columns returned in your query.

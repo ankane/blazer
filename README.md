@@ -219,6 +219,18 @@ Use `{start_time}` and `{end_time}` for time ranges. [Example](https://blazer.do
 SELECT * FROM ratings WHERE rated_at >= {start_time} AND rated_at <= {end_time}
 ```
 
+#### Variables with static values (via user selection)
+
+```sql
+-- gender: ["male", "female", "others"]
+-- gender: {"Handsome Male": "male", "Beautiful Women": "female", "Kind Person": "others"}
+
+SELECT * FROM users WHERE gender = {gender}
+```
+
+This allows to annotate regular variables so the UI shows the values as a
+select input instead of a free-text input.
+
 ### Smart Variables
 
 [Example](https://blazer.dokkuapp.com/queries/1-smart-variable)

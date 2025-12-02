@@ -59,7 +59,16 @@
           })()
         <% end %>
       <% else %>
-        <%= text_field_tag var, var_params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !var_params[var], class: "form-control" %>
+        <% if @bind_vars_values.key? var %>
+          <%= select_tag var, options_for_select([[nil, nil]] + @bind_vars_values[var], selected: var_params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
+          <%= javascript_tag nonce: true do %>
+            $("#<%= var %>").selectize({
+              create: true
+            });
+          <% end %>
+        <% else %>
+          <%= text_field_tag var, var_params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !var_params[var], class: "form-control" %>
+        <% end %>
       <% end %>
     <% end %>
 

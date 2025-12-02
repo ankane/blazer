@@ -268,6 +268,7 @@ module Blazer
       @linked_columns = @data_source.linked_columns
 
       @markers = []
+      @annotations = Blazer.annotations.new(@data_source.annotations).call(@result)
       @geojson = []
       set_map_data if Blazer.maps?
 

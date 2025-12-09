@@ -71,6 +71,7 @@ module Blazer
     attr_accessor :slack_oauth_token
     attr_accessor :slack_webhook_url
     attr_accessor :mapbox_access_token
+    attr_accessor :base_controller
   end
   self.audit = true
   self.user_name = :name
@@ -80,6 +81,7 @@ module Blazer
   self.async = false
   self.images = false
   self.override_csp = false
+  self.base_controller = "ApplicationController"
 
   VARIABLE_MESSAGE = "Variable cannot be used in this position"
   TIMEOUT_MESSAGE = "Query timed out :("

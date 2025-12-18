@@ -164,14 +164,14 @@ class QueriesTest < ActionDispatch::IntegrationTest
   end
 
   def test_images
-    Blazer.stub(:images, true) do
+    with_option(:images, true) do
       run_query("SELECT 'http://localhost:3000/image.png'")
       assert_match %{<img referrerpolicy="no-referrer" src="http://localhost:3000/image.png" }, response.body
     end
   end
 
   def test_async
-    Blazer.stub(:async, true) do
+    with_option(:async, true) do
       perform_enqueued_jobs do
         run_query "SELECT 123"
       end

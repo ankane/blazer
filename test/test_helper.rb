@@ -37,6 +37,16 @@ class ActionDispatch::IntegrationTest
   def postgresql?
     ENV["ADAPTER"].nil?
   end
+
+  def with_option(name, value)
+    previous_value = Blazer.send(name)
+    begin
+      Blazer.send("#{name}=", value)
+      yield
+    ensure
+      Blazer.send("#{name}=", previous_value)
+    end
+  end
 end
 
 require_relative "support/adapter_test"

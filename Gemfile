@@ -4,7 +4,6 @@ gemspec
 
 gem "rake"
 gem "minitest"
-gem "minitest-mock"
 gem "combustion"
 gem "rails", "~> 8.1.0"
 gem "pg"

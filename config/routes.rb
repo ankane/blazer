@@ -6,6 +6,7 @@ Blazer::Engine.routes.draw do
     get :tables, on: :collection
     get :schema, on: :collection
     get :docs, on: :collection
+    get Blazer.sharing.route_path, to: 'queries#share', as: :share
   end
 
   resources :checks, except: [:show] do

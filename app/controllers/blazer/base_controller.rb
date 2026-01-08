@@ -37,6 +37,7 @@ module Blazer
     def process_vars(statement, var_params = nil)
       var_params ||= request.query_parameters
       (@bind_vars ||= []).concat(statement.variables).uniq!
+      @bind_vars_values ||= statement.variable_values
       # update in-place so populated in view and consistent across queries on dashboard
       @bind_vars.each do |var|
         if !var_params[var]

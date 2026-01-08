@@ -357,7 +357,7 @@ SELECT x, y FROM table
 2 columns - string, numeric - and last column named `pie` - [Example](https://blazer.dokkuapp.com/queries/17-pie-chart)
 
 ```sql
-SELECT gender, COUNT(*) AS pie FROM users GROUP BY 1
+SELECT gender, COUNT(*) AS pie FROM users GROUP BY 1 ORDER BY pie DESC;
 ```
 
 ### Maps

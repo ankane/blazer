@@ -36,6 +36,10 @@ data_sources:
     variable_defaults:
       default_var: default_value
 
+    annotations:
+      line: SELECT NOW() - INTERVAL '1 hour' as date, 'line_annotation' as label
+      box: SELECT NOW() - INTERVAL '2 hour' as min_date, NOW() - INTERVAL '1 hour' as max_date, 'box_annotation' as label
+
 # create audits
 audit: true
 

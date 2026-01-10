@@ -24,7 +24,13 @@ module Blazer
           link_to value, value, target: "_blank"
         end
       else
-        value
+        if key.include?("json")
+          content_tag(:pre, format_json_value(value), class: "hljs")
+        elsif key.include?("yaml")
+          content_tag(:pre, format_yaml_value(value), class: "hljs")
+        else
+          value
+        end
       end
     end
 
@@ -34,6 +40,20 @@ module Blazer
 
     def blazer_series_name(k)
       k.nil? ? "null" : k.to_s
+    end
+
+    private
+
+    def format_json_value(value)
+      JSON.pretty_generate(JSON.parse(value))
+    rescue JSON::ParserError
+      value
+    end
+
+    def format_yaml_value(value)
+        YAML.dump(YAML.load(value))
+    rescue StandardError
+      value
     end
   end
 end

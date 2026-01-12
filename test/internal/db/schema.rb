@@ -53,4 +53,13 @@ ActiveRecord::Schema.define do
   create_table :users do |t|
     t.string :name
   end
+
+  # Source table for materialized view tests
+  create_table :matview_source do |t|
+    t.string :name
+    t.integer :value
+    t.boolean :active
+    t.text :metadata
+    t.timestamps null: false
+  end
 end

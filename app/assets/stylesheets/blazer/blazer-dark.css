@@ -1,0 +1,600 @@
+/*
+ * Blazer dark theme
+ * Uses prefers-color-scheme: dark for system preference
+ * Colors are defined as CSS variables for easy customization.
+ */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Surfaces */
+    --blazer-dark-bg-page: #1a1d21;
+    --blazer-dark-bg-surface: #242629;
+    --blazer-dark-bg-elevated: #2d3035;
+    --blazer-dark-bg-code-inline: #2d2628;
+
+    /* Borders */
+    --blazer-dark-border: #40444b;
+    --blazer-dark-border-topbar: #3a3d42;
+
+    /* Text */
+    --blazer-dark-text: #e4e6eb;
+    --blazer-dark-text-muted: #8a8f98;
+    --blazer-dark-text-secondary: #b0b3b8;
+    --blazer-dark-text-on-primary: #fff;
+
+    /* Links & focus */
+    --blazer-dark-link: #5a9fd4;
+    --blazer-dark-link-hover: #7ab3e0;
+    --blazer-dark-focus-ring: rgba(90, 159, 212, 0.25);
+
+    /* Buttons - default */
+    --blazer-dark-btn-default-bg: #3a3d42;
+    --blazer-dark-btn-default-bg-hover: #4a4d52;
+    --blazer-dark-btn-default-border: #505358;
+
+    /* Buttons - primary */
+    --blazer-dark-btn-primary: #2d6a9f;
+    --blazer-dark-btn-primary-hover: #3a7ab5;
+
+    /* Buttons - info */
+    --blazer-dark-btn-info: #1a5f7a;
+    --blazer-dark-btn-info-hover: #217589;
+
+    /* Buttons - success */
+    --blazer-dark-btn-success: #2d6b2d;
+    --blazer-dark-btn-success-hover: #357a35;
+    --blazer-dark-btn-success-border: #3d8b3d;
+
+    /* Buttons - danger */
+    --blazer-dark-btn-danger: #8b3a3a;
+    --blazer-dark-btn-danger-hover: #a04545;
+
+    /* Alerts */
+    --blazer-dark-alert-danger-bg: #4a2a2a;
+    --blazer-dark-alert-danger-text: #f0a0a0;
+    --blazer-dark-alert-danger-border: #5a3535;
+    --blazer-dark-alert-info-bg: #2a3a4a;
+    --blazer-dark-alert-info-text: #a0c0e0;
+    --blazer-dark-alert-info-border: #354555;
+
+    /* Semantic states */
+    --blazer-dark-error: #f0a0a0;
+    --blazer-dark-success: #7bc67b;
+    --blazer-dark-warning: #e5b05c;
+    --blazer-dark-code: #e8a0a8;
+    --blazer-dark-glyphicon-remove: #e07070;
+    --blazer-dark-glyphicon-remove-hover: #f09090;
+
+    /* Daterangepicker disabled */
+    --blazer-dark-dp-off: #5a5d62;
+
+    /* Syntax highlighting */
+    --blazer-dark-hljs-comment: #6a737d;
+    --blazer-dark-hljs-keyword: #79b8ff;
+    --blazer-dark-hljs-number: #79d2a0;
+    --blazer-dark-hljs-string: #f0b090;
+    --blazer-dark-hljs-tag: #85b5e8;
+    --blazer-dark-hljs-attribute: #7ee787;
+    --blazer-dark-hljs-class: #ffd066;
+  }
+
+  /* Base */
+  body {
+    background-color: var(--blazer-dark-bg-page);
+    color: var(--blazer-dark-text);
+  }
+
+  .container {
+    background-color: transparent;
+  }
+
+  /* Topbar - overrides application.css */
+  .topbar {
+    background-color: var(--blazer-dark-bg-surface);
+    border-bottom-color: var(--blazer-dark-border-topbar);
+  }
+
+  /* Tables */
+  .table,
+  .table.results-table,
+  .table.schema-table {
+    color: var(--blazer-dark-text);
+  }
+
+  .table > thead > tr > th,
+  .table > tbody > tr > th,
+  .table > tfoot > tr > th,
+  .table > thead > tr > td,
+  .table > tbody > tr > td,
+  .table > tfoot > tr > td {
+    border-color: var(--blazer-dark-border);
+  }
+
+  .table > thead > tr > th {
+    border-bottom-color: var(--blazer-dark-border);
+    color: var(--blazer-dark-text-secondary);
+  }
+
+  .results-table thead {
+    background-color: var(--blazer-dark-bg-surface);
+  }
+
+  .table-striped > tbody > tr:nth-of-type(odd) {
+    background-color: var(--blazer-dark-bg-surface);
+  }
+
+  .table-hover > tbody > tr:hover {
+    background-color: var(--blazer-dark-bg-elevated);
+  }
+
+  .table .table {
+    background-color: transparent;
+  }
+
+  /* Forms */
+  .form-control {
+    background-color: var(--blazer-dark-bg-surface);
+    border-color: var(--blazer-dark-border);
+    color: var(--blazer-dark-text);
+  }
+
+  .form-control:focus {
+    border-color: var(--blazer-dark-link);
+    background-color: var(--blazer-dark-bg-surface);
+    color: var(--blazer-dark-text);
+    box-shadow: 0 0 0 2px var(--blazer-dark-focus-ring);
+  }
+
+  .form-control::placeholder {
+    color: var(--blazer-dark-text-muted);
+  }
+
+  .form-control[disabled],
+  .form-control[readonly],
+  fieldset[disabled] .form-control {
+    background-color: var(--blazer-dark-bg-elevated);
+    color: var(--blazer-dark-text-muted);
+  }
+
+  label {
+    color: var(--blazer-dark-text-secondary);
+  }
+
+  /* Buttons */
+  .btn-default {
+    color: var(--blazer-dark-text);
+    background-color: var(--blazer-dark-btn-default-bg);
+    border-color: var(--blazer-dark-border);
+  }
+
+  .btn-default:hover,
+  .btn-default:focus,
+  .btn-default.focus {
+    color: var(--blazer-dark-text);
+    background-color: var(--blazer-dark-btn-default-bg-hover);
+    border-color: var(--blazer-dark-btn-default-border);
+  }
+
+  .btn-default[disabled]:hover,
+  .btn-default[disabled]:focus,
+  .btn-default.disabled:hover,
+  .btn-default.disabled:focus {
+    background-color: var(--blazer-dark-btn-default-bg);
+    border-color: var(--blazer-dark-border);
+  }
+
+  .btn-primary {
+    background-color: var(--blazer-dark-btn-primary);
+    border-color: var(--blazer-dark-btn-primary);
+  }
+
+  .btn-primary:hover,
+  .btn-primary:focus {
+    background-color: var(--blazer-dark-btn-primary-hover);
+    border-color: var(--blazer-dark-btn-primary-hover);
+  }
+
+  .btn-info {
+    background-color: var(--blazer-dark-btn-info);
+    border-color: var(--blazer-dark-btn-info);
+  }
+
+  .btn-info:hover,
+  .btn-info:focus {
+    background-color: var(--blazer-dark-btn-info-hover);
+    border-color: var(--blazer-dark-btn-info-hover);
+  }
+
+  .btn-success {
+    background-color: var(--blazer-dark-btn-success);
+    border-color: var(--blazer-dark-btn-success);
+  }
+
+  .btn-success:hover,
+  .btn-success:focus {
+    background-color: var(--blazer-dark-btn-success-hover);
+    border-color: var(--blazer-dark-btn-success-hover);
+  }
+
+  .btn-danger {
+    background-color: var(--blazer-dark-btn-danger);
+    border-color: var(--blazer-dark-btn-danger);
+  }
+
+  .btn-danger:hover,
+  .btn-danger:focus {
+    background-color: var(--blazer-dark-btn-danger-hover);
+    border-color: var(--blazer-dark-btn-danger-hover);
+  }
+
+  /* Alerts */
+  .alert {
+    border-color: transparent;
+  }
+
+  .alert-danger {
+    background-color: var(--blazer-dark-alert-danger-bg);
+    color: var(--blazer-dark-alert-danger-text);
+    border-color: var(--blazer-dark-alert-danger-border);
+  }
+
+  .alert-info {
+    background-color: var(--blazer-dark-alert-info-bg);
+    color: var(--blazer-dark-alert-info-text);
+    border-color: var(--blazer-dark-alert-info-border);
+  }
+
+  /* Dropdown */
+  .dropdown-menu {
+    background-color: var(--blazer-dark-bg-surface);
+    border-color: var(--blazer-dark-border);
+  }
+
+  .dropdown-menu > li > a {
+    color: var(--blazer-dark-text);
+  }
+
+  .dropdown-menu > li > a:hover,
+  .dropdown-menu > li > a:focus {
+    background-color: var(--blazer-dark-bg-elevated);
+    color: var(--blazer-dark-text);
+  }
+
+  .dropdown-menu .divider {
+    background-color: var(--blazer-dark-border);
+  }
+
+  .caret {
+    border-top-color: var(--blazer-dark-text);
+  }
+
+  /* List group */
+  .list-group-item {
+    background-color: var(--blazer-dark-bg-surface);
+    border-color: var(--blazer-dark-border);
+    color: var(--blazer-dark-text);
+  }
+
+  .list-group-item:hover {
+    background-color: var(--blazer-dark-bg-elevated);
+  }
+
+  /* Text and links */
+  a {
+    color: var(--blazer-dark-link);
+  }
+
+  a:hover,
+  a:focus {
+    color: var(--blazer-dark-link-hover);
+  }
+
+  .text-muted {
+    color: var(--blazer-dark-text-muted) !important;
+  }
+
+  .creator {
+    color: var(--blazer-dark-text-muted);
+  }
+
+  .vars {
+    color: var(--blazer-dark-text-muted);
+  }
+
+  #header a.active {
+    color: var(--blazer-dark-text-muted);
+  }
+
+  /* Check states - keep semantic colors, adjust for dark */
+  .check-state.failing {
+    color: var(--blazer-dark-error);
+  }
+
+  .check-state.passing {
+    color: var(--blazer-dark-success);
+  }
+
+  .check-state.error {
+    color: var(--blazer-dark-text-muted);
+  }
+
+  .check-state.timed_out {
+    color: var(--blazer-dark-warning);
+  }
+
+  .check-state.disabled {
+    color: var(--blazer-dark-text-muted);
+  }
+
+  .query-error {
+    color: var(--blazer-dark-error);
+  }
+
+  /* Chart and results container */
+  .chart > .results-container {
+    border-color: var(--blazer-dark-border);
+    background-color: var(--blazer-dark-bg-surface);
+  }
+
+  .chart-container h4,
+  .chart-container h4 a {
+    color: var(--blazer-dark-text);
+  }
+
+  /* Pre/code - #code block (highlight.js uses .hljs) */
+  pre {
+    background-color: var(--blazer-dark-bg-surface);
+    color: var(--blazer-dark-text);
+    border-color: var(--blazer-dark-border);
+  }
+
+  pre#code,
+  pre#code code {
+    background-color: var(--blazer-dark-bg-surface);
+    color: var(--blazer-dark-text);
+  }
+
+  /* Bootstrap code (bootstrap.css:1530-1536) - inline code */
+  code {
+    color: var(--blazer-dark-code);
+    background-color: var(--blazer-dark-bg-code-inline);
+  }
+
+  /* Syntax highlighting (github.css overrides for dark) */
+  .hljs {
+    background: var(--blazer-dark-bg-surface) !important;
+    color: var(--blazer-dark-text) !important;
+  }
+
+  .hljs-comment,
+  .hljs-template_comment,
+  .diff .hljs-header,
+  .hljs-javadoc {
+    color: var(--blazer-dark-hljs-comment);
+  }
+
+  .hljs-keyword,
+  .css .rule .hljs-keyword,
+  .hljs-title,
+  .hljs-id {
+    color: var(--blazer-dark-hljs-keyword);
+  }
+
+  .hljs-number,
+  .hljs-hexcolor {
+    color: var(--blazer-dark-hljs-number);
+  }
+
+  .hljs-string,
+  .hljs-tag .hljs-value {
+    color: var(--blazer-dark-hljs-string);
+  }
+
+  .hljs-tag,
+  .hljs-tag .hljs-title {
+    color: var(--blazer-dark-hljs-tag);
+  }
+
+  .hljs-attribute {
+    color: var(--blazer-dark-hljs-attribute);
+  }
+
+  .hljs-class .hljs-title {
+    color: var(--blazer-dark-hljs-class);
+  }
+
+  /* Editor container is already dark in application.css (#141414) - slight tweak for consistency */
+  #editor-container {
+    background-color: var(--blazer-dark-bg-page);
+  }
+
+  /* Selectize */
+  .selectize-input,
+  .selectize-control.single .selectize-input,
+  .selectize-control.single .selectize-input.input-active,
+  .selectize-input.full {
+    background-color: var(--blazer-dark-bg-surface) !important;
+    border-color: var(--blazer-dark-border) !important;
+    color: var(--blazer-dark-text) !important;
+    box-shadow: none !important;
+  }
+
+  /* Override selectize single input gradient (selectize.css:377-388) */
+  .selectize-control.single .selectize-input {
+    background-image: linear-gradient(to bottom, var(--blazer-dark-bg-elevated), var(--blazer-dark-bg-surface)) !important;
+    background-repeat: repeat-x !important;
+    -webkit-box-shadow: none !important;
+    box-shadow: none !important;
+    filter: none !important;
+  }
+
+  .selectize-control.single .selectize-input input {
+    background-color: transparent !important;
+    color: var(--blazer-dark-text) !important;
+  }
+
+  .selectize-input > input,
+  .selectize-dropdown,
+  .selectize-input,
+  .selectize-input input {
+    color: var(--blazer-dark-text) !important;
+  }
+
+  .selectize-input.dropdown-active::before {
+    background: var(--blazer-dark-border);
+  }
+
+  .selectize-dropdown .create {
+    color: var(--blazer-dark-link);
+  }
+
+  .selectize-dropdown .option,
+  .selectize-dropdown [data-selectable] {
+    color: var(--blazer-dark-text);
+  }
+
+  .selectize-dropdown .active,
+  .selectize-dropdown .option.active,
+  .selectize-dropdown [data-selectable].active {
+    background-color: var(--blazer-dark-bg-elevated);
+    color: var(--blazer-dark-text);
+  }
+
+  .selectize-dropdown,
+  .selectize-dropdown.single {
+    background-color: var(--blazer-dark-bg-surface);
+    border-color: var(--blazer-dark-border);
+  }
+
+  .selectize-dropdown .optgroup {
+    border-color: var(--blazer-dark-border);
+  }
+
+  .selectize-dropdown .optgroup-header {
+    background-color: var(--blazer-dark-bg-elevated);
+    color: var(--blazer-dark-text-secondary);
+  }
+
+  .selectize-dropdown-content {
+    background-color: var(--blazer-dark-bg-surface);
+  }
+
+  .selectize-dropdown-header {
+    background: var(--blazer-dark-bg-elevated);
+    border-bottom-color: var(--blazer-dark-border);
+    color: var(--blazer-dark-text-secondary);
+  }
+
+  .selectize-control.multi .selectize-input > div {
+    background: var(--blazer-dark-btn-primary);
+    border-color: var(--blazer-dark-btn-primary-hover);
+    color: var(--blazer-dark-text-on-primary);
+  }
+
+  .selectize-control.multi .selectize-input > div.active {
+    background: var(--blazer-dark-btn-success-hover);
+    border-color: var(--blazer-dark-btn-success-border);
+  }
+
+  .selectize-control.single .selectize-input:after {
+    border-color: var(--blazer-dark-text-muted) transparent transparent transparent;
+  }
+
+  .selectize-control.single .selectize-input.dropdown-active:after {
+    border-color: transparent transparent var(--blazer-dark-text-muted) transparent;
+  }
+
+  /* Daterangepicker */
+  .daterangepicker {
+    background-color: var(--blazer-dark-bg-surface);
+    border-color: var(--blazer-dark-border);
+    color: var(--blazer-dark-text);
+  }
+
+  .daterangepicker:after {
+    border-bottom-color: var(--blazer-dark-bg-surface);
+  }
+
+  .daterangepicker.drop-up:after {
+    border-top-color: var(--blazer-dark-bg-surface);
+  }
+
+  .daterangepicker .calendar-table {
+    background-color: var(--blazer-dark-bg-surface);
+    border-color: var(--blazer-dark-border);
+  }
+
+  .daterangepicker .calendar-table th,
+  .daterangepicker .calendar-table td {
+    color: var(--blazer-dark-text);
+  }
+
+  .daterangepicker td.available:hover,
+  .daterangepicker th.available:hover {
+    background-color: var(--blazer-dark-bg-elevated);
+    color: var(--blazer-dark-text);
+  }
+
+  .daterangepicker td.off,
+  .daterangepicker td.off.end-date,
+  .daterangepicker td.off.in-range {
+    color: var(--blazer-dark-dp-off);
+  }
+
+  .daterangepicker td.in-range {
+    background-color: var(--blazer-dark-bg-elevated);
+    color: var(--blazer-dark-text);
+  }
+
+  .daterangepicker td.active {
+    background-color: var(--blazer-dark-btn-primary);
+    color: var(--blazer-dark-text-on-primary);
+  }
+
+  .daterangepicker .drp-buttons .btn {
+    color: var(--blazer-dark-text);
+  }
+
+  .daterangepicker .calendar-table .next span,
+  .daterangepicker .calendar-table .prev span {
+    border-color: var(--blazer-dark-text);
+  }
+
+  .daterangepicker .ranges li {
+    color: var(--blazer-dark-text);
+  }
+
+  .daterangepicker .ranges li:hover {
+    background-color: var(--blazer-dark-bg-elevated);
+  }
+
+  /* Glyphicon remove - keep red for delete affordance */
+  .glyphicon-remove {
+    color: var(--blazer-dark-glyphicon-remove);
+  }
+
+  .list-group li:hover .glyphicon-remove {
+    color: var(--blazer-dark-glyphicon-remove-hover);
+  }
+
+  /* Headings */
+  h1, h2, h3, h4 {
+    color: var(--blazer-dark-text);
+  }
+
+  /* Horizontal rule */
+  hr {
+    border-color: var(--blazer-dark-border);
+  }
+
+  /* Small form / schema table */
+  .small-form,
+  .schema-table {
+    color: inherit;
+  }
+
+  /* List unstyled (emails in checks) */
+  .list-unstyled li {
+    color: var(--blazer-dark-text);
+  }
+}

@@ -205,8 +205,8 @@ module Blazer
   @adapter_instance ||= begin
     # TODO add required settings to adapters
     unless settings["url"] || Rails.env.development? || Rails.env.test? || ["bigquery", "athena", "snowflake", "salesforce"].include?(settings["adapter"])
-      raise Blazer::Error, "Empty url for data source: #{id}"
-    end
+  raise Blazer::Error, "Empty url for data source: #{id}"
+end
 
         unless Blazer.adapters[adapter]
           raise Blazer::Error, "Unknown adapter"

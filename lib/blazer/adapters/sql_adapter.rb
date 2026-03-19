@@ -74,6 +74,18 @@ module Blazer
         sql =
           if sqlite?
             "SELECT NULL, name FROM sqlite_master WHERE type IN ('table', 'view') ORDER BY name"
+          elsif postgresql?
+            # Include materialized views for PostgreSQL
+            tables_sql = "SELECT table_schema, table_name FROM information_schema.tables"
+            matviews_sql = <<~SQL.squish
+              SELECT n.nspname AS table_schema,
+                     c.relname AS table_name
+              FROM pg_catalog.pg_class c
+              LEFT JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+              WHERE c.relkind = 'm'
+                AND pg_catalog.has_table_privilege(c.oid, 'SELECT')
+            SQL
+            add_schemas("SELECT table_schema, table_name FROM (#{tables_sql} UNION ALL #{matviews_sql}) AS combined_tables")
           else
             add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
           end
@@ -103,6 +115,24 @@ module Blazer
         sql =
           if sqlite?
             "SELECT NULL, t.name, c.name, c.type, c.cid FROM sqlite_master t INNER JOIN pragma_table_info(t.name) c WHERE t.type IN ('table', 'view')"
+          elsif postgresql?
+            # Include materialized view columns for PostgreSQL
+            columns_sql = "SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns"
+            matview_columns_sql = <<~SQL.squish
+              SELECT n.nspname AS table_schema,
+                     c.relname AS table_name,
+                     a.attname AS column_name,
+                     pg_catalog.format_type(a.atttypid, a.atttypmod) AS data_type,
+                     a.attnum AS ordinal_position
+              FROM pg_catalog.pg_class c
+              JOIN pg_catalog.pg_namespace n ON n.oid = c.relnamespace
+              JOIN pg_catalog.pg_attribute a ON a.attrelid = c.oid
+              WHERE c.relkind = 'm'
+                AND a.attnum > 0
+                AND NOT a.attisdropped
+                AND pg_catalog.has_table_privilege(c.oid, 'SELECT')
+            SQL
+            add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM (#{columns_sql} UNION ALL #{matview_columns_sql}) AS combined_columns")
           else
             add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
           end

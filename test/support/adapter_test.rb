@@ -2,6 +2,7 @@ module AdapterTest
   def setup
     settings = YAML.load_file("test/support/adapters.yml")
     Blazer.instance_variable_set(:@settings, settings)
+    setup_materialized_views if respond_to?(:setup_materialized_views, true)
   end
 
   # some adapter tests override this method

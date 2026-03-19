@@ -1,3 +1,7 @@
+## 3.4.0 (unreleased)
+
+- Added PostgreSQL materialized view support to table preview dropdown and schema explorer (PR #282, Issue #498)
+
 ## 3.3.0 (2025-04-12)
 
 - Fixed error with forecasting with Rails 7.2+

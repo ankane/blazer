@@ -13,13 +13,11 @@ jobs:
             gemfile: gemfiles/rails80.gemfile
           - ruby: 3.3
             gemfile: gemfiles/rails72.gemfile
-          - ruby: 3.2
-            gemfile: gemfiles/rails71.gemfile
     env:
       BUNDLE_GEMFILE: ${{ matrix.gemfile }}
       TEST_PROPHET: 1
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}

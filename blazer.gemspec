@@ -18,6 +18,6 @@ Gem::Specification.new do |spec|
   spec.add_dependency "railties", ">= 7.2"
   spec.add_dependency "activerecord", ">= 7.2"
   spec.add_dependency "chartkick", ">= 5"
-  spec.add_dependency "safely_block", ">= 0.4"
+  spec.add_dependency "safely_block", ">= 1"
   spec.add_dependency "csv"
 end

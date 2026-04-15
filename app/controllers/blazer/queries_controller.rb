@@ -1,6 +1,8 @@
 module Blazer
   class QueriesController < BaseController
     before_action :set_query, only: [:show, :edit, :update, :destroy, :refresh]
+    before_action :authorize_blazer_query_access!, only: [:show, :edit, :update, :destroy, :refresh]
+    before_action :authorize_blazer_create!, only: [:new, :create]
     before_action :set_data_source, only: [:tables, :docs, :schema, :cancel]
 
     def home
@@ -343,6 +345,7 @@ module Blazer
       @more = limit && @queries.size >= limit
 
       @queries = @queries.select { |q| !q.name.to_s.start_with?("#") || q.try(:creator).try(:id) == blazer_user.try(:id) }
+      @queries = @queries.select { |q| can_access_blazer_query?(q) }
 
       @queries =
         @queries.map do |q|
@@ -365,10 +368,6 @@ module Blazer
 
     def set_query
       @query = Blazer::Query.find(params[:id].to_s.split("-").first)
-    end
-
-    def render_forbidden
-      render plain: "Access denied", status: :forbidden
     end
 
     def query_params

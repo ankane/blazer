@@ -10,7 +10,9 @@
         </h3>
       </div>
       <div class="col-sm-3 text-right">
-        <%= link_to "Edit", edit_dashboard_path(@dashboard, params: variable_params(@dashboard)), class: "btn btn-info" %>
+        <% if can_create_blazer_queries? %>
+          <%= link_to "Edit", edit_dashboard_path(@dashboard, params: variable_params(@dashboard)), class: "btn btn-info" %>
+        <% end %>
       </div>
     </div>
   </div>

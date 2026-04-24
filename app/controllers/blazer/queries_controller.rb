@@ -15,6 +15,8 @@ module Blazer
         @dashboards = @dashboards.includes(:creator) if Blazer.user_class
       end
 
+      @dashboards = @dashboards.select { |d| can_access_blazer_dashboard?(d) }
+
       @dashboards =
         @dashboards.map do |d|
           {

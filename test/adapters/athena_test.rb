@@ -65,9 +65,25 @@ class AthenaTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_catalog_in_query_execution_context
+    adapter = build_adapter("catalog" => "s3tablescatalog/my-datalake", "database" => "starview")
+    context = {database: "starview", catalog: "s3tablescatalog/my-datalake"}
+    assert_equal context, adapter.send(:query_execution_context)
+  end
+
+  def test_catalog_omitted_when_not_set
+    adapter = build_adapter("database" => "mydb")
+    assert_equal({database: "mydb"}, adapter.send(:query_execution_context))
+  end
+
   private
 
   def engine_version
     Blazer.data_sources[data_source].settings["engine_version"].to_i
+  end
+
+  def build_adapter(settings)
+    data_source = OpenStruct.new(settings: settings, id: "test", timeout: 300)
+    Blazer::Adapters::AthenaAdapter.new(data_source)
   end
 end

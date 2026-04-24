@@ -22,7 +22,7 @@
     <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
   </div>
   <p style="padding-bottom: 140px;" v-cloak>
-    <% if @dashboard.persisted? %>
+    <% if @dashboard.persisted? && can_create_blazer_queries? %>
       <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
     <% end %>
     <%= f.submit "Save", class: "btn btn-success" %>

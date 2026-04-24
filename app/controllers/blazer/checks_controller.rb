@@ -1,6 +1,7 @@
 module Blazer
   class ChecksController < BaseController
     before_action :set_check, only: [:edit, :update, :destroy, :run]
+    before_action :authorize_blazer_create!, only: [:new, :create, :edit, :update, :destroy]
 
     def index
       state_order = [nil, "disabled", "error", "timed out", "failing", "passing"]

@@ -49,7 +49,7 @@ module Blazer
             "passing"
           end
         elsif result.rows.any?
-          check_type == "missing_data" ? "passing" : "failing"
+          %w[bad_data new_bad_data].include?(check_type) ? 'failing' : 'passing'
         else
           check_type == "missing_data" ? "failing" : "passing"
         end
@@ -66,8 +66,16 @@ module Blazer
         end
       end
 
+      condition = state != state_was
+
+      if respond_to?(:last_results_hash)
+        results_hash = Digest::MD5.hexdigest(result.rows.to_json)
+        condition =  results_hash != last_result if check_type == 'new_bad_data'
+        self.last_results_hash = results_hash
+      end
+
       # do not notify on creation, except when not passing
-      if (state_was != "new" || state != "passing") && state != state_was
+      if (state_was != "new" || state != "passing") && condition
         Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now if emails.present?
         Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size, message, check_type)
       end

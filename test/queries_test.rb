@@ -8,8 +8,10 @@ class QueriesTest < ActionDispatch::IntegrationTest
   end
 
   def test_index
+    create_query
     get blazer.root_path
     assert_response :success
+    assert_match "Test", response.body
   end
 
   def test_create

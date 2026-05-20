@@ -1,5 +1,3 @@
-require "net/http"
-
 module Blazer
   class SlackNotifier
     def self.failing_checks(checks)
@@ -101,6 +99,8 @@ module Blazer
 
     # TODO use return value
     def self.post(payload)
+      require "net/http"
+
       if Blazer.slack_webhook_url.present?
         response = post_api(Blazer.slack_webhook_url, payload, {})
         response.is_a?(Net::HTTPSuccess) && response.body == "ok"

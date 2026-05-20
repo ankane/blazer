@@ -106,12 +106,6 @@ class QueriesTest < ActionDispatch::IntegrationTest
     end
   end
 
-  def test_rollback
-    create_query
-    run_query "DELETE FROM blazer_queries"
-    assert_equal 1, Blazer::Query.count
-  end
-
   def test_tables
     get blazer.tables_queries_path(data_source: "main")
     assert_response :success
@@ -120,16 +114,27 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_includes tables, "blazer_queries"
   end
 
+  def test_docs
+    get blazer.docs_queries_path(data_source: "main")
+    assert_response :success
+    assert_match "Docs: main", response.body
+  end
+
   def test_schema
     get blazer.schema_queries_path(data_source: "main")
     assert_response :success
     assert_match "Schema: main", response.body
   end
 
-  def test_docs
-    get blazer.docs_queries_path(data_source: "main")
+  def test_cancel
+    post blazer.cancel_queries_path("run-id", data_source: "main")
     assert_response :success
-    assert_match "Docs: main", response.body
+  end
+
+  def test_rollback
+    create_query
+    run_query "DELETE FROM blazer_queries"
+    assert_equal 1, Blazer::Query.count
   end
 
   def test_variables_time

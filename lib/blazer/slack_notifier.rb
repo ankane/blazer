@@ -2,11 +2,26 @@ require "net/http"
 
 module Blazer
   class SlackNotifier
-    def self.state_change(check, state, state_was, rows_count, error, check_type)
-      check.split_slack_channels.each do |channel|
+    def self.failing_checks(checks)
+      slack_channels = {}
+      checks.each do |check|
+        split_slack_channels(check).each do |channel|
+          (slack_channels[channel] ||= []) << check
+        end
+      end
+      slack_channels.each do |channel, checks|
+        Safely.safely do
+          channel_failing_checks(channel, checks)
+        end
+      end
+    end
+
+    def self.state_change(check:, state:, state_was:, result:, message:, check_type:)
+      rows_count = result.rows.size
+      split_slack_channels(check).each do |channel|
         text =
-          if error
-            error
+          if message
+            message
           elsif rows_count > 0 && check_type == "bad_data"
             pluralize(rows_count, "row")
           end
@@ -27,7 +42,24 @@ module Blazer
       end
     end
 
-    def self.failing_checks(channel, checks)
+    # TODO improve name
+    def self.notify_list(check)
+      split_slack_channels(check)
+    end
+
+    def self.fields
+      Blazer.slack? ? [:slack_channels] : []
+    end
+
+    def self.split_slack_channels(check)
+      if Blazer.slack?
+        check.slack_channels.to_s.downcase.split(",").map(&:strip)
+      else
+        []
+      end
+    end
+
+    def self.channel_failing_checks(channel, checks)
       text =
         checks.map do |check|
           "<#{query_url(check.query_id)}|#{escape(check.query.name)}> #{escape(check.state)}"

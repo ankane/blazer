@@ -10,18 +10,6 @@ module Blazer
     before_validation :set_state
     before_validation :fix_emails
 
-    def split_emails
-      emails.to_s.downcase.split(",").map(&:strip)
-    end
-
-    def split_slack_channels
-      if Blazer.slack?
-        slack_channels.to_s.downcase.split(",").map(&:strip)
-      else
-        []
-      end
-    end
-
     def update_state(result)
       check_type =
         if respond_to?(:check_type)
@@ -68,8 +56,9 @@ module Blazer
 
       # do not notify on creation, except when not passing
       if (state_was != "new" || state != "passing") && state != state_was
-        Blazer::CheckMailer.state_change(self, state, state_was, result.rows.size, message, result.columns, result.rows.first(10).as_json, result.column_types, check_type).deliver_now if emails.present?
-        Blazer::SlackNotifier.state_change(self, state, state_was, result.rows.size, message, check_type)
+        Blazer.notifiers.each do |notifier|
+          notifier.state_change(check: self, state:, state_was:, result:, message:, check_type:)
+        end
       end
       save! if changed?
     end
@@ -80,18 +69,17 @@ module Blazer
         self.state ||= "new"
       end
 
+      # TODO rename
       def fix_emails
-        # some people like doing ; instead of ,
-        # but we know what they mean, so let's fix it
-        # also, some people like to use whitespace
-        if emails.present?
-          self.emails = emails.strip.gsub(/[;\s]/, ",").gsub(/,+/, ", ")
+        Blazer.notifiers.each do |notifier|
+          notifier.before_validation(self) if notifier.respond_to?(:before_validation)
         end
       end
 
+      # TODO rename
       def validate_emails
-        unless split_emails.all? { |e| e =~ /\A\S+@\S+\.\S+\z/ }
-          errors.add(:base, "Invalid emails")
+        Blazer.notifiers.each do |notifier|
+          notifier.validate(self) if notifier.respond_to?(:validate)
         end
       end
 

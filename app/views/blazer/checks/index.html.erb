@@ -45,11 +45,10 @@
         <td><%= check.schedule if check.respond_to?(:schedule) %></td>
         <td>
           <ul class="list-unstyled" style="margin-bottom: 0; word-break: break-all;">
-            <% check.split_emails.each do |email| %>
-              <li><%= email %></li>
-            <% end %>
-            <% check.split_slack_channels.each do |channel| %>
-              <li><%= channel %></li>
+            <% Blazer.notifiers.each do |notifier| %>
+              <% notifier.notify_list(check).each do |item| %>
+                <li><%= item %></li>
+              <% end %>
             <% end %>
           </ul>
         </td>

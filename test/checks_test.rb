@@ -7,7 +7,15 @@ class ChecksTest < ActionDispatch::IntegrationTest
   end
 
   def test_index
+    query = create_query
+    create_check(query: query, check_type: "bad_data")
+
     get blazer.checks_path
+    assert_response :success
+  end
+
+  def test_new
+    get blazer.new_check_path
     assert_response :success
   end
 
@@ -64,6 +72,14 @@ class ChecksTest < ActionDispatch::IntegrationTest
     assert_emails 2 do
       Blazer.send_failing_checks
     end
+  end
+
+  def test_emails_invalid
+    query = create_query
+
+    post blazer.checks_path(params: {check: {query_id: query.id, schedule: "5 minutes", check_type: "bad_data", emails: "hi"}})
+    assert_response :unprocessable_entity
+    assert_match "Invalid emails", response.body
   end
 
   def test_slack

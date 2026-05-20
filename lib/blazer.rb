@@ -36,6 +36,10 @@ require_relative "blazer/adapters/spark_adapter"
 require_relative "blazer/adapters/sql_adapter"
 require_relative "blazer/adapters/snowflake_adapter"
 
+# notifiers
+require_relative "blazer/email_notifier"
+require_relative "blazer/slack_notifier"
+
 # engine
 require_relative "blazer/engine"
 
@@ -46,8 +50,6 @@ module Blazer
 
   # actionmailer optional
   autoload :CheckMailer, "blazer/check_mailer"
-  # net/http optional
-  autoload :SlackNotifier, "blazer/slack_notifier"
   # activejob optional
   autoload :RunStatementJob, "blazer/run_statement_job"
 
@@ -188,28 +190,9 @@ module Blazer
   end
 
   def self.send_failing_checks
-    emails = {}
-    slack_channels = {}
-
-    Blazer::Check.includes(:query).where(state: ["failing", "error", "timed out", "disabled"]).find_each do |check|
-      check.split_emails.each do |email|
-        (emails[email] ||= []) << check
-      end
-      check.split_slack_channels.each do |channel|
-        (slack_channels[channel] ||= []) << check
-      end
-    end
-
-    emails.each do |email, checks|
-      Safely.safely do
-        Blazer::CheckMailer.failing_checks(email, checks).deliver_now
-      end
-    end
-
-    slack_channels.each do |channel, checks|
-      Safely.safely do
-        Blazer::SlackNotifier.failing_checks(channel, checks)
-      end
+    checks = Blazer::Check.includes(:query).where(state: ["failing", "error", "timed out", "disabled"]).to_a
+    Blazer.notifiers.each do |notifier|
+      notifier.failing_checks(checks)
     end
   end
 
@@ -263,6 +246,14 @@ module Blazer
     forecasters[name] = forecaster
   end
 
+  def self.notifiers
+    @notifiers ||= []
+  end
+
+  def self.register_notifier(notifier)
+    self.notifiers << notifier
+  end
+
   def self.archive_queries
     raise "Audits must be enabled to archive" unless Blazer.audit
     raise "Missing status column - see https://github.com/ankane/blazer#23" unless Blazer::Query.column_names.include?("status")
@@ -280,3 +271,6 @@ end
 require_relative "blazer/adapters"
 require_relative "blazer/anomaly_detectors"
 require_relative "blazer/forecasters"
+
+Blazer.register_notifier Blazer::EmailNotifier
+Blazer.register_notifier Blazer::SlackNotifier

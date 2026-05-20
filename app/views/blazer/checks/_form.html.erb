@@ -56,19 +56,14 @@
     </div>
   <% end %>
 
-  <div class="form-group">
-    <%= f.label :emails %>
-    <%= f.text_field :emails, placeholder: "Optional, comma separated", class: "form-control" %>
-  </div>
-
-  <% if Blazer.slack? %>
+  <% Blazer.notifiers.flat_map(&:fields).each do |field| %>
     <div class="form-group">
-      <%= f.label :slack_channels %>
-      <%= f.text_field :slack_channels, placeholder: "Optional, comma separated", class: "form-control" %>
+      <%= f.label field %>
+      <%= f.text_field field, placeholder: "Optional, comma separated", class: "form-control" %>
     </div>
   <% end %>
 
-  <p class="text-muted">Emails <%= Blazer.slack? ? "and Slack notifications " : nil %>are sent when a check starts failing, and when it starts passing again.
+  <p class="text-muted">Notifications are sent when a check starts failing, and when it starts passing again.
   <p>
     <% if @check.persisted? %>
       <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>

@@ -116,6 +116,15 @@ class ChecksTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_emails_normalize
+    query = create_query
+    check = create_check(query: query, check_type: "bad_data", emails: "hi@example.org;hi2@example.org")
+    assert_equal "hi@example.org, hi2@example.org", check.emails
+
+    check.update!(emails: "hi@example.org,   hi2@example.org")
+    assert_equal "hi@example.org, hi2@example.org", check.emails
+  end
+
   def test_emails_invalid
     query = create_query
 

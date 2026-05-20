@@ -68,28 +68,28 @@ module Blazer
 
     private
 
-      def set_state
-        self.state ||= "new"
-      end
+    def set_state
+      self.state ||= "new"
+    end
 
-      # TODO rename
-      def fix_emails
-        Blazer.notifiers.each do |notifier|
-          notifier.before_validation(self) if notifier.respond_to?(:before_validation)
-        end
+    # TODO rename
+    def fix_emails
+      Blazer.notifiers.each do |notifier|
+        notifier.before_validation(self) if notifier.respond_to?(:before_validation)
       end
+    end
 
-      # TODO rename
-      def validate_emails
-        Blazer.notifiers.each do |notifier|
-          notifier.validate(self) if notifier.respond_to?(:validate)
-        end
+    # TODO rename
+    def validate_emails
+      Blazer.notifiers.each do |notifier|
+        notifier.validate(self) if notifier.respond_to?(:validate)
       end
+    end
 
-      def validate_variables
-        if query.variables.any?
-          errors.add(:base, "Query can't have variables")
-        end
+    def validate_variables
+      if query.variables.any?
+        errors.add(:base, "Query can't have variables")
       end
+    end
   end
 end

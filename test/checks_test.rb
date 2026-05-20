@@ -8,10 +8,11 @@ class ChecksTest < ActionDispatch::IntegrationTest
 
   def test_index
     query = create_query
-    create_check(query: query, check_type: "bad_data")
+    create_check(query: query, check_type: "bad_data", emails: "hi@example.org")
 
     get blazer.checks_path
     assert_response :success
+    assert_match "hi@example.org", response.body
   end
 
   def test_index_q

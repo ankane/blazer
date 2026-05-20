@@ -45,10 +45,8 @@
         <td><%= check.schedule if check.respond_to?(:schedule) %></td>
         <td>
           <ul class="list-unstyled" style="margin-bottom: 0; word-break: break-all;">
-            <% Blazer.notifiers.each do |notifier| %>
-              <% notifier.notify_list(check).each do |item| %>
-                <li><%= item %></li>
-              <% end %>
+            <% Blazer.notifiers.flat_map { |n| n.notify_list(check) }.each do |item| %>
+              <li><%= item %></li>
             <% end %>
           </ul>
         </td>

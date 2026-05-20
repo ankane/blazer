@@ -40,10 +40,10 @@ class QueriesTest < ActionDispatch::IntegrationTest
   end
 
   def test_new_upload_id
-    upload = Blazer::Upload.create!(table: "orders")
+    upload = Blazer::Upload.create!(table: "line_items")
     get blazer.new_query_path(upload_id: upload.id)
     assert_response :success
-    assert_match "SELECT * FROM &quot;uploads&quot;.&quot;orders&quot; LIMIT 10", response.body
+    assert_match "SELECT * FROM &quot;uploads&quot;.&quot;line_items&quot; LIMIT 10", response.body
   end
 
   def test_create
@@ -66,6 +66,34 @@ class QueriesTest < ActionDispatch::IntegrationTest
     post blazer.queries_path, params: {query: {name: "Test", statement: "", data_source: "main"}}
     assert_response :unprocessable_entity
     assert_match(/Statement can(&#39;|’)t be blank/, response.body)
+  end
+
+  def test_show
+    query = create_query
+    get blazer.query_path(query)
+    assert_response :success
+    assert_match "Test", response.body
+  end
+
+  def test_edit
+    query = create_query
+    get blazer.edit_query_path(query)
+    assert_response :success
+    assert_match "Test", response.body
+  end
+
+  def test_refresh
+    query = create_query
+    post blazer.refresh_query_path(query)
+    assert_redirected_to blazer.query_path(query)
+  end
+
+  def test_update
+    query = create_query
+    patch blazer.query_path(query, params: {query: {name: "Updated"}})
+    query.reload
+    assert_redirected_to blazer.query_path(query)
+    assert_equal "Updated", query.name
   end
 
   def test_destroy
@@ -102,12 +130,6 @@ class QueriesTest < ActionDispatch::IntegrationTest
     get blazer.docs_queries_path(data_source: "main")
     assert_response :success
     assert_match "Docs: main", response.body
-  end
-
-  def test_refresh
-    query = create_query
-    post blazer.refresh_query_path(query)
-    assert_redirected_to blazer.query_path(query)
   end
 
   def test_variables_time

@@ -25,6 +25,9 @@ module Blazer
       end
     end
 
+    def edit
+    end
+
     def update
       if @check.update(check_params)
         redirect_to query_path(@check.query)

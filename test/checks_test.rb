@@ -38,6 +38,14 @@ class ChecksTest < ActionDispatch::IntegrationTest
     assert_response :redirect
   end
 
+  def test_edit
+    query = create_query
+    check = create_check(query: query, check_type: "bad_data")
+
+    get blazer.edit_check_path(check)
+    assert_response :success
+  end
+
   def test_update
     query = create_query
     check = create_check(query: query, check_type: "bad_data")
@@ -59,6 +67,14 @@ class ChecksTest < ActionDispatch::IntegrationTest
     assert_raises(ActiveRecord::RecordNotFound) do
       check.reload
     end
+  end
+
+  def test_run
+    query = create_query
+    check = create_check(query: query, check_type: "bad_data")
+
+    get blazer.run_check_path(check)
+    assert_response :redirect
   end
 
   def test_bad_data

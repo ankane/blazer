@@ -168,13 +168,35 @@ module Blazer
       end
 
       def client_options
-        @client_options ||= begin
-          options = {}
-          if settings["access_key_id"] || settings["secret_access_key"]
-            options[:credentials] = Aws::Credentials.new(settings["access_key_id"], settings["secret_access_key"])
+        options = {}
+        if credentials = client_credentials
+          options[:credentials] = credentials
+        end
+        options[:region] = settings["region"] if settings["region"]
+        options
+      end
+
+      def client_credentials
+        @client_credentials ||= begin
+          # Loading the access key & secret from the top-level settings is supported for backwards compatibility,
+          # but prefer loading them from the 'credentials' sub-hash.
+          creds = (settings["credentials"] || {}).with_defaults(settings.slice("access_key_id", "secret_access_key", "region"))
+          access_key_id = creds["access_key_id"]
+          secret_access_key = creds["secret_access_key"]
+          role_arn = creds["role_arn"]
+          if role_arn
+            region = creds["region"]
+            role_session_name = creds["role_session_name"] || "blazer"
+            Aws::AssumeRoleCredentials.new(
+              access_key_id: access_key_id,
+              secret_access_key: secret_access_key,
+              region: region,
+              role_arn: role_arn,
+              role_session_name: role_session_name,
+            )
+          elsif access_key_id && secret_access_key
+            Aws::Credentials.new(access_key_id, secret_access_key)
           end
-          options[:region] = settings["region"] if settings["region"]
-          options
         end
       end
     end

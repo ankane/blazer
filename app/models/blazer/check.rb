@@ -36,10 +36,10 @@ module Blazer
           else
             "passing"
           end
-        elsif result.rows.any?
-          check_type == "missing_data" ? "passing" : "failing"
-        else
-          check_type == "missing_data" ? "failing" : "passing"
+        elsif check_type == "missing_data"
+          result.rows.any? ? "passing" : "failing"
+        else # bad_data
+          result.rows.any? ? "failing" : "passing"
         end
 
       self.last_run_at = Time.now if respond_to?(:last_run_at=)

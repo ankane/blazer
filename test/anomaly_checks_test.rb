@@ -23,6 +23,8 @@ class AnomalyChecksTest < ActionDispatch::IntegrationTest
     assert_anomaly("anomaly_detection")
   end
 
+  private
+
   def assert_anomaly(anomaly_checks)
     skip if !postgresql? || RUBY_ENGINE == "truffleruby"
 

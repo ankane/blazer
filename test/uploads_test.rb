@@ -108,6 +108,8 @@ class UploadsTest < ActionDispatch::IntegrationTest
     assert_match "Duplicate column name: a", response.body
   end
 
+  private
+
   def create_upload(file: "line_items.csv", content_type: "text/csv")
     post blazer.uploads_path, params: {upload: {table: "line_items", description: "Billing line items", file: fixture_file_upload("test/support/#{file}", content_type)}}
   end

@@ -167,6 +167,8 @@ class ChecksTest < ActionDispatch::IntegrationTest
     end
   end
 
+  private
+
   def assert_slack_messages(expected)
     count = 0
     stub_method(Blazer::SlackNotifier, :post_api, ->(*) { count += 1 }) do

@@ -18,6 +18,8 @@ class ForecastingTest < ActionDispatch::IntegrationTest
     assert_forecast("trend")
   end
 
+  private
+
   def assert_forecast(forecasting)
     skip unless postgresql?
 

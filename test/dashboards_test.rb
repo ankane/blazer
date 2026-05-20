@@ -56,6 +56,8 @@ class DashboardsTest < ActionDispatch::IntegrationTest
     assert_redirected_to blazer.dashboard_path(dashboard)
   end
 
+  private
+
   def create_dashboard
     Blazer::Dashboard.create!(name: "Test")
   end

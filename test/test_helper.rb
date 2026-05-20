@@ -26,8 +26,8 @@ class ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  def create_query(statement: "SELECT 1", **attributes)
-    Blazer::Query.create!(statement: statement, data_source: "main", status: "active", **attributes)
+  def create_query(name: "Test", statement: "SELECT 1", **attributes)
+    Blazer::Query.create!(name: name, statement: statement, data_source: "main", status: "active", **attributes)
   end
 
   def create_check(**attributes)

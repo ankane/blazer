@@ -1,6 +1,5 @@
 module AdapterTest
   def setup
-    super
     settings = YAML.load_file("test/support/adapters.yml")
     Blazer.instance_variable_set(:@settings, settings)
   end

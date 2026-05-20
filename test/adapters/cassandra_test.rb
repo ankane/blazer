@@ -8,7 +8,6 @@ class CassandraTest < ActionDispatch::IntegrationTest
   end
 
   def setup
-    super
     @@once ||= begin
       require "cassandra"
       cluster = Cassandra.cluster(hosts: ["localhost"])

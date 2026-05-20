@@ -7,9 +7,21 @@ class QueriesTest < ActionDispatch::IntegrationTest
     Blazer::Query.delete_all
   end
 
-  def test_index
+  def test_home
     create_query
     get blazer.root_path
+    assert_response :success
+    assert_match "Test", response.body
+  end
+
+  def test_index
+    get blazer.queries_path
+    assert_redirected_to blazer.root_path
+  end
+
+  def test_index_json
+    create_query
+    get blazer.queries_path, as: :json
     assert_response :success
     assert_match "Test", response.body
   end

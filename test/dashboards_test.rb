@@ -11,6 +11,13 @@ class DashboardsTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  def test_create
+    post blazer.dashboards_path(params: {dashboard: {name: "Test"}})
+    dashboard = Blazer::Dashboard.last
+    assert_redirected_to blazer.dashboard_path(dashboard)
+    assert_equal "Test", dashboard.name
+  end
+
   def test_show
     dashboard = create_dashboard
     get blazer.dashboard_path(dashboard)
@@ -21,6 +28,14 @@ class DashboardsTest < ActionDispatch::IntegrationTest
     dashboard = create_dashboard
     get blazer.edit_dashboard_path(dashboard)
     assert_response :success
+  end
+
+  def test_update
+    dashboard = create_dashboard
+    patch blazer.dashboard_path(dashboard, params: {dashboard: {name: "Updated"}})
+    dashboard.reload
+    assert_redirected_to blazer.dashboard_path(dashboard)
+    assert_equal "Updated", dashboard.name
   end
 
   def test_destroy

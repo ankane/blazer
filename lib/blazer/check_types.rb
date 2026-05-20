@@ -2,7 +2,7 @@ Blazer.register_check_type "bad_data", "Any results (bad data)" do |result|
   result.rows.any? ? "failing" : "passing"
 end
 
-Blazer.register_check_type "missing_data", "No results (missing data" do |result|
+Blazer.register_check_type "missing_data", "No results (missing data)" do |result|
   result.rows.any? ? "passing" : "failing"
 end
 

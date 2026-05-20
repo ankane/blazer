@@ -50,7 +50,23 @@ class UploadsTest < ActionDispatch::IntegrationTest
     assert_match "Table already exists", response.body
   end
 
-  def test_rename
+  def test_show
+    create_upload
+    upload = Blazer::Upload.last
+
+    get blazer.upload_path(upload)
+    assert_redirected_to blazer.new_query_path(upload_id: upload.id)
+  end
+
+  def test_edit
+    create_upload
+    upload = Blazer::Upload.last
+
+    get blazer.edit_upload_path(upload)
+    assert_response :success
+  end
+
+  def test_update_rename
     create_upload
     upload = Blazer::Upload.last
     assert_redirected_to blazer.upload_path(upload)
@@ -60,6 +76,18 @@ class UploadsTest < ActionDispatch::IntegrationTest
 
     tables = Blazer::UploadsConnection.connection.select_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'uploads'").rows.map(&:first)
     assert_equal ["items"], tables
+  end
+
+  def test_destroy
+    create_upload
+    upload = Blazer::Upload.last
+
+    delete blazer.upload_path(upload)
+    assert_redirected_to blazer.uploads_path
+
+    assert_raises(ActiveRecord::RecordNotFound) do
+      upload.reload
+    end
   end
 
   def test_bad_content_type

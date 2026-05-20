@@ -26,6 +26,26 @@ class QueriesTest < ActionDispatch::IntegrationTest
     assert_match "Test", response.body
   end
 
+  def test_new
+    get blazer.new_query_path
+    assert_response :success
+    assert_match "New Query", response.body
+  end
+
+  def test_new_fork_query_id
+    query = create_query(statement: "SELECT 1000")
+    get blazer.new_query_path(fork_query_id: query.id)
+    assert_response :success
+    assert_match "SELECT 1000", response.body
+  end
+
+  def test_new_upload_id
+    upload = Blazer::Upload.create!(table: "orders")
+    get blazer.new_query_path(upload_id: upload.id)
+    assert_response :success
+    assert_match "SELECT * FROM &quot;uploads&quot;.&quot;orders&quot; LIMIT 10", response.body
+  end
+
   def test_create
     post blazer.queries_path, params: {query: {name: "Test", statement: "SELECT 1", data_source: "main"}}
     query = Blazer::Query.last

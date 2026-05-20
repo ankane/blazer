@@ -13,9 +13,9 @@ class QueriesTest < ActionDispatch::IntegrationTest
 
   def test_create
     post blazer.queries_path, params: {query: {name: "Test", statement: "SELECT 1", data_source: "main"}}
-    assert_response :redirect
-
     query = Blazer::Query.last
+    assert_redirected_to blazer.query_path(query)
+
     get blazer.query_path(query)
     assert_response :success
 
@@ -36,7 +36,7 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_destroy
     query = create_query
     delete blazer.query_path(query)
-    assert_response :redirect
+    assert_redirected_to blazer.root_path
   end
 
   def test_rollback
@@ -66,7 +66,7 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_refresh
     query = create_query
     post blazer.refresh_query_path(query)
-    assert_response :redirect
+    assert_redirected_to blazer.query_path(query)
   end
 
   def test_variables_time

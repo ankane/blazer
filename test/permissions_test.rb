@@ -34,7 +34,7 @@ class PermissionsTest < ActionDispatch::IntegrationTest
 
       delete blazer.query_path(query)
       # TODO error response
-      assert_response :redirect
+      assert_redirected_to blazer.root_path
       assert Blazer::Query.exists?(query.id)
     end
   end
@@ -44,10 +44,10 @@ class PermissionsTest < ActionDispatch::IntegrationTest
       query = create_query(name: "Test", creator: user)
 
       patch blazer.query_path(query), params: {query: {name: "* Test"}}
-      assert_response :redirect
+      assert_redirected_to blazer.query_path(query)
 
       patch blazer.query_path(query), params: {query: {name: "# Test"}}
-      assert_response :redirect
+      assert_redirected_to blazer.query_path(query)
     end
   end
 

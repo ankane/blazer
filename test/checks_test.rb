@@ -35,7 +35,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
     query = create_query
 
     post blazer.checks_path(params: {check: {query_id: query.id, schedule: "5 minutes", check_type: "bad_data", emails: "hi@example.org"}})
-    assert_response :redirect
+    assert_redirected_to blazer.query_path(query)
   end
 
   def test_edit
@@ -51,7 +51,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
     check = create_check(query: query, check_type: "bad_data")
 
     patch blazer.check_path(check, params: {check: {schedule: "1 hour"}})
-    assert_response :redirect
+    assert_redirected_to blazer.query_path(query)
 
     check.reload
     assert_equal "1 hour", check.schedule
@@ -62,7 +62,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
     check = create_check(query: query, check_type: "bad_data")
 
     delete blazer.check_path(check)
-    assert_response :redirect
+    assert_redirected_to blazer.checks_path
 
     assert_raises(ActiveRecord::RecordNotFound) do
       check.reload
@@ -74,7 +74,7 @@ class ChecksTest < ActionDispatch::IntegrationTest
     check = create_check(query: query, check_type: "bad_data")
 
     get blazer.run_check_path(check)
-    assert_response :redirect
+    assert_redirected_to blazer.query_path(query)
   end
 
   def test_bad_data

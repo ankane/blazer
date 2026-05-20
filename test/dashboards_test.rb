@@ -20,14 +20,14 @@ class DashboardsTest < ActionDispatch::IntegrationTest
   def test_destroy
     dashboard = create_dashboard
     delete blazer.dashboard_path(dashboard)
-    assert_response :redirect
+    assert_redirected_to blazer.root_path
   end
 
   def test_refresh
     dashboard = create_dashboard
     dashboard.queries << create_query
     post blazer.refresh_dashboard_path(dashboard)
-    assert_response :redirect
+    assert_redirected_to blazer.dashboard_path(dashboard)
   end
 
   def create_dashboard

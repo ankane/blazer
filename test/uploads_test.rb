@@ -21,9 +21,9 @@ class UploadsTest < ActionDispatch::IntegrationTest
 
   def test_create
     create_upload
-    assert_response :redirect
-
     upload = Blazer::Upload.last
+    assert_redirected_to blazer.upload_path(upload)
+
     assert_equal "line_items", upload.table
     assert_equal "Billing line items", upload.description
 
@@ -41,7 +41,8 @@ class UploadsTest < ActionDispatch::IntegrationTest
 
   def test_create_duplicate_table
     create_upload
-    assert_response :redirect
+    upload = Blazer::Upload.last
+    assert_redirected_to blazer.upload_path(upload)
     Blazer::Upload.delete_all
 
     create_upload
@@ -51,11 +52,11 @@ class UploadsTest < ActionDispatch::IntegrationTest
 
   def test_rename
     create_upload
-    assert_response :redirect
-
     upload = Blazer::Upload.last
+    assert_redirected_to blazer.upload_path(upload)
+
     patch blazer.upload_path(upload), params: {upload: {table: "items"}}
-    assert_response :redirect
+    assert_redirected_to blazer.upload_path(upload)
 
     tables = Blazer::UploadsConnection.connection.select_all("SELECT table_name FROM information_schema.tables WHERE table_schema = 'uploads'").rows.map(&:first)
     assert_equal ["items"], tables

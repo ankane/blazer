@@ -53,6 +53,12 @@ class AnomalyChecksTest < ActionDispatch::IntegrationTest
       check.reload
       assert_equal "error", check.state
       assert_equal "Bad format", check.message
+
+      query.update!(statement: "SELECT current_date, 1 LIMIT 0")
+      Blazer.run_checks(schedule: "5 minutes")
+      check.reload
+      assert_equal "error", check.state
+      assert_equal "No data", check.message
     end
   end
 end

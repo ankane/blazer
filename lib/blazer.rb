@@ -254,6 +254,14 @@ module Blazer
     self.notifiers << notifier
   end
 
+  def self.check_types
+    @check_types ||= {}
+  end
+
+  def self.register_check_type(name, label, &block)
+    check_types[name] = {label: label, block: block}
+  end
+
   def self.archive_queries
     raise "Audits must be enabled to archive" unless Blazer.audit
     raise "Missing status column - see https://github.com/ankane/blazer#23" unless Blazer::Query.column_names.include?("status")
@@ -270,6 +278,7 @@ end
 
 require_relative "blazer/adapters"
 require_relative "blazer/anomaly_detectors"
+require_relative "blazer/check_types"
 require_relative "blazer/forecasters"
 
 Blazer.register_notifier Blazer::EmailNotifier

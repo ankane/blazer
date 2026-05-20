@@ -13,26 +13,13 @@ module Blazer
     def update_state(result)
       check_type = computed_check_type
 
-      message = result.error
-
-      self.state =
+      self.state, message =
         if result.timed_out?
-          "timed out"
+          ["timed out", result.error]
         elsif result.error
-          "error"
-        elsif check_type == "anomaly"
-          anomaly, message = result.detect_anomaly
-          if anomaly.nil?
-            "error"
-          elsif anomaly
-            "failing"
-          else
-            "passing"
-          end
-        elsif check_type == "missing_data"
-          result.rows.any? ? "passing" : "failing"
-        else # bad_data
-          result.rows.any? ? "failing" : "passing"
+          ["error", result.error]
+        else
+          Blazer.check_types.fetch(check_type).fetch(:block).call(result)
         end
 
       self.last_run_at = Time.now if respond_to?(:last_run_at=)

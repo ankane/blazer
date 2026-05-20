@@ -2,6 +2,7 @@ require_relative "test_helper"
 
 class CacheTest < ActionDispatch::IntegrationTest
   def setup
+    super
     Rails.cache.clear
   end
 

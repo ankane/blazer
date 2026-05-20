@@ -2,6 +2,7 @@ require_relative "test_helper"
 
 class QueriesTest < ActionDispatch::IntegrationTest
   def setup
+    super
     Blazer::Audit.delete_all
     Blazer::Query.delete_all
   end

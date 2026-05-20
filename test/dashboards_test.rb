@@ -2,6 +2,7 @@ require_relative "test_helper"
 
 class DashboardsTest < ActionDispatch::IntegrationTest
   def setup
+    super
     Blazer::Query.delete_all
     Blazer::Dashboard.delete_all
   end

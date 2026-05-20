@@ -3,7 +3,7 @@ require_relative "test_helper"
 class UploadsTest < ActionDispatch::IntegrationTest
   def setup
     skip unless postgresql?
-
+    super
     Blazer::Upload.delete_all
     Blazer::UploadsConnection.connection.execute("DROP SCHEMA IF EXISTS uploads CASCADE")
     Blazer::UploadsConnection.connection.execute("CREATE SCHEMA uploads")

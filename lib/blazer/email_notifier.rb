@@ -38,12 +38,12 @@ module Blazer
       end
     end
 
-    def self.split_emails(check)
-      check.emails.to_s.downcase.split(",").map(&:strip)
-    end
-
     def self.fields
       [:emails]
+    end
+
+    def self.split_emails(check)
+      check.emails.to_s.downcase.split(",").map(&:strip)
     end
   end
 end

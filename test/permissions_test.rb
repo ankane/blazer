@@ -3,7 +3,6 @@ require_relative "test_helper"
 class PermissionsTest < ActionDispatch::IntegrationTest
   def setup
     Blazer::Query.delete_all
-    User.delete_all
   end
 
   def test_list
@@ -56,5 +55,7 @@ class PermissionsTest < ActionDispatch::IntegrationTest
   def with_new_user
     user = User.create!
     yield user
+  ensure
+    user.destroy if user
   end
 end

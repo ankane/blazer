@@ -11,14 +11,7 @@ module Blazer
     before_validation :fix_emails
 
     def update_state(result)
-      check_type =
-        if respond_to?(:check_type)
-          self.check_type
-        elsif respond_to?(:invert)
-          invert ? "missing_data" : "bad_data"
-        else
-          "bad_data"
-        end
+      check_type = computed_check_type
 
       message = result.error
 
@@ -61,6 +54,16 @@ module Blazer
         end
       end
       save! if changed?
+    end
+
+    def computed_check_type
+      if respond_to?(:check_type)
+        check_type
+      elsif respond_to?(:invert)
+        invert ? "missing_data" : "bad_data"
+      else
+        "bad_data"
+      end
     end
 
     private

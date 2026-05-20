@@ -61,11 +61,13 @@ class QueriesTest < ActionDispatch::IntegrationTest
   def test_schema
     get blazer.schema_queries_path(data_source: "main")
     assert_response :success
+    assert_match "Schema: main", response.body
   end
 
   def test_docs
     get blazer.docs_queries_path(data_source: "main")
     assert_response :success
+    assert_match "Docs: main", response.body
   end
 
   def test_refresh

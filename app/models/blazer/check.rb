@@ -87,7 +87,7 @@ module Blazer
     end
 
     def validate_variables
-      if query.variables.any?
+      if query && query.variables.any?
         errors.add(:base, "Query can't have variables")
       end
     end

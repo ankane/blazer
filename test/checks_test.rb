@@ -14,6 +14,17 @@ class ChecksTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  def test_index_q
+    query = create_query
+    create_check(query: query, check_type: "bad_data", emails: "hi@example.org")
+    create_check(query: query, check_type: "bad_data", emails: "hello@example.org")
+
+    get blazer.checks_path(q: "hi")
+    assert_response :success
+    assert_match "hi@example.org", response.body
+    refute_match "hello@example.org", response.body
+  end
+
   def test_new
     get blazer.new_check_path
     assert_response :success

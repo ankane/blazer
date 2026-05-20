@@ -5,7 +5,7 @@ module Blazer
     def index
       state_order = [nil, "disabled", "error", "timed out", "failing", "passing"]
       @checks = Blazer::Check.joins(:query).includes(:query).order("blazer_queries.name, blazer_checks.id").to_a.sort_by { |q| state_order.index(q.state) || 99 }
-      @checks.select! { |c| "#{c.query.name} #{c.emails}".downcase.include?(params[:q]) } if params[:q]
+      @checks.select! { |c| ([c.query.name] + Blazer.notifiers.flat_map { |n| n.notify_list(c) }).join(" ").downcase.include?(params[:q]) } if params[:q]
     end
 
     def new

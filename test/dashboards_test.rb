@@ -17,6 +17,12 @@ class DashboardsTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
+  def test_edit
+    dashboard = create_dashboard
+    get blazer.edit_dashboard_path(dashboard)
+    assert_response :success
+  end
+
   def test_destroy
     dashboard = create_dashboard
     delete blazer.dashboard_path(dashboard)

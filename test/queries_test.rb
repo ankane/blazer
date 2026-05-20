@@ -40,10 +40,10 @@ class QueriesTest < ActionDispatch::IntegrationTest
   end
 
   def test_new_upload_id
-    upload = Blazer::Upload.create!(table: "line_items")
+    upload = Blazer::Upload.create!(table: "orders")
     get blazer.new_query_path(upload_id: upload.id)
     assert_response :success
-    assert_match "SELECT * FROM &quot;uploads&quot;.&quot;line_items&quot; LIMIT 10", response.body
+    assert_match "SELECT * FROM &quot;uploads&quot;.&quot;orders&quot; LIMIT 10", response.body
   end
 
   def test_create

@@ -41,6 +41,13 @@ class AnomalyChecksTest < ActionDispatch::IntegrationTest
       assert_equal "failing", check.state
       assert_equal "Anomaly detected in v", check.message
 
+      query.update!(statement: "SELECT current_date + n AS day, 'A' AS category, 0.1 * random() FROM generate_series(1, 30) n UNION ALL SELECT current_date + 31 AS day, 'A' AS category, 2")
+
+      Blazer.run_checks(schedule: "5 minutes")
+      check.reload
+      assert_equal "failing", check.state
+      assert_equal "Anomaly detected in A", check.message
+
       query.update!(statement: "SELECT 1")
       Blazer.run_checks(schedule: "5 minutes")
       check.reload

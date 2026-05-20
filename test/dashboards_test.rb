@@ -21,6 +21,10 @@ class DashboardsTest < ActionDispatch::IntegrationTest
     dashboard = create_dashboard
     delete blazer.dashboard_path(dashboard)
     assert_redirected_to blazer.root_path
+
+    assert_raises(ActiveRecord::RecordNotFound) do
+      dashboard.reload
+    end
   end
 
   def test_refresh

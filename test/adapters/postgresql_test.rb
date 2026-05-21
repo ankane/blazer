@@ -27,8 +27,7 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
     tables = ds.tables.map { |v| v[:table] }
     assert_includes tables, "users"
     assert_includes tables, "users_view"
-    # TODO add
-    refute_includes tables, "users_matview"
+    assert_includes tables, "users_matview"
   end
 
   def test_schema_method
@@ -40,8 +39,7 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
     ]
     assert_equal expected, columns["users"]
     assert_equal expected, columns["users_view"]
-    # TODO add
-    assert_nil columns["users_matview"]
+    assert_equal expected, columns["users_matview"]
   end
 
   def test_run

@@ -1,3 +1,7 @@
+## 3.5.0 (unreleased)
+
+- Added materialized views to table preview and schema page for Postgres
+
 ## 3.4.0 (2026-04-20)
 
 - Dropped support for Ruby < 3.3 and Rails < 7.2

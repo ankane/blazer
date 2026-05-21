@@ -1,5 +1,4 @@
 # dependencies
-require "chartkick"
 require "safely/core"
 
 # stdlib

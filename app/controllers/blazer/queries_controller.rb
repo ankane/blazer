@@ -179,7 +179,9 @@ module Blazer
           continue_run
         end
       else
-        render layout: false
+        render json: {
+          success: @success
+        }
       end
     end
 
@@ -267,6 +269,7 @@ module Blazer
 
       @linked_columns = @data_source.linked_columns
 
+      # TODO move to JavaScript
       @markers = []
       @geojson = []
       set_map_data if Blazer.maps?
@@ -274,8 +277,26 @@ module Blazer
       render_cohort_analysis if @cohort_analysis && !@error
 
       respond_to do |format|
-        format.html do
-          render layout: false
+        format.json do
+          render json: {
+            columns: @columns,
+            column_types: @result.column_types,
+            sort_types: @column_types,
+            rows: @rows,
+            error: @error,
+            success: @success,
+            cohort_analysis: @cohort_analysis,
+            cohort_error: @cohort_error,
+            forecast_error: @forecast_error,
+            markers: @markers,
+            geojson: @geojson,
+            druid: @data_source.adapter == "druid",
+            min_width_types: @min_width_types,
+            # TODO use set
+            linked_columns: @linked_columns.select { |k, v| @columns.include?(k) },
+            smart_values: @smart_values,
+            time_zone: Blazer.time_zone.tzinfo.name
+          }
         end
         format.csv do
           # not ideal, but useful for testing

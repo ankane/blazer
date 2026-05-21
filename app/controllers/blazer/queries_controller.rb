@@ -181,7 +181,8 @@ module Blazer
           continue_run
         end
       else
-        render layout: false
+        # TODO move HTML rendering to JavaScript
+        render json: {html: render_to_string(layout: false, formats: [:html])}
       end
     end
 

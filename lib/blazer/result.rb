@@ -24,6 +24,7 @@ module Blazer
       # TODO move to data source adapters
       case @data_source.adapter
       when "sql"
+        # TODO limit to Postgres and add other databases
         if @columns == ["QUERY PLAN"]
           @rows.map { |r| r[0] }.join("\n")
         end

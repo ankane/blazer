@@ -84,6 +84,8 @@ module Blazer
 
   VARIABLE_MESSAGE = "Variable cannot be used in this position"
   TIMEOUT_MESSAGE = "Query timed out :("
+
+  # TODO move to SqlAdapter
   TIMEOUT_ERRORS = [
     "canceling statement due to statement timeout", # postgres
     "canceling statement due to conflict with recovery", # postgres

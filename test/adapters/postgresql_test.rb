@@ -16,6 +16,30 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_result
+    result = ds.run_statement("SELECT 'world' AS hello")
+    assert_equal [["world"]], result.rows
+    assert_equal ["hello"], result.columns
+    assert_equal ["string"], result.column_types
+  end
+
+  def test_tables_method
+    tables = ds.tables.map { |v| v[:table] }
+    assert_includes tables, "users"
+    assert_includes tables, "users_view"
+    # TODO add
+    refute_includes tables, "users_matview"
+  end
+
+  def test_schema_method
+    schema = ds.schema
+    tables = schema.map { |v| v[:table] }
+    assert_includes tables, "users"
+    assert_includes tables, "users_view"
+    # TODO add
+    refute_includes tables, "users_matview"
+  end
+
   def test_run
     assert_result [{"hello" => "world"}], "SELECT 'world' AS hello"
   end
@@ -91,22 +115,5 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
 
   def test_jsonb_output
     assert_result [{"jsonb" => '{"hello": "world"}'}], %!SELECT '{"hello": "world"}'::jsonb!
-  end
-
-  def test_tables_method
-    tables = ds.tables.map { |v| v[:table] }
-    assert_includes tables, "users"
-    assert_includes tables, "users_view"
-    # TODO add
-    refute_includes tables, "users_matview"
-  end
-
-  def test_schema_method
-    schema = ds.schema
-    tables = schema.map { |v| v[:table] }
-    assert_includes tables, "users"
-    assert_includes tables, "users_view"
-    # TODO add
-    refute_includes tables, "users_matview"
   end
 end

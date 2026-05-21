@@ -16,6 +16,26 @@ class SqliteTest < ActionDispatch::IntegrationTest
     end
   end
 
+  def test_result
+    result = ds.run_statement("SELECT 'world' AS hello")
+    assert_equal [["world"]], result.rows
+    assert_equal ["hello"], result.columns
+    assert_equal ["string"], result.column_types
+  end
+
+  def test_tables_method
+    tables = ds.tables
+    assert_includes tables, "users"
+    assert_includes tables, "users_view"
+  end
+
+  def test_schema_method
+    schema = ds.schema
+    tables = schema.map { |v| v[:table] }
+    assert_includes tables, "users"
+    assert_includes tables, "users_view"
+  end
+
   def test_run
     assert_result [{"hello" => "world"}], "SELECT 'world' AS hello"
   end
@@ -58,18 +78,5 @@ class SqliteTest < ActionDispatch::IntegrationTest
 
   def test_multiple_variables
     assert_result [{"c1" => "one", "c2" => "two", "c3" => "one"}], "SELECT {var} AS c1, {var2} AS c2, {var} AS c3", var: "one", var2: "two"
-  end
-
-  def test_tables_method
-    tables = ds.tables
-    assert_includes tables, "users"
-    assert_includes tables, "users_view"
-  end
-
-  def test_schema_method
-    schema = ds.schema
-    tables = schema.map { |v| v[:table] }
-    assert_includes tables, "users"
-    assert_includes tables, "users_view"
   end
 end

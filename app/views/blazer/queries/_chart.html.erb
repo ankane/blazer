@@ -1,0 +1,8 @@
+<% chart_id = SecureRandom.hex %>
+<%= content_tag :div, "Loading...", id: chart_id, style: "height: 300px; width: 100%; text-align: center; color: #999; line-height: 300px; font-size: 14px; font-family: 'Lucida Grande', 'Lucida Sans Unicode', Verdana, Arial, Helvetica, sans-serif;" %>
+<%= javascript_tag nonce: true do %>
+  (function() {
+    <%= blazer_js_var "chart", {id: chart_id, type: type, data: data, options: options} %>
+    new Chartkick[chart.type](chart.id, chart.data, chart.options);
+  })();
+<% end %>

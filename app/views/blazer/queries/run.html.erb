@@ -43,10 +43,9 @@
   <% end %>
   <% if @rows.any? %>
     <% values = @rows.first %>
-    <% chart_id = SecureRandom.hex %>
     <% column_types = @result.column_types %>
     <% chart_type = @result.chart_type %>
-    <% chart_options = {id: chart_id, thousands: t("number.format.delimiter"), decimal: t("number.format.separator")} %>
+    <% chart_options = {thousands: t("number.format.delimiter"), decimal: t("number.format.separator")} %>
     <% if ["line", "line2"].include?(chart_type) %>
       <% chart_options.merge!(min: nil) %>
     <% end %>
@@ -92,16 +91,16 @@
       <% end %>
     <% elsif chart_type == "line" %>
       <% chart_data = @columns[1..-1].each_with_index.map{ |k, i| {name: blazer_series_name(k), data: @rows.map{ |r| [r[0], r[i + 1]] }, library: series_library[i]} } %>
-      <%= line_chart chart_data, **chart_options %>
+      <%= render partial: "chart", locals: {type: "LineChart", data: chart_data, options: chart_options} %>
     <% elsif chart_type == "line2" %>
       <% chart_data = @rows.group_by { |r| v = r[1]; (@smart_values[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: blazer_series_name(name), data: v.map { |v2| [v2[0], v2[2]] }, library: series_library[i]} } %>
-      <%= line_chart chart_data, **chart_options %>
+      <%= render partial: "chart", locals: {type: "LineChart", data: chart_data, options: chart_options} %>
     <% elsif chart_type == "pie" %>
       <% chart_data = @rows.map { |r| [(@smart_values[@columns[0]] || {})[r[0].to_s] || r[0], r[1]] } %>
-      <%= pie_chart chart_data, **chart_options %>
+      <%= render partial: "chart", locals: {type: "PieChart", data: chart_data, options: chart_options} %>
     <% elsif chart_type == "bar" %>
       <% chart_data = (values.size - 1).times.map { |i| name = @columns[i + 1]; {name: blazer_series_name(name), data: @rows.first(20).map { |r| [(@smart_values[@columns[0]] || {})[r[0].to_s] || r[0], r[i + 1]] } } } %>
-      <%= column_chart chart_data, **chart_options %>
+      <%= render partial: "chart", locals: {type: "ColumnChart", data: chart_data, options: chart_options} %>
     <% elsif chart_type == "bar2" %>
       <% first_20 = @rows.group_by { |r| r[0] }.values.first(20).flatten(1) %>
       <% labels = first_20.map { |r| r[0] }.uniq %>
@@ -112,10 +111,10 @@
         <% end %>
       <% end %>
       <% chart_data = first_20.group_by { |r| v = r[1]; (@smart_values[@columns[1]] || {})[v.to_s] || v }.each_with_index.map { |(name, v), i| {name: blazer_series_name(name), data: v.sort_by { |r2| labels.index(r2[0]) }.map { |v2| v3 = v2[0]; [(@smart_values[@columns[0]] || {})[v3.to_s] || v3, v2[2]] }} } %>
-      <%= column_chart chart_data, **chart_options %>
+      <%= render partial: "chart", locals: {type: "ColumnChart", data: chart_data, options: chart_options} %>
     <% elsif chart_type == "scatter" %>
       <% chart_options.merge!(xtitle: @columns[0], ytitle: @columns[1]) %>
-      <%= scatter_chart @rows, **chart_options %>
+      <%= render partial: "chart", locals: {type: "ScatterChart", data: @rows, options: chart_options} %>
     <% elsif @only_chart %>
       <% if @rows.size == 1 && @rows.first.size == 1 %>
         <% v = @rows.first.first %>

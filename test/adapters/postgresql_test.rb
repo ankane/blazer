@@ -83,4 +83,41 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   def test_jsonb_output
     assert_result [{"jsonb" => '{"hello": "world"}'}], %!SELECT '{"hello": "world"}'::jsonb!
   end
+
+  def test_tables_method
+    setup_views
+    tables = ds.tables.map { |v| v[:table] }
+    assert_includes tables, "users"
+    assert_includes tables, "users_view"
+    # TODO add
+    refute_includes tables, "users_matview"
+  end
+
+  def test_schema_method
+    setup_views
+    schema = ds.schema
+    tables = schema.map { |v| v[:table] }
+    assert_includes tables, "users"
+    assert_includes tables, "users_view"
+    # TODO add
+    refute_includes tables, "users_matview"
+  end
+
+  private
+
+  def ds
+    Blazer.data_sources[data_source]
+  end
+
+  def execute(statement)
+    ds.send(:adapter_instance).send(:execute, statement)
+  end
+
+  def setup_views
+    @@setup_views ||= begin
+      execute "CREATE VIEW users_view AS SELECT * FROM users"
+      execute "CREATE MATERIALIZED VIEW users_matview AS SELECT * FROM users"
+      true
+    end
+  end
 end

@@ -1,8 +1,8 @@
 # dependencies
+require "csv"
 require "safely/core"
 
 # stdlib
-require "csv"
 require "digest/sha2"
 require "json"
 require "yaml"

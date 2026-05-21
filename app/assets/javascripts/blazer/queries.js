@@ -42,11 +42,19 @@ function createElement(tag, text, classList) {
   return el
 }
 
-function renderResult(el, data) {
+function renderResult(el, data, onlyChart) {
   el.replaceChildren()
   if (data.error) {
     var div = createElement("div", data.error, ["alert", "alert-danger"])
     el.appendChild(div)
+  } else if (!data.success) {
+    if (onlyChart) {
+      var p = createElement("p", "Select variables", ["text-muted"])
+      el.append(p)
+    } else {
+      var div = createElement("div", "Can’t preview queries with variables...yet!", ["alert", "alert-info"])
+      el.appendChild(div)
+    }
   } else {
     $(el).html(data.html)
   }

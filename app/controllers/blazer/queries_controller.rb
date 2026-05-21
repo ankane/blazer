@@ -181,8 +181,9 @@ module Blazer
           continue_run
         end
       else
-        # TODO move HTML rendering to JavaScript
-        render json: {html: render_to_string(layout: false, formats: [:html])}
+        @rows = []
+        @columns = []
+        render_run
       end
     end
 
@@ -281,9 +282,14 @@ module Blazer
           data =
             if @error
               {error: @error.first(200)}
+            elsif !@success
+              {success: false}
             else
-              # TODO move HTML rendering to JavaScript
-              {html: render_to_string(layout: false, formats: [:html])}
+              {
+                success: true,
+                # TODO move HTML rendering to JavaScript
+                html: render_to_string(layout: false, formats: [:html])
+              }
             end
           render json: data
         end

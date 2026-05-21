@@ -1,12 +1,4 @@
-<% if @error %>
-  <div class="alert alert-danger"><%= @error.first(200) %></div>
-<% elsif !@success %>
-  <% if @only_chart %>
-    <p class="text-muted">Select variables</p>
-  <% else %>
-    <div class="alert alert-info">Can’t preview queries with variables</div>
-  <% end %>
-<% elsif @cohort_analysis %>
+<% if @cohort_analysis %>
   <% if @cohort_error %>
     <div class="alert alert-info"><%= @cohort_error %></div>
   <% else %>

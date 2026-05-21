@@ -221,9 +221,9 @@
         // this.results = data
 
         Vue.nextTick(function () {
-          const results = document.getElementById("results-html");
-          results.replaceChildren();
-          createResults(data, results);
+          const results = document.getElementById("results-html")
+          results.replaceChildren()
+          createResults(data, results)
         })
       }
     },

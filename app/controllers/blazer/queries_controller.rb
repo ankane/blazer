@@ -179,9 +179,7 @@ module Blazer
           continue_run
         end
       else
-        render json: {
-          success: @success
-        }
+        render json: {success: @success}
       end
     end
 

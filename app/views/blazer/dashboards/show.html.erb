@@ -46,7 +46,7 @@
     runQuery(data, function (data) {
       const results = document.getElementById("chart-<%= i %>")
       results.replaceChildren()
-      createResults(data, results, true);
+      createResults(data, results, true)
       $("#chart-<%= i %> table").stupidtable(stupidtableCustomSettings)
     }, function (message) {
       $("#chart-<%= i %>").addClass("query-error").html(message)

@@ -105,14 +105,6 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
 
   private
 
-  def ds
-    Blazer.data_sources[data_source]
-  end
-
-  def execute(statement)
-    ds.send(:adapter_instance).send(:execute, statement)
-  end
-
   def setup_views
     @@setup_views ||= begin
       execute "CREATE VIEW users_view AS SELECT * FROM users"

@@ -279,9 +279,9 @@ module Blazer
       respond_to do |format|
         format.json do
           if @error
-            render json: {error: @error.first(200)}
+            data = {error: @error.first(200)}
           elsif !@success
-            render json: {success: false}
+            data = {success: false}
           elsif @cohort_analysis
             data = {cohort_analysis: true}
             if @cohort_error
@@ -289,14 +289,13 @@ module Blazer
             else
               data[:html] = render_to_string(partial: "cohorts", formats: [:html])
             end
-            render json: data
           else
             data = {
               # TODO move HTML rendering to JavaScript
               html: render_to_string(layout: false, formats: [:html])
             }
-            render json: data
           end
+          render json: data
         end
         format.csv do
           # not ideal, but useful for testing

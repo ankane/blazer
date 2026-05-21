@@ -20,6 +20,15 @@ module Blazer
       cached_at.present?
     end
 
+    # TODO move to data source adapters
+    def explain
+      if @columns == ["QUERY PLAN"]
+        @rows.map { |r| r[0] }.join("\n")
+      elsif @columns == ["PLAN"] && @data_source.adapter == "druid"
+        @rows[0][0]
+      end
+    end
+
     def smart_values
       @smart_values ||= begin
         smart_values = {}

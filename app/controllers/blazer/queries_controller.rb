@@ -125,6 +125,7 @@ module Blazer
           @columns = @result.columns
           @rows = @result.rows
           @error = @result.error
+          @explain = @result.explain
           @just_cached = !@result.error && @result.cached_at.present?
           @cached_at = nil
           params[:data_source] = nil
@@ -163,6 +164,7 @@ module Blazer
           @columns = @result.columns
           @rows = @result.rows
           @error = @result.error
+          @explain = @result.explain
           @cached_at = @result.cached_at
           @just_cached = @result.just_cached
 

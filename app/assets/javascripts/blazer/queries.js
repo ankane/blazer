@@ -47,7 +47,7 @@ function renderResult(el, data, onlyChart) {
   if (data.error) {
     var div = createElement("div", data.error, ["alert", "alert-danger"])
     el.appendChild(div)
-  } else if (!data.success) {
+  } else if (data.success === false) {
     if (onlyChart) {
       var p = createElement("p", "Select variables", ["text-muted"])
       el.appendChild(p)
@@ -55,6 +55,9 @@ function renderResult(el, data, onlyChart) {
       var div = createElement("div", "Can’t preview queries with variables...yet!", ["alert", "alert-info"])
       el.appendChild(div)
     }
+  } else if (data.cohort_error) {
+    var div = createElement("div", data.cohort_error, ["alert", "alert-info"])
+    el.appendChild(div)
   } else {
     $(el).html(data.html)
   }

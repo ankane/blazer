@@ -1,10 +1,4 @@
-<% if @cohort_analysis %>
-  <% if @cohort_error %>
-    <div class="alert alert-info"><%= @cohort_error %></div>
-  <% else %>
-    <%= render partial: "cohorts" %>
-  <% end %>
-<% else %>
+<% if true %>
   <% unless @only_chart %>
     <%= render partial: "caching" %>
     <p class="text-muted" style="margin-bottom: 10px;">

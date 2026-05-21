@@ -60,7 +60,6 @@ class SqliteTest < ActionDispatch::IntegrationTest
     assert_result [{"c1" => "one", "c2" => "two", "c3" => "one"}], "SELECT {var} AS c1, {var2} AS c2, {var} AS c3", var: "one", var2: "two"
   end
 
-
   def test_tables_method
     tables = ds.tables
     assert_includes tables, "users"

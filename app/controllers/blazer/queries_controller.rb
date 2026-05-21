@@ -134,8 +134,6 @@ module Blazer
           # query lost
           Rails.logger.info "[blazer lost query] #{@run_id}"
           @error = "We lost your query :("
-          @rows = []
-          @columns = []
           render_run
         else
           continue_run
@@ -181,8 +179,6 @@ module Blazer
           continue_run
         end
       else
-        @rows = []
-        @columns = []
         render_run
       end
     end
@@ -246,6 +242,9 @@ module Blazer
     end
 
     def render_run
+      @rows ||= []
+      @columns ||= []
+
       @checks = @query ? @query.checks.order(:id) : []
 
       @first_row = @rows.first || []

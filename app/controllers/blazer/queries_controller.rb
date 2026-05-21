@@ -297,7 +297,7 @@ module Blazer
             smart_values: @smart_values,
             time_zone: Blazer.time_zone.tzinfo.name
           }
-          if Blazer.maps? && (@markers || @geojson)
+          if Blazer.maps? && (@markers.any? || @geojson.any?)
             data[:mapbox_access_token] = Blazer.mapbox_access_token
           end
           render json: data

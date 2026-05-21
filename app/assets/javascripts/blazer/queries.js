@@ -36,11 +36,10 @@ function runQueryHelper(query) {
     url: Routes.run_queries_path(),
     method: "POST",
     data: query.data,
-    dataType: "html"
+    dataType: "json"
   }).done( function (d) {
-    if (d[0] == "{") {
-      var response = $.parseJSON(d)
-      query.data.blazer = response
+    if (d.run_id) {
+      query.data.blazer = d
       setTimeout( function () {
         if (!query.canceled) {
           runQueryHelper(query)

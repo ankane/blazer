@@ -44,7 +44,7 @@
     <%= blazer_js_var "data", data %>
 
     runQuery(data, function (data) {
-      $("#chart-<%= i %>").html(data)
+      $("#chart-<%= i %>").html(data.html)
       $("#chart-<%= i %> table").stupidtable(stupidtableCustomSettings)
     }, function (message) {
       $("#chart-<%= i %>").addClass("query-error").html(message)

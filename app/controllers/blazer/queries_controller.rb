@@ -276,8 +276,9 @@ module Blazer
       render_cohort_analysis if @cohort_analysis && !@error
 
       respond_to do |format|
-        format.html do
-          render layout: false
+        format.json do
+          # TODO move HTML rendering to JavaScript
+          render json: {html: render_to_string(layout: false, formats: [:html])}
         end
         format.csv do
           # not ideal, but useful for testing

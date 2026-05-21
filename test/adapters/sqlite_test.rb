@@ -7,6 +7,15 @@ class SqliteTest < ActionDispatch::IntegrationTest
     "sqlite"
   end
 
+  def setup
+    super
+    @@once ||= begin
+      execute "CREATE TABLE users (id integer)"
+      execute "CREATE VIEW users_view AS SELECT * FROM users"
+      true
+    end
+  end
+
   def test_run
     assert_result [{"hello" => "world"}], "SELECT 'world' AS hello"
   end
@@ -53,27 +62,15 @@ class SqliteTest < ActionDispatch::IntegrationTest
 
 
   def test_tables_method
-    setup_tables
     tables = ds.tables
     assert_includes tables, "users"
     assert_includes tables, "users_view"
   end
 
   def test_schema_method
-    setup_tables
     schema = ds.schema
     tables = schema.map { |v| v[:table] }
     assert_includes tables, "users"
     assert_includes tables, "users_view"
-  end
-
-  private
-
-  def setup_tables
-    @@setup_tables ||= begin
-      execute "CREATE TABLE users (id integer)"
-      execute "CREATE VIEW users_view AS SELECT * FROM users"
-      true
-    end
   end
 end

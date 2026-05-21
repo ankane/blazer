@@ -7,6 +7,15 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
     "postgresql"
   end
 
+  def setup
+    super
+    @@once ||= begin
+      execute "CREATE VIEW users_view AS SELECT * FROM users"
+      execute "CREATE MATERIALIZED VIEW users_matview AS SELECT * FROM users"
+      true
+    end
+  end
+
   def test_run
     assert_result [{"hello" => "world"}], "SELECT 'world' AS hello"
   end
@@ -85,7 +94,6 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   end
 
   def test_tables_method
-    setup_views
     tables = ds.tables.map { |v| v[:table] }
     assert_includes tables, "users"
     assert_includes tables, "users_view"
@@ -94,22 +102,11 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
   end
 
   def test_schema_method
-    setup_views
     schema = ds.schema
     tables = schema.map { |v| v[:table] }
     assert_includes tables, "users"
     assert_includes tables, "users_view"
     # TODO add
     refute_includes tables, "users_matview"
-  end
-
-  private
-
-  def setup_views
-    @@setup_views ||= begin
-      execute "CREATE VIEW users_view AS SELECT * FROM users"
-      execute "CREATE MATERIALIZED VIEW users_matview AS SELECT * FROM users"
-      true
-    end
   end
 end

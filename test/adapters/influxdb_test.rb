@@ -8,6 +8,7 @@ class InfluxdbTest < ActionDispatch::IntegrationTest
   end
 
   def setup
+    super
     @@once ||= begin
       client = InfluxDB::Client.new(url: "http://localhost:8086/blazer_test")
       client.delete_series("items")

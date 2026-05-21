@@ -75,7 +75,7 @@ module Blazer
           if sqlite?
             "SELECT NULL, name FROM sqlite_master WHERE type IN ('table', 'view') ORDER BY name"
           elsif postgresql?
-            add_schemas("SELECT * FROM (SELECT table_schema, table_name FROM information_schema.tables UNION ALL SELECT n.nspname AS table_schema, c.relname AS table_name FROM pg_class c INNER JOIN pg_namespace n ON c.relnamespace = n.oid WHERE c.relkind = 'm' AND has_table_privilege(c.oid, 'SELECT'))")
+            add_schemas("SELECT * FROM (SELECT table_schema, table_name FROM information_schema.tables UNION ALL SELECT n.nspname AS table_schema, c.relname AS table_name FROM pg_class c INNER JOIN pg_namespace n ON c.relnamespace = n.oid WHERE c.relkind = 'm' AND has_any_column_privilege(c.oid, 'SELECT'))")
           else
             add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
           end

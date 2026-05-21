@@ -50,7 +50,7 @@ function renderResult(el, data, onlyChart) {
   } else if (!data.success) {
     if (onlyChart) {
       var p = createElement("p", "Select variables", ["text-muted"])
-      el.append(p)
+      el.appendChild(p)
     } else {
       var div = createElement("div", "Can’t preview queries with variables...yet!", ["alert", "alert-info"])
       el.appendChild(div)

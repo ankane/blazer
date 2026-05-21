@@ -278,7 +278,7 @@ module Blazer
 
       respond_to do |format|
         format.json do
-          render json: {
+          data = {
             columns: @columns,
             column_types: @result.column_types,
             sort_types: @column_types,
@@ -297,6 +297,10 @@ module Blazer
             smart_values: @smart_values,
             time_zone: Blazer.time_zone.tzinfo.name
           }
+          if Blazer.maps? && (@markers || @geojson)
+            data[:mapbox_access_token] = Blazer.mapbox_access_token
+          end
+          render json: data
         end
         format.csv do
           # not ideal, but useful for testing

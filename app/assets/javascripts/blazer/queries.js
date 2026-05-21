@@ -118,6 +118,7 @@ function createResults(data, results, onlyChart) {
   const minWidthTypes = data["min_width_types"];
   const smartValues = data["smart_values"];
   const timeZone = data["time_zone"];
+  const mapboxAccessToken = data["mapbox_access_token"];
 
   if (error) {
     const div = createElement("div", error.slice(0, 200), ["alert", "alert-danger"]);

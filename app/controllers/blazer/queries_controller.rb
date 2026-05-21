@@ -290,7 +290,7 @@ module Blazer
             forecast_error: @forecast_error,
             markers: @markers,
             geojson: @geojson,
-            druid: @data_source.adapter == "druid",
+            explain: @explain,
             min_width_types: @min_width_types,
             # TODO use set
             linked_columns: @linked_columns.select { |k, v| @columns.include?(k) },

@@ -109,6 +109,7 @@ function createResults(data, results, onlyChart) {
   const rows = data["rows"]
   const linkedColumns = data["linked_columns"]
   const error = data["error"]
+  const explain = data["explain"]
   const success = data["success"]
   const cohortAnalysis = data["cohort_analysis"]
   const cohortError = data["cohort_error"]
@@ -293,10 +294,8 @@ function createResults(data, results, onlyChart) {
       const div = document.createElement("div")
       div.classList.add("results-container")
 
-      if (arrayEquals(columns, ["QUERY PLAN"])) {
-        div.appendChild(explainElement(rows.map(v => v[0]).join("\n")))
-      } else if (arrayEquals(columns, ["PLAN"]) && data["druid"]) {
-        div.appendChild(explainElement(rows[0][0]))
+      if (explain) {
+        div.appendChild(explainElement(explain))
       } else {
         // table
         const table = document.createElement("table")

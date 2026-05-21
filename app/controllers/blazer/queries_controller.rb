@@ -283,11 +283,13 @@ module Blazer
           elsif !@success
             render json: {success: false}
           elsif @cohort_analysis
+            data = {cohort_analysis: true}
             if @cohort_error
-              render json: {cohort_error: @cohort_error}
+              data[:cohort_error] = @cohort_error
             else
-              render json: {html: render_to_string(partial: "cohorts", formats: [:html])}
+              data[:html] = render_to_string(partial: "cohorts", formats: [:html])
             end
+            render json: data
           else
             data = {
               # TODO move HTML rendering to JavaScript

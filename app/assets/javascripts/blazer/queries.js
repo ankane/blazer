@@ -55,9 +55,13 @@ function renderResult(el, data, onlyChart) {
       var div = createElement("div", "Can’t preview queries with variables...yet!", ["alert", "alert-info"])
       el.appendChild(div)
     }
-  } else if (data.cohort_error) {
-    var div = createElement("div", data.cohort_error, ["alert", "alert-info"])
-    el.appendChild(div)
+  } else if (data.cohort_analysis) {
+    if (data.cohort_error) {
+      var div = createElement("div", data.cohort_error, ["alert", "alert-info"])
+      el.appendChild(div)
+    } else {
+      $(el).html(data.html)
+    }
   } else {
     $(el).html(data.html)
   }

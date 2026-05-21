@@ -104,7 +104,7 @@
 
         runQuery(data, function (data) {
           _this.running = false
-          _this.showResults(data.html)
+          _this.showResults(data)
 
           errorLine = _this.getErrorLine()
           if (errorLine) {
@@ -116,7 +116,7 @@
         }, function (data) {
           _this.running = false
           _this.error = true
-          _this.showResults(data)
+          _this.results = data
         })
       },
       cancel: function(e) {
@@ -221,7 +221,7 @@
         // this.results = data
 
         Vue.nextTick(function () {
-          $("#results-html").html(data)
+          renderResult(document.getElementById("results-html"), data)
         })
       }
     },

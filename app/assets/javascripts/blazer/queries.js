@@ -31,6 +31,27 @@ function runNext() {
   }
 }
 
+function createElement(tag, text, classList) {
+  var el = document.createElement(tag)
+  if (classList) {
+    for (var i = 0; i < classList.length; i++) {
+      el.classList.add(classList[i])
+    }
+  }
+  el.appendChild(document.createTextNode(text))
+  return el
+}
+
+function renderResult(el, data) {
+  el.replaceChildren()
+  if (data.error) {
+    var div = createElement("div", data.error, ["alert", "alert-danger"])
+    el.appendChild(div)
+  } else {
+    $(el).html(data.html)
+  }
+}
+
 function runQueryHelper(query) {
   var xhr = $.ajax({
     url: Routes.run_queries_path(),

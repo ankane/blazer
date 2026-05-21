@@ -278,8 +278,14 @@ module Blazer
 
       respond_to do |format|
         format.json do
-          # TODO move HTML rendering to JavaScript
-          render json: {html: render_to_string(layout: false, formats: [:html])}
+          data =
+            if @error
+              {error: @error.first(200)}
+            else
+              # TODO move HTML rendering to JavaScript
+              {html: render_to_string(layout: false, formats: [:html])}
+            end
+          render json: data
         end
         format.csv do
           # not ideal, but useful for testing

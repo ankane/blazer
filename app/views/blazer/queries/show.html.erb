@@ -48,7 +48,7 @@
 
   <%= javascript_tag nonce: true do %>
     function showRun(data) {
-      $("#results").html(data.html)
+      renderResult(document.getElementById("results"), data)
       $("#results table").stupidtable(stupidtableCustomSettings).stickyTableHeaders({fixedOffset: 60})
     }
 

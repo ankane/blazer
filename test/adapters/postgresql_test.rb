@@ -33,11 +33,15 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
 
   def test_schema_method
     schema = ds.schema
-    tables = schema.map { |v| v[:table] }
-    assert_includes tables, "users"
-    assert_includes tables, "users_view"
+    columns = schema.to_h { |v| [v[:table], v[:columns]] }
+    expected = [
+      {name: "id", data_type: "bigint"},
+      {name: "name", data_type: "character varying"}
+    ]
+    assert_equal expected, columns["users"]
+    assert_equal expected, columns["users_view"]
     # TODO add
-    refute_includes tables, "users_matview"
+    assert_nil columns["users_matview"]
   end
 
   def test_run

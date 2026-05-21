@@ -483,7 +483,7 @@ anomaly_checks: anomaly_detection
 
 ## Forecasting
 
-Blazer supports for two different forecasting methods. [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
+Blazer supports for two different forecasting methods.
 
 A forecast link will appear for queries that return 2 columns with types timestamp and numeric.
 

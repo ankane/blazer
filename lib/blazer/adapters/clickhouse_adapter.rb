@@ -119,7 +119,7 @@ module Blazer
       private
 
       def database
-        settings["database"] || "default"
+        @database ||= settings["database"] || "default"
       end
     end
   end

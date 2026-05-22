@@ -12,6 +12,7 @@ module Blazer
         query_params = {
           "database" => database,
           "default_format" => "JSONCompact",
+          "output_format_json_quote_64bit_integers" => 0, # for ClickHouse < 25.8
           "readonly" => 1
         }
         query_params["max_execution_time"] = data_source.timeout if data_source.timeout

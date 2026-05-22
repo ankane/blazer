@@ -11,7 +11,7 @@ class ClickhouseTest < ActionDispatch::IntegrationTest
     super
     @@once ||= begin
       # TODO fix
-      # ds.run_statement "CREATE TABLE users (id integer)"
+      # ds.run_statement "CREATE TABLE users (id bigint)"
       true
     end
   end
@@ -33,6 +33,11 @@ class ClickhouseTest < ActionDispatch::IntegrationTest
     assert_equal "Query timed out :(", result.error
   end
 
+  def test_readonly
+    result = ds.run_statement("DELETE FROM users WHERE id = 1")
+    assert_match "READONLY", result.error
+  end
+
   def test_tables_method
     tables = ds.tables
     assert_includes tables, "users"
@@ -42,7 +47,7 @@ class ClickhouseTest < ActionDispatch::IntegrationTest
     schema = ds.schema
     columns = schema.to_h { |v| [v[:table], v[:columns]] }
     expected = [
-      {name: "id", data_type: "Int32"}
+      {name: "id", data_type: "Int64"}
     ]
     assert_equal expected, columns["users"]
   end

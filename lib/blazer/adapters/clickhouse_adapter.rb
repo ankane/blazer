@@ -18,7 +18,7 @@ module Blazer
         query_params["max_execution_time"] = data_source.timeout if data_source.timeout
 
         post_data = {
-          "query" => "#{statement} /*#{comment}*/",
+          "query" => "#{statement} /*#{comment}*/"
         }
         bind_params.each do |k, v|
           v = v.utc.strftime("%Y-%m-%d %H:%M:%S.%N") if v.is_a?(ActiveSupport::TimeWithZone)

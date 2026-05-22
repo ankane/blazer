@@ -32,9 +32,7 @@ module Blazer
             query_string: statement,
             # use token so we fetch cached results after query is run
             client_request_token: request_token,
-            query_execution_context: {
-              database: database
-            }
+            query_execution_context: {database: database, catalog: catalog}.compact
           }
 
           if settings["output_location"]
@@ -119,11 +117,11 @@ module Blazer
       end
 
       def tables
-        glue.get_tables(database_name: database).table_list.map(&:name).sort
+        glue_tables.table_list.map(&:name).sort
       end
 
       def schema
-        glue.get_tables(database_name: database).table_list.map { |t| {table: t.name, columns: t.storage_descriptor.columns.map { |c| {name: c.name, data_type: c.type} }} }
+        glue_tables.table_list.map { |t| {table: t.name, columns: t.storage_descriptor.columns.map { |c| {name: c.name, data_type: c.type} }} }
       end
 
       def preview_statement
@@ -144,6 +142,14 @@ module Blazer
 
       def database
         @database ||= settings["database"] || "default"
+      end
+
+      def catalog
+        @catalog ||= settings["catalog"]
+      end
+
+      def glue_tables
+        glue.get_tables({database_name: database, catalog_id: catalog}.compact)
       end
 
       # note: this setting is experimental

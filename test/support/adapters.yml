@@ -11,6 +11,11 @@ data_sources:
   cassandra:
     url: cassandra://localhost:9042/blazer_test
 
+  clickhouse:
+    adapter: clickhouse
+    url: http://default:secret@localhost:8123
+    timeout: 0.01
+
   drill:
     adapter: drill
     url: http://localhost:8047

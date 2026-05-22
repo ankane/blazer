@@ -8,7 +8,7 @@ end
 task default: :test
 
 %w(
-  athena bigquery cassandra drill druid elasticsearch
+  athena bigquery cassandra clickhouse drill druid elasticsearch
   hive ignite influxdb mysql neo4j opensearch
   postgresql presto redshift salesforce snowflake
   soda spark sqlite sqlserver

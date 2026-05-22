@@ -575,6 +575,7 @@ data_sources:
 - [Apache Ignite](#apache-ignite)
 - [Apache Spark](#apache-spark)
 - [Cassandra](#cassandra)
+- [ClickHouse](#clickhouse) [unreleased]
 - [Druid](#druid)
 - [Elasticsearch](#elasticsearch)
 - [Google BigQuery](#google-bigquery)
@@ -730,6 +731,18 @@ data_sources:
 ```
 
 Use a [read-only role](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_using/useSecurePermission.html).
+
+### ClickHouse
+
+Set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: clickhouse
+    url: https://user:password@hostname:8443
+    database: default
+```
 
 ### Druid
 

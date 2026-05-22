@@ -1,6 +1,7 @@
 Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter
 Blazer.register_adapter "bigquery", Blazer::Adapters::BigQueryAdapter
 Blazer.register_adapter "cassandra", Blazer::Adapters::CassandraAdapter
+Blazer.register_adapter "clickhouse", Blazer::Adapters::ClickhouseAdapter
 Blazer.register_adapter "drill", Blazer::Adapters::DrillAdapter
 Blazer.register_adapter "druid", Blazer::Adapters::DruidAdapter
 Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter

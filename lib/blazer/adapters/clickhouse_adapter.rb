@@ -21,6 +21,8 @@ module Blazer
         }
         bind_params.each do |k, v|
           v = v.utc.strftime("%Y-%m-%d %H:%M:%S.%N") if v.is_a?(ActiveSupport::TimeWithZone)
+          # https://github.com/ClickHouse/ClickHouse/issues/69656
+          v = v.gsub("\\") { "\\\\" } if v.is_a?(String)
           post_data["param_#{k}"] = v.to_s unless v.nil?
         end
 

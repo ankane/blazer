@@ -88,8 +88,11 @@ class ClickhouseTest < ActionDispatch::IntegrationTest
     assert_result [{"hello" => '"'}], "SELECT {var} AS hello", var: '"'
   end
 
-  # TODO fix
-  # def test_backslash
-  #   assert_result [{"hello" => "\\"}], "SELECT {var} AS hello", var: "\\"
-  # end
+  def test_backslash
+    assert_result [{"hello" => "\\"}], "SELECT {var} AS hello", var: "\\"
+  end
+
+  def test_double_backslash
+    assert_result [{"hello" => "\\\\"}], "SELECT {var} AS hello", var: "\\\\"
+  end
 end

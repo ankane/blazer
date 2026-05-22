@@ -76,7 +76,7 @@ module Blazer
               untyped_rows.concat page.result_set.rows.map { |r| r.data.map(&:var_char_value) }
             end
 
-            utc = ActiveSupport::TimeZone['Etc/UTC']
+            utc = ActiveSupport::TimeZone["Etc/UTC"]
 
             rows = untyped_rows[1..-1] || []
             rows = untyped_rows[0..-1] unless column_info.present?

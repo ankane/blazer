@@ -62,11 +62,9 @@ check_schedules:
   - "5 minutes"
 
 # enable anomaly detection
-# note: with trend, time series are sent to https://trendapi.org
 # anomaly_checks: prophet / trend / anomaly_detection
 
 # enable forecasting
-# note: with trend, time series are sent to https://trendapi.org
 # forecasting: prophet / trend
 
 # enable map

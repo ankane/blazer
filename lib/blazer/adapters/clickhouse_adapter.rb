@@ -6,34 +6,33 @@ module Blazer
         rows = []
         error = nil
 
-        res = nil
         begin
           res = execute("#{statement} /*#{comment}*/", bind_params)
-        rescue Errno::ECONNREFUSED => e
-          error = e.message
-        end
 
-        if res.is_a?(Net::HTTPSuccess)
-          data = JSON.parse(res.body)
-          columns = data["meta"].map { |v| v["name"] }
-          rows = data["data"]
-          data["meta"].each_with_index do |c, i|
-            type = c["type"]
-            type = type[9..-2] if type.start_with?("Nullable(")
-            if type.start_with?("DateTime")
-              utc = ActiveSupport::TimeZone["Etc/UTC"]
-              rows.each do |row|
-                row[i] &&= utc.parse(row[i])
-              end
-            elsif ["Date", "Date32"].include?(type)
-              rows.each do |row|
-                row[i] &&= Date.parse(row[i])
+          if res.is_a?(Net::HTTPSuccess)
+            data = JSON.parse(res.body)
+            columns = data["meta"].map { |v| v["name"] }
+            rows = data["data"]
+            data["meta"].each_with_index do |c, i|
+              type = c["type"]
+              type = type[9..-2] if type.start_with?("Nullable(")
+              if type.start_with?("DateTime")
+                utc = ActiveSupport::TimeZone["Etc/UTC"]
+                rows.each do |row|
+                  row[i] &&= utc.parse(row[i])
+                end
+              elsif ["Date", "Date32"].include?(type)
+                rows.each do |row|
+                  row[i] &&= Date.parse(row[i])
+                end
               end
             end
+          else
+            error = res.body
+            error = Blazer::TIMEOUT_MESSAGE if error.include?("TIMEOUT_EXCEEDED")
           end
-        elsif res
-          error = res.body
-          error = Blazer::TIMEOUT_MESSAGE if error.include?("TIMEOUT_EXCEEDED")
+        rescue Errno::ECONNREFUSED => e
+          error = e.message
         end
 
         [columns, rows, error]

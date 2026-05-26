@@ -2,7 +2,7 @@
 
 - Added materialized views to table preview and schema page for Postgres
 - Added support for ClickHouse
-- Added `catalog` setting to Amazon Athena
+- Added `catalog` setting for Amazon Athena
 
 ## 3.4.0 (2026-04-20)
 

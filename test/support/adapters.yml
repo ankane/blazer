@@ -14,7 +14,7 @@ data_sources:
   clickhouse:
     adapter: clickhouse
     url: http://default:secret@localhost:8123
-    timeout: 0.01
+    timeout: 0.05
 
   drill:
     adapter: drill

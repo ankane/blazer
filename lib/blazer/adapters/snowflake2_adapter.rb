@@ -16,8 +16,12 @@ module Blazer
         # for testing
         # submit_uri.query = URI.encode_www_form({"async" => true})
 
+        timeout = data_source.timeout || 300
+        stop_at = Time.now + timeout
+
         post_data = {
-          statement: "#{statement} /*#{comment}*/"
+          statement: "#{statement} /*#{comment}*/",
+          timeout: timeout
         }
         # use empty? since any? doesn't work for [nil]
         unless bind_params.empty?
@@ -38,7 +42,6 @@ module Blazer
               [i + 1, {type: type, value: v&.to_s}]
             end
         end
-        post_data[:timeout] = data_source.timeout if data_source.timeout
         post_data[:database] = settings["database"] if settings["database"]
         post_data[:schema] = settings["schema"] if settings["schema"]
         post_data[:warehouse] = settings["warehouse"] if settings["warehouse"]
@@ -51,7 +54,7 @@ module Blazer
         options = {
           use_ssl: true,
           open_timeout: 3,
-          read_timeout: data_source.timeout ? data_source.timeout + 3 : 60
+          read_timeout: timeout + 3
         }
 
         begin
@@ -60,7 +63,12 @@ module Blazer
           end
 
           while res.is_a?(Net::HTTPAccepted)
-            sleep(1)
+            if Time.now > stop_at
+              error = Blazer::TIMEOUT_MESSAGE
+              break
+            end
+
+            sleep(3)
 
             data = JSON.parse(res.body)
             statement_uri = URI("#{api_prefix}#{CGI.escape(data["statementHandle"])}")
@@ -123,7 +131,7 @@ module Blazer
                 end
               end
             end
-          else
+          elsif !error
             data = JSON.parse(res.body)
             error = data["message"]
             error = Blazer::TIMEOUT_MESSAGE if error.include?("Statement reached its statement or warehouse timeout")

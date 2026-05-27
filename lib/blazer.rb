@@ -35,6 +35,7 @@ require_relative "blazer/adapters/soda_adapter"
 require_relative "blazer/adapters/spark_adapter"
 require_relative "blazer/adapters/sql_adapter"
 require_relative "blazer/adapters/snowflake_adapter"
+require_relative "blazer/adapters/snowflake2_adapter"
 
 # notifiers
 require_relative "blazer/email_notifier"

@@ -75,6 +75,14 @@ data_sources:
     adapter: snowflake
     # conn_str: ...
 
+  snowflake2:
+    adapter: snowflake2
+    account_id: ...
+    database: ...
+    schema: PUBLIC
+    access_token: ...
+    timeout: 1
+
   sqlite:
     url: "sqlite3::memory:"
 

@@ -93,7 +93,6 @@ module Blazer
       end
 
       def execute(statement, bind_params)
-        require "json"
         require "net/http"
 
         query_params = {

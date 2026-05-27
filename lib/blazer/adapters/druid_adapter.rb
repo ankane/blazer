@@ -4,9 +4,7 @@ module Blazer
       TIMESTAMP_REGEX = /\A\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z\z/
 
       def run_statement(statement, comment, bind_params)
-        require "json"
         require "net/http"
-        require "uri"
 
         columns = []
         rows = []

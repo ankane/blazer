@@ -2,7 +2,6 @@ module Blazer
   module Adapters
     class Snowflake2Adapter < BaseAdapter
       def run_statement(statement, comment, bind_params)
-        require "json"
         require "net/http"
 
         columns = []

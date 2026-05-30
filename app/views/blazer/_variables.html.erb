@@ -90,7 +90,10 @@
             ranges: {
              "Today": [dateStr(), dateStr()],
              "Last 7 Days": [dateStr(6), dateStr()],
-             "Last 30 Days": [dateStr(29), dateStr()]
+             "Last 30 Days": [dateStr(29), dateStr()],
+             "Last 3 Months": [now.clone().subtract(3, "months").format(format), dateStr()],
+             "Last 6 Months": [now.clone().subtract(6, "months").format(format), dateStr()],
+             "Last Year": [now.clone().subtract(1, "year").format(format), dateStr()]
             },
             locale: {
               format: format

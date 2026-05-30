@@ -1,5 +1,5 @@
 module Blazer
-  class BaseController < ApplicationController
+  class BaseController < Blazer.base_controller.constantize
     # skip filters
     filters = _process_action_callbacks.map(&:filter) - [:activate_authlogic]
     skip_before_action(*filters, raise: false)

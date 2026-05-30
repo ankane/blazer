@@ -121,6 +121,40 @@ module Blazer
     end
     helper_method :blazer_user
 
+    def can_create_blazer_queries?
+      return true unless blazer_user.respond_to?(:can_create_blazer_queries?)
+      blazer_user.can_create_blazer_queries?
+    end
+    helper_method :can_create_blazer_queries?
+
+    def can_access_blazer_query?(query)
+      return true unless blazer_user.respond_to?(:can_access_blazer_query?)
+      blazer_user.can_access_blazer_query?(query)
+    end
+    helper_method :can_access_blazer_query?
+
+    def can_access_blazer_dashboard?(dashboard)
+      return true unless blazer_user.respond_to?(:can_access_blazer_dashboard?)
+      blazer_user.can_access_blazer_dashboard?(dashboard)
+    end
+    helper_method :can_access_blazer_dashboard?
+
+    def authorize_blazer_create!
+      render_forbidden unless can_create_blazer_queries?
+    end
+
+    def authorize_blazer_query_access!
+      render_forbidden unless can_access_blazer_query?(@query)
+    end
+
+    def authorize_blazer_dashboard_access!
+      render_forbidden unless can_access_blazer_dashboard?(@dashboard)
+    end
+
+    def render_forbidden
+      render plain: "Access denied", status: :forbidden
+    end
+
     def render_errors(resource)
       @errors = resource.errors
       action = resource.persisted? ? :edit : :new

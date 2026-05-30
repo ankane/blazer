@@ -40,7 +40,7 @@
         </div>
         <div class="form-group text-right">
           <%= f.submit "For Enter Press", class: "hide" %>
-          <% if @query.persisted? %>
+          <% if @query.persisted? && can_create_blazer_queries? %>
             <%= link_to "Delete", query_path(@query), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
             <%= f.submit "Fork", class: "btn btn-info" %>
           <% end %>

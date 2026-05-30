@@ -4,6 +4,7 @@ ActiveRecord::Schema.define do
     t.string :name
     t.text :description
     t.text :statement
+    t.text :secret_token
     t.string :data_source
     t.string :status
     t.timestamps null: false

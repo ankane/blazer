@@ -3,17 +3,21 @@
 <div class="topbar">
   <div class="container">
     <div class="row" style="padding-top: 13px;">
-      <div class="col-sm-9">
+      <div class="col-sm-8">
         <%= render partial: "blazer/nav" %>
         <h3 style="line-height: 34px; display: inline; margin-left: 5px;">
           <%= @query.name %>
         </h3>
       </div>
-      <div class="col-sm-3 text-right">
+      <div class="col-sm-4 text-right">
         <%= link_to "Edit", edit_query_path(@query, params: variable_params(@query)), class: "btn btn-default", disabled: !@query.editable?(blazer_user) %>
         <%= link_to "Fork", new_query_path(params: {variables: variable_params(@query), fork_query_id: @query.id, data_source: @query.data_source, name: @query.name}), class: "btn btn-info" %>
 
         <% if !@error && @success %>
+          <% if Blazer.sharing.enabled? %>
+              <span class='btn btn-success' data-toggle="modal" data-target="#sharingModal">Share</span>
+          <% end %>
+
           <%= button_to "Download", run_queries_path(format: "csv"), params: @run_data, class: "btn btn-primary" %>
         <% end %>
       </div>
@@ -69,4 +73,8 @@
   if (code.text().length < 10000) {
     hljs.highlightElement(code.get(0))
   }
+<% end %>
+
+<% if Blazer.sharing.enabled? %>
+  <%= render(partial: 'sharing_modal') %>
 <% end %>

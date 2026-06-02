@@ -172,9 +172,11 @@ CREATE ROLE blazer LOGIN PASSWORD 'secret';
 GRANT CONNECT ON DATABASE dbname TO blazer;
 GRANT USAGE ON SCHEMA public TO blazer;
 GRANT SELECT ON ALL TABLES IN SCHEMA public TO blazer;
-ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
+ALTER DEFAULT PRIVILEGES FOR ROLE your_pg_user_that_runs_migrations IN SCHEMA public GRANT SELECT ON TABLES TO blazer;
 COMMIT;
 ```
+
+Note that `ALTER DEFAULT PRIVILEGES` will only `GRANT SELECT ...` for tables created by `your_pg_user_that_runs_migrations`
 
 ### MySQL and MariaDB
 

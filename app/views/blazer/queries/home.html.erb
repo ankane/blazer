@@ -40,11 +40,11 @@
         <% end%>
       </tr>
     </thead>
-    <tbody id="items" class="list cloak">
+    <tbody id="items" class="list">
     </tbody>
   </table>
 
-  <p id="loading" class="text-muted" style="display: none;">Loading...</p>
+  <p id="loading" class="text-muted hide">Loading...</p>
 </div>
 
 <%= javascript_tag nonce: true do %>
@@ -77,7 +77,9 @@
     }
   }
 
+  var search = document.getElementById("search")
   var items = document.getElementById("items")
+  var loading = document.getElementById("loading")
 
   function addItem(item) {
     var tr = document.createElement("tr")
@@ -87,14 +89,14 @@
     var a = document.createElement("a")
     a.setAttribute("href", itemPath(item))
     if (item.dashboard) {
-      a.classList = "dashboard"
+      a.classList.add("dashboard")
     }
     a.textContent = item.name
     td.append(a)
 
     if (item.vars) {
       var span = document.createElement("span")
-      span.classList = "vars"
+      span.classList.add("vars")
       span.textContent = item.vars
       td.append(" ", span)
     }
@@ -102,7 +104,7 @@
     tr.append(td)
     if (showUser) {
       var td2 = document.createElement("td")
-      td2.classList = "creator"
+      td2.classList.add("creator")
       td2.textContent = item.creator
       tr.append(td2)
     }
@@ -143,10 +145,10 @@
   }
 
   if (more) {
-    $("#loading").show()
+    loading.classList.remove("hide")
 
     $.getJSON(Routes.queries_path(), function (data) {
-      $("#loading").hide()
+      loading.classList.add("hide")
 
       var newValues = []
       for (var j = 0; j < data.length; j++) {
@@ -164,13 +166,10 @@
   }
 
   function showItems() {
-    var searchTerm = $("#search").val()
-    items.replaceChildren(...visibleItems(searchTerm).map(addItem))
+    items.replaceChildren(...visibleItems(search.value).map(addItem))
   }
 
-  $("#search").on("input", showItems)
+  search.addEventListener("input", showItems)
 
   showItems()
-
-  $(".cloak").removeClass("cloak")
 <% end %>

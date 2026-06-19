@@ -7,21 +7,16 @@
     <%= f.label :name %>
     <%= f.text_field :name, class: "form-control" %>
   </div>
-  <div class="form-group" v-show="queries.length">
+  <div class="form-group" id="queries-group" style="display: none;">
     <%= f.label :charts %>
     <ul id="queries" class="list-group">
-      <li class="list-group-item" v-for="(query, index) in queries" :key="query.id" v-cloak>
-        <span class="glyphicon glyphicon-remove" aria-hidden="true" v-on:click="remove(index)"></span>
-        {{ query.name }}
-        <input type="hidden" name="query_ids[]" :value="query.id">
-      </li>
     </ul>
   </div>
-  <div class="form-group" v-cloak>
+  <div class="form-group cloak">
     <%= f.label :query_id, "Add Chart" %>
     <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
   </div>
-  <p style="padding-bottom: 140px;" v-cloak>
+  <p style="padding-bottom: 140px;" class="cloak">
     <% if @dashboard.persisted? %>
       <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
     <% end %>
@@ -34,49 +29,62 @@
   <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
   <%= blazer_js_var "dashboardQueries", (@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).as_json(only: [:id, :name]) %>
 
-  var app = Vue.createApp({
-    data: function() {
-      return {
-        queries: dashboardQueries
-      }
-    },
-    methods: {
-      remove: function(index) {
-        this.queries.splice(index, 1)
-      }
-    },
-    mounted: function() {
-      var app = this
-      $("#query_id").selectize({
-        options: queries,
-        highlight: false,
-        maxOptions: 100,
-        onChange: function(val) {
-          if (val) {
-            var item = this.getItem(val)
+  function addQuery(query) {
+    var li = document.createElement("li")
+    li.className = "list-group-item"
+    li.setAttribute("data-query-id", query.id)
 
-            // if duplicate query is added, remove the first one
-            for (var i = 0; i < app.queries.length; i++) {
-              if (app.queries[i].id == val) {
-                app.queries.splice(i, 1)
-                break
-              }
-            }
+    var span = document.createElement("span")
+    span.className = "glyphicon glyphicon-remove"
+    span.setAttribute("aria-hidden", "true")
 
-            app.queries.push({id: val, name: item.text()})
-            this.setValue("")
+    var input = document.createElement("input")
+    input.setAttribute("type", "hidden")
+    input.setAttribute("name", "query_ids[]")
+    input.setAttribute("value", query.id)
+
+    li.append(span, query.name, input)
+    document.getElementById("queries").append(li)
+
+    $("#queries-group").show()
+  }
+
+  for (var i = 0; i < dashboardQueries.length; i++) {
+    addQuery(dashboardQueries[i])
+  }
+
+  $("#queries").on("click", ".glyphicon-remove", function () {
+    $(this).parent("li").remove()
+
+    if ($("#queries li").length == 0) {
+      $("#queries-group").hide()
+    }
+  })
+
+  $("#query_id").selectize({
+    options: queries,
+    highlight: false,
+    maxOptions: 100,
+    onChange: function(val) {
+      if (val) {
+        var item = this.getItem(val)
+
+        // if duplicate query is added, remove the first one
+        var existingQueries = $("#queries li")
+        for (var i = 0; i < existingQueries.length; i++) {
+          if (existingQueries[i].getAttribute("data-query-id") == val) {
+            existingQueries[i].remove()
+            break
           }
         }
-      })
-    }
-  })
-  app.config.compilerOptions.whitespace = "preserve"
-  app.mount("#app")
 
-  Sortable.create($("#queries").get(0), {
-    onEnd: function(e) {
-      var app = window.app._component.data()
-      app.queries.splice(e.newIndex, 0, app.queries.splice(e.oldIndex, 1)[0])
+        addQuery({id: val, name: item.text()})
+        this.setValue("")
+      }
     }
   })
+
+  $(".cloak").removeClass("cloak")
+
+  Sortable.create(document.getElementById("queries"))
 <% end %>

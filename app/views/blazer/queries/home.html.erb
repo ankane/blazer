@@ -89,12 +89,14 @@
       a.classList = "dashboard"
     }
     a.textContent = item.name
+    td.append(a)
 
-    var span = document.createElement("span")
-    span.classList = "vars"
-    span.textContent = items.vars
-
-    td.append(a, span)
+    if (item.vars) {
+      var span = document.createElement("span")
+      span.classList = "vars"
+      span.textContent = item.vars
+      td.append(" ", span)
+    }
 
     tr.append(td)
     <% if Blazer.user_class %>

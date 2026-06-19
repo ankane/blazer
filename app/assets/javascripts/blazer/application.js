@@ -15,7 +15,6 @@
 //= require ./ace
 //= require ./Sortable
 //= require ./bootstrap
-//= require ./vue.global.prod
 //= require ./routes
 //= require ./queries
 //= require ./fuzzysearch

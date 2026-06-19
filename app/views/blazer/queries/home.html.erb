@@ -53,7 +53,7 @@
   <%= blazer_js_var "more", @more %>
   <%= blazer_js_var "showUser", !!Blazer.user_class %>
 
-  var prepareSearch = function (list) {
+  function prepareSearch(list) {
     var i, q, searchStr
     for (i = 0; i < list.length; i++) {
       q = list[i]
@@ -65,7 +65,7 @@
     }
   }
 
-  var prepareQuery = function (str) {
+  function prepareQuery(str) {
     return str.toLowerCase()
   }
 

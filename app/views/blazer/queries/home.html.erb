@@ -51,6 +51,7 @@
   <%= blazer_js_var "dashboards", @dashboards %>
   <%= blazer_js_var "queries", @queries %>
   <%= blazer_js_var "more", @more %>
+  <%= blazer_js_var "showUser", !!Blazer.user_class %>
 
   var prepareSearch = function (list) {
     var i, q, searchStr
@@ -99,12 +100,12 @@
     }
 
     tr.append(td)
-    <% if Blazer.user_class %>
-    var td2 = document.createElement("td")
-    td2.classList = "creator"
-    td2.textContent = item.creator
-    tr.append(td2)
-    <% end %>
+    if (showUser) {
+      var td2 = document.createElement("td")
+      td2.classList = "creator"
+      td2.textContent = item.creator
+      tr.append(td2)
+    }
     return tr
   }
 

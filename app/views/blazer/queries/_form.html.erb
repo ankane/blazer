@@ -72,6 +72,7 @@
   <%= blazer_js_var "variableParams", @variable_params %>
   <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
+  const app = document.getElementById("app")
   const statement = document.getElementById("query_statement")
   const docsLink = document.getElementById("docs-link")
   const schemaLink = document.getElementById("schema-link")
@@ -161,7 +162,7 @@
       lines = 9
     }
 
-    document.getElementById("editor").style.height = ((lines + 1) * 16).toString() + "px"
+    editor.container.style.height = ((lines + 1) * 16).toString() + "px"
     editor.resize()
   }
 
@@ -219,5 +220,5 @@
 
   updateDataSource()
   showEditor()
-  show(document.getElementById("app"))
+  show(app)
 <% end %>

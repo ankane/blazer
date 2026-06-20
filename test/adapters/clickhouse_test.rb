@@ -1,17 +1,17 @@
 require_relative "../test_helper"
 
-class SqliteTest < ActionDispatch::IntegrationTest
+class ClickhouseTest < ActionDispatch::IntegrationTest
   include AdapterTest
 
   def data_source
-    "sqlite"
+    "clickhouse"
   end
 
   def setup
     super
     @@once ||= begin
-      execute "CREATE TABLE users (id integer)"
-      execute "CREATE VIEW users_view AS SELECT * FROM users"
+      # TODO fix
+      # ds.run_statement "CREATE TABLE users (id bigint)"
       true
     end
   end
@@ -23,17 +23,33 @@ class SqliteTest < ActionDispatch::IntegrationTest
     assert_equal ["string"], result.column_types
   end
 
+  def test_error
+    result = ds.run_statement("1")
+    assert_match "Syntax error", result.error
+  end
+
+  def test_timeout
+    result = ds.run_statement("SELECT sleep(1)")
+    assert_equal "Query timed out :(", result.error
+  end
+
+  def test_readonly
+    result = ds.run_statement("DELETE FROM users WHERE id = 1")
+    assert_match "READONLY", result.error
+  end
+
   def test_tables_method
     tables = ds.tables
     assert_includes tables, "users"
-    assert_includes tables, "users_view"
   end
 
   def test_schema_method
     schema = ds.schema
-    tables = schema.map { |v| v[:table] }
-    assert_includes tables, "users"
-    assert_includes tables, "users_view"
+    columns = schema.to_h { |v| [v[:table], v[:columns]] }
+    expected = [
+      {name: "id", data_type: "Int64"}
+    ]
+    assert_equal expected, columns["users"]
   end
 
   def test_run
@@ -41,7 +57,7 @@ class SqliteTest < ActionDispatch::IntegrationTest
   end
 
   def test_audit
-    assert_audit "SELECT $1 AS hello\n\n[\"world\"]", "SELECT {var} AS hello", var: "world"
+    assert_audit "SELECT {var: String} AS hello\n\n{\"var\":\"world\"}", "SELECT {var} AS hello", var: "world"
   end
 
   def test_string
@@ -57,7 +73,7 @@ class SqliteTest < ActionDispatch::IntegrationTest
   end
 
   def test_time
-    assert_result [{"hello" => "2022-01-01 08:00:00"}], "SELECT {created_at} AS hello", created_at: "2022-01-01 08:00:00"
+    assert_result [{"hello" => "2022-01-01 08:00:00 UTC"}], "SELECT {created_at} AS hello", created_at: "2022-01-01 08:00:00"
   end
 
   def test_nil
@@ -76,7 +92,7 @@ class SqliteTest < ActionDispatch::IntegrationTest
     assert_result [{"hello" => "\\"}], "SELECT {var} AS hello", var: "\\"
   end
 
-  def test_multiple_variables
-    assert_result [{"c1" => "one", "c2" => "two", "c3" => "one"}], "SELECT {var} AS c1, {var2} AS c2, {var} AS c3", var: "one", var2: "two"
+  def test_double_backslash
+    assert_result [{"hello" => "\\\\"}], "SELECT {var} AS hello", var: "\\\\"
   end
 end

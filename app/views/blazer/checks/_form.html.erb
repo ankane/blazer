@@ -1,3 +1,11 @@
+<%= javascript_tag nonce: true do %>
+  function selectize(id, options) {
+    const element = document.getElementById(id)
+    $(element).selectize(options)
+    element.closest(".hide").classList.remove("hide")
+  }
+<% end %>
+
 <%= form_for @check, html: {class: "small-form"} do |f| %>
   <% unless @check.respond_to?(:check_type) || @check.respond_to?(:invert) %>
     <p class="text-muted">Checks are designed to identify bad data. A check fails if there are any results.</p>
@@ -16,7 +24,7 @@
       <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
       <%= blazer_js_var "items", [@check.query_id].compact %>
 
-      $("#check_query_id").selectize({options: queries, items: items, highlight: false, maxOptions: 100}).parents(".hide").removeClass("hide");
+      selectize("check_query_id", {options: queries, items: items, highlight: false, maxOptions: 100})
     <% end %>
   </div>
 
@@ -28,7 +36,7 @@
         <%= f.select :check_type, check_options %>
       </div>
       <%= javascript_tag nonce: true do %>
-        $("#check_check_type").selectize({}).parent().removeClass("hide");
+        selectize("check_check_type", {})
       <% end %>
     </div>
   <% elsif @check.respond_to?(:invert) %>
@@ -38,7 +46,7 @@
         <%= f.select :invert, [["Any results (bad data)", false], ["No results (missing data)", true]] %>
       </div>
       <%= javascript_tag nonce: true do %>
-        $("#check_invert").selectize({}).parent().removeClass("hide");
+        selectize("check_invert", {})
       <% end %>
     </div>
   <% end %>
@@ -50,7 +58,7 @@
         <%= f.select :schedule, Blazer.check_schedules.map { |v| [v, v] } %>
       </div>
       <%= javascript_tag nonce: true do %>
-        $("#check_schedule").selectize({}).parent().removeClass("hide");
+        selectize("check_schedule", {})
       <% end %>
     </div>
   <% end %>

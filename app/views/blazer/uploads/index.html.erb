@@ -19,7 +19,7 @@
     </div>
   </div>
 
-  <input id="search" type="text" placeholder="Start typing a table or person" style="width: 300px; display: inline-block;" class="search form-control" />
+  <input id="search" type="text" placeholder="Start typing a table or person" style="width: 300px; display: inline-block;" class="search form-control" autofocus />
 </div>
 
 <table id="uploads" class="table">
@@ -46,10 +46,10 @@
 </table>
 
 <%= javascript_tag nonce: true do %>
-  $("#search").on("keyup", function() {
-    var value = $(this).val().toLowerCase()
-    $("#uploads tbody tr").filter( function() {
-      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-    })
-  }).focus()
+  document.getElementById("search").addEventListener("input", function () {
+    const value = this.value.toLowerCase()
+    for (const upload of document.querySelectorAll("#uploads tbody tr")) {
+      toggle(upload, upload.textContent.toLowerCase().includes(value))
+    }
+  })
 <% end %>

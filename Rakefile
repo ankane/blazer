@@ -8,9 +8,9 @@ end
 task default: :test
 
 %w(
-  athena bigquery cassandra drill druid elasticsearch
+  athena bigquery cassandra clickhouse drill druid elasticsearch
   hive ignite influxdb mysql neo4j opensearch
-  postgresql presto redshift salesforce snowflake
+  postgresql presto redshift salesforce snowflake snowflake2
   soda spark sqlite sqlserver
 ).each do |adapter|
   namespace :test do

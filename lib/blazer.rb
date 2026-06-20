@@ -1,8 +1,8 @@
 # dependencies
+require "csv"
 require "safely/core"
 
 # stdlib
-require "csv"
 require "digest/sha2"
 require "json"
 require "yaml"
@@ -20,6 +20,7 @@ require_relative "blazer/adapters/base_adapter"
 require_relative "blazer/adapters/athena_adapter"
 require_relative "blazer/adapters/bigquery_adapter"
 require_relative "blazer/adapters/cassandra_adapter"
+require_relative "blazer/adapters/clickhouse_adapter"
 require_relative "blazer/adapters/drill_adapter"
 require_relative "blazer/adapters/druid_adapter"
 require_relative "blazer/adapters/elasticsearch_adapter"
@@ -34,6 +35,7 @@ require_relative "blazer/adapters/soda_adapter"
 require_relative "blazer/adapters/spark_adapter"
 require_relative "blazer/adapters/sql_adapter"
 require_relative "blazer/adapters/snowflake_adapter"
+require_relative "blazer/adapters/snowflake2_adapter"
 
 # notifiers
 require_relative "blazer/email_notifier"

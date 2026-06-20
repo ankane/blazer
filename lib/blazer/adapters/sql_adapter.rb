@@ -74,6 +74,8 @@ module Blazer
         sql =
           if sqlite?
             "SELECT NULL, name FROM sqlite_master WHERE type IN ('table', 'view') ORDER BY name"
+          elsif postgresql?
+            add_schemas("SELECT * FROM (SELECT table_schema, table_name FROM information_schema.tables UNION ALL SELECT n.nspname AS table_schema, c.relname AS table_name FROM pg_class c INNER JOIN pg_namespace n ON c.relnamespace = n.oid WHERE c.relkind = 'm' AND has_any_column_privilege(c.oid, 'SELECT'))")
           else
             add_schemas("SELECT table_schema, table_name FROM information_schema.tables")
           end
@@ -103,6 +105,8 @@ module Blazer
         sql =
           if sqlite?
             "SELECT NULL, t.name, c.name, c.type, c.cid FROM sqlite_master t INNER JOIN pragma_table_info(t.name) c WHERE t.type IN ('table', 'view')"
+          elsif postgresql?
+            add_schemas("SELECT * FROM (SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns UNION ALL SELECT n.nspname AS table_schema, c.relname AS table_name, a.attname AS column_name, format_type(a.atttypid, a.atttypmod) AS data_type, a.attnum AS ordinal_position FROM pg_attribute a INNER JOIN pg_class c ON a.attrelid = c.oid INNER JOIN pg_namespace n ON c.relnamespace = n.oid WHERE a.attnum > 0 AND NOT a.attisdropped AND c.relkind = 'm' AND has_column_privilege(c.oid, a.attnum, 'SELECT'))")
           else
             add_schemas("SELECT table_schema, table_name, column_name, data_type, ordinal_position FROM information_schema.columns")
           end

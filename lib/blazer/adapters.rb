@@ -1,6 +1,7 @@
 Blazer.register_adapter "athena", Blazer::Adapters::AthenaAdapter
 Blazer.register_adapter "bigquery", Blazer::Adapters::BigQueryAdapter
 Blazer.register_adapter "cassandra", Blazer::Adapters::CassandraAdapter
+Blazer.register_adapter "clickhouse", Blazer::Adapters::ClickhouseAdapter
 Blazer.register_adapter "drill", Blazer::Adapters::DrillAdapter
 Blazer.register_adapter "druid", Blazer::Adapters::DruidAdapter
 Blazer.register_adapter "elasticsearch", Blazer::Adapters::ElasticsearchAdapter
@@ -15,4 +16,5 @@ Blazer.register_adapter "soda", Blazer::Adapters::SodaAdapter
 Blazer.register_adapter "spark", Blazer::Adapters::SparkAdapter
 Blazer.register_adapter "sql", Blazer::Adapters::SqlAdapter
 Blazer.register_adapter "snowflake", Blazer::Adapters::SnowflakeAdapter
+Blazer.register_adapter "snowflake2", Blazer::Adapters::Snowflake2Adapter
 Blazer.register_adapter "trino", Blazer::Adapters::PrestoAdapter

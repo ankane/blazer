@@ -7,6 +7,41 @@ class PostgresqlTest < ActionDispatch::IntegrationTest
     "postgresql"
   end
 
+  def setup
+    super
+    @@once ||= begin
+      execute "CREATE VIEW users_view AS SELECT * FROM users"
+      execute "CREATE MATERIALIZED VIEW users_matview AS SELECT * FROM users"
+      true
+    end
+  end
+
+  def test_result
+    result = ds.run_statement("SELECT 'world' AS hello")
+    assert_equal [["world"]], result.rows
+    assert_equal ["hello"], result.columns
+    assert_equal ["string"], result.column_types
+  end
+
+  def test_tables_method
+    tables = ds.tables.map { |v| v[:table] }
+    assert_includes tables, "users"
+    assert_includes tables, "users_view"
+    assert_includes tables, "users_matview"
+  end
+
+  def test_schema_method
+    schema = ds.schema
+    columns = schema.to_h { |v| [v[:table], v[:columns]] }
+    expected = [
+      {name: "id", data_type: "bigint"},
+      {name: "name", data_type: "character varying"}
+    ]
+    assert_equal expected, columns["users"]
+    assert_equal expected, columns["users_view"]
+    assert_equal expected, columns["users_matview"]
+  end
+
   def test_run
     assert_result [{"hello" => "world"}], "SELECT 'world' AS hello"
   end

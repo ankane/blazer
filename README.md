@@ -483,7 +483,7 @@ anomaly_checks: anomaly_detection
 
 ## Forecasting
 
-Blazer supports for two different forecasting methods. [Example](https://blazer.dokkuapp.com/queries/18-forecast?forecast=t)
+Blazer supports for two different forecasting methods.
 
 A forecast link will appear for queries that return 2 columns with types timestamp and numeric.
 
@@ -575,6 +575,7 @@ data_sources:
 - [Apache Ignite](#apache-ignite)
 - [Apache Spark](#apache-spark)
 - [Cassandra](#cassandra)
+- [ClickHouse](#clickhouse) [unreleased]
 - [Druid](#druid)
 - [Elasticsearch](#elasticsearch)
 - [Google BigQuery](#google-bigquery)
@@ -615,6 +616,7 @@ data_sources:
     # optional settings
     output_location: s3://some-bucket/
     workgroup: primary
+    catalog: s3tablescatalog/some-bucket # [unreleased]
     access_key_id: ...
     secret_access_key: ...
     region: ...
@@ -729,6 +731,18 @@ data_sources:
 ```
 
 Use a [read-only role](https://docs.datastax.com/en/cql-oss/3.3/cql/cql_using/useSecurePermission.html).
+
+### ClickHouse
+
+Set:
+
+```yml
+data_sources:
+  my_source:
+    adapter: clickhouse
+    url: https://user:password@hostname:8443
+    database: default
+```
 
 ### Druid
 

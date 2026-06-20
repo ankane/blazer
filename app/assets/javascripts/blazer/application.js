@@ -15,36 +15,36 @@
 //= require ./ace
 //= require ./Sortable
 //= require ./bootstrap
-//= require ./vue.global.prod
 //= require ./routes
 //= require ./queries
 //= require ./fuzzysearch
 
-$(document).on('mouseenter', '.dropdown-toggle', function () {
-  $(this).parent().addClass('open')
+$(document).on("mouseenter", ".dropdown-toggle", function () {
+  this.parentElement.classList.add("open")
 })
 
 $(document).on("change", "#bind input, #bind select", function () {
-  submitIfCompleted($(this).closest("form"))
+  submitIfCompleted(this.closest("form"))
 })
 
 $(document).on("click", "#code", function () {
-  $(this).addClass("expanded")
+  this.classList.add("expanded")
 })
 
 $(document).on("click", "a[disabled]", function (e) {
   e.preventDefault()
 })
 
-function submitIfCompleted($form) {
-  var completed = true
-  $form.find("input[name], select").each( function () {
-    if ($(this).val() == "") {
+function submitIfCompleted(form) {
+  let completed = true
+  for (const input of form.querySelectorAll("input[name], select")) {
+    if (input.value == "") {
       completed = false
+      break
     }
-  })
+  }
   if (completed) {
-    $form.submit()
+    form.submit()
   }
 }
 
@@ -82,3 +82,10 @@ function preventBackspaceNav() {
 
 preventBackspaceNav()
 
+function toggle(element, found) {
+  if (found) {
+    element.classList.remove("hide")
+  } else {
+    element.classList.add("hide")
+  }
+}

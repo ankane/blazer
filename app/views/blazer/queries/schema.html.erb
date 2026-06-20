@@ -5,7 +5,7 @@
 <hr />
 
 <div id="header">
-  <input id="search" type="text" placeholder="Start typing a table or column" style="width: 300px; display: inline-block;" class="search form-control" />
+  <input id="search" type="text" placeholder="Start typing a table or column" style="width: 300px; display: inline-block;" class="search form-control" autofocus />
 </div>
 
 <% @schema.each do |table| %>
@@ -29,27 +29,27 @@
 <% end %>
 
 <%= javascript_tag nonce: true do %>
-  $("#search").on("keyup", function() {
-    var value = $(this).val().toLowerCase()
-    $(".schema-table").filter(function() {
+  document.getElementById("search").addEventListener("input", function () {
+    const value = this.value
+    for (const schemaTable of document.querySelectorAll(".schema-table")) {
       // if found in table name, show entire table
       // if just found in rows, show row
+      const tableFound = schemaTable.querySelector("thead").textContent.toLowerCase().includes(value)
 
-      var found = $(this).find("thead").text().toLowerCase().indexOf(value) > -1
-
-      if (found) {
-        $(this).find("tbody tr").toggle(true)
-      } else {
-        $(this).find("tbody tr").filter(function() {
-          var found2 = $(this).text().toLowerCase().indexOf(value) > -1
-          $(this).toggle(found2)
-          if (found2) {
-            found = true
+      let anyColumnFound = false
+      for (const column of schemaTable.querySelectorAll("tbody tr")) {
+        if (tableFound) {
+          toggle(column, true)
+        } else {
+          const columnFound = column.textContent.toLowerCase().includes(value)
+          toggle(column, columnFound)
+          if (columnFound) {
+            anyColumnFound = true
           }
-        })
+        }
       }
 
-      $(this).toggle(found)
-    })
-  }).focus()
+      toggle(schemaTable, tableFound || anyColumnFound)
+    }
+  })
 <% end %>

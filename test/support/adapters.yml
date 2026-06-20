@@ -11,6 +11,11 @@ data_sources:
   cassandra:
     url: cassandra://localhost:9042/blazer_test
 
+  clickhouse:
+    adapter: clickhouse
+    url: http://default:secret@localhost:8123
+    timeout: 0.05
+
   drill:
     adapter: drill
     url: http://localhost:8047
@@ -69,6 +74,14 @@ data_sources:
   snowflake:
     adapter: snowflake
     # conn_str: ...
+
+  snowflake2:
+    adapter: snowflake2
+    account_id: ...
+    database: ...
+    schema: PUBLIC
+    access_token: ...
+    timeout: 1
 
   sqlite:
     url: "sqlite3::memory:"

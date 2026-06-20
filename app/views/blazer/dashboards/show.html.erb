@@ -38,18 +38,20 @@
       <p class="text-muted">Loading...</p>
     </div>
   </div>
+  <% run_data = {statement: query.statement, query_id: query.id, data_source: query.data_source, variables: variable_params(query), only_chart: true} %>
+  <% run_data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
   <%= javascript_tag nonce: true do %>
-    <% data = {statement: query.statement, query_id: query.id, data_source: query.data_source, variables: variable_params(query), only_chart: true} %>
-    <% data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
-    <%= blazer_js_var "data", data %>
-
-    runQuery(data, function (data) {
-      const results = document.getElementById("chart-<%= i %>")
-      results.replaceChildren()
-      createResults(data, results, true)
-      $("#chart-<%= i %> table").stupidtable(stupidtableCustomSettings)
-    }, function (message) {
-      $("#chart-<%= i %>").addClass("query-error").html(message)
-    });
+    (function() {
+      <%= blazer_js_var "chartId", "chart-#{i}" %>
+      <%= blazer_js_var "runData", run_data %>
+      const chart = document.getElementById(chartId)
+      runQuery(runData, function (data) {
+        createResults(data, chart, true)
+        $(chart.querySelector("table")).stupidtable(stupidtableCustomSettings)
+      }, function (message) {
+        chart.classList.add("query-error")
+        chart.textContent = message
+      })
+    })()
   <% end %>
 <% end %>

@@ -47,29 +47,30 @@
   </div>
 
   <%= javascript_tag nonce: true do %>
+    const results = document.getElementById("results")
+
     function showRun(data) {
       const results = document.getElementById("results")
-      results.replaceChildren()
       createResults(data, results)
-
-      $("#results table").stupidtable(stupidtableCustomSettings).stickyTableHeaders({fixedOffset: 60})
+      $(results.querySelector("table")).stupidtable(stupidtableCustomSettings).stickyTableHeaders({fixedOffset: 60})
     }
 
     function showError(message) {
-      $("#results").addClass("query-error").html(message)
+      results.classList.add("query-error")
+      results.textContent = message
     }
 
-    <%= blazer_js_var "data", @run_data %>
+    <%= blazer_js_var "runData", @run_data %>
 
-    runQuery(data, showRun, showError)
+    runQuery(runData, showRun, showError)
   <% end %>
 <% end %>
 
 <%= javascript_tag nonce: true do %>
   // do not highlight really long queries
   // this can lead to performance issues
-  var code = $("#code code")
-  if (code.text().length < 10000) {
-    hljs.highlightElement(code.get(0))
+  const code = document.querySelector("#code code")
+  if (code.textContent.length < 10000) {
+    hljs.highlightElement(code)
   }
 <% end %>

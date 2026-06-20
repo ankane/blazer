@@ -20,7 +20,7 @@
     </div>
   </div>
 
-  <input id="search" type="text" placeholder="Start typing a query or state" style="width: 300px; display: inline-block;" class="search form-control" />
+  <input id="search" type="text" placeholder="Start typing a query or state" style="width: 300px; display: inline-block;" class="search form-control" autofocus />
 </div>
 
 <table id="checks" class="table">
@@ -60,10 +60,10 @@
 </table>
 
 <%= javascript_tag nonce: true do %>
-  $("#search").on("keyup", function() {
-    var value = $(this).val().toLowerCase()
-    $("#checks tbody tr").filter( function() {
-      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-    })
-  }).focus()
+  document.getElementById("search").addEventListener("input", function () {
+    const value = this.value.toLowerCase()
+    for (const check of document.querySelectorAll("#checks tbody tr")) {
+      toggle(check, check.textContent.toLowerCase().includes(value))
+    }
+  })
 <% end %>

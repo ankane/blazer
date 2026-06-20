@@ -79,7 +79,8 @@
   const cancelButton = document.getElementById("cancel-button")
   const results = document.getElementById("results-html")
   const loading = document.getElementById("loading")
-  let tablesXhr = null
+  let editor
+  let tablesXhr
 
   function getSQL() {
     const selectedText = editor.getSelectedText()
@@ -124,17 +125,6 @@
     cancelAllQueries()
   }
 
-  runButton.addEventListener("click", run)
-  cancelButton.addEventListener("click", cancel)
-
-  $(tableSelect).selectize({})
-  tableSelect.selectize.on("change", function (table) {
-    editor.setValue(previewStatement[dsSelect.value].replace("{table}", table), 1)
-    run()
-    this.clear(true)
-    this.blur()
-  })
-
   function updateDataSource() {
     const dataSource = dsSelect.value
     document.getElementById("schema-link").setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
@@ -160,14 +150,6 @@
       tableSelect.selectize.refreshOptions(false)
     })
   }
-
-  updateDataSource()
-
-  $(dsSelect).selectize({})
-  dsSelect.selectize.on("change", function() {
-    updateDataSource()
-    this.blur()
-  })
 
   function adjustHeight() {
     // https://stackoverflow.com/questions/11584061/
@@ -215,7 +197,24 @@
     editor.focus()
   }
 
-  showEditor()
+  runButton.addEventListener("click", run)
+  cancelButton.addEventListener("click", cancel)
 
+  $(tableSelect).selectize({})
+  tableSelect.selectize.on("change", function (table) {
+    editor.setValue(previewStatement[dsSelect.value].replace("{table}", table), 1)
+    run()
+    this.clear(true)
+    this.blur()
+  })
+
+  $(dsSelect).selectize({})
+  dsSelect.selectize.on("change", function() {
+    updateDataSource()
+    this.blur()
+  })
+
+  updateDataSource()
+  showEditor()
   show(document.getElementById("app"))
 <% end %>

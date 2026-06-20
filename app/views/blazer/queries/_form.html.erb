@@ -116,10 +116,10 @@
     runQuery(runData, function (data) {
       stopRunning()
       $(results).html(data)
-    }, function (data) {
+    }, function (message) {
       stopRunning()
       results.classList.add("query-error")
-      results.textContent = data
+      results.textContent = message
     })
   }
 

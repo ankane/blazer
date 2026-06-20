@@ -54,7 +54,7 @@
               input.value = toDate(picker.startDate).utc().format()
               submitIfCompleted(input.closest("form"))
             })
-            if (input.val().length > 0) {
+            if (input.value.length > 0) {
               const picker = datePicker.data("daterangepicker")
               datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
             }

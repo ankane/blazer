@@ -1,13 +1,13 @@
-var pendingQueries = []
-var runningQueries = []
-var maxQueries = 3
+let pendingQueries = []
+const runningQueries = []
+const maxQueries = 3
 
 function runQuery(data, success, error) {
   if (!data.data_source) {
     throw new Error("Data source is required to cancel queries")
   }
   data.run_id = uuid()
-  var query = {
+  const query = {
     data: data,
     success: success,
     error: error,
@@ -22,7 +22,7 @@ function runQuery(data, success, error) {
 
 function runNext() {
   if (runningQueries.length < maxQueries) {
-    var query = pendingQueries.shift()
+    const query = pendingQueries.shift()
     if (query) {
       runningQueries.push(query)
       runQueryHelper(query)
@@ -32,14 +32,14 @@ function runNext() {
 }
 
 function runQueryHelper(query) {
-  var xhr = $.ajax({
+  const xhr = $.ajax({
     url: Routes.run_queries_path(),
     method: "POST",
     data: query.data,
     dataType: "html"
   }).done( function (d) {
     if (d[0] == "{") {
-      var response = $.parseJSON(d)
+      const response = $.parseJSON(d)
       query.data.blazer = response
       setTimeout( function () {
         if (!query.canceled) {
@@ -58,7 +58,7 @@ function runQueryHelper(query) {
     if (jqXHR.status === 0) {
       cancelServerQuery(query)
     } else {
-      var message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message
+      let message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message
       if (!message) {
         message = "An error occurred"
       }
@@ -71,22 +71,22 @@ function runQueryHelper(query) {
 }
 
 function queryComplete(query) {
-  var index = runningQueries.indexOf(query)
+  const index = runningQueries.indexOf(query)
   runningQueries.splice(index, 1)
   runNext()
 }
 
 function uuid() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    var r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8)
+    const r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8)
     return v.toString(16)
   })
 }
 
 function cancelAllQueries() {
   pendingQueries = []
-  for (var i = 0; i < runningQueries.length; i++) {
-    cancelQuery(runningQueries[i])
+  for (const query of runningQueries) {
+    cancelQuery(query)
   }
 }
 
@@ -103,17 +103,15 @@ function cancelQuery(query) {
 
 function cancelServerQuery(query) {
   // tell server
-  var path = Routes.cancel_queries_path()
-  var data = {run_id: query.run_id, data_source: query.data_source}
+  const path = Routes.cancel_queries_path()
+  const data = {run_id: query.run_id, data_source: query.data_source}
   if (navigator.sendBeacon) {
     // use FormData over Blob and URLSearchParams for maximum compatibility
     // Blob works with Chrome 81+ and URLSearchParams works with Chrome 88+
-    var formdata = new FormData()
-    var params = csrfProtect(data)
-    for (var key in params) {
-      if (Object.prototype.hasOwnProperty.call(params, key)) {
-        formdata.append(key, params[key])
-      }
+    const formdata = new FormData()
+    const params = csrfProtect(data)
+    for (const [key, value] of Object.entries(params)) {
+      formdata.append(key, value)
     }
     navigator.sendBeacon(path, formdata)
   } else {
@@ -123,8 +121,8 @@ function cancelServerQuery(query) {
 }
 
 function csrfProtect(payload) {
-  var param = document.querySelector("meta[name=csrf-param]")?.getAttribute("content")
-  var token = document.querySelector("meta[name=csrf-token]")?.getAttribute("content")
+  const param = document.querySelector("meta[name=csrf-param]")?.getAttribute("content")
+  const token = document.querySelector("meta[name=csrf-token]")?.getAttribute("content")
   if (param && token) payload[param] = token
   return payload
 }

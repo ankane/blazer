@@ -120,7 +120,7 @@
     }, function (data) {
       stopRunning()
       results.classList.add("query-error")
-      showResults(data)
+      results.textContent = data
     })
   }
 

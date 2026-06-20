@@ -54,11 +54,11 @@
   <%= blazer_js_var "showUser", !!Blazer.user_class %>
 
   const search = document.getElementById("search")
-  const items = document.getElementById("items")
+  const itemsList = document.getElementById("items")
   const loading = document.getElementById("loading")
 
-  function prepareSearch(list) {
-    for (const item of list) {
+  function prepareSearch(items) {
+    for (const item of items) {
       let searchStr = item.name + item.creator
       if (item.creator === "You") {
         searchStr += "mine me"
@@ -115,26 +115,26 @@
 
     if (searchTerm.length > 0) {
       const term = prepareQuery(searchTerm)
-      const items = []
+      const exactItems = []
       const fuzzyItems = []
-      for (const item of listItems) {
+      for (const item of items) {
         if (item.searchStr.includes(term)) {
-          items.push(item)
-          if (items.length == pageSize) {
+          exactItems.push(item)
+          if (exactItems.length == pageSize) {
             break
           }
         } else if (fuzzysearch(term, item.searchStr)) {
           fuzzyItems.push(item)
         }
       }
-      return items.concat(fuzzyItems).slice(0, pageSize)
+      return exactItems.concat(fuzzyItems).slice(0, pageSize)
     } else {
-      return listItems.slice(0, pageSize)
+      return items.slice(0, pageSize)
     }
   }
 
-  let listItems = dashboards.concat(queries)
-  prepareSearch(listItems)
+  let items = dashboards.concat(queries)
+  prepareSearch(items)
 
   const queryIds = new Set()
   for (const query of queries) {
@@ -155,13 +155,13 @@
       }
 
       prepareSearch(newItems)
-      listItems = listItems.concat(newItems)
+      items = items.concat(newItems)
       renderItems()
     })
   }
 
   function renderItems() {
-    items.replaceChildren(...visibleItems().map(renderItem))
+    itemsList.replaceChildren(...visibleItems().map(renderItem))
   }
 
   search.addEventListener("input", renderItems)

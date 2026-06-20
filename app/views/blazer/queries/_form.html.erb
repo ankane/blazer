@@ -4,7 +4,7 @@
 
 <% @variable_params = @query.persisted? ? variable_params(@query) : nested_variable_params(@query) %>
 
-<div id="app" class="cloak">
+<div id="app" class="hide">
   <%= form_for @query, url: (@query.persisted? ? query_path(@query, params: @variable_params) : queries_path(params: @variable_params)), html: {autocomplete: "off"} do |f| %>
     <div class="row">
       <div id="statement-box" class="col-xs-8">
@@ -26,7 +26,7 @@
             <select id="table_names" style="width: 240px;" placeholder="Preview table"></select>
           </div>
           <a id="run-button" class="btn btn-info" style="vertical-align: top; width: 70px;">Run</a>
-          <a id="cancel-button" class="btn btn-danger" style="vertical-align: top; width: 70px; display: none;">Cancel</a>
+          <a id="cancel-button" class="btn btn-danger hide" style="vertical-align: top; width: 70px;">Cancel</a>
         </div>
       </div>
       <div class="col-xs-4">
@@ -63,7 +63,7 @@
   <% end %>
 
   <div id="results">
-    <p id="loading" class="text-muted" style="display: none;">Loading...</p>
+    <p id="loading" class="text-muted hide">Loading...</p>
     <div id="results-html"></div>
   </div>
 </div>
@@ -71,6 +71,11 @@
 <%= javascript_tag nonce: true do %>
   <%= blazer_js_var "variableParams", @variable_params %>
   <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
+
+  var runButton = document.getElementById("run-button");
+  var cancelButton = document.getElementById("cancel-button");
+  var results = document.getElementById("results-html");
+  var loading = document.getElementById("loading");
 
   function cancel(e) {
     stopRunning()
@@ -84,21 +89,23 @@
   }
 
   function showResults(data) {
-    $("#results-html").html(data)
+    $(results).html(data)
   }
 
   function startRunning() {
-    $("#run-button").hide()
-    $("#results-html").empty().hide().removeClass("query-error")
-    $("#cancel-button").show()
-    $("#loading").show()
+    runButton.classList.add("hide")
+    results.replaceChildren()
+    results.classList.add("hide")
+    results.classList.remove("query-error")
+    cancelButton.classList.remove("hide")
+    loading.classList.remove("hide")
   }
 
   function stopRunning() {
-    $("#cancel-button").hide()
-    $("#loading").hide()
-    $("#run-button").show()
-    $("#results-html").show()
+    cancelButton.classList.add("hide")
+    loading.classList.add("hide")
+    runButton.classList.remove("hide")
+    results.classList.remove("hide")
   }
 
   function run(e) {
@@ -112,13 +119,13 @@
       showResults(data)
     }, function (data) {
       stopRunning()
-      $("#results-html").addClass("query-error")
+      results.classList.add("query-error")
       showResults(data)
     })
   }
 
-  $("#run-button").click(run)
-  $("#cancel-button").click(cancel)
+  runButton.addEventListener("click", run)
+  cancelButton.addEventListener("click", cancel)
 
   var dataSource
   var $select = $("#table_names").selectize({})
@@ -219,5 +226,5 @@
 
   showEditor()
 
-  $(".cloak").removeClass("cloak")
+  document.getElementById("app").classList.remove("hide")
 <% end %>

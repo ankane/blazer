@@ -39,7 +39,7 @@
       let anyColumnFound = false
       for (const column of schemaTable.querySelectorAll("tbody tr")) {
         if (tableFound) {
-          toggle(column, true)
+          show(column)
         } else {
           const columnFound = column.textContent.toLowerCase().includes(value)
           toggle(column, columnFound)

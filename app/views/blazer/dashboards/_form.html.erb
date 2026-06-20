@@ -56,11 +56,13 @@
     addQuery(dashboardQueries[i])
   }
 
-  $(queriesList).on("click", ".glyphicon-remove", function () {
-    this.closest("li").remove()
+  queriesList.addEventListener("click", function (e) {
+    if (e.target.classList.contains("glyphicon-remove")) {
+      e.target.closest("li").remove()
 
-    if (queriesList.querySelectorAll("li").length == 0) {
-      queriesGroup.hide()
+      if (queriesList.querySelectorAll("li").length == 0) {
+        queriesGroup.classList.add("hide")
+      }
     }
   })
 

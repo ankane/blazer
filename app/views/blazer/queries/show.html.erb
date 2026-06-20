@@ -59,9 +59,9 @@
       results.textContent = message
     }
 
-    <%= blazer_js_var "data", @run_data %>
+    <%= blazer_js_var "runData", @run_data %>
 
-    runQuery(data, showRun, showError)
+    runQuery(runData, showRun, showError)
   <% end %>
 <% end %>
 

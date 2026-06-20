@@ -38,12 +38,12 @@
       <p class="text-muted">Loading...</p>
     </div>
   </div>
-  <% data = {statement: query.statement, query_id: query.id, data_source: query.data_source, variables: variable_params(query), only_chart: true} %>
-  <% data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
+  <% run_data = {statement: query.statement, query_id: query.id, data_source: query.data_source, variables: variable_params(query), only_chart: true} %>
+  <% run_data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
   <%= javascript_tag nonce: true do %>
     (function() {
       <%= blazer_js_var "chartId", "chart-#{i}" %>
-      <%= blazer_js_var "runData", data %>
+      <%= blazer_js_var "runData", run_data %>
       var chart = document.getElementById(chartId)
       runQuery(runData, function (data) {
         $(chart).html(data)

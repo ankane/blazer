@@ -144,12 +144,12 @@
   if (more) {
     show(loading)
 
-    $.getJSON(Routes.queries_path(), function (data) {
+    $.getJSON(Routes.queries_path(), function (queries) {
       hide(loading)
 
       const newItems = []
-      for (const query of data) {
-        if (query && !queryIds.has(query.id)) {
+      for (const query of queries) {
+        if (!queryIds.has(query.id)) {
           newItems.push(query)
         }
       }

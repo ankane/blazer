@@ -9,7 +9,7 @@
       return moment.tz(time.format(format), timeZone)
     }
   <% end %>
-  <form id="bind" method="get" action="<%= action %>" class="form-inline" style="margin-bottom: 15px;">
+  <%= content_tag :form, id: "bind", method: "get", action: action, class: "form-inline", style: "margin-bottom: 15px;" do %>
     <% date_vars = ["start_time", "end_time"] %>
     <% if (date_vars - @bind_vars).empty? %>
       <% @bind_vars = @bind_vars - date_vars %>
@@ -31,9 +31,9 @@
         <%= hidden_field_tag var, var_params[var] %>
 
         <div class="selectize-control single" style="width: 200px;">
-          <div id="<%= var %>-select" class="selectize-input" style="display: inline-block;">
+          <%= content_tag :div, id: "#{var}-select", class: "selectize-input", style: "display: inline-block;" do %>
             <span>Select a date</span>
-          </div>
+          <% end %>
         </div>
 
         <%= javascript_tag nonce: true do %>
@@ -129,5 +129,5 @@
     <% end %>
 
     <input type="submit" class="btn btn-success" value="Run" style="vertical-align: top;" />
-  </form>
+  <% end %>
 <% end %>

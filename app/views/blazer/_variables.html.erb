@@ -115,13 +115,12 @@
           reportrange.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY") + " - " + toDate(picker.endDate).format("MMMM D, YYYY"))
         })
 
+        const picker = reportrange.data("daterangepicker")
         if (startTime.value.length > 0) {
-          const picker = reportrange.data("daterangepicker")
           picker.setStartDate(moment.tz(startTime.value, timeZone))
           picker.setEndDate(moment.tz(endTime.value, timeZone))
           reportrange.trigger("apply.daterangepicker", picker)
         } else {
-          const picker = reportrange.data("daterangepicker")
           reportrange.trigger("apply.daterangepicker", picker)
           submitIfCompleted(startTime.closest("form"))
         }

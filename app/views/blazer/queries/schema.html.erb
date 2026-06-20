@@ -5,7 +5,7 @@
 <hr />
 
 <div id="header">
-  <input id="search" type="text" placeholder="Start typing a table or column" style="width: 300px; display: inline-block;" class="search form-control" />
+  <input id="search" type="text" placeholder="Start typing a table or column" style="width: 300px; display: inline-block;" class="search form-control" autofocus />
 </div>
 
 <% @schema.each do |table| %>
@@ -29,19 +29,19 @@
 <% end %>
 
 <%= javascript_tag nonce: true do %>
-  $("#search").on("keyup", function() {
-    var value = $(this).val().toLowerCase()
+  document.getElementById("search").addEventListener("input", function() {
+    var value = this.value
     $(".schema-table").filter(function() {
       // if found in table name, show entire table
       // if just found in rows, show row
 
-      var found = $(this).find("thead").text().toLowerCase().indexOf(value) > -1
+      var found = this.querySelector("thead").textContent.toLowerCase().indexOf(value) > -1
 
       if (found) {
-        $(this).find("tbody tr").toggle(true)
+        $(this.querySelector("tbody tr")).toggle(true)
       } else {
-        $(this).find("tbody tr").filter(function() {
-          var found2 = $(this).text().toLowerCase().indexOf(value) > -1
+        $(this.querySelector("tbody tr")).filter(function() {
+          var found2 = this.textContent.toLowerCase().indexOf(value) > -1
           $(this).toggle(found2)
           if (found2) {
             found = true
@@ -51,5 +51,5 @@
 
       $(this).toggle(found)
     })
-  }).focus()
+  })
 <% end %>

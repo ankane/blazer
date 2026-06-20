@@ -79,11 +79,7 @@
   const cancelButton = document.getElementById("cancel-button")
   const results = document.getElementById("results-html")
   const loading = document.getElementById("loading")
-
-  function cancel(e) {
-    stopRunning()
-    cancelAllQueries()
-  }
+  let tablesXhr = null
 
   function getSQL() {
     const selectedText = editor.getSelectedText()
@@ -123,6 +119,11 @@
     })
   }
 
+  function cancel(e) {
+    stopRunning()
+    cancelAllQueries()
+  }
+
   runButton.addEventListener("click", run)
   cancelButton.addEventListener("click", cancel)
 
@@ -134,7 +135,6 @@
     this.blur()
   })
 
-  let tablesXhr
   function updateDataSource() {
     const dataSource = dsSelect.value
     document.getElementById("schema-link").setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))

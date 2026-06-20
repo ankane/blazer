@@ -136,9 +136,9 @@
 
   prepareSearch(listItems)
 
-  const queryIds = {}
+  const queryIds = new Set()
   for (const query of queries) {
-    queryIds[query.id] = true
+    queryIds.add(query.id)
   }
 
   if (more) {
@@ -149,7 +149,7 @@
 
       const newValues = []
       for (const val of data) {
-        if (val && !queryIds[val.id]) {
+        if (val && !queryIds.has(val.id)) {
           newValues.push(val)
         }
       }

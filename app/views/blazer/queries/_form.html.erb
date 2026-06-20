@@ -73,7 +73,7 @@
   <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
   const statement = document.getElementById("query_statement")
-  const tableNames = document.getElementById("table_names")
+  const tableSelect = document.getElementById("table_names")
   const dsSelect = document.getElementById("query_data_source")
   const runButton = document.getElementById("run-button")
   const cancelButton = document.getElementById("cancel-button")
@@ -126,8 +126,8 @@
   runButton.addEventListener("click", run)
   cancelButton.addEventListener("click", cancel)
 
-  $(tableNames).selectize({})
-  tableNames.selectize.on("change", function (value) {
+  $(tableSelect).selectize({})
+  tableSelect.selectize.on("change", function (value) {
     editor.setValue(previewStatement[dsSelect.value].replace("{table}", value), 1)
     run()
     this.clear(true)
@@ -140,7 +140,7 @@
     document.getElementById("schema-link").setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
     document.getElementById("docs-link").setAttribute("href", Routes.docs_queries_path({data_source: dataSource}))
 
-    tableNames.selectize.clearOptions()
+    tableSelect.selectize.clearOptions()
 
     if (tablesXhr) {
       tablesXhr.abort()
@@ -155,9 +155,9 @@
           newOptions.push({text: table, value: table})
         }
       }
-      tableNames.selectize.clearOptions()
-      tableNames.selectize.addOption(newOptions)
-      tableNames.selectize.refreshOptions(false)
+      tableSelect.selectize.clearOptions()
+      tableSelect.selectize.addOption(newOptions)
+      tableSelect.selectize.refreshOptions(false)
     })
   }
 

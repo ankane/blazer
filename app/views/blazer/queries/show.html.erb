@@ -47,7 +47,7 @@
   </div>
 
   <%= javascript_tag nonce: true do %>
-    var results = document.getElementById("results")
+    const results = document.getElementById("results")
 
     function showRun(data) {
       $(results).html(data)
@@ -68,7 +68,7 @@
 <%= javascript_tag nonce: true do %>
   // do not highlight really long queries
   // this can lead to performance issues
-  var code = document.querySelector("#code code")
+  const code = document.querySelector("#code code")
   if (code.textContent.length < 10000) {
     hljs.highlightElement(code)
   }

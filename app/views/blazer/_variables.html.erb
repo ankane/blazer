@@ -39,8 +39,8 @@
         <%= javascript_tag nonce: true do %>
           (function() {
             <%= blazer_js_var "varId", var %>
-            var input = $(document.getElementById(varId))
-            var datePicker = $("#<%= var %>-select")
+            const input = $(document.getElementById(varId))
+            const datePicker = $("#<%= var %>-select")
             datePicker.daterangepicker({
               singleDatePicker: true,
               locale: {format: format},
@@ -55,7 +55,7 @@
               submitIfCompleted($("#<%= var %>").closest("form"))
             })
             if (input.val().length > 0) {
-              var picker = datePicker.data("daterangepicker")
+              const picker = datePicker.data("daterangepicker")
               datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
             }
           })()

@@ -72,10 +72,10 @@
   <%= blazer_js_var "variableParams", @variable_params %>
   <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
-  var runButton = document.getElementById("run-button")
-  var cancelButton = document.getElementById("cancel-button")
-  var results = document.getElementById("results-html")
-  var loading = document.getElementById("loading")
+  const runButton = document.getElementById("run-button")
+  const cancelButton = document.getElementById("cancel-button")
+  const results = document.getElementById("results-html")
+  const loading = document.getElementById("loading")
 
   function cancel(e) {
     stopRunning()
@@ -83,8 +83,8 @@
   }
 
   function getSQL() {
-    var selectedText = editor.getSelectedText()
-    var text = selectedText.length < 10 ? editor.getValue() : selectedText
+    const selectedText = editor.getSelectedText()
+    const text = selectedText.length < 10 ? editor.getValue() : selectedText
     return text.replace(/\n/g, "\r\n")
   }
 
@@ -108,9 +108,9 @@
     startRunning()
     cancelAllQueries()
 
-    var data = {statement: getSQL(), data_source: $("#query_data_source").val(), variables: variableParams}
+    const runData = {statement: getSQL(), data_source: $("#query_data_source").val(), variables: variableParams}
 
-    runQuery(data, function (data) {
+    runQuery(runData, function (data) {
       stopRunning()
       $(results).html(data)
     }, function (data) {
@@ -124,8 +124,8 @@
   cancelButton.addEventListener("click", cancel)
 
   var dataSource
-  var $select = $("#table_names").selectize({})
-  var selectize = $select[0].selectize
+  const $select = $("#table_names").selectize({})
+  const selectize = $select[0].selectize
   selectize.on("change", function(val) {
     editor.setValue(previewStatement[dataSource].replace("{table}", val), 1)
     run()
@@ -133,8 +133,7 @@
     selectize.blur()
   })
 
-  var tablesXhr
-
+  let tablesXhr
   function updateDataSource(dataSource) {
     window.dataSource = dataSource
     document.getElementById("schema-link").setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
@@ -146,10 +145,9 @@
       tablesXhr.abort()
     }
 
-    tablesXhr = $.getJSON(Routes.tables_queries_path({data_source: dataSource}), function(data) {
-      var newOptions = []
-      for (var i = 0; i < data.length; i++) {
-        var table = data[i]
+    tablesXhr = $.getJSON(Routes.tables_queries_path({data_source: dataSource}), function (data) {
+      const newOptions = []
+      for (const table of data) {
         if (typeof table === "object") {
           newOptions.push({text: table.table, value: table.value})
         } else {
@@ -164,8 +162,8 @@
 
   updateDataSource($("#query_data_source").val())
 
-  var $dsSelect = $("#query_data_source").selectize({})
-  var dsSelectize = $dsSelect[0].selectize
+  const $dsSelect = $("#query_data_source").selectize({})
+  const dsSelectize = $dsSelect[0].selectize
   dsSelectize.on("change", function(val) {
     updateDataSource(val)
     dsSelectize.blur()
@@ -173,13 +171,12 @@
 
   function adjustHeight() {
     // https://stackoverflow.com/questions/11584061/
-    var editor = this.editor
-    var lines = editor.getSession().getScreenLength()
+    let lines = editor.getSession().getScreenLength()
     if (lines < 9) {
       lines = 9
     }
 
-    this.editorHeight = ((lines + 1) * 16).toString() + "px"
+    editorHeight = ((lines + 1) * 16).toString() + "px"
     editor.resize()
   }
 
@@ -209,8 +206,6 @@
     })
     // fix command+L
     editor.commands.removeCommands(["gotoline", "find"])
-
-    this.editor = editor
 
     editor.getSession().on("change", function () {
       $("#query_statement").val(editor.getValue())

@@ -58,12 +58,12 @@
   const loading = document.getElementById("loading")
 
   function prepareSearch(list) {
-    for (const q of list) {
-      let searchStr = q.name + q.creator
-      if (q.creator === "You") {
+    for (const item of list) {
+      let searchStr = item.name + item.creator
+      if (item.creator === "You") {
         searchStr += "mine me"
       }
-      q.searchStr = prepareQuery(searchStr)
+      item.searchStr = prepareQuery(searchStr)
     }
   }
 
@@ -116,14 +116,14 @@
       const term = prepareQuery(searchTerm)
       const items = []
       const fuzzyItems = []
-      for (const q of listItems) {
-        if (q.searchStr.includes(term)) {
-          items.push(q)
+      for (const item of listItems) {
+        if (item.searchStr.includes(term)) {
+          items.push(item)
           if (items.length == pageSize) {
             break
           }
-        } else if (fuzzysearch(term, q.searchStr)) {
-          fuzzyItems.push(q)
+        } else if (fuzzysearch(term, item.searchStr)) {
+          fuzzyItems.push(item)
         }
       }
       return items.concat(fuzzyItems).slice(0, pageSize)

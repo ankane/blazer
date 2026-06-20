@@ -125,18 +125,17 @@
   runButton.addEventListener("click", run)
   cancelButton.addEventListener("click", cancel)
 
-  var dataSource
   $(tableNames).selectize({})
   tableNames.selectize.on("change", function(val) {
-    editor.setValue(previewStatement[dataSource].replace("{table}", val), 1)
+    editor.setValue(previewStatement[dsSelect.value].replace("{table}", val), 1)
     run()
     this.clear(true)
     this.blur()
   })
 
   let tablesXhr
-  function updateDataSource(dataSource) {
-    window.dataSource = dataSource
+  function updateDataSource() {
+    const dataSource = dsSelect.value
     document.getElementById("schema-link").setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
     document.getElementById("docs-link").setAttribute("href", Routes.docs_queries_path({data_source: dataSource}))
 
@@ -161,11 +160,11 @@
     })
   }
 
-  updateDataSource(dsSelect.value)
+  updateDataSource()
 
   $(dsSelect).selectize({})
-  dsSelect.selectize.on("change", function(val) {
-    updateDataSource(val)
+  dsSelect.selectize.on("change", function() {
+    updateDataSource()
     this.blur()
   })
 

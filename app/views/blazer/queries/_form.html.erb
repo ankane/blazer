@@ -88,10 +88,6 @@
     return text.replace(/\n/g, "\r\n")
   }
 
-  function showResults(data) {
-    $(results).html(data)
-  }
-
   function startRunning() {
     runButton.classList.add("hide")
     results.replaceChildren()
@@ -116,7 +112,7 @@
 
     runQuery(data, function (data) {
       stopRunning()
-      showResults(data)
+      $(results).html(data)
     }, function (data) {
       stopRunning()
       results.classList.add("query-error")

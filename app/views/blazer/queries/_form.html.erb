@@ -72,6 +72,8 @@
   <%= blazer_js_var "variableParams", @variable_params %>
   <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
+  const tableNames = document.getElementById("table_names")
+  const dsSelect = document.getElementById("query_data_source")
   const runButton = document.getElementById("run-button")
   const cancelButton = document.getElementById("cancel-button")
   const results = document.getElementById("results-html")
@@ -108,7 +110,7 @@
     startRunning()
     cancelAllQueries()
 
-    const runData = {statement: getSQL(), data_source: $("#query_data_source").val(), variables: variableParams}
+    const runData = {statement: getSQL(), data_source: dsSelect.value, variables: variableParams}
 
     runQuery(runData, function (data) {
       stopRunning()
@@ -124,13 +126,12 @@
   cancelButton.addEventListener("click", cancel)
 
   var dataSource
-  const $select = $("#table_names").selectize({})
-  const selectize = $select[0].selectize
-  selectize.on("change", function(val) {
+  $(tableNames).selectize({})
+  tableNames.selectize.on("change", function(val) {
     editor.setValue(previewStatement[dataSource].replace("{table}", val), 1)
     run()
-    selectize.clear(true)
-    selectize.blur()
+    this.clear(true)
+    this.blur()
   })
 
   let tablesXhr
@@ -139,7 +140,7 @@
     document.getElementById("schema-link").setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
     document.getElementById("docs-link").setAttribute("href", Routes.docs_queries_path({data_source: dataSource}))
 
-    selectize.clearOptions()
+    tableNames.selectize.clearOptions()
 
     if (tablesXhr) {
       tablesXhr.abort()
@@ -154,19 +155,18 @@
           newOptions.push({text: table, value: table})
         }
       }
-      selectize.clearOptions()
-      selectize.addOption(newOptions)
-      selectize.refreshOptions(false)
+      tableNames.selectize.clearOptions()
+      tableNames.selectize.addOption(newOptions)
+      tableNames.selectize.refreshOptions(false)
     })
   }
 
-  updateDataSource($("#query_data_source").val())
+  updateDataSource(dsSelect.value)
 
-  const $dsSelect = $("#query_data_source").selectize({})
-  const dsSelectize = $dsSelect[0].selectize
-  dsSelectize.on("change", function(val) {
+  $(dsSelect).selectize({})
+  dsSelect.selectize.on("change", function(val) {
     updateDataSource(val)
-    dsSelectize.blur()
+    this.blur()
   })
 
   function adjustHeight() {

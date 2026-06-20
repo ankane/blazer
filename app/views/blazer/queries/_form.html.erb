@@ -129,8 +129,9 @@
 
   function updateDataSource() {
     const dataSource = dsSelect.value
-    schemaLink.setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
+
     docsLink.setAttribute("href", Routes.docs_queries_path({data_source: dataSource}))
+    schemaLink.setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
 
     tableSelect.selectize.clearOptions()
 

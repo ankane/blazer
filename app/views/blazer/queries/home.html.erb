@@ -54,10 +54,8 @@
   <%= blazer_js_var "showUser", !!Blazer.user_class %>
 
   function prepareSearch(list) {
-    var i, q, searchStr
-    for (i = 0; i < list.length; i++) {
-      q = list[i]
-      searchStr = q.name + q.creator
+    for (const q of list) {
+      let searchStr = q.name + q.creator
       if (q.creator === "You") {
         searchStr += "mine me"
       }
@@ -77,16 +75,16 @@
     }
   }
 
-  var search = document.getElementById("search")
-  var items = document.getElementById("items")
-  var loading = document.getElementById("loading")
+  const search = document.getElementById("search")
+  const items = document.getElementById("items")
+  const loading = document.getElementById("loading")
 
   function addItem(item) {
-    var tr = document.createElement("tr")
+    const tr = document.createElement("tr")
 
-    var td = document.createElement("td")
+    const td = document.createElement("td")
 
-    var a = document.createElement("a")
+    const a = document.createElement("a")
     a.setAttribute("href", itemPath(item))
     if (item.dashboard) {
       a.classList.add("dashboard")
@@ -95,7 +93,7 @@
     td.append(a)
 
     if (item.vars) {
-      var span = document.createElement("span")
+      const span = document.createElement("span")
       span.classList.add("vars")
       span.textContent = item.vars
       td.append(" ", span)
@@ -103,7 +101,7 @@
 
     tr.append(td)
     if (showUser) {
-      var td2 = document.createElement("td")
+      const td2 = document.createElement("td")
       td2.classList.add("creator")
       td2.textContent = item.creator
       tr.append(td2)
@@ -112,15 +110,14 @@
   }
 
   function visibleItems(searchTerm) {
-    var pageSize = 200
+    const pageSize = 200
 
     if (searchTerm.length > 0) {
-      var term = prepareQuery(searchTerm)
-      var items = []
-      var fuzzyItems = []
-      for (var i = 0; i < listItems.length; i++) {
-        var q = listItems[i]
-        if (q.searchStr.indexOf(term) !== -1) {
+      const term = prepareQuery(searchTerm)
+      const items = []
+      const fuzzyItems = []
+      for (const q of listItems) {
+        if (q.searchStr.includes(term)) {
           items.push(q)
           if (items.length == pageSize) {
             break
@@ -135,13 +132,13 @@
     }
   }
 
-  var listItems = dashboards.concat(queries)
+  let listItems = dashboards.concat(queries)
 
   prepareSearch(listItems)
 
-  var queryIds = {}
-  for (i = 0; i < queries.length; i++) {
-    queryIds[queries[i].id] = true
+  const queryIds = {}
+  for (const query of queries) {
+    queryIds[query.id] = true
   }
 
   if (more) {
@@ -150,9 +147,8 @@
     $.getJSON(Routes.queries_path(), function (data) {
       loading.classList.add("hide")
 
-      var newValues = []
-      for (var j = 0; j < data.length; j++) {
-        var val = data[j]
+      const newValues = []
+      for (const val of data) {
         if (val && !queryIds[val.id]) {
           newValues.push(val)
         }

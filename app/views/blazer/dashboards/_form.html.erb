@@ -27,7 +27,8 @@
 
 <%= javascript_tag nonce: true do %>
   <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
-  <%= blazer_js_var "dashboardQueries", (@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).as_json(only: [:id, :name]) %>
+  <%= blazer_js_
+   "dashboardQueries", (@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).as_json(only: [:id, :name]) %>
 
   const queriesList = document.getElementById("queries")
   const queriesGroup = document.getElementById("queries-group")

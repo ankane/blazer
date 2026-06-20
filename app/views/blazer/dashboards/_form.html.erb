@@ -71,19 +71,19 @@
     options: queries,
     highlight: false,
     maxOptions: 100,
-    onChange: function (val) {
-      if (val) {
-        const item = this.getItem(val)
+    onChange: function (id) {
+      if (id) {
+        const item = this.getItem(id)
 
         // if duplicate query is added, remove the first one
         for (const query of queriesList.querySelectorAll("li")) {
-          if (query.getAttribute("data-query-id") == val) {
+          if (query.getAttribute("data-query-id") == id) {
             query.remove()
             break
           }
         }
 
-        addQuery({id: val, name: item.text()})
+        addQuery({id: id, name: item.text()})
         this.setValue("")
       }
     }

@@ -79,19 +79,19 @@
       </div>
 
       <%= javascript_tag nonce: true do %>
+        const startTime = document.getElementById("start_time")
+        const endTime = document.getElementById("end_time")
+        const reportrange = document.getElementById("reportrange")
+
         function dateStr(daysAgo) {
           return now.clone().subtract(daysAgo || 0, "days").format(format)
         }
-
-        const startTime = document.getElementById("start_time")
-        const endTime = document.getElementById("end_time")
 
         function setTimeInputs(start, end) {
           startTime.value = toDate(start).utc().format()
           endTime.value = toDate(end).endOf("day").utc().format()
         }
 
-        const reportrange = document.getElementById("reportrange")
         $(reportrange).daterangepicker(
           {
             ranges: {

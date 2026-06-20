@@ -37,7 +37,7 @@ $(document).on("click", "a[disabled]", function (e) {
 
 function submitIfCompleted(form) {
   let completed = true
-  for (const input in form.querySelectorAll("input[name], select")) {
+  for (const input of form.querySelectorAll("input[name], select")) {
     if (input.value == "") {
       completed = false
       break

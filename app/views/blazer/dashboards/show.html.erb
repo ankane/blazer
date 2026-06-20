@@ -43,11 +43,15 @@
     <% data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
     <%= blazer_js_var "data", data %>
 
-    runQuery(data, function (data) {
-      $("#chart-<%= i %>").html(data)
-      $("#chart-<%= i %> table").stupidtable(stupidtableCustomSettings)
-    }, function (message) {
-      $("#chart-<%= i %>").addClass("query-error").html(message)
-    });
+    (function() {
+      var chart = document.getElementById("chart-<%= i %>")
+      runQuery(data, function (data) {
+        $(chart).html(data)
+        $(chart.querySelector("table")).stupidtable(stupidtableCustomSettings)
+      }, function (message) {
+        chart.classList.add("query-error")
+        chart.textContent = message
+      })
+    })()
   <% end %>
 <% end %>

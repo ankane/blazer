@@ -123,8 +123,8 @@ function cancelServerQuery(query) {
 }
 
 function csrfProtect(payload) {
-  var param = $("meta[name=csrf-param]").attr("content")
-  var token = $("meta[name=csrf-token]").attr("content")
+  var param = document.querySelector("meta[name=csrf-param]")?.getAttribute("content")
+  var token = document.querySelector("meta[name=csrf-token]")?.getAttribute("content")
   if (param && token) payload[param] = token
   return payload
 }

@@ -34,9 +34,9 @@
 <% @queries.each_with_index do |query, i| %>
   <div class="chart-container">
     <h4><%= link_to query.friendly_name, query_path(query, params: variable_params(query)), target: "_blank" %></h4>
-    <div id="chart-<%= i %>" class="chart">
+    <%= tag.div id: "chart-#{i}", class: "chart" do %>
       <p class="text-muted">Loading...</p>
-    </div>
+    <% end %>
   </div>
   <% run_data = {statement: query.statement, query_id: query.id, data_source: query.data_source, variables: variable_params(query), only_chart: true} %>
   <% run_data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>

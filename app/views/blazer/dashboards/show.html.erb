@@ -46,7 +46,7 @@
       <%= blazer_js_var "runData", run_data %>
       const chart = document.getElementById(chartId)
       runQuery(runData, function (data) {
-        $(chart).html(data)
+        renderResult(chart, data, true)
         $(chart.querySelector("table")).stupidtable(stupidtableCustomSettings)
       }, function (message) {
         chart.classList.add("query-error")

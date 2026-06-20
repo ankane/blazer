@@ -134,8 +134,6 @@ module Blazer
           # query lost
           Rails.logger.info "[blazer lost query] #{@run_id}"
           @error = "We lost your query :("
-          @rows = []
-          @columns = []
           render_run
         else
           continue_run
@@ -181,7 +179,7 @@ module Blazer
           continue_run
         end
       else
-        render layout: false
+        render_run
       end
     end
 
@@ -244,6 +242,9 @@ module Blazer
     end
 
     def render_run
+      @rows ||= []
+      @columns ||= []
+
       @checks = @query ? @query.checks.order(:id) : []
 
       @first_row = @rows.first || []
@@ -276,8 +277,25 @@ module Blazer
       render_cohort_analysis if @cohort_analysis && !@error
 
       respond_to do |format|
-        format.html do
-          render layout: false
+        format.json do
+          if @error
+            data = {error: @error.first(200)}
+          elsif !@success
+            data = {success: false}
+          elsif @cohort_analysis
+            data = {cohort_analysis: true}
+            if @cohort_error
+              data[:cohort_error] = @cohort_error
+            else
+              data[:html] = render_to_string(partial: "cohorts", formats: [:html])
+            end
+          else
+            data = {
+              # TODO move HTML rendering to JavaScript
+              html: render_to_string(layout: false, formats: [:html])
+            }
+          end
+          render json: data
         end
         format.csv do
           # not ideal, but useful for testing

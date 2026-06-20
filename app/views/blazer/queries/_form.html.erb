@@ -115,7 +115,7 @@
 
     runQuery(runData, function (data) {
       stopRunning()
-      $(results).html(data)
+      renderResult(results, data, false)
     }, function (data) {
       stopRunning()
       results.classList.add("query-error")

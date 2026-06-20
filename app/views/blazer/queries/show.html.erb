@@ -50,7 +50,7 @@
     const results = document.getElementById("results")
 
     function showRun(data) {
-      $(results).html(data)
+      renderResult(results, data, false)
       $(results.querySelector("table")).stupidtable(stupidtableCustomSettings).stickyTableHeaders({fixedOffset: 60})
     }
 

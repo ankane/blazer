@@ -31,16 +31,48 @@ function runNext() {
   }
 }
 
+function createElement(tag, text, classList) {
+  const element = document.createElement(tag)
+  if (classList) {
+    element.classList.add(...classList)
+  }
+  element.append(text)
+  return element
+}
+
+function renderResult(element, data, onlyChart) {
+  if (data["error"]) {
+    const div = createElement("div", data["error"], ["alert", "alert-danger"])
+    element.replaceChildren(div)
+  } else if (data["success"] === false) {
+    if (onlyChart) {
+      const p = createElement("p", "Select variables", ["text-muted"])
+      element.replaceChildren(p)
+    } else {
+      const div = createElement("div", "Can’t preview queries with variables...yet!", ["alert", "alert-info"])
+      element.replaceChildren(div)
+    }
+  } else if (data["cohort_analysis"]) {
+    if (data["cohort_error"]) {
+      const div = createElement("div", data["cohort_error"], ["alert", "alert-info"])
+      element.replaceChildren(div)
+    } else {
+      $(element).html(data["html"])
+    }
+  } else {
+    $(element).html(data["html"])
+  }
+}
+
 function runQueryHelper(query) {
   const xhr = $.ajax({
     url: Routes.run_queries_path(),
     method: "POST",
     data: query.data,
-    dataType: "html"
+    dataType: "json"
   }).done( function (d) {
-    if (d[0] == "{") {
-      const response = $.parseJSON(d)
-      query.data.blazer = response
+    if (d.run_id) {
+      query.data.blazer = d
       setTimeout( function () {
         if (!query.canceled) {
           runQueryHelper(query)

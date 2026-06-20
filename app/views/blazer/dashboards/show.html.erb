@@ -41,11 +41,12 @@
   <%= javascript_tag nonce: true do %>
     <% data = {statement: query.statement, query_id: query.id, data_source: query.data_source, variables: variable_params(query), only_chart: true} %>
     <% data.merge!(cohort_period: params[:cohort_period]) if params[:cohort_period] %>
-    <%= blazer_js_var "data", data %>
+    <%= blazer_js_var "chartId", "chart-#{i}" %>
+    <%= blazer_js_var "runData", data %>
 
     (function() {
-      var chart = document.getElementById("chart-<%= i %>")
-      runQuery(data, function (data) {
+      var chart = document.getElementById(chartId)
+      runQuery(runData, function (data) {
         $(chart).html(data)
         $(chart.querySelector("table")).stupidtable(stupidtableCustomSettings)
       }, function (message) {

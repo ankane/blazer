@@ -23,8 +23,11 @@ $(document).on("mouseenter", ".dropdown-toggle", function () {
   this.parentElement.classList.add("open")
 })
 
-$(document).on("change", "#bind input, #bind select", function () {
-  submitIfCompleted(this.closest("form"))
+document.addEventListener("change", function (e) {
+  const element = e.target.closest("#bind input, #bind select")
+  if (element) {
+    submitIfCompleted(element.closest("form"))
+  }
 })
 
 document.addEventListener("click", function (e) {

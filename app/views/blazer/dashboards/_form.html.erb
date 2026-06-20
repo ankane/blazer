@@ -29,19 +29,19 @@
   <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
   <%= blazer_js_var "dashboardQueries", (@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).as_json(only: [:id, :name]) %>
 
-  var queriesList = document.getElementById("queries")
-  var queriesGroup = document.getElementById("queries-group")
+  const queriesList = document.getElementById("queries")
+  const queriesGroup = document.getElementById("queries-group")
 
   function addQuery(query) {
-    var li = document.createElement("li")
+    const li = document.createElement("li")
     li.classList.add("list-group-item")
     li.setAttribute("data-query-id", query.id)
 
-    var span = document.createElement("span")
+    const span = document.createElement("span")
     span.classList.add("glyphicon", "glyphicon-remove")
     span.setAttribute("aria-hidden", "true")
 
-    var input = document.createElement("input")
+    const input = document.createElement("input")
     input.setAttribute("type", "hidden")
     input.setAttribute("name", "query_ids[]")
     input.setAttribute("value", query.id)
@@ -52,8 +52,8 @@
     queriesGroup.classList.remove("hide")
   }
 
-  for (var i = 0; i < dashboardQueries.length; i++) {
-    addQuery(dashboardQueries[i])
+  for (const query of dashboardQueries) {
+    addQuery(query)
   }
 
   queriesList.addEventListener("click", function (e) {
@@ -70,15 +70,14 @@
     options: queries,
     highlight: false,
     maxOptions: 100,
-    onChange: function(val) {
+    onChange: function (val) {
       if (val) {
-        var item = this.getItem(val)
+        const item = this.getItem(val)
 
         // if duplicate query is added, remove the first one
-        var existingQueries = queriesList.querySelectorAll("li")
-        for (var i = 0; i < existingQueries.length; i++) {
-          if (existingQueries[i].getAttribute("data-query-id") == val) {
-            existingQueries[i].remove()
+        for (const query of queriesList.querySelectorAll("li")) {
+          if (query.getAttribute("data-query-id") == val) {
+            query.remove()
             break
           }
         }

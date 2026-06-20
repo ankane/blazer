@@ -53,6 +53,10 @@
   <%= blazer_js_var "more", @more %>
   <%= blazer_js_var "showUser", !!Blazer.user_class %>
 
+  const search = document.getElementById("search")
+  const items = document.getElementById("items")
+  const loading = document.getElementById("loading")
+
   function prepareSearch(list) {
     for (const q of list) {
       let searchStr = q.name + q.creator
@@ -74,10 +78,6 @@
       return Routes.query_path(item.to_param)
     }
   }
-
-  const search = document.getElementById("search")
-  const items = document.getElementById("items")
-  const loading = document.getElementById("loading")
 
   function addItem(item) {
     const tr = document.createElement("tr")
@@ -133,7 +133,6 @@
   }
 
   let listItems = dashboards.concat(queries)
-
   prepareSearch(listItems)
 
   const queryIds = new Set()
@@ -155,7 +154,6 @@
       }
 
       prepareSearch(newValues)
-
       listItems = listItems.concat(newValues)
       showItems()
     })
@@ -166,6 +164,5 @@
   }
 
   search.addEventListener("input", showItems)
-
   showItems()
 <% end %>

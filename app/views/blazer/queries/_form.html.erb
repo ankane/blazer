@@ -73,6 +73,8 @@
   <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
   const statement = document.getElementById("query_statement")
+  const docsLink = document.getElementById("docs-link")
+  const schemaLink = document.getElementById("schema-link")
   const tableSelect = document.getElementById("table_names")
   const dsSelect = document.getElementById("query_data_source")
   const runButton = document.getElementById("run-button")
@@ -127,8 +129,8 @@
 
   function updateDataSource() {
     const dataSource = dsSelect.value
-    document.getElementById("schema-link").setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
-    document.getElementById("docs-link").setAttribute("href", Routes.docs_queries_path({data_source: dataSource}))
+    schemaLink.setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
+    docsLink.setAttribute("href", Routes.docs_queries_path({data_source: dataSource}))
 
     tableSelect.selectize.clearOptions()
 

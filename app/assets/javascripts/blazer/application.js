@@ -37,8 +37,11 @@ document.addEventListener("click", function (e) {
   }
 })
 
-$(document).on("click", "a[disabled]", function (e) {
-  e.preventDefault()
+document.addEventListener("click", function (e) {
+  const target = e.target.closest("a[disabled]")
+  if (target) {
+    e.preventDefault()
+  }
 })
 
 function submitIfCompleted(form) {

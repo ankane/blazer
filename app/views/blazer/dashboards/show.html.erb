@@ -44,7 +44,6 @@
     (function() {
       <%= blazer_js_var "chartId", "chart-#{i}" %>
       <%= blazer_js_var "runData", data %>
-
       var chart = document.getElementById(chartId)
       runQuery(runData, function (data) {
         $(chart).html(data)

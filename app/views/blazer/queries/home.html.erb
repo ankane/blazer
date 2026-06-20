@@ -109,7 +109,8 @@
     return tr
   }
 
-  function visibleItems(searchTerm) {
+  function visibleItems() {
+    const searchTerm = search.value
     const pageSize = 200
 
     if (searchTerm.length > 0) {
@@ -160,7 +161,7 @@
   }
 
   function renderItems() {
-    items.replaceChildren(...visibleItems(search.value).map(renderItem))
+    items.replaceChildren(...visibleItems().map(renderItem))
   }
 
   search.addEventListener("input", renderItems)

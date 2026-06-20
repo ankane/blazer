@@ -82,10 +82,18 @@ function preventBackspaceNav() {
 
 preventBackspaceNav()
 
+function show(element) {
+  element.classList.remove("hide")
+}
+
+function hide(element) {
+  element.classList.add("hide")
+}
+
 function toggle(element, found) {
   if (found) {
-    element.classList.remove("hide")
+    show(element)
   } else {
-    element.classList.add("hide")
+    hide(element)
   }
 }

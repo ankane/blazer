@@ -142,10 +142,10 @@
   }
 
   if (more) {
-    loading.classList.remove("hide")
+    show(loading)
 
     $.getJSON(Routes.queries_path(), function (data) {
-      loading.classList.add("hide")
+      hide(loading)
 
       const newItems = []
       for (const query of data) {

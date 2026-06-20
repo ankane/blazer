@@ -92,19 +92,19 @@
   }
 
   function startRunning() {
-    runButton.classList.add("hide")
+    hide(runButton)
     results.replaceChildren()
-    results.classList.add("hide")
+    hide(results)
     results.classList.remove("query-error")
-    cancelButton.classList.remove("hide")
-    loading.classList.remove("hide")
+    show(cancelButton)
+    show(loading)
   }
 
   function stopRunning() {
-    cancelButton.classList.add("hide")
-    loading.classList.add("hide")
-    runButton.classList.remove("hide")
-    results.classList.remove("hide")
+    hide(cancelButton)
+    hide(loading)
+    show(runButton)
+    show(results)
   }
 
   function run(e) {
@@ -217,5 +217,5 @@
 
   showEditor()
 
-  document.getElementById("app").classList.remove("hide")
+  show(document.getElementById("app"))
 <% end %>

@@ -2,7 +2,7 @@
   function selectize(id, options) {
     const element = document.getElementById(id)
     $(element).selectize(options)
-    element.closest(".hide").classList.remove("hide")
+    show(element.closest(".hide"))
   }
 <% end %>
 

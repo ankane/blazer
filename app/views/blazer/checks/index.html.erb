@@ -60,12 +60,10 @@
 </table>
 
 <%= javascript_tag nonce: true do %>
-  document.getElementById("search").addEventListener("input", function() {
-    var value = this.value.toLowerCase()
-    var checks = document.querySelectorAll("#checks tbody tr")
-    for (var i = 0; i < checks.length; i++) {
-      var check = checks[i]
-      toggle(check, check.textContent.toLowerCase().indexOf(value) > -1)
+  document.getElementById("search").addEventListener("input", function () {
+    const value = this.value.toLowerCase()
+    for (const check of document.querySelectorAll("#checks tbody tr")) {
+      toggle(check, check.textContent.toLowerCase().includes(value))
     }
   })
 <% end %>

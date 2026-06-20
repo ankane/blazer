@@ -29,6 +29,14 @@
 <% end %>
 
 <%= javascript_tag nonce: true do %>
+  function toggle(element, found) {
+    if (found) {
+      element.classList.remove("hide")
+    } else {
+      element.classList.add("hide")
+    }
+  }
+
   document.getElementById("search").addEventListener("input", function() {
     var value = this.value
     var schemaTables = document.querySelectorAll(".schema-table")
@@ -37,24 +45,25 @@
 
       // if found in table name, show entire table
       // if just found in rows, show row
-      var found = schemaTable.querySelector("thead").textContent.toLowerCase().indexOf(value) > -1
+      var tableFound = schemaTable.querySelector("thead").textContent.toLowerCase().indexOf(value) > -1
 
       var columns = schemaTable.querySelectorAll("tbody tr")
+      var anyColumnFound = false
 
-      if (found) {
-        $(columns).toggle(true)
-      } else {
-        for (var j = 0; j < columns.length; j++) {
-          var column = columns[j]
+      for (var j = 0; j < columns.length; j++) {
+        var column = columns[j]
+        if (tableFound) {
+          toggle(column, true)
+        } else {
           var columnFound = column.textContent.toLowerCase().indexOf(value) > -1
-          $(column).toggle(columnFound)
+          toggle(column, columnFound)
           if (columnFound) {
-            found = true
+            anyColumnFound = true
           }
         }
       }
 
-      $(schemaTable).toggle(found)
+      toggle(schemaTable, tableFound || anyColumnFound)
     }
   })
 <% end %>

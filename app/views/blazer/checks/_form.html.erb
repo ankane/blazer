@@ -23,7 +23,6 @@
     <%= javascript_tag nonce: true do %>
       <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
       <%= blazer_js_var "items", [@check.query_id].compact %>
-
       selectize("check_query_id", {options: queries, items: items, highlight: false, maxOptions: 100})
     <% end %>
   </div>

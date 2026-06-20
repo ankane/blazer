@@ -57,7 +57,7 @@
   }
 
   $(queriesList).on("click", ".glyphicon-remove", function () {
-    $(this).parent("li").remove()
+    this.closest("li").remove()
 
     if (queriesList.querySelectorAll("li").length == 0) {
       queriesGroup.hide()

@@ -29,14 +29,6 @@
 <% end %>
 
 <%= javascript_tag nonce: true do %>
-  function toggle(element, found) {
-    if (found) {
-      element.classList.remove("hide")
-    } else {
-      element.classList.add("hide")
-    }
-  }
-
   document.getElementById("search").addEventListener("input", function() {
     var value = this.value
     var schemaTables = document.querySelectorAll(".schema-table")

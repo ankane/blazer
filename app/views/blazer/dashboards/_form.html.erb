@@ -31,6 +31,9 @@
 
   const queriesList = document.getElementById("queries")
   const queriesGroup = document.getElementById("queries-group")
+  const chartsGroup = document.getElementById("charts-group")
+  const queryId = document.getElementById("query_id")
+  const actions = document.getElementById("actions")
 
   function addQuery(query) {
     const li = document.createElement("li")
@@ -67,7 +70,7 @@
     }
   })
 
-  $(document.getElementById("query_id")).selectize({
+  $(queryId).selectize({
     options: queries,
     highlight: false,
     maxOptions: 100,
@@ -89,8 +92,8 @@
     }
   })
 
-  document.getElementById("charts-group").classList.remove("hide")
-  document.getElementById("actions").classList.remove("hide")
+  chartsGroup.classList.remove("hide")
+  actions.classList.remove("hide")
 
   Sortable.create(queriesList)
 <% end %>

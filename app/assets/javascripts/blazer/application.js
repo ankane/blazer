@@ -27,8 +27,11 @@ $(document).on("change", "#bind input, #bind select", function () {
   submitIfCompleted(this.closest("form"))
 })
 
-$(document).on("click", "#code", function () {
-  this.classList.add("expanded")
+document.addEventListener("click", function (e) {
+  const element = e.target.closest("#code")
+  if (element) {
+    element.classList.add("expanded")
+  }
 })
 
 $(document).on("click", "a[disabled]", function (e) {

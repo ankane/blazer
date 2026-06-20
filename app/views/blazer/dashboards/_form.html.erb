@@ -7,7 +7,7 @@
     <%= f.label :name %>
     <%= f.text_field :name, class: "form-control" %>
   </div>
-  <div class="form-group" id="queries-group" style="display: none;">
+  <div class="form-group hide" id="queries-group">
     <%= f.label :charts %>
     <ul id="queries" class="list-group">
     </ul>
@@ -29,13 +29,16 @@
   <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
   <%= blazer_js_var "dashboardQueries", (@queries || @dashboard.dashboard_queries.order(:position).map(&:query)).as_json(only: [:id, :name]) %>
 
+  var queriesList = document.getElementById("queries")
+  var queriesGroup = document.getElementById("queries-group")
+
   function addQuery(query) {
     var li = document.createElement("li")
-    li.className = "list-group-item"
+    li.classList.add("list-group-item")
     li.setAttribute("data-query-id", query.id)
 
     var span = document.createElement("span")
-    span.className = "glyphicon glyphicon-remove"
+    span.classList.add("glyphicon", "glyphicon-remove")
     span.setAttribute("aria-hidden", "true")
 
     var input = document.createElement("input")
@@ -44,20 +47,20 @@
     input.setAttribute("value", query.id)
 
     li.append(span, query.name, input)
-    document.getElementById("queries").append(li)
+    queriesList.append(li)
 
-    $("#queries-group").show()
+    queriesGroup.classList.remove("hide")
   }
 
   for (var i = 0; i < dashboardQueries.length; i++) {
     addQuery(dashboardQueries[i])
   }
 
-  $("#queries").on("click", ".glyphicon-remove", function () {
+  $(queriesList).on("click", ".glyphicon-remove", function () {
     $(this).parent("li").remove()
 
-    if ($("#queries li").length == 0) {
-      $("#queries-group").hide()
+    if (queriesList.querySelectorAll("li").length == 0) {
+      queriesGroup.hide()
     }
   })
 
@@ -70,7 +73,7 @@
         var item = this.getItem(val)
 
         // if duplicate query is added, remove the first one
-        var existingQueries = $("#queries li")
+        var existingQueries = queriesList.querySelectorAll("li")
         for (var i = 0; i < existingQueries.length; i++) {
           if (existingQueries[i].getAttribute("data-query-id") == val) {
             existingQueries[i].remove()
@@ -86,5 +89,5 @@
 
   $(".cloak").removeClass("cloak")
 
-  Sortable.create(document.getElementById("queries"))
+  Sortable.create(queriesList)
 <% end %>

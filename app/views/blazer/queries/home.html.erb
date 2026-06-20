@@ -123,7 +123,7 @@
           if (exactItems.length == pageSize) {
             break
           }
-        } else if (fuzzysearch(term, item.searchStr)) {
+        } else if (fuzzyItems.length < pageSize && fuzzysearch(term, item.searchStr)) {
           fuzzyItems.push(item)
         }
       }

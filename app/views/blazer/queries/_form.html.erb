@@ -127,8 +127,8 @@
   cancelButton.addEventListener("click", cancel)
 
   $(tableSelect).selectize({})
-  tableSelect.selectize.on("change", function (value) {
-    editor.setValue(previewStatement[dsSelect.value].replace("{table}", value), 1)
+  tableSelect.selectize.on("change", function (table) {
+    editor.setValue(previewStatement[dsSelect.value].replace("{table}", table), 1)
     run()
     this.clear(true)
     this.blur()

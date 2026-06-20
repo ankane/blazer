@@ -31,16 +31,18 @@
 <%= javascript_tag nonce: true do %>
   document.getElementById("search").addEventListener("input", function() {
     var value = this.value
-    $(".schema-table").filter(function() {
+    var schemaTables = document.querySelectorAll(".schema-table")
+    for (var i = 0; i < schemaTables.length; i++) {
+      var schemaTable = schemaTables[i]
+
       // if found in table name, show entire table
       // if just found in rows, show row
-
-      var found = this.querySelector("thead").textContent.toLowerCase().indexOf(value) > -1
+      var found = schemaTable.querySelector("thead").textContent.toLowerCase().indexOf(value) > -1
 
       if (found) {
-        $(this.querySelector("tbody tr")).toggle(true)
+        $(schemaTable.querySelectorAll("tbody tr")).toggle(true)
       } else {
-        $(this.querySelector("tbody tr")).filter(function() {
+        $(schemaTable.querySelectorAll("tbody tr")).filter(function() {
           var found2 = this.textContent.toLowerCase().indexOf(value) > -1
           $(this).toggle(found2)
           if (found2) {
@@ -49,7 +51,7 @@
         })
       }
 
-      $(this).toggle(found)
-    })
+      $(schemaTable).toggle(found)
+    }
   })
 <% end %>

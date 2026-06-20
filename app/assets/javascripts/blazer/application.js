@@ -24,16 +24,16 @@ $(document).on("mouseenter", ".dropdown-toggle", function () {
 })
 
 document.addEventListener("change", function (e) {
-  const element = e.target.closest("#bind input, #bind select")
-  if (element) {
-    submitIfCompleted(element.closest("form"))
+  const target = e.target.closest("#bind input, #bind select")
+  if (target) {
+    submitIfCompleted(target.closest("form"))
   }
 })
 
 document.addEventListener("click", function (e) {
-  const element = e.target.closest("#code")
-  if (element) {
-    element.classList.add("expanded")
+  const target = e.target.closest("#code")
+  if (target) {
+    target.classList.add("expanded")
   }
 })
 

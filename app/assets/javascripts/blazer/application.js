@@ -19,8 +19,11 @@
 //= require ./queries
 //= require ./fuzzysearch
 
-$(document).on("mouseenter", ".dropdown-toggle", function () {
-  this.parentElement.classList.add("open")
+document.addEventListener("mouseover", function (e) {
+  const target = e.target.closest(".dropdown-toggle")
+  if (target) {
+    target.parentElement.classList.add("open")
+  }
 })
 
 document.addEventListener("change", function (e) {

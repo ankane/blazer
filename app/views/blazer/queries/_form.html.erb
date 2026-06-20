@@ -72,10 +72,10 @@
   <%= blazer_js_var "variableParams", @variable_params %>
   <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
-  var runButton = document.getElementById("run-button");
-  var cancelButton = document.getElementById("cancel-button");
-  var results = document.getElementById("results-html");
-  var loading = document.getElementById("loading");
+  var runButton = document.getElementById("run-button")
+  var cancelButton = document.getElementById("cancel-button")
+  var results = document.getElementById("results-html")
+  var loading = document.getElementById("loading")
 
   function cancel(e) {
     stopRunning()

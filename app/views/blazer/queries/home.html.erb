@@ -79,7 +79,7 @@
     }
   }
 
-  function addItem(item) {
+  function renderItem(item) {
     const tr = document.createElement("tr")
 
     const td = document.createElement("td")
@@ -146,23 +146,23 @@
     $.getJSON(Routes.queries_path(), function (data) {
       loading.classList.add("hide")
 
-      const newValues = []
-      for (const val of data) {
-        if (val && !queryIds.has(val.id)) {
-          newValues.push(val)
+      const newItems = []
+      for (const query of data) {
+        if (query && !queryIds.has(query.id)) {
+          newItems.push(query)
         }
       }
 
-      prepareSearch(newValues)
-      listItems = listItems.concat(newValues)
-      showItems()
+      prepareSearch(newItems)
+      listItems = listItems.concat(newItems)
+      renderItems()
     })
   }
 
-  function showItems() {
-    items.replaceChildren(...visibleItems(search.value).map(addItem))
+  function renderItems() {
+    items.replaceChildren(...visibleItems(search.value).map(renderItem))
   }
 
-  search.addEventListener("input", showItems)
-  showItems()
+  search.addEventListener("input", renderItems)
+  renderItems()
 <% end %>

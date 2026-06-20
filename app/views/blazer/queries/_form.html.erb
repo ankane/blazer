@@ -72,6 +72,7 @@
   <%= blazer_js_var "variableParams", @variable_params %>
   <%= blazer_js_var "previewStatement", Blazer.data_sources.to_h { |k, v| [k, (v.preview_statement rescue "")] } %>
 
+  const statement = document.getElementById("query_statement")
   const tableNames = document.getElementById("table_names")
   const dsSelect = document.getElementById("query_data_source")
   const runButton = document.getElementById("run-button")
@@ -207,7 +208,7 @@
     editor.commands.removeCommands(["gotoline", "find"])
 
     editor.getSession().on("change", function () {
-      $("#query_statement").val(editor.getValue())
+      statement.value = editor.getValue()
       adjustHeight()
     })
     adjustHeight()

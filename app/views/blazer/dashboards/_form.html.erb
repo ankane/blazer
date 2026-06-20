@@ -59,9 +59,9 @@
   }
 
   queriesList.addEventListener("click", function (e) {
-    const element = e.target.closest(".glyphicon-remove")
-    if (element) {
-      element.closest("li").remove()
+    const target = e.target.closest(".glyphicon-remove")
+    if (target) {
+      target.closest("li").remove()
 
       if (queriesList.querySelectorAll("li").length == 0) {
         hide(queriesGroup)

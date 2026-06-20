@@ -39,16 +39,19 @@
       // if just found in rows, show row
       var found = schemaTable.querySelector("thead").textContent.toLowerCase().indexOf(value) > -1
 
+      var columns = schemaTable.querySelectorAll("tbody tr")
+
       if (found) {
-        $(schemaTable.querySelectorAll("tbody tr")).toggle(true)
+        $(columns).toggle(true)
       } else {
-        $(schemaTable.querySelectorAll("tbody tr")).filter(function() {
-          var found2 = this.textContent.toLowerCase().indexOf(value) > -1
-          $(this).toggle(found2)
-          if (found2) {
+        for (var j = 0; j < columns.length; j++) {
+          var column = columns[j]
+          var columnFound = column.textContent.toLowerCase().indexOf(value) > -1
+          $(column).toggle(columnFound)
+          if (columnFound) {
             found = true
           }
-        })
+        }
       }
 
       $(schemaTable).toggle(found)

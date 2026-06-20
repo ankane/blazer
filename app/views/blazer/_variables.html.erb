@@ -39,8 +39,9 @@
         <%= javascript_tag nonce: true do %>
           (function() {
             <%= blazer_js_var "varId", var %>
+            <%= blazer_js_var "selectId", "#{var}-select" %>
             const input = document.getElementById(varId)
-            const datePicker = $("#<%= var %>-select")
+            const datePicker = $(document.getElementById(selectId))
             datePicker.daterangepicker({
               singleDatePicker: true,
               locale: {format: format},

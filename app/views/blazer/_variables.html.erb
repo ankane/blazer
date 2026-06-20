@@ -22,9 +22,12 @@
       <% if (data = @smart_vars[var]) %>
         <%= select_tag var, options_for_select([[nil, nil]] + data, selected: var_params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
         <%= javascript_tag nonce: true do %>
-          $("#<%= var %>").selectize({
-            create: true
-          });
+          (function() {
+            <%= blazer_js_var "varId", var %>
+            $(document.getElementById(varId)).selectize({
+              create: true
+            })
+          })()
         <% end %>
       <% elsif var.end_with?("_at") || var == "start_time" || var == "end_time" %>
         <%= hidden_field_tag var, var_params[var] %>
@@ -37,7 +40,8 @@
 
         <%= javascript_tag nonce: true do %>
           (function() {
-            var input = $("#<%= var %>")
+            <%= blazer_js_var "varId", var %>
+            var input = $(document.getElementById(varId))
             var datePicker = $("#<%= var %>-select")
             datePicker.daterangepicker({
               singleDatePicker: true,
@@ -109,7 +113,7 @@
           $("#reportrange span").html(toDate(picker.startDate).format("MMMM D, YYYY") + " - " + toDate(picker.endDate).format("MMMM D, YYYY"))
         })
 
-        if ($("#start_time").val().length > 0) {
+        if (document.getElementById("start_time").value.length > 0) {
           var picker = $("#reportrange").data("daterangepicker")
           picker.setStartDate(moment.tz($("#start_time").val(), timeZone))
           picker.setEndDate(moment.tz($("#end_time").val(), timeZone))

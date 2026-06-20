@@ -91,8 +91,8 @@
           endTime.value = toDate(end).endOf("day").utc().format()
         }
 
-        const reportrange = $("#reportrange")
-        reportrange.daterangepicker(
+        const reportrange = document.getElementById("reportrange")
+        $(reportrange).daterangepicker(
           {
             ranges: {
              "Today": [dateStr(), dateStr()],
@@ -113,16 +113,16 @@
           }
         ).on("apply.daterangepicker", function(ev, picker) {
           setTimeInputs(picker.startDate, picker.endDate)
-          reportrange.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY") + " - " + toDate(picker.endDate).format("MMMM D, YYYY"))
+          reportrange.querySelector("span").textContent = toDate(picker.startDate).format("MMMM D, YYYY") + " - " + toDate(picker.endDate).format("MMMM D, YYYY")
         })
 
-        const picker = reportrange.data("daterangepicker")
+        const picker = $(reportrange).data("daterangepicker")
         if (startTime.value.length > 0) {
           picker.setStartDate(moment.tz(startTime.value, timeZone))
           picker.setEndDate(moment.tz(endTime.value, timeZone))
-          reportrange.trigger("apply.daterangepicker", picker)
+          $(reportrange).trigger("apply.daterangepicker", picker)
         } else {
-          reportrange.trigger("apply.daterangepicker", picker)
+          $(reportrange).trigger("apply.daterangepicker", picker)
           submitIfCompleted(startTime.closest("form"))
         }
       <% end %>

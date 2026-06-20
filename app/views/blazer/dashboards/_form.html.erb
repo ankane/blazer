@@ -31,7 +31,7 @@
 
   const queriesList = document.getElementById("queries")
   const queriesGroup = document.getElementById("queries-group")
-  const queryId = document.getElementById("query_id")
+  const querySelect = document.getElementById("query_id")
   const actions = document.getElementById("actions")
 
   function addQuery(query) {
@@ -69,7 +69,7 @@
     }
   })
 
-  $(queryId).selectize({
+  $(querySelect).selectize({
     options: queries,
     highlight: false,
     maxOptions: 100,
@@ -91,7 +91,7 @@
     }
   })
 
-  show(queryId.closest(".hide"))
+  show(querySelect.closest(".hide"))
   show(actions)
 
   Sortable.create(queriesList)

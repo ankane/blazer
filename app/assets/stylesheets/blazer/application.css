@@ -309,3 +309,7 @@ h2 {
   vertical-align: top;
   margin-right: 5px;
 }
+
+.docs-table {
+  max-width: 500px;
+}

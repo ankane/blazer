@@ -37,6 +37,8 @@ table.results-table {
 input.search {
   border: none;
   box-shadow: none;
+  width: 300px;
+  display: inline-block;
 }
 
 input.search:focus {

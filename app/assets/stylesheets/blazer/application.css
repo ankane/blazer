@@ -269,6 +269,10 @@ h2 {
   width: 15%;
 }
 
+.description-header {
+  width: 60%;
+}
+
 .notifiers {
   margin-bottom: 0;
   word-break: break-all;
@@ -277,4 +281,18 @@ h2 {
 .table > tbody > tr > td.check-actions {
   text-align: right;
   padding: 1px;
+}
+
+#dashboard-actions {
+  padding-bottom: 140px;
+}
+
+#dashboard-header {
+  line-height: 34px;
+  display: inline;
+  margin-left: 5px;
+}
+
+.dashboard-row {
+  padding-top: 13px;
 }

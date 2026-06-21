@@ -15,7 +15,7 @@
     <%= f.label :query_id, "Add Chart" %>
     <%= select_tag :query_id, nil, {include_blank: true, placeholder: "Select chart"} %>
   </div>
-  <p style="padding-bottom: 140px;" class="hide" id="actions">
+  <p class="hide" id="dashboard-actions">
     <% if @dashboard.persisted? %>
       <%= link_to "Delete", dashboard_path(@dashboard), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>
     <% end %>
@@ -31,7 +31,7 @@
   const queriesList = document.getElementById("queries")
   const queriesGroup = document.getElementById("queries-group")
   const querySelect = document.getElementById("query_id")
-  const actions = document.getElementById("actions")
+  const actions = document.getElementById("dashboard-actions")
 
   function addQuery(query) {
     const li = document.createElement("li")

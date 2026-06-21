@@ -24,7 +24,12 @@
         <%= javascript_tag nonce: true do %>
           (function() {
             <%= blazer_js_var "varId", var %>
-            $(document.getElementById(varId)).selectize({create: true})
+            $(document.getElementById(varId)).selectize({
+              create: true,
+              onChange: function() {
+                submitIfCompleted(this.$input.get(0).closest("form"))
+              }
+            })
           })()
         <% end %>
       <% elsif var.end_with?("_at") || var == "start_time" || var == "end_time" %>

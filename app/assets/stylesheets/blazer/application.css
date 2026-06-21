@@ -179,6 +179,10 @@ input.search:focus {
   color: #999;
 }
 
+.header-div {
+  line-height: 34px;
+}
+
 #code {
   max-height: 236px;
   overflow: hidden;
@@ -242,4 +246,9 @@ h2 {
 
 .selectize-dropdown .create {
   padding: 5px 8px;
+}
+
+.user-header {
+  width: 20%;
+  text-align: right;
 }

@@ -1,6 +1,6 @@
 <div id="queries">
   <div id="header">
-    <div class="pull-right" style="line-height: 34px;">
+    <div class="pull-right header-div">
       <% if blazer_user %>
         <%= link_to "All", root_path, class: !params[:filter] ? "active" : nil, style: "margin-right: 40px;" %>
 
@@ -36,7 +36,7 @@
       <tr>
         <th>Name</th>
         <% if Blazer.user_class %>
-          <th style="width: 20%; text-align: right;">Mastermind</th>
+          <th class="user-header">Mastermind</th>
         <% end%>
       </tr>
     </thead>

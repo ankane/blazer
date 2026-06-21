@@ -1,5 +1,5 @@
 <% if @cached_at || @just_cached %>
-  <p class="text-muted" style="float: right;">
+  <p class="text-muted pull-right">
     <% if @cached_at %>
       Cached <%= time_ago_in_words(@cached_at, include_seconds: true) %> ago
     <% elsif params[:query_id] %>

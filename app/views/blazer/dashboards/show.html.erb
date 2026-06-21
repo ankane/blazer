@@ -19,7 +19,7 @@
 <div style="margin-bottom: 60px;"></div>
 
 <% if @data_sources.any? { |ds| ds.cache_mode != "off" } %>
-  <p class="text-muted" style="float: right;">
+  <p class="text-muted pull-right">
     Some queries may be cached
     <%= link_to "Refresh", refresh_dashboard_path(@dashboard, params: variable_params(@dashboard)), method: :post %>
   </p>

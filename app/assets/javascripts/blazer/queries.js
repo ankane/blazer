@@ -35,7 +35,7 @@ function runQueryHelper(query) {
   const xhr = $.ajax({
     url: Routes.run_queries_path(),
     method: "POST",
-    data: query.data,
+    data: csrfProtect(query.data),
     dataType: "html"
   }).done( function (d) {
     if (d[0] == "{") {
@@ -105,18 +105,18 @@ function cancelServerQuery(query) {
   // tell server
   const path = Routes.cancel_queries_path()
   const data = {run_id: query.run_id, data_source: query.data_source}
+  const params = csrfProtect(data)
   if (navigator.sendBeacon) {
     // use FormData over Blob and URLSearchParams for maximum compatibility
     // Blob works with Chrome 81+ and URLSearchParams works with Chrome 88+
     const formdata = new FormData()
-    const params = csrfProtect(data)
     for (const [key, value] of Object.entries(params)) {
       formdata.append(key, value)
     }
     navigator.sendBeacon(path, formdata)
   } else {
     // TODO make sync
-    $.post(path, data)
+    $.post(path, params)
   }
 }
 

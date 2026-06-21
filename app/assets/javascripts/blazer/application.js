@@ -1,5 +1,4 @@
 //= require ./jquery
-//= require ./rails-ujs
 //= require ./tablesort
 //= require ./selectize
 //= require ./highlight.min
@@ -42,6 +41,15 @@ document.addEventListener("click", function (e) {
   const target = e.target.closest("a[disabled]")
   if (target) {
     e.preventDefault()
+  }
+})
+
+document.addEventListener("click", function (e) {
+  const target = e.target.closest("a[data-confirm]")
+  if (target) {
+    if (!window.confirm(target.getAttribute("data-confirm"))) {
+      e.preventDefault()
+    }
   }
 })
 

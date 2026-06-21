@@ -115,6 +115,10 @@ function toggle(element, found) {
   }
 }
 
+function pathParams(params) {
+  return (new URLSearchParams(params)).toString()
+}
+
 function getJSON(url, success, controller) {
   const options = {headers: {"Accept": "application/json"}}
   if (controller) {

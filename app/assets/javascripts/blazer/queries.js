@@ -92,7 +92,7 @@ function cancelAllQueries() {
 
 // needed for Chrome
 // queries are canceled before unload with Firefox and Safari
-$(window).on("unload", cancelAllQueries)
+window.addEventListener("beforeunload", cancelAllQueries)
 
 function cancelQuery(query) {
   query.canceled = true

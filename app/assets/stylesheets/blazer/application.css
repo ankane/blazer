@@ -296,3 +296,16 @@ h2 {
 .name-row {
   padding-top: 13px;
 }
+
+.topbar-margin {
+  margin-bottom: 60px;
+}
+
+.query-description {
+  white-space: pre-line;
+}
+
+.nav-btn-group {
+  vertical-align: top;
+  margin-right: 5px;
+}

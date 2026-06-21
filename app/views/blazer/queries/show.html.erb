@@ -21,7 +21,7 @@
   </div>
 </div>
 
-<div style="margin-bottom: 60px;"></div>
+<div class="topbar-margin"></div>
 
 <% if @sql_errors.any? %>
   <div class="alert alert-danger">
@@ -34,7 +34,7 @@
 <% end %>
 
 <% if @query.description.present? %>
-  <p style="white-space: pre-line;"><%= @query.description %></p>
+  <p class="query-description"><%= @query.description %></p>
 <% end %>
 
 <%= render partial: "blazer/variables", locals: {action: query_path(@query)} %>

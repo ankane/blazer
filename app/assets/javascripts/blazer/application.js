@@ -11,7 +11,6 @@
 //= require ./mapkick.bundle
 //= require ./ace
 //= require ./Sortable
-//= require ./bootstrap
 //= require ./routes
 //= require ./queries
 //= require ./fuzzysearch

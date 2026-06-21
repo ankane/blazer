@@ -114,3 +114,14 @@ function toggle(element, found) {
     hide(element)
   }
 }
+
+function getJSON(url, success) {
+  fetch(url, {headers: {"Accept": "application/json"}})
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error("Bad response")
+      }
+      return response.json()
+    })
+    .then(success)
+}

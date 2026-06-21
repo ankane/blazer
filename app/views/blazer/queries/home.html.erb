@@ -143,7 +143,7 @@
   if (more) {
     show(loading)
 
-    $.getJSON(Routes.queries_path(), function (queries) {
+    getJSON(Routes.queries_path(), function (queries) {
       hide(loading)
 
       const newItems = []

@@ -140,7 +140,7 @@
       tablesXhr.abort()
     }
 
-    tablesXhr = $.getJSON(Routes.tables_queries_path({data_source: dataSource}), function (data) {
+    tablesXhr = getJSON(Routes.tables_queries_path({data_source: dataSource}), function (data) {
       const newOptions = []
       for (const table of data) {
         if (typeof table === "object") {

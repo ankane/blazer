@@ -317,3 +317,7 @@ h2 {
 .docs-table .first-header {
   width: 20%;
 }
+
+.column-name {
+  width: 60%;
+}

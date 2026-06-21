@@ -20,7 +20,7 @@
     <tbody>
       <% table[:columns].each do |column| %>
         <tr>
-          <td style="width: 60%;"><%= column[:name] %></td>
+          <td class="column-name"><%= column[:name] %></td>
           <td class="text-muted"><%= column[:data_type] %></td>
         </tr>
       <% end %>

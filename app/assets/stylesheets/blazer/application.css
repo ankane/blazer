@@ -313,3 +313,7 @@ h2 {
 .docs-table {
   max-width: 500px;
 }
+
+.docs-table .first-header {
+  width: 20%;
+}

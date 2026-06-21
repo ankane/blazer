@@ -287,12 +287,12 @@ h2 {
   padding-bottom: 140px;
 }
 
-#dashboard-header {
+.name-header {
   line-height: 34px;
   display: inline;
   margin-left: 5px;
 }
 
-.dashboard-row {
+.name-row {
   padding-top: 13px;
 }

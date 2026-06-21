@@ -47,7 +47,10 @@
       const chart = document.getElementById(chartId)
       runQuery(runData, function (data) {
         $(chart).html(data)
-        $(chart.querySelector("table")).stupidtable(stupidtableCustomSettings)
+        const table = chart.querySelector("table")
+        if (table) {
+          tablesort(table)
+        }
       }, function (message) {
         chart.classList.add("query-error")
         chart.textContent = message

@@ -51,7 +51,8 @@
 
     function showRun(data) {
       $(results).html(data)
-      $(results.querySelector("table")).stupidtable(stupidtableCustomSettings).stickyTableHeaders({fixedOffset: 60})
+      tablesort(results.querySelector("table"))
+      $(results.querySelector("table")).stickyTableHeaders({fixedOffset: 60})
     }
 
     function showError(message) {

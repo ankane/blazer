@@ -27,10 +27,10 @@
   <thead>
     <tr>
       <th>Query</th>
-      <th style="width: 10%;">State</th>
-      <th style="width: 10%;">Run</th>
-      <th style="width: 20%;">Notify</th>
-      <th style="width: 15%;"></th>
+      <th class="state-header">State</th>
+      <th class="run-header">Run</th>
+      <th class="notify-header">Notify</th>
+      <th class="actions-header"></th>
     </tr>
   </thead>
   <tbody>
@@ -44,13 +44,13 @@
         </td>
         <td><%= check.schedule if check.respond_to?(:schedule) %></td>
         <td>
-          <ul class="list-unstyled" style="margin-bottom: 0; word-break: break-all;">
+          <ul class="list-unstyled notifiers">
             <% Blazer.notifiers.flat_map { |n| n.notify_list(check) }.each do |item| %>
               <li><%= item %></li>
             <% end %>
           </ul>
         </td>
-        <td style="text-align: right; padding: 1px;">
+        <td class="check-actions">
           <%= link_to "Edit", edit_check_path(check), class: "btn btn-info" %>
           <%= button_to "Run Now", refresh_query_path(check.query), class: "btn btn-primary" %>
         </td>

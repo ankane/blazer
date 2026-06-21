@@ -252,3 +252,29 @@ h2 {
   width: 20%;
   text-align: right;
 }
+
+.state-header {
+  width: 10%;
+}
+
+.run-header {
+  width: 10%;
+}
+
+.notify-header {
+  width: 20%;
+}
+
+.actions-header {
+  width: 15%;
+}
+
+.notifiers {
+  margin-bottom: 0;
+  word-break: break-all;
+}
+
+.table > tbody > tr > td.check-actions {
+  text-align: right;
+  padding: 1px;
+}

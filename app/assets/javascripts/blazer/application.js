@@ -1,7 +1,6 @@
 //= require ./jquery
 //= require ./rails-ujs
 //= require ./tablesort
-//= require ./jquery.stickytableheaders
 //= require ./selectize
 //= require ./highlight.min
 //= require ./moment

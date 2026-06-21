@@ -52,7 +52,7 @@
     function showRun(data) {
       $(results).html(data)
       tablesort(results.querySelector("table"))
-      $(results.querySelector("table")).stickyTableHeaders({fixedOffset: 60})
+      results.querySelector("table").classList.add("stickytable")
     }
 
     function showError(message) {

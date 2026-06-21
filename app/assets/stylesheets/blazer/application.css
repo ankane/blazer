@@ -321,3 +321,20 @@ h2 {
 .column-name {
   width: 60%;
 }
+
+.stickytable thead {
+  position: sticky;
+  top: 60px;
+}
+
+.stickytable th {
+  box-shadow: inset 0 -2px 0 0 #ddd;
+}
+
+.table.stickytable > thead > tr > th {
+  border-bottom: none;
+}
+
+.table.stickytable > tbody > tr:first-child > td {
+  border-top: none;
+}

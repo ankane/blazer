@@ -115,8 +115,12 @@ function toggle(element, found) {
   }
 }
 
-function getJSON(url, success) {
-  fetch(url, {headers: {"Accept": "application/json"}})
+function getJSON(url, success, controller) {
+  const options = {headers: {"Accept": "application/json"}}
+  if (controller) {
+    options.signal = controller.signal
+  }
+  fetch(url, options)
     .then(function (response) {
       if (!response.ok) {
         throw new Error("Bad response")

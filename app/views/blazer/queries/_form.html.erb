@@ -187,7 +187,7 @@
     editor.commands.addCommand({
       name: "run",
       bindKey: {win: "Ctrl-Enter",  mac: "Command-Enter"},
-      exec: function(editor) {
+      exec: function (editor) {
         run()
       },
       readOnly: false // false if this command should not apply in readOnly mode
@@ -215,7 +215,7 @@
   })
 
   $(dsSelect).selectize({})
-  dsSelect.selectize.on("change", function() {
+  dsSelect.selectize.on("change", function () {
     updateDataSource()
     this.blur()
   })

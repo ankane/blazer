@@ -22,11 +22,11 @@
       <% if (data = @smart_vars[var]) %>
         <%= select_tag var, options_for_select([[nil, nil]] + data, selected: var_params[var]), style: "margin-right: 20px; width: 200px; display: none;" %>
         <%= javascript_tag nonce: true do %>
-          (function() {
+          (function () {
             <%= blazer_js_var "varId", var %>
             $(document.getElementById(varId)).selectize({
               create: true,
-              onChange: function() {
+              onChange: function () {
                 submitIfCompleted(this.$input.get(0).closest("form"))
               }
             })
@@ -42,7 +42,7 @@
         </div>
 
         <%= javascript_tag nonce: true do %>
-          (function() {
+          (function () {
             <%= blazer_js_var "varId", var %>
             <%= blazer_js_var "selectId", "#{var}-select" %>
             const input = document.getElementById(varId)
@@ -55,7 +55,7 @@
               startDate: input.value.length > 0 ? moment.tz(input.value, timeZone) : now
             })
             // hack to start with empty date
-            datePicker.on("apply.daterangepicker", function(ev, picker) {
+            datePicker.on("apply.daterangepicker", function (ev, picker) {
               datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
               input.value = toDate(picker.startDate).utc().format()
               submitIfCompleted(input.closest("form"))
@@ -112,11 +112,11 @@
             opens: "right",
             alwaysShowCalendars: true
           },
-          function(start, end) {
+          function (start, end) {
             setTimeInputs(start, end)
             submitIfCompleted(startTime.closest("form"))
           }
-        ).on("apply.daterangepicker", function(ev, picker) {
+        ).on("apply.daterangepicker", function (ev, picker) {
           setTimeInputs(picker.startDate, picker.endDate)
           reportrange.querySelector("span").textContent = toDate(picker.startDate).format("MMMM D, YYYY") + " - " + toDate(picker.endDate).format("MMMM D, YYYY")
         })

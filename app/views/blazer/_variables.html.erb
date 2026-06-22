@@ -57,13 +57,13 @@
             })
             // hack to start with empty date
             datePicker.on("apply.daterangepicker", function (ev, picker) {
-              datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+              datePicker.find(".item").html(toDate(picker.startDate).format("MMMM D, YYYY"))
               input.value = toDate(picker.startDate).utc().format()
               submitIfCompleted(input.closest("form"))
             })
             if (input.value.length > 0) {
               const picker = datePicker.data("daterangepicker")
-              datePicker.find("span").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+              datePicker.find(".item").html(toDate(picker.startDate).format("MMMM D, YYYY"))
             }
           })()
         <% end %>

@@ -35,34 +35,34 @@ function runQueryHelper(query) {
   const formdata = createFormData(csrfProtect(query.data))
   const controller = new AbortController()
   fetch(Routes.run_queries_path(), {method: "POST", body: formdata, signal: controller.signal})
-  .then(function (response) {
-    if (!response.ok) {
-      throw new Error(response.statusText)
-    }
-    return response.text()
-  })
-  .then( function (text) {
-    if (text[0] == "{") {
-      query.data.blazer = JSON.parse(text)
-      setTimeout( function () {
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error(response.statusText)
+      }
+      return response.text()
+    })
+    .then( function (text) {
+      if (text[0] == "{") {
+        query.data.blazer = JSON.parse(text)
+        setTimeout( function () {
+          if (!query.canceled) {
+            runQueryHelper(query)
+          }
+        }, 1000)
+      } else {
         if (!query.canceled) {
-          runQueryHelper(query)
+          query.success(text)
         }
-      }, 1000)
-    } else {
-      if (!query.canceled) {
-        query.success(text)
+        queryComplete(query)
+      }
+    }).catch( function (error) {
+      if (error.name == "AbortError") {
+        cancelServerQuery(query)
+      } else {
+        query.error(error.message)
       }
       queryComplete(query)
-    }
-  }).catch( function (error) {
-    if (error.name == "AbortError") {
-      cancelServerQuery(query)
-    } else {
-      query.error(error.message)
-    }
-    queryComplete(query)
-  })
+    })
   query.controller = controller
 }
 

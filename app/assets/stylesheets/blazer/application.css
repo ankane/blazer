@@ -56,7 +56,6 @@ input.search:focus {
 
 .form-inline .ts-wrapper, .text-right .ts-wrapper {
   display: inline-block;
-  vertical-align: middle;
   margin-left: 5px;
   margin-right: 20px;
   text-align: left;

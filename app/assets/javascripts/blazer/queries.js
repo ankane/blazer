@@ -41,7 +41,7 @@ function runQueryHelper(query) {
       }
       return response.text()
     })
-    .then( function (text) {
+    .then(function (text) {
       if (text[0] == "{") {
         query.data.blazer = JSON.parse(text)
         setTimeout( function () {
@@ -55,7 +55,8 @@ function runQueryHelper(query) {
         }
         queryComplete(query)
       }
-    }).catch( function (error) {
+    })
+    .catch(function (error) {
       if (error.name == "AbortError") {
         cancelServerQuery(query)
       } else {
@@ -73,7 +74,7 @@ function queryComplete(query) {
 }
 
 function uuid() {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (c) {
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
     const r = Math.random()*16|0, v = c == 'x' ? r : (r&0x3|0x8)
     return v.toString(16)
   })

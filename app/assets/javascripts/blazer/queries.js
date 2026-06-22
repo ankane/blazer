@@ -32,15 +32,18 @@ function runNext() {
 }
 
 function runQueryHelper(query) {
-  const xhr = $.ajax({
-    url: Routes.run_queries_path(),
-    method: "POST",
-    data: csrfProtect(query.data),
-    dataType: "html"
-  }).done( function (d) {
-    if (d[0] == "{") {
-      const response = $.parseJSON(d)
-      query.data.blazer = response
+  const formdata = createFormData(csrfProtect(query.data))
+  const controller = new AbortController()
+  fetch(Routes.run_queries_path(), {method: "POST", body: formdata, signal: controller.signal})
+  .then(function (response) {
+    if (!response.ok) {
+      throw new Error(response.statusText)
+    }
+    return response.text()
+  })
+  .then( function (text) {
+    if (text[0] == "{") {
+      query.data.blazer = $.parseJSON(text)
       setTimeout( function () {
         if (!query.canceled) {
           runQueryHelper(query)
@@ -48,26 +51,19 @@ function runQueryHelper(query) {
       }, 1000)
     } else {
       if (!query.canceled) {
-        query.success(d)
+        query.success(text)
       }
       queryComplete(query)
     }
-  }).fail( function(jqXHR, textStatus, errorThrown) {
-    // check jqXHR.status instead of query.canceled
-    // so it works for page navigation with Firefox and Safari
-    if (jqXHR.status === 0) {
+  }).catch( function (error) {
+    if (error.name == "AbortError") {
       cancelServerQuery(query)
     } else {
-      let message = (typeof errorThrown === "string") ? errorThrown : errorThrown.message
-      if (!message) {
-        message = "An error occurred"
-      }
-      query.error(message)
+      query.error(error.message)
     }
     queryComplete(query)
   })
-  query.xhr = xhr
-  return xhr
+  query.controller = controller
 }
 
 function queryComplete(query) {
@@ -96,15 +92,22 @@ window.addEventListener("beforeunload", cancelAllQueries)
 
 function cancelQuery(query) {
   query.canceled = true
-  if (query.xhr) {
-    query.xhr.abort()
+  if (query.controller) {
+    query.controller.abort()
   }
 }
 
 function createFormData(params) {
   const formdata = new FormData()
   for (const [key, value] of Object.entries(params)) {
-    formdata.append(key, value)
+    if (typeof value === "object") {
+      // handle single level of nesting
+      for (const [k, v] of Object.entries(value)) {
+        formdata.append(`${key}[${k}]`, v)
+      }
+    } else {
+      formdata.append(key, value)
+    }
   }
   return formdata
 }

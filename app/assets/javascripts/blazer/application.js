@@ -22,6 +22,17 @@ document.addEventListener("mouseover", function (e) {
   }
 })
 
+document.addEventListener("click", function (e) {
+  const dropdown = document.querySelector(".dropdown-toggle")
+  if (dropdown) {
+    if (dropdown.contains(e.target)) {
+      dropdown.parentElement.classList.toggle("open")
+    } else {
+      dropdown.parentElement.classList.remove("open")
+    }
+  }
+})
+
 document.addEventListener("change", function (e) {
   const target = e.target.closest("#bind input, #bind select")
   if (target) {

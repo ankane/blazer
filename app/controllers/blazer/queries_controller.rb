@@ -43,7 +43,7 @@ module Blazer
         name: params[:name]
       )
       if params[:fork_query_id]
-        @query.statement ||= Blazer::Query.find(params[:fork_query_id]).try(:statement)
+        @query.statement ||= Blazer::Query.find(params[:fork_query_id]).statement
       end
       if params[:upload_id]
         upload = Blazer::Upload.find(params[:upload_id])

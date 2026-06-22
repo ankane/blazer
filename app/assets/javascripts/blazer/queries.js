@@ -128,7 +128,6 @@ function cancelServerQuery(query) {
     // Blob works with Chrome 81+ and URLSearchParams works with Chrome 88+
     navigator.sendBeacon(path, formdata)
   } else {
-    // TODO make sync
     fetch(path, {method: "POST", body: formdata})
   }
 }

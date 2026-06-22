@@ -1,13 +1,13 @@
-function removeCommas(string) {
+function removeDelimiters(string) {
   return string.replace(/,/g, "")
 }
 
 function compareInt(a, b) {
-  return parseInt(removeCommas(a), 10) - parseInt(removeCommas(b), 10)
+  return parseInt(removeDelimiters(a), 10) - parseInt(removeDelimiters(b), 10)
 }
 
 function compareFloat(a, b) {
-  return parseFloat(removeCommas(a)) - parseFloat(removeCommas(b))
+  return parseFloat(removeDelimiters(a)) - parseFloat(removeDelimiters(b))
 }
 
 function compareString(a, b) {

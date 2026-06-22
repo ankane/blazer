@@ -404,6 +404,41 @@ SELECT * FROM ratings WHERE user_id IS NULL /* all ratings should have a user */
 
 Then create check with optional emails if you want to be notified. Emails are sent when a check starts failing, and when it starts passing again.
 
+### Variables in Checks
+
+Checks run saved queries automatically, so queries used for checks should not require variables.
+Blazer validates this when you create or update a check and shows `Query can't have variables` for queries with placeholders like `{company_id}`.
+
+For example, this query works well as a normal interactive query, but not as a check:
+
+```sql
+SELECT * FROM orders WHERE company_id = {company_id} AND shipped_at IS NULL
+```
+
+Use one of these patterns instead:
+
+- Create a separate saved query per value you want to check.
+- Put the constant directly in the check query.
+- Keep the variable-based query for ad hoc use and create a second check-specific query without variables.
+- Use a database view if multiple checks need to share the same complex logic.
+
+For a check-specific version of the query above, use:
+
+```sql
+SELECT * FROM orders WHERE company_id = 42 AND shipped_at IS NULL
+```
+
+A few details to keep in mind:
+
+- Smart variables are also variables, so they are not available to checks.
+- URL parameters are only used when running a query interactively in the UI.
+- Scheduled runs from `blazer:run_checks` do not prompt for or store variable values.
+- Default variable values do not make a query check-compatible.
+- If a check stops saving after a query change, look for `{variable_name}` placeholders in the query.
+- If you need the same check for many customers or accounts, duplicate the saved query and replace the variable with each account's value.
+- To reuse logic without duplicating long SQL, move shared SQL into a view or common table expression and keep each check query variable-free.
+- After changing a query used by a check, run the check manually or wait for the next scheduled run to confirm the new SQL works.
+
 ## Cohorts
 
 Create a cohort analysis from a simple SQL query. [Example](https://blazer.dokkuapp.com/queries/19-cohort-analysis-from-first-order)

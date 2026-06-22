@@ -33,7 +33,7 @@
 
         //default settings for options
         this.parentEl = 'body';
-        this.element = $(element);
+        this.element = element;
         this.startDate = moment().startOf('day');
         this.endDate = moment().endOf('day');
         this.minDate = false;
@@ -57,11 +57,11 @@
         this.ranges = {};
 
         this.opens = 'right';
-        if (this.element.hasClass('pull-right'))
+        if (this.element.classList.contains('pull-right'))
             this.opens = 'left';
 
         this.drops = 'down';
-        if (this.element.hasClass('dropup'))
+        if (this.element.classList.contains('dropup'))
             this.drops = 'up';
 
         this.buttonClasses = 'btn btn-sm';
@@ -92,12 +92,8 @@
         if (typeof options !== 'object' || options === null)
             options = {};
 
-        //allow setting options with data attributes
-        //data-api options will be overwritten with custom javascript options
-        options = $.extend(this.element.data(), options);
-
         //html template for the picker UI
-        if (typeof options.template !== 'string' && !(options.template instanceof $))
+        if (typeof options.template !== 'string')
             options.template =
             '<div class="daterangepicker">' +
                 '<div class="ranges"></div>' +
@@ -116,8 +112,11 @@
                 '</div>' +
             '</div>';
 
-        this.parentEl = (options.parentEl && $(options.parentEl).length) ? $(options.parentEl) : $(this.parentEl);
-        this.container = $(options.template).appendTo(this.parentEl);
+        this.parentEl = document.querySelector(this.parentEl);
+        var template = document.createElement('template');
+        template.innerHTML = options.template;
+        this.parentEl.append(template.content.firstElementChild);
+        this.container = this.parentEl.lastElementChild;
 
         //
         // handle all the possible options overriding defaults
@@ -160,7 +159,7 @@
                 this.locale.customRangeLabel = rangeHtml;
             }
         }
-        this.container.addClass(this.locale.direction);
+        this.container.classList.add(this.locale.direction);
 
         if (typeof options.startDate === 'string')
             this.startDate = moment(options.startDate, this.locale.format);
@@ -291,8 +290,8 @@
 
         //if no start/end dates set, check if an input element contains initial values
         if (typeof options.startDate === 'undefined' && typeof options.endDate === 'undefined') {
-            if ($(this.element).is(':text')) {
-                var val = $(this.element).val(),
+            if (this.element.matches(':text')) {
+                var val = this.element.value,
                     split = val.split(this.locale.separator);
 
                 start = end = null;
@@ -357,7 +356,7 @@
                 list += '<li data-range-key="' + this.locale.customRangeLabel + '">' + this.locale.customRangeLabel + '</li>';
             }
             list += '</ul>';
-            this.container.find('.ranges').prepend(list);
+            this.container.querySelector('.ranges').prepend(document.createRange().createContextualFragment(list));
         }
 
         if (typeof cb === 'function') {
@@ -367,7 +366,7 @@
         if (!this.timePicker) {
             this.startDate = this.startDate.startOf('day');
             this.endDate = this.endDate.endOf('day');
-            this.container.find('.calendar-time').hide();
+            this.container.querySelector('.calendar-time').style.display = 'none';
         }
 
         //can't be used together for now
@@ -375,67 +374,66 @@
             this.autoApply = false;
 
         if (this.autoApply) {
-            this.container.addClass('auto-apply');
+            this.container.classList.add('auto-apply');
         }
 
         if (typeof options.ranges === 'object')
-            this.container.addClass('show-ranges');
+            this.container.classList.add('show-ranges');
 
         if (this.singleDatePicker) {
-            this.container.addClass('single');
-            this.container.find('.drp-calendar.left').addClass('single');
-            this.container.find('.drp-calendar.left').show();
-            this.container.find('.drp-calendar.right').hide();
+            this.container.classList.add('single');
+            this.container.querySelector('.drp-calendar.left').classList.add('single');
+            this.container.querySelector('.drp-calendar.left').style.display = 'block';
+            this.container.querySelector('.drp-calendar.right').style.display = 'none';
             if (!this.timePicker && this.autoApply) {
-                this.container.addClass('auto-apply');
+                this.container.classList.add('auto-apply');
             }
         }
 
         if ((typeof options.ranges === 'undefined' && !this.singleDatePicker) || this.alwaysShowCalendars) {
-            this.container.addClass('show-calendar');
+            this.container.classList.add('show-calendar');
         }
 
-        this.container.addClass('opens' + this.opens);
+        this.container.classList.add('opens' + this.opens);
 
         //apply CSS classes and labels to buttons
-        this.container.find('.applyBtn, .cancelBtn').addClass(this.buttonClasses);
+        this.container.querySelectorAll('.applyBtn, .cancelBtn').forEach(el => el.classList.add(...this.buttonClasses.split(' ')));
         if (this.applyButtonClasses.length)
-            this.container.find('.applyBtn').addClass(this.applyButtonClasses);
+            this.container.querySelector('.applyBtn').classList.add(...this.applyButtonClasses.split(' '));
         if (this.cancelButtonClasses.length)
-            this.container.find('.cancelBtn').addClass(this.cancelButtonClasses);
-        this.container.find('.applyBtn').html(this.locale.applyLabel);
-        this.container.find('.cancelBtn').html(this.locale.cancelLabel);
+            this.container.querySelector('.cancelBtn').classList.add(...this.cancelButtonClasses.split(' '));
+        this.container.querySelector('.applyBtn').innerHTML = this.locale.applyLabel;
+        this.container.querySelector('.cancelBtn').innerHTML = this.locale.cancelLabel;
 
         //
         // event listeners
         //
 
-        this.container.find('.drp-calendar')
-            .on('click.daterangepicker', '.prev', $.proxy(this.clickPrev, this))
-            .on('click.daterangepicker', '.next', $.proxy(this.clickNext, this))
-            .on('mousedown.daterangepicker', 'td.available', $.proxy(this.clickDate, this))
-            .on('mouseenter.daterangepicker', 'td.available', $.proxy(this.hoverDate, this))
-            .on('change.daterangepicker', 'select.yearselect', $.proxy(this.monthOrYearChanged, this))
-            .on('change.daterangepicker', 'select.monthselect', $.proxy(this.monthOrYearChanged, this))
-            .on('change.daterangepicker', 'select.hourselect,select.minuteselect,select.secondselect,select.ampmselect', $.proxy(this.timeChanged, this));
+        this.container.querySelectorAll('.drp-calendar').forEach(cal => {
+            cal.addEventListener('click', e => e.target.closest('.prev') && this.clickPrev(e));
+            cal.addEventListener('click', e => e.target.closest('.next') && this.clickNext(e));
+            cal.addEventListener('mousedown', e => e.target.closest('td.available') && this.clickDate(e));
+            cal.addEventListener('mouseover', e => e.target.closest('td.available') && this.hoverDate(e));
+            cal.addEventListener('change', e => e.target.closest('select.yearselect') && this.monthOrYearChanged(e));
+            cal.addEventListener('change', e => e.target.closest('select.monthselect') && this.monthOrYearChanged(e));
+            cal.addEventListener('change', e => e.target.closest('select.hourselect,select.minuteselect,select.secondselect,select.ampmselect') && this.timeChanged(e));
+        });
 
-        this.container.find('.ranges')
-            .on('click.daterangepicker', 'li', $.proxy(this.clickRange, this));
+        var ranges = this.container.querySelector('.ranges');
+        ranges.addEventListener('click', e => e.target.closest('li') && this.clickRange(e));
 
-        this.container.find('.drp-buttons')
-            .on('click.daterangepicker', 'button.applyBtn', $.proxy(this.clickApply, this))
-            .on('click.daterangepicker', 'button.cancelBtn', $.proxy(this.clickCancel, this));
+        var buttons = this.container.querySelector('.drp-buttons');
+        buttons.addEventListener('click', e => e.target.closest('button.applyBtn') && this.clickApply(e));
+        buttons.addEventListener('click', e => e.target.closest('button.cancelBtn') && this.clickCancel(e));
 
-        if (this.element.is('input') || this.element.is('button')) {
-            this.element.on({
-                'click.daterangepicker': $.proxy(this.show, this),
-                'focus.daterangepicker': $.proxy(this.show, this),
-                'keyup.daterangepicker': $.proxy(this.elementChanged, this),
-                'keydown.daterangepicker': $.proxy(this.keydown, this) //IE 11 compatibility
-            });
+        if (this.element.matches('input') || this.element.matches('button')) {
+            this.element.addEventListener('click', e => this.show(e));
+            this.element.addEventListener('focus', e => this.show(e));
+            this.element.addEventListener('keyup', e => this.elementChanged(e));
+            this.element.addEventListener('keydown', e => this.keydown(e));
         } else {
-            this.element.on('click.daterangepicker', $.proxy(this.toggle, this));
-            this.element.on('keydown.daterangepicker', $.proxy(this.toggle, this));
+            this.element.addEventListener('click', e => this.toggle(e));
+            this.element.addEventListener('keydown', e => this.toggle(e));
         }
 
         //
@@ -505,7 +503,7 @@
 
             this.previousRightTime = this.endDate.clone();
 
-            this.container.find('.drp-selected').html(this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format));
+            this.container.querySelector('.drp-selected').innerHTML = this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format);
 
             if (!this.isShowing)
                 this.updateElement();
@@ -526,13 +524,13 @@
                 this.renderTimePicker('left');
                 this.renderTimePicker('right');
                 if (!this.endDate) {
-                    this.container.find('.right .calendar-time select').prop('disabled', true).addClass('disabled');
+                    this.container.querySelector('.right .calendar-time select').prop('disabled', true).classList.add('disabled');
                 } else {
-                    this.container.find('.right .calendar-time select').prop('disabled', false).removeClass('disabled');
+                    this.container.querySelector('.right .calendar-time select').prop('disabled', false).classList.remove('disabled');
                 }
             }
             if (this.endDate)
-                this.container.find('.drp-selected').html(this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format));
+                this.container.querySelector('.drp-selected').innerHTML = this.startDate.format(this.locale.format) + this.locale.separator + this.endDate.format(this.locale.format);
             this.updateMonthsInView();
             this.updateCalendars();
             this.updateFormInputs();
@@ -574,28 +572,28 @@
             if (this.timePicker) {
                 var hour, minute, second;
                 if (this.endDate) {
-                    hour = parseInt(this.container.find('.left .hourselect').val(), 10);
-                    minute = parseInt(this.container.find('.left .minuteselect').val(), 10);
+                    hour = parseInt(this.container.querySelector('.left .hourselect').value, 10);
+                    minute = parseInt(this.container.querySelector('.left .minuteselect').value, 10);
                     if (isNaN(minute)) {
-                        minute = parseInt(this.container.find('.left .minuteselect option:last').val(), 10);
+                        minute = parseInt(this.container.querySelector('.left .minuteselect option:last').value, 10);
                     }
-                    second = this.timePickerSeconds ? parseInt(this.container.find('.left .secondselect').val(), 10) : 0;
+                    second = this.timePickerSeconds ? parseInt(this.container.querySelector('.left .secondselect').value, 10) : 0;
                     if (!this.timePicker24Hour) {
-                        var ampm = this.container.find('.left .ampmselect').val();
+                        var ampm = this.container.querySelector('.left .ampmselect').value;
                         if (ampm === 'PM' && hour < 12)
                             hour += 12;
                         if (ampm === 'AM' && hour === 12)
                             hour = 0;
                     }
                 } else {
-                    hour = parseInt(this.container.find('.right .hourselect').val(), 10);
-                    minute = parseInt(this.container.find('.right .minuteselect').val(), 10);
+                    hour = parseInt(this.container.querySelector('.right .hourselect').value, 10);
+                    minute = parseInt(this.container.querySelector('.right .minuteselect').value, 10);
                     if (isNaN(minute)) {
-                        minute = parseInt(this.container.find('.right .minuteselect option:last').val(), 10);
+                        minute = parseInt(this.container.querySelector('.right .minuteselect option:last').value, 10);
                     }
-                    second = this.timePickerSeconds ? parseInt(this.container.find('.right .secondselect').val(), 10) : 0;
+                    second = this.timePickerSeconds ? parseInt(this.container.querySelector('.right .secondselect').value, 10) : 0;
                     if (!this.timePicker24Hour) {
-                        var ampm = this.container.find('.right .ampmselect').val();
+                        var ampm = this.container.querySelector('.right .ampmselect').value;
                         if (ampm === 'PM' && hour < 12)
                             hour += 12;
                         if (ampm === 'AM' && hour === 12)
@@ -610,7 +608,7 @@
             this.renderCalendar('right');
 
             //highlight any predefined range matching the current start and end dates
-            this.container.find('.ranges li').removeClass('active');
+            this.container.querySelectorAll('.ranges li').forEach(li => li.classList.remove('active'));
             if (this.endDate == null) return;
 
             this.calculateChosenLabel();
@@ -753,7 +751,7 @@
             if (this.showWeekNumbers || this.showISOWeekNumbers)
                 html += '<th class="week">' + this.locale.weekLabel + '</th>';
 
-            $.each(this.locale.daysOfWeek, function(index, dayOfWeek) {
+            this.locale.daysOfWeek.forEach(function(dayOfWeek) {
                 html += '<th>' + dayOfWeek + '</th>';
             });
 
@@ -846,7 +844,7 @@
             html += '</tbody>';
             html += '</table>';
 
-            this.container.find('.drp-calendar.' + side + ' .calendar-table').html(html);
+            this.container.querySelector('.drp-calendar.' + side + ' .calendar-table').innerHTML = html;
 
         },
 
@@ -869,15 +867,15 @@
                 minDate = this.startDate;
 
                 //Preserve the time already selected
-                var timeSelector = this.container.find('.drp-calendar.right .calendar-time');
+                var timeSelector = this.container.querySelector('.drp-calendar.right .calendar-time');
                 if (timeSelector.html() != '') {
 
-                    selected.hour(!isNaN(selected.hour()) ? selected.hour() : timeSelector.find('.hourselect option:selected').val());
-                    selected.minute(!isNaN(selected.minute()) ? selected.minute() : timeSelector.find('.minuteselect option:selected').val());
-                    selected.second(!isNaN(selected.second()) ? selected.second() : timeSelector.find('.secondselect option:selected').val());
+                    selected.hour(!isNaN(selected.hour()) ? selected.hour() : timeSelector.querySelector('.hourselect option:selected').value);
+                    selected.minute(!isNaN(selected.minute()) ? selected.minute() : timeSelector.querySelector('.minuteselect option:selected').value);
+                    selected.second(!isNaN(selected.second()) ? selected.second() : timeSelector.querySelector('.secondselect option:selected').value);
 
                     if (!this.timePicker24Hour) {
-                        var ampm = timeSelector.find('.ampmselect option:selected').val();
+                        var ampm = timeSelector.querySelector('.ampmselect option:selected').value;
                         if (ampm === 'PM' && selected.hour() < 12)
                             selected.hour(selected.hour() + 12);
                         if (ampm === 'AM' && selected.hour() === 12)
@@ -1007,16 +1005,16 @@
                 html += '</select>';
             }
 
-            this.container.find('.drp-calendar.' + side + ' .calendar-time').html(html);
+            this.container.querySelector('.drp-calendar.' + side + ' .calendar-time').innerHTML = html;
 
         },
 
         updateFormInputs: function() {
 
             if (this.singleDatePicker || (this.endDate && (this.startDate.isBefore(this.endDate) || this.startDate.isSame(this.endDate)))) {
-                this.container.find('button.applyBtn').prop('disabled', false);
+                this.container.querySelector('button.applyBtn').disabled = false;
             } else {
-                this.container.find('button.applyBtn').prop('disabled', true);
+                this.container.querySelector('button.applyBtn').disabled = true;
             }
 
         },
@@ -1026,90 +1024,90 @@
                 containerTop,
                 drops = this.drops;
 
-            var parentRightEdge = $(window).width();
-            if (!this.parentEl.is('body')) {
+            var parentRightEdge = window.innerWidth;
+            if (!this.parentEl.matches('body')) {
                 parentOffset = {
-                    top: this.parentEl.offset().top - this.parentEl.scrollTop(),
-                    left: this.parentEl.offset().left - this.parentEl.scrollLeft()
+                    top: this.parentEl.getBoundingClientRect().top - this.parentEl.scrollTop,
+                    left: this.parentEl.getBoundingClientRect().left - this.parentEl.scrollLeft
                 };
-                parentRightEdge = this.parentEl[0].clientWidth + this.parentEl.offset().left;
+                parentRightEdge = this.parentEl.clientWidth + this.parentEl.getBoundingClientRect().left;
             }
 
             switch (drops) {
             case 'auto':
-                containerTop = this.element.offset().top + this.element.outerHeight() - parentOffset.top;
-                if (containerTop + this.container.outerHeight() >= this.parentEl[0].scrollHeight) {
-                    containerTop = this.element.offset().top - this.container.outerHeight() - parentOffset.top;
+                containerTop = this.element.getBoundingClientRect().top + this.element.offsetHeight - parentOffset.top;
+                if (containerTop + this.container.offsetHeight >= this.parentEl.scrollHeight) {
+                    containerTop = this.element.getBoundingClientRect().top - this.container.offsetHeight - parentOffset.top;
                     drops = 'up';
                 }
                 break;
             case 'up':
-                containerTop = this.element.offset().top - this.container.outerHeight() - parentOffset.top;
+                containerTop = this.element.getBoundingClientRect().top - this.container.offsetHeight - parentOffset.top;
                 break;
             default:
-                containerTop = this.element.offset().top + this.element.outerHeight() - parentOffset.top;
+                containerTop = this.element.getBoundingClientRect().top + this.element.offsetHeight - parentOffset.top;
                 break;
             }
 
             // Force the container to it's actual width
-            this.container.css({
+            Object.assign(this.container.style, {
               top: 0,
               left: 0,
               right: 'auto'
             });
-            var containerWidth = this.container.outerWidth();
+            var containerWidth = this.container.offsetWidth;
 
-            this.container.toggleClass('drop-up', drops == 'up');
+            this.container.classList.toggle('drop-up', drops == 'up');
 
             if (this.opens == 'left') {
-                var containerRight = parentRightEdge - this.element.offset().left - this.element.outerWidth();
-                if (containerWidth + containerRight > $(window).width()) {
-                    this.container.css({
-                        top: containerTop,
+                var containerRight = parentRightEdge - this.element.getBoundingClientRect().left - this.element.offsetWidth;
+                if (containerWidth + containerRight > window.innerWidth) {
+                    Object.assign(this.container.style, {
+                        top: containerTop + 'px',
                         right: 'auto',
                         left: 9
                     });
                 } else {
-                    this.container.css({
-                        top: containerTop,
-                        right: containerRight,
+                    Object.assign(this.container.style, {
+                        top: containerTop + 'px',
+                        right: containerRight + 'px',
                         left: 'auto'
                     });
                 }
             } else if (this.opens == 'center') {
-                var containerLeft = this.element.offset().left - parentOffset.left + this.element.outerWidth() / 2
+                var containerLeft = this.element.getBoundingClientRect().left - parentOffset.left + this.element.offsetWidth / 2
                                         - containerWidth / 2;
                 if (containerLeft < 0) {
-                    this.container.css({
-                        top: containerTop,
+                    Object.assign(this.container.style, {
+                        top: containerTop + 'px',
                         right: 'auto',
                         left: 9
                     });
-                } else if (containerLeft + containerWidth > $(window).width()) {
-                    this.container.css({
-                        top: containerTop,
+                } else if (containerLeft + containerWidth > window.innerWidth) {
+                    Object.assign(this.container.style, {
+                        top: containerTop + 'px',
                         left: 'auto',
                         right: 0
                     });
                 } else {
-                    this.container.css({
-                        top: containerTop,
-                        left: containerLeft,
+                    Object.assign(this.container.style, {
+                        top: containerTop + 'px',
+                        left: containerLeft + 'px',
                         right: 'auto'
                     });
                 }
             } else {
-                var containerLeft = this.element.offset().left - parentOffset.left;
-                if (containerLeft + containerWidth > $(window).width()) {
-                    this.container.css({
-                        top: containerTop,
+                var containerLeft = this.element.getBoundingClientRect().left - parentOffset.left;
+                if (containerLeft + containerWidth > window.innerWidth) {
+                    Object.assign(this.container.style, {
+                        top: containerTop + 'px',
                         left: 'auto',
                         right: 0
                     });
                 } else {
-                    this.container.css({
-                        top: containerTop,
-                        left: containerLeft,
+                    Object.assign(this.container.style, {
+                        top: containerTop + 'px',
+                        left: containerLeft + 'px',
                         right: 'auto'
                     });
                 }
@@ -1120,29 +1118,28 @@
             if (this.isShowing) return;
 
             // Create a click proxy that is private to this instance of datepicker, for unbinding
-            this._outsideClickProxy = $.proxy(function(e) { this.outsideClick(e); }, this);
+            this._outsideClickProxy = e => this.outsideClick(e);
 
             // Bind global datepicker mousedown for hiding and
-            $(document)
-              .on('mousedown.daterangepicker', this._outsideClickProxy)
-              // also support mobile devices
-              .on('touchend.daterangepicker', this._outsideClickProxy)
-              // also explicitly play nice with Bootstrap dropdowns, which stopPropagation when clicking them
-              .on('click.daterangepicker', '[data-toggle=dropdown]', this._outsideClickProxy)
-              // and also close when focus changes to outside the picker (eg. tabbing between controls)
-              .on('focusin.daterangepicker', this._outsideClickProxy);
+            document.addEventListener('mousedown', this._outsideClickProxy);
+            // also support mobile devices
+            document.addEventListener('touchend', this._outsideClickProxy);
+            // also explicitly play nice with Bootstrap dropdowns, which stopPropagation when clicking them
+            document.addEventListener('click', e => e.target.closest('[data-toggle=dropdown]') && this._outsideClickProxy(e));
+            // and also close when focus changes to outside the picker (eg. tabbing between controls)
+            document.addEventListener('focusin', this._outsideClickProxy);
 
             // Reposition the picker if the window is resized while it's open
-            $(window).on('resize.daterangepicker', $.proxy(function(e) { this.move(e); }, this));
+            window.addEventListener('resize', e => this.move(e));
 
             this.oldStartDate = this.startDate.clone();
             this.oldEndDate = this.endDate.clone();
             this.previousRightTime = this.endDate.clone();
 
             this.updateView();
-            this.container.show();
+            this.container.style.display = 'block';
             this.move();
-            this.element.trigger('show.daterangepicker', this);
+            // this.element.trigger('show.daterangepicker', this);
             this.isShowing = true;
         },
 
@@ -1162,10 +1159,10 @@
             //if picker is attached to a text input, update it
             this.updateElement();
 
-            $(document).off('.daterangepicker');
-            $(window).off('.daterangepicker');
-            this.container.hide();
-            this.element.trigger('hide.daterangepicker', this);
+            // $(document).off('.daterangepicker');
+            // $(window).off('.daterangepicker');
+            this.container.style.display = 'none';
+            // this.element.trigger('hide.daterangepicker', this);
             this.isShowing = false;
         },
 
@@ -1178,28 +1175,28 @@
         },
 
         outsideClick: function(e) {
-            var target = $(e.target);
+            var target = e.target;
             // if the page is clicked anywhere except within the daterangerpicker/button
             // itself then call this.hide()
             if (
                 // ie modal dialog fix
                 e.type == "focusin" ||
-                target.closest(this.element).length ||
-                target.closest(this.container).length ||
-                target.closest('.calendar-table').length
+                this.element.contains(target) ||
+                this.container.contains(target) ||
+                target.closest('.calendar-table')
                 ) return;
             this.hide();
-            this.element.trigger('outsideClick.daterangepicker', this);
+            // this.element.trigger('outsideClick.daterangepicker', this);
         },
 
         showCalendars: function() {
-            this.container.addClass('show-calendar');
+            this.container.classList.add('show-calendar');
             this.move();
-            this.element.trigger('showCalendar.daterangepicker', this);
+            // this.element.trigger('showCalendar.daterangepicker', this);
         },
 
         hideCalendars: function() {
-            this.container.removeClass('show-calendar');
+            this.container.classList.remove('show-calendar');
             this.element.trigger('hideCalendar.daterangepicker', this);
         },
 
@@ -1225,8 +1222,8 @@
         },
 
         clickPrev: function(e) {
-            var cal = $(e.target).parents('.drp-calendar');
-            if (cal.hasClass('left')) {
+            var cal = e.target.closest('.drp-calendar');
+            if (cal.classList.contains('left')) {
                 this.leftCalendar.month.subtract(1, 'month');
                 if (this.linkedCalendars)
                     this.rightCalendar.month.subtract(1, 'month');
@@ -1237,8 +1234,8 @@
         },
 
         clickNext: function(e) {
-            var cal = $(e.target).parents('.drp-calendar');
-            if (cal.hasClass('left')) {
+            var cal = e.target.closest('.drp-calendar');
+            if (cal.classList.contains('left')) {
                 this.leftCalendar.month.add(1, 'month');
             } else {
                 this.rightCalendar.month.add(1, 'month');
@@ -1251,34 +1248,34 @@
         hoverDate: function(e) {
 
             //ignore dates that can't be selected
-            if (!$(e.target).hasClass('available')) return;
+            if (!e.target.classList.contains('available')) return;
 
-            var title = $(e.target).attr('data-title');
+            var title = e.target.getAttribute('data-title');
             var row = title.substr(1, 1);
             var col = title.substr(3, 1);
-            var cal = $(e.target).parents('.drp-calendar');
-            var date = cal.hasClass('left') ? this.leftCalendar.calendar[row][col] : this.rightCalendar.calendar[row][col];
+            var cal = e.target.closest('.drp-calendar');
+            var date = cal.classList.contains('left') ? this.leftCalendar.calendar[row][col] : this.rightCalendar.calendar[row][col];
 
             //highlight the dates between the start date and the date being hovered as a potential end date
             var leftCalendar = this.leftCalendar;
             var rightCalendar = this.rightCalendar;
             var startDate = this.startDate;
             if (!this.endDate) {
-                this.container.find('.drp-calendar tbody td').each(function(index, el) {
+                this.container.querySelectorAll('.drp-calendar tbody td').forEach(function(el, index) {
 
                     //skip week numbers, only look at dates
-                    if ($(el).hasClass('week')) return;
+                    if (el.classList.contains('week')) return;
 
-                    var title = $(el).attr('data-title');
+                    var title = el.getAttribute('data-title');
                     var row = title.substr(1, 1);
                     var col = title.substr(3, 1);
-                    var cal = $(el).parents('.drp-calendar');
-                    var dt = cal.hasClass('left') ? leftCalendar.calendar[row][col] : rightCalendar.calendar[row][col];
+                    var cal = el.closest('.drp-calendar');
+                    var dt = cal.classList.contains('left') ? leftCalendar.calendar[row][col] : rightCalendar.calendar[row][col];
 
                     if ((dt.isAfter(startDate) && dt.isBefore(date)) || dt.isSame(date, 'day')) {
-                        $(el).addClass('in-range');
+                        el.classList.add('in-range');
                     } else {
-                        $(el).removeClass('in-range');
+                        el.classList.remove('in-range');
                     }
 
                 });
@@ -1288,13 +1285,13 @@
 
         clickDate: function(e) {
 
-            if (!$(e.target).hasClass('available')) return;
+            if (!e.target.classList.contains('available')) return;
 
-            var title = $(e.target).attr('data-title');
+            var title = e.target.getAttribute('data-title');
             var row = title.substr(1, 1);
             var col = title.substr(3, 1);
-            var cal = $(e.target).parents('.drp-calendar');
-            var date = cal.hasClass('left') ? this.leftCalendar.calendar[row][col] : this.rightCalendar.calendar[row][col];
+            var cal = e.target.closest('.drp-calendar');
+            var date = cal.classList.contains('left') ? this.leftCalendar.calendar[row][col] : this.rightCalendar.calendar[row][col];
 
             //
             // this function needs to do a few things:
@@ -1307,19 +1304,19 @@
 
             if (this.endDate || date.isBefore(this.startDate, 'day')) { //picking start
                 if (this.timePicker) {
-                    var hour = parseInt(this.container.find('.left .hourselect').val(), 10);
+                    var hour = parseInt(this.container.querySelector('.left .hourselect').value, 10);
                     if (!this.timePicker24Hour) {
-                        var ampm = this.container.find('.left .ampmselect').val();
+                        var ampm = this.container.querySelector('.left .ampmselect').value;
                         if (ampm === 'PM' && hour < 12)
                             hour += 12;
                         if (ampm === 'AM' && hour === 12)
                             hour = 0;
                     }
-                    var minute = parseInt(this.container.find('.left .minuteselect').val(), 10);
+                    var minute = parseInt(this.container.querySelector('.left .minuteselect').value, 10);
                     if (isNaN(minute)) {
-                        minute = parseInt(this.container.find('.left .minuteselect option:last').val(), 10);
+                        minute = parseInt(this.container.querySelector('.left .minuteselect option:last').value, 10);
                     }
-                    var second = this.timePickerSeconds ? parseInt(this.container.find('.left .secondselect').val(), 10) : 0;
+                    var second = this.timePickerSeconds ? parseInt(this.container.querySelector('.left .secondselect').value, 10) : 0;
                     date = date.clone().hour(hour).minute(minute).second(second);
                 }
                 this.endDate = null;
@@ -1330,19 +1327,19 @@
                 this.setEndDate(this.startDate.clone());
             } else { // picking end
                 if (this.timePicker) {
-                    var hour = parseInt(this.container.find('.right .hourselect').val(), 10);
+                    var hour = parseInt(this.container.querySelector('.right .hourselect').value, 10);
                     if (!this.timePicker24Hour) {
-                        var ampm = this.container.find('.right .ampmselect').val();
+                        var ampm = this.container.querySelector('.right .ampmselect').value;
                         if (ampm === 'PM' && hour < 12)
                             hour += 12;
                         if (ampm === 'AM' && hour === 12)
                             hour = 0;
                     }
-                    var minute = parseInt(this.container.find('.right .minuteselect').val(), 10);
+                    var minute = parseInt(this.container.querySelector('.right .minuteselect').value, 10);
                     if (isNaN(minute)) {
-                        minute = parseInt(this.container.find('.right .minuteselect option:last').val(), 10);
+                        minute = parseInt(this.container.querySelector('.right .minuteselect option:last').value, 10);
                     }
-                    var second = this.timePickerSeconds ? parseInt(this.container.find('.right .secondselect').val(), 10) : 0;
+                    var second = this.timePickerSeconds ? parseInt(this.container.querySelector('.right .secondselect').value, 10) : 0;
                     date = date.clone().hour(hour).minute(minute).second(second);
                 }
                 this.setEndDate(date.clone());
@@ -1374,14 +1371,16 @@
                     //ignore times when comparing dates if time picker seconds is not enabled
                     if (this.startDate.format(format) == this.ranges[range][0].format(format) && this.endDate.format(format) == this.ranges[range][1].format(format)) {
                         customRange = false;
-                        this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').attr('data-range-key');
+                        this.chosenLabel = this.container.querySelector('.ranges li:eq(' + i + ')').classList.add('active').attr('data-range-key');
                         break;
                     }
                 } else {
                     //ignore times when comparing dates if time picker is not enabled
                     if (this.startDate.format('YYYY-MM-DD') == this.ranges[range][0].format('YYYY-MM-DD') && this.endDate.format('YYYY-MM-DD') == this.ranges[range][1].format('YYYY-MM-DD')) {
                         customRange = false;
-                        this.chosenLabel = this.container.find('.ranges li:eq(' + i + ')').addClass('active').attr('data-range-key');
+                        var li = this.container.querySelectorAll('.ranges li')[i];
+                        li.classList.add('active');
+                        this.chosenLabel = li.getAttribute('data-range-key');
                         break;
                     }
                 }
@@ -1389,7 +1388,11 @@
             }
             if (customRange) {
                 if (this.showCustomRangeLabel) {
-                    this.chosenLabel = this.container.find('.ranges li:last').addClass('active').attr('data-range-key');
+                    var li = this.container.querySelector('.ranges li:last-child');
+                    if (li) {
+                        li.classList.add('active');
+                        this.chosenLabel = li.getAttribute('data-range-key');
+                    }
                 } else {
                     this.chosenLabel = null;
                 }
@@ -1399,7 +1402,7 @@
 
         clickApply: function(e) {
             this.hide();
-            this.element.trigger('apply.daterangepicker', this);
+            this.element.dispatchEvent(new Event('apply.daterangepicker'));
         },
 
         clickCancel: function(e) {
@@ -1410,13 +1413,13 @@
         },
 
         monthOrYearChanged: function(e) {
-            var isLeft = $(e.target).closest('.drp-calendar').hasClass('left'),
+            var isLeft = e.target.closest('.drp-calendar').classList.contains('left'),
                 leftOrRight = isLeft ? 'left' : 'right',
-                cal = this.container.find('.drp-calendar.'+leftOrRight);
+                cal = this.container.querySelector('.drp-calendar.'+leftOrRight);
 
             // Month must be Number for new moment versions
-            var month = parseInt(cal.find('.monthselect').val(), 10);
-            var year = cal.find('.yearselect').val();
+            var month = parseInt(cal.querySelector('.monthselect').value, 10);
+            var year = cal.querySelector('.yearselect').value;
 
             if (!isLeft) {
                 if (year < this.startDate.year() || (year == this.startDate.year() && month < this.startDate.month())) {
@@ -1453,18 +1456,18 @@
 
         timeChanged: function(e) {
 
-            var cal = $(e.target).closest('.drp-calendar'),
-                isLeft = cal.hasClass('left');
+            var cal = e.target.closest('.drp-calendar'),
+                isLeft = cal.classList.contains('left');
 
-            var hour = parseInt(cal.find('.hourselect').val(), 10);
-            var minute = parseInt(cal.find('.minuteselect').val(), 10);
+            var hour = parseInt(cal.querySelector('.hourselect').value, 10);
+            var minute = parseInt(cal.querySelector('.minuteselect').value, 10);
             if (isNaN(minute)) {
-                minute = parseInt(cal.find('.minuteselect option:last').val(), 10);
+                minute = parseInt(cal.querySelector('.minuteselect option:last').value, 10);
             }
-            var second = this.timePickerSeconds ? parseInt(cal.find('.secondselect').val(), 10) : 0;
+            var second = this.timePickerSeconds ? parseInt(cal.querySelector('.secondselect').value, 10) : 0;
 
             if (!this.timePicker24Hour) {
-                var ampm = cal.find('.ampmselect').val();
+                var ampm = cal.querySelector('.ampmselect').value;
                 if (ampm === 'PM' && hour < 12)
                     hour += 12;
                 if (ampm === 'AM' && hour === 12)
@@ -1503,10 +1506,10 @@
         },
 
         elementChanged: function() {
-            if (!this.element.is('input')) return;
-            if (!this.element.val().length) return;
+            if (!this.element.matches('input')) return;
+            if (!this.element.value.length) return;
 
-            var dateString = this.element.val().split(this.locale.separator),
+            var dateString = this.element.value.split(this.locale.separator),
                 start = null,
                 end = null;
 
@@ -1516,7 +1519,7 @@
             }
 
             if (this.singleDatePicker || start === null || end === null) {
-                start = moment(this.element.val(), this.locale.format);
+                start = moment(this.element.value, this.locale.format);
                 end = start;
             }
 
@@ -1543,12 +1546,12 @@
         },
 
         updateElement: function() {
-            if (this.element.is('input') && this.autoUpdateInput) {
+            if (this.element.matches('input') && this.autoUpdateInput) {
                 var newValue = this.startDate.format(this.locale.format);
                 if (!this.singleDatePicker) {
                     newValue += this.locale.separator + this.endDate.format(this.locale.format);
                 }
-                if (newValue !== this.element.val()) {
+                if (newValue !== this.element.value) {
                     this.element.val(newValue).trigger('change');
                 }
             }
@@ -1562,16 +1565,7 @@
 
     };
 
-    $.fn.daterangepicker = function(options, callback) {
-        var implementOptions = $.extend(true, {}, $.fn.daterangepicker.defaultOptions, options);
-        this.each(function() {
-            var el = $(this);
-            if (el.data('daterangepicker'))
-                el.data('daterangepicker').remove();
-            el.data('daterangepicker', new DateRangePicker(el, implementOptions, callback));
-        });
-        return this;
-    };
+    this.DateRangePicker = DateRangePicker;
 
     return DateRangePicker;
 

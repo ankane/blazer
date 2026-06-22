@@ -48,7 +48,7 @@
             <%= blazer_js_var "selectId", "#{var}-select" %>
             const input = document.getElementById(varId)
             const datePicker = document.getElementById(selectId)
-            $(datePicker).daterangepicker({
+            const picker = new DateRangePicker(datePicker, {
               singleDatePicker: true,
               locale: {format: format},
               autoUpdateInput: false,
@@ -56,13 +56,12 @@
               startDate: input.value.length > 0 ? moment.tz(input.value, timeZone) : now
             })
             // hack to start with empty date
-            $(datePicker).on("apply.daterangepicker", function (ev, picker) {
+            datePicker.addEventListener("apply.daterangepicker", function () {
               datePicker.querySelector(".item").textContent = toDate(picker.startDate).format("MMMM D, YYYY")
               input.value = toDate(picker.startDate).utc().format()
               submitIfCompleted(input.closest("form"))
             })
             if (input.value.length > 0) {
-              const picker = $(datePicker).data("daterangepicker")
               datePicker.querySelector(".item").textContent = toDate(picker.startDate).format("MMMM D, YYYY")
             }
           })()
@@ -103,7 +102,7 @@
           reportrange.querySelector(".item").textContent = toDate(picker.startDate).format("MMMM D, YYYY") + " - " + toDate(picker.endDate).format("MMMM D, YYYY")
         }
 
-        $(reportrange).daterangepicker(
+        const picker = new DateRangePicker(reportrange,
           {
             ranges: {
              "Today": [dateStr(), dateStr()],
@@ -122,11 +121,11 @@
             setTimeInputs(start, end)
             submitIfCompleted(startTime.closest("form"))
           }
-        ).on("apply.daterangepicker", function (ev, picker) {
+        )
+        reportrange.addEventListener("apply.daterangepicker", function () {
           applyDateRangePicker(picker)
         })
 
-        const picker = $(reportrange).data("daterangepicker")
         if (startTime.value.length > 0) {
           picker.setStartDate(moment.tz(startTime.value, timeZone))
           picker.setEndDate(moment.tz(endTime.value, timeZone))

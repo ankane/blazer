@@ -1,4 +1,3 @@
-//= require ./jquery
 //= require ./tablesort
 //= require ./tom-select.base
 //= require ./highlight.min
@@ -112,5 +111,6 @@ function getJSON(url, success, controller) {
 }
 
 function renderResults(element, data) {
-  $(element).html(data)
+  const range = document.createRange()
+  element.replaceChildren(range.createContextualFragment(data))
 }

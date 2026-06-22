@@ -1,0 +1,8 @@
+<% map_id = SecureRandom.hex %>
+<%= tag.div id: map_id, style: "height: #{@only_chart ? 300 : 500}px;" %>
+<%= javascript_tag nonce: true do %>
+  (function () {
+    <%= blazer_js_var "map", {type: type, id: map_id, data: data, options: options} %>
+    new Mapkick[map.type](map.id, map.data, map.options);
+  })()
+<% end %>

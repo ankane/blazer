@@ -43,7 +43,7 @@ function runQueryHelper(query) {
   })
   .then( function (text) {
     if (text[0] == "{") {
-      query.data.blazer = $.parseJSON(text)
+      query.data.blazer = JSON.parse(text)
       setTimeout( function () {
         if (!query.canceled) {
           runQueryHelper(query)

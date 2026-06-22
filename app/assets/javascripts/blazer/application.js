@@ -1,6 +1,6 @@
 //= require ./jquery
 //= require ./tablesort
-//= require ./selectize
+//= require ./tom-select.base
 //= require ./highlight.min
 //= require ./moment
 //= require ./moment-timezone-with-data

@@ -134,7 +134,7 @@
     docsLink.setAttribute("href", Routes.docs_queries_path({data_source: dataSource}))
     schemaLink.setAttribute("href", Routes.schema_queries_path({data_source: dataSource}))
 
-    tableSelect.selectize.clearOptions()
+    tableSelect.tomselect.clearOptions()
 
     if (tablesXhr) {
       tablesXhr.abort()
@@ -151,9 +151,9 @@
           newOptions.push({text: table, value: table})
         }
       }
-      tableSelect.selectize.clearOptions()
-      tableSelect.selectize.addOption(newOptions)
-      tableSelect.selectize.refreshOptions(false)
+      tableSelect.tomselect.clearOptions()
+      tableSelect.tomselect.addOption(newOptions)
+      tableSelect.tomselect.refreshOptions(false)
     }, tablesXhr)
   }
 
@@ -206,18 +206,20 @@
   runButton.addEventListener("click", run)
   cancelButton.addEventListener("click", cancel)
 
-  $(tableSelect).selectize({})
-  tableSelect.selectize.on("change", function (table) {
-    editor.setValue(previewStatement[dsSelect.value].replace("{table}", table), 1)
-    run()
-    this.clear(true)
-    this.blur()
+  new TomSelect(tableSelect, {
+    onChange: function (table) {
+      editor.setValue(previewStatement[dsSelect.value].replace("{table}", table), 1)
+      run()
+      this.clear(true)
+      this.blur()
+    }
   })
 
-  $(dsSelect).selectize({})
-  dsSelect.selectize.on("change", function () {
-    updateDataSource()
-    this.blur()
+  new TomSelect(dsSelect, {
+    onChange: function() {
+      updateDataSource()
+      this.blur()
+    }
   })
 
   updateDataSource()

@@ -1,7 +1,7 @@
 /*
  *= require ./bootstrap-sprockets
  *= require ./bootstrap
- *= require ./selectize
+ *= require ./tom-select.default
  *= require ./github
  *= require ./daterangepicker
  *= require_self
@@ -54,7 +54,7 @@ input.search:focus {
   outline: none;
 }
 
-.form-inline .selectize-control, .text-right .selectize-control {
+.form-inline .ts-wrapper, .text-right .ts-wrapper {
   display: inline-block;
   vertical-align: middle;
   margin-left: 5px;
@@ -62,8 +62,17 @@ input.search:focus {
   text-align: left;
 }
 
-#statement-box .selectize-control {
+#statement-box .ts-wrapper {
   margin-right: 0;
+}
+
+.ts-control > input {
+  min-width: 0;
+}
+
+.has-items .ts-control > input {
+  margin-left: 1px !important;
+  margin-right: 0 !important;
 }
 
 #editor-container {
@@ -244,8 +253,12 @@ h2 {
   max-width: 500px;
 }
 
-.selectize-dropdown .create {
+.ts-dropdown .create {
   padding: 5px 8px;
+}
+
+.ts-dropdown {
+  margin-top: 0 !important;
 }
 
 .user-header {

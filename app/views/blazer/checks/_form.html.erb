@@ -1,7 +1,10 @@
 <%= javascript_tag nonce: true do %>
-  function selectize(id, options) {
+  function createSelect(id, options) {
     const element = document.getElementById(id)
-    $(element).selectize(options)
+    const onChange = function () {
+      this.blur()
+    }
+    new TomSelect(element, {onChange, ...options})
     show(element.closest(".hide"))
   }
 <% end %>
@@ -23,7 +26,7 @@
     <%= javascript_tag nonce: true do %>
       <%= blazer_js_var "queries", Blazer::Query.active.named.order(:name).select("id, name").map { |q| {text: q.name, value: q.id} } %>
       <%= blazer_js_var "items", [@check.query_id].compact %>
-      selectize("check_query_id", {options: queries, items: items, highlight: false, maxOptions: 100})
+      createSelect("check_query_id", {options: queries, items: items, highlight: false, maxOptions: 100})
     <% end %>
   </div>
 
@@ -35,7 +38,7 @@
         <%= f.select :check_type, check_options %>
       </div>
       <%= javascript_tag nonce: true do %>
-        selectize("check_check_type", {})
+        createSelect("check_check_type", {})
       <% end %>
     </div>
   <% elsif @check.respond_to?(:invert) %>
@@ -45,7 +48,7 @@
         <%= f.select :invert, [["Any results (bad data)", false], ["No results (missing data)", true]] %>
       </div>
       <%= javascript_tag nonce: true do %>
-        selectize("check_invert", {})
+        createSelect("check_invert", {})
       <% end %>
     </div>
   <% end %>
@@ -57,7 +60,7 @@
         <%= f.select :schedule, Blazer.check_schedules.map { |v| [v, v] } %>
       </div>
       <%= javascript_tag nonce: true do %>
-        selectize("check_schedule", {})
+        createSelect("check_schedule", {})
       <% end %>
     </div>
   <% end %>

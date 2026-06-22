@@ -67,7 +67,7 @@
     }
   })
 
-  $(querySelect).selectize({
+  new TomSelect(querySelect, {
     options: queries,
     highlight: false,
     maxOptions: 100,
@@ -83,8 +83,9 @@
           }
         }
 
-        addQuery({id: id, name: item.text()})
+        addQuery({id: id, name: item.textContent})
         this.setValue("")
+        this.blur()
       }
     }
   })

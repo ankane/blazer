@@ -24,10 +24,11 @@
         <%= javascript_tag nonce: true do %>
           (function () {
             <%= blazer_js_var "varId", var %>
-            $(document.getElementById(varId)).selectize({
+            new TomSelect(document.getElementById(varId), {
               create: true,
               onChange: function () {
-                submitIfCompleted(this.$input.get(0).closest("form"))
+                submitIfCompleted(this.input.closest("form"))
+                this.blur()
               }
             })
           })()
@@ -35,9 +36,9 @@
       <% elsif var.end_with?("_at") || var == "start_time" || var == "end_time" %>
         <%= hidden_field_tag var, var_params[var] %>
 
-        <div class="selectize-control single" style="width: 200px;">
-          <%= tag.div id: "#{var}-select", class: "selectize-input", style: "display: inline-block;" do %>
-            <span>Select a date</span>
+        <div class="ts-wrapper single" style="width: 200px;">
+          <%= tag.div id: "#{var}-select", class: "ts-control" do %>
+            <div class="item">Select a date</div>
           <% end %>
         </div>
 
@@ -77,9 +78,9 @@
       <% end %>
 
       <%= label_tag nil, date_vars.join(" & ") %>
-      <div class="selectize-control single" style="width: 300px;">
-        <div id="reportrange" class="selectize-input" style="display: inline-block;">
-          <span>Select a time range</span>
+      <div class="ts-wrapper single" style="width: 300px;">
+        <div class="ts-control" id="reportrange">
+          <div class="item">Select a time range</div>
         </div>
       </div>
 
@@ -118,7 +119,7 @@
           }
         ).on("apply.daterangepicker", function (ev, picker) {
           setTimeInputs(picker.startDate, picker.endDate)
-          reportrange.querySelector("span").textContent = toDate(picker.startDate).format("MMMM D, YYYY") + " - " + toDate(picker.endDate).format("MMMM D, YYYY")
+          reportrange.querySelector(".item").textContent = toDate(picker.startDate).format("MMMM D, YYYY") + " - " + toDate(picker.endDate).format("MMMM D, YYYY")
         })
 
         const picker = $(reportrange).data("daterangepicker")

@@ -47,8 +47,8 @@
             <%= blazer_js_var "varId", var %>
             <%= blazer_js_var "selectId", "#{var}-select" %>
             const input = document.getElementById(varId)
-            const datePicker = $(document.getElementById(selectId))
-            datePicker.daterangepicker({
+            const datePicker = document.getElementById(selectId)
+            $(datePicker).daterangepicker({
               singleDatePicker: true,
               locale: {format: format},
               autoUpdateInput: false,
@@ -56,14 +56,14 @@
               startDate: input.value.length > 0 ? moment.tz(input.value, timeZone) : now
             })
             // hack to start with empty date
-            datePicker.on("apply.daterangepicker", function (ev, picker) {
-              datePicker.find(".item").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+            $(datePicker).on("apply.daterangepicker", function (ev, picker) {
+              datePicker.querySelector(".item").textContent = toDate(picker.startDate).format("MMMM D, YYYY")
               input.value = toDate(picker.startDate).utc().format()
               submitIfCompleted(input.closest("form"))
             })
             if (input.value.length > 0) {
-              const picker = datePicker.data("daterangepicker")
-              datePicker.find(".item").html(toDate(picker.startDate).format("MMMM D, YYYY"))
+              const picker = $(datePicker).data("daterangepicker")
+              datePicker.querySelector(".item").textContent = toDate(picker.startDate).format("MMMM D, YYYY")
             }
           })()
         <% end %>

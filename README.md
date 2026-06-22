@@ -1052,7 +1052,7 @@ View the [changelog](https://github.com/ankane/blazer/blob/master/CHANGELOG.md)
 
 ## Thanks
 
-Blazer uses a number of awesome open source projects, including [Rails](https://github.com/rails/rails/), [Vue.js](https://github.com/vuejs/vue), [jQuery](https://github.com/jquery/jquery), [Bootstrap](https://github.com/twbs/bootstrap), [Selectize](https://github.com/brianreavis/selectize.js), [StickyTableHeaders](https://github.com/jmosbech/StickyTableHeaders), [Stupid jQuery Table Sort](https://github.com/joequery/Stupid-Table-Plugin), and [Date Range Picker](https://github.com/dangrossman/bootstrap-daterangepicker).
+Blazer uses a number of awesome open source projects, including [Rails](https://github.com/rails/rails), [Bootstrap](https://github.com/twbs/bootstrap), [Ace](https://github.com/ajaxorg/ace), [Chart.js](https://github.com/chartjs/Chart.js), [Moment.js](https://github.com/moment/moment), [Sortable](https://github.com/SortableJS/Sortable), [Tom Select](https://github.com/orchidjs/tom-select), and [Date Range Picker](https://github.com/dangrossman/daterangepicker).
 
 Demo data from [MovieLens](https://grouplens.org/datasets/movielens/).
 

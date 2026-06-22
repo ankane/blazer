@@ -62,6 +62,16 @@ document.addEventListener("click", function (e) {
   }
 })
 
+// make autofocus work with back button
+window.addEventListener("pageshow", function (e) {
+  if (e.persisted) {
+    const element = document.querySelector("input[autofocus]")
+    if (element) {
+      element.focus()
+    }
+  }
+})
+
 function submitIfCompleted(form) {
   let completed = true
   for (const input of form.querySelectorAll("input[name], select")) {

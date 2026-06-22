@@ -127,7 +127,7 @@ function getJSON(url, success, controller) {
   fetch(url, options)
     .then(function (response) {
       if (!response.ok) {
-        throw new Error("Bad response")
+        throw new Error(response.statusText)
       }
       return response.json()
     })

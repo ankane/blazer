@@ -1,7 +1,7 @@
 /*
  *= require ./bootstrap-sprockets
  *= require ./bootstrap
- *= require ./tom-select.default
+ *= require ./tom-select
  *= require ./github
  *= require ./daterangepicker
  *= require_self

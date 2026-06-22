@@ -51,8 +51,11 @@
 
     function showRun(data) {
       renderResults(results, data)
-      tablesort(results.querySelector("table"))
-      results.querySelector("table").classList.add("stickytable")
+      const table = results.querySelector("table")
+      if (table) {
+        tablesort(table)
+        table.classList.add("stickytable")
+      }
     }
 
     function showError(message) {

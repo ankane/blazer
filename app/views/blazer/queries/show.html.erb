@@ -50,7 +50,7 @@
     const results = document.getElementById("results")
 
     function showRun(data) {
-      $(results).html(data)
+      renderResults(results, data)
       tablesort(results.querySelector("table"))
       results.querySelector("table").classList.add("stickytable")
     }

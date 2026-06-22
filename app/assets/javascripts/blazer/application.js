@@ -133,3 +133,7 @@ function getJSON(url, success, controller) {
     })
     .then(success)
 }
+
+function renderResults(element, data) {
+  $(element).html(data)
+}

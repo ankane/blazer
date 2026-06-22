@@ -46,7 +46,7 @@
       <%= blazer_js_var "runData", run_data %>
       const chart = document.getElementById(chartId)
       runQuery(runData, function (data) {
-        $(chart).html(data)
+        renderResults(chart, data)
         const table = chart.querySelector("table")
         if (table) {
           tablesort(table)

@@ -575,7 +575,7 @@ data_sources:
 - [Apache Ignite](#apache-ignite)
 - [Apache Spark](#apache-spark)
 - [Cassandra](#cassandra)
-- [ClickHouse](#clickhouse) [unreleased]
+- [ClickHouse](#clickhouse)
 - [Druid](#druid)
 - [Elasticsearch](#elasticsearch)
 - [Google BigQuery](#google-bigquery)
@@ -616,7 +616,7 @@ data_sources:
     # optional settings
     output_location: s3://some-bucket/
     workgroup: primary
-    catalog: s3tablescatalog/some-bucket # [unreleased]
+    catalog: s3tablescatalog/some-bucket
     access_key_id: ...
     secret_access_key: ...
     region: ...
@@ -908,34 +908,16 @@ Use a read-only user. Supports [SOQL](https://developer.salesforce.com/docs/atla
 
 ### Snowflake
 
-First, install ODBC. For Homebrew, use:
-
-```sh
-brew install unixodbc
-```
-
-For Ubuntu, use:
-
-```sh
-sudo apt-get install unixodbc-dev
-```
-
-For Heroku, use the [Apt buildpack](https://github.com/heroku/heroku-buildpack-apt) and create an `Aptfile` with:
-
-```text
-unixodbc-dev
-https://sfc-repo.snowflakecomputing.com/odbc/linux/2.21.5/snowflake-odbc-2.21.5.x86_64.deb
-```
-
-> This installs the driver at `/app/.apt/usr/lib/snowflake/odbc/lib/libSnowflake.so`
-
-Then, download the [Snowflake ODBC driver](https://docs.snowflake.com/developer-guide/odbc/odbc-download). Add [odbc_adapter](https://github.com/localytics/odbc_adapter) to your Gemfile and set:
+Set:
 
 ```yml
 data_sources:
   my_source:
-    adapter: snowflake
-    conn_str: Driver=/path/to/libSnowflake.so;uid=user;pwd=password;server=host.snowflakecomputing.com
+    adapter: snowflake2
+    account_id: ...
+    database: ...
+    schema: PUBLIC
+    access_token: ...
 ```
 
 Use a [read-only role](https://docs.snowflake.com/en/user-guide/security-access-control-configure.html).

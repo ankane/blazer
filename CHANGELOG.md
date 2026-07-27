@@ -1,5 +1,6 @@
-## 3.5.0 (unreleased)
+## 3.5.0 (2026-07-27)
 
+- Fixed stored XSS vulnerability - [more info](https://github.com/ankane/blazer/security/advisories/GHSA-m5f6-4589-m89f)
 - Added materialized views to table preview and schema page for Postgres
 - Added support for ClickHouse
 - Added `catalog` setting for Amazon Athena

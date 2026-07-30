@@ -225,7 +225,7 @@
   cursor: pointer;
 }
 .plugin-clear_button.form-select .clear-button, .plugin-clear_button.single .clear-button {
-  right: max(var(--ts-pr-caret), 8px);
+  right: Max(var(--ts-pr-caret), 8px);
 }
 .plugin-clear_button.focus.has-items .clear-button, .plugin-clear_button:not(.disabled):hover.has-items .clear-button {
   opacity: 1;
@@ -373,11 +373,11 @@
 }
 
 .ts-control:not(.rtl) {
-  padding-right: max(var(--ts-pr-min), var(--ts-pr-clear-button) + var(--ts-pr-caret)) !important;
+  padding-right: Max(var(--ts-pr-min), calc(var(--ts-pr-clear-button) + var(--ts-pr-caret))) !important;
 }
 
 .ts-control.rtl {
-  padding-left: max(var(--ts-pr-min), var(--ts-pr-clear-button) + var(--ts-pr-caret)) !important;
+  padding-left: Max(var(--ts-pr-min), calc(var(--ts-pr-clear-button) + var(--ts-pr-caret))) !important;
 }
 
 .ts-wrapper {

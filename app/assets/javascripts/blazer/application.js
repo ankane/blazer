@@ -54,12 +54,52 @@ document.addEventListener("click", function (e) {
 })
 
 document.addEventListener("click", function (e) {
-  const target = e.target.closest("a[data-confirm]")
-  if (target) {
-    if (!window.confirm(target.getAttribute("data-confirm"))) {
-      e.preventDefault()
-    }
+  const target = e.target.closest("a[data-confirm], a[data-method]")
+  if (!target) return
+
+  const confirmMessage = target.getAttribute("data-confirm")
+
+  if (confirmMessage && !window.confirm(confirmMessage)) {
+    e.preventDefault()
+    e.stopImmediatePropagation()
+    return
   }
+
+  const method = target.getAttribute("data-method")
+  if (!method) return
+
+  e.preventDefault()
+  e.stopImmediatePropagation()
+
+  const form = document.createElement("form")
+  form.method = "post"
+  form.action = target.href
+  form.hidden = true
+
+  if (target.target) {
+    form.target = target.target
+  }
+
+  const methodInput = document.createElement("input")
+  methodInput.type = "hidden"
+  methodInput.name = "_method"
+  methodInput.value = method
+  form.appendChild(methodInput)
+
+  const csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute("content")
+  const csrfParam = document.querySelector('meta[name="csrf-param"]')?.getAttribute("content")
+  const url = new URL(target.href, window.location.href)
+
+  if (csrfToken && csrfParam && url.origin === window.location.origin) {
+    const csrfInput = document.createElement("input")
+    csrfInput.type = "hidden"
+    csrfInput.name = csrfParam
+    csrfInput.value = csrfToken
+    form.appendChild(csrfInput)
+  }
+
+  document.body.appendChild(form)
+  form.submit()
 })
 
 // make autofocus work with back button

@@ -1,3 +1,7 @@
+## 3.5.1 (unreleased)
+
+- Fixed table preview and schema page for Postgres < 16
+
 ## 3.5.0 (2026-07-27)
 
 - Fixed stored XSS vulnerability - [more info](https://github.com/ankane/blazer/security/advisories/GHSA-m5f6-4589-m89f)

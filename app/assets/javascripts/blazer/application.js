@@ -79,7 +79,7 @@ document.addEventListener("click", function (e) {
 
     let params = {"_method": target.getAttribute("data-method")}
     if (isSameOrigin(target.href)) {
-      params = csrfProtect(params);
+      params = csrfProtect(params)
     }
 
     for (const [k, v] of Object.entries(params)) {

@@ -1,4 +1,4 @@
-## 3.5.1 (unreleased)
+## 3.5.1 (2026-07-31)
 
 - Fixed delete buttons
 - Fixed table preview and schema page for Postgres < 16

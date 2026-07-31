@@ -64,7 +64,7 @@ document.addEventListener("click", function (e) {
 })
 
 function isSameOrigin(href) {
-  return new URL(href, window.location.href).origin === window.location.origin;
+  return new URL(href, window.location.href).origin === window.location.origin
 }
 
 document.addEventListener("click", function (e) {

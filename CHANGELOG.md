@@ -2,6 +2,7 @@
 
 - Fixed delete buttons
 - Fixed table preview and schema page for Postgres < 16
+- Fixed error with Sass
 
 ## 3.5.0 (2026-07-27)
 

@@ -1,5 +1,6 @@
 ## 3.5.1 (unreleased)
 
+- Fixed delete buttons
 - Fixed table preview and schema page for Postgres < 16
 
 ## 3.5.0 (2026-07-27)

@@ -58,7 +58,40 @@ document.addEventListener("click", function (e) {
   if (target) {
     if (!window.confirm(target.getAttribute("data-confirm"))) {
       e.preventDefault()
+      e.stopImmediatePropagation()
     }
+  }
+})
+
+function isSameOrigin(href) {
+  return new URL(href, window.location.href).origin === window.location.origin;
+}
+
+document.addEventListener("click", function (e) {
+  const target = e.target.closest("a[data-method]")
+  if (target) {
+    e.preventDefault()
+
+    const form = document.createElement("form")
+    form.method = "post"
+    form.action = target.href
+    form.hidden = true
+
+    let params = {"_method": target.getAttribute("data-method")}
+    if (isSameOrigin(target.href)) {
+      params = csrfProtect(params);
+    }
+
+    for (const [k, v] of Object.entries(params)) {
+      const input = document.createElement("input")
+      input.type = "hidden"
+      input.name = k
+      input.value = v
+      form.append(input)
+    }
+
+    document.body.append(form)
+    form.submit()
   }
 })
 

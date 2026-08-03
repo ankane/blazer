@@ -15,6 +15,26 @@ module Blazer
       @variables ||= statement.to_s.gsub(/\-\-.+/, "").gsub(/\/\*.+\*\//m, "").scan(/\{\w*?\}/i).map { |v| v[1...-1] }.reject { |v| /\A\d+(\,\d+)?\z/.match(v) || v.empty? }.uniq
     end
 
+    # Extract variable declarations like:
+    #
+    #   -- var_name: JSON_ARRAY
+    #   -- var_name: JSON_HASH (keys are human readable, values for query)
+    def variable_values
+      @variable_values ||=
+        statement.to_s.scan(/-- (\w+): ([\[\{].*)/).to_h do |(var, json)|
+          spec = JSON.parse(json)
+          values = case spec
+                   when Hash then spec.to_a
+                   when Array then spec
+                   else
+                     [spec]
+                   end
+          [var, values]
+        rescue JSON::JSONError
+          [var, nil]
+        end.compact
+    end
+
     def add_values(var_params)
       variables.each do |var|
         value = var_params[var].presence

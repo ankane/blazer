@@ -37,7 +37,8 @@ function runQueryHelper(query) {
   fetch(Routes.run_queries_path(), {method: "POST", body: formdata, signal: controller.signal})
     .then(function (response) {
       if (!response.ok) {
-        throw new Error(response.statusText)
+        // statusText is always empty with HTTP/2
+        throw new Error(`Request failed with status ${response.status}`)
       }
       return response.text()
     })

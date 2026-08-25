@@ -38,7 +38,7 @@ function runQueryHelper(query) {
     .then(function (response) {
       if (!response.ok) {
         // statusText is always empty with HTTP/2
-        throw new Error(`Request failed with status ${response.status}`)
+        throw new Error(`[${response.status}] ${response.statusText}`)
       }
       return response.text()
     })

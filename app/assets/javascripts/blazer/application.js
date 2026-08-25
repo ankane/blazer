@@ -146,7 +146,7 @@ function getJSON(url, success, controller) {
   fetch(url, options)
     .then(function (response) {
       if (!response.ok) {
-        throw new Error(response.statusText)
+        throw new Error(response.statusText || `An error occurred: ${response.status}`)
       }
       return response.json()
     })

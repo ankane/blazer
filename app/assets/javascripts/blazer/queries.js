@@ -37,7 +37,7 @@ function runQueryHelper(query) {
   fetch(Routes.run_queries_path(), {method: "POST", body: formdata, signal: controller.signal})
     .then(function (response) {
       if (!response.ok) {
-        throw new Error(response.statusText)
+        throw new Error(response.statusText || `An error occurred: ${response.status}`)
       }
       return response.text()
     })

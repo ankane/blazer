@@ -22,7 +22,9 @@ module Blazer
           app.config.assets.precompile << proc { |path| path == "blazer/favicon.png" }
         end
       end
+    end
 
+    config.after_initialize do
       Blazer.time_zone ||= Blazer.settings["time_zone"] || Time.zone
       Blazer.audit = Blazer.settings.key?("audit") ? Blazer.settings["audit"] : true
       Blazer.user_name = Blazer.settings["user_name"] if Blazer.settings["user_name"]

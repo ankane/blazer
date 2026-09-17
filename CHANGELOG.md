@@ -1,3 +1,7 @@
+## 3.5.2 (unreleased)
+
+- Fixed error message when status text not available
+
 ## 3.5.1 (2026-07-31)
 
 - Fixed delete buttons

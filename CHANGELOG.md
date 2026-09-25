@@ -1,4 +1,4 @@
-## 3.5.2 (unreleased)
+## 3.5.2 (2026-09-24)
 
 - Fixed error message when status text not available
 

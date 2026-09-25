@@ -72,7 +72,7 @@
     </div>
   <% end %>
 
-  <p class="text-muted">Notifications are sent when a check starts failing, and when it starts passing again.
+  <p class="text-muted">Notifications are sent when a check starts failing, and when it starts passing again.</p>
   <p>
     <% if @check.persisted? %>
       <%= link_to "Delete", check_path(@check), method: :delete, "data-confirm" => "Are you sure?", class: "btn btn-danger" %>

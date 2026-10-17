@@ -114,7 +114,7 @@ module Blazer
 
       # round integers
       if @rows[0][1].is_a?(Integer)
-        forecast = forecast.map { |k, v| [k, v.round] }.to_h
+        forecast = forecast.to_h { |k, v| [k, v.round] }
       end
 
       @rows.each do |row|

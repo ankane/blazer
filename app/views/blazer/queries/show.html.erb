@@ -39,7 +39,7 @@
 
 <%= render partial: "blazer/variables", locals: {action: query_path(@query)} %>
 
-<pre id="code"><code><%= @statement.display_statement %></code></pre>
+<pre id="code"><code class="language-sql"><%= @statement.display_statement %></code></pre>
 
 <% if @success %>
   <div id="results">

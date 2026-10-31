@@ -1,3 +1,7 @@
+## 3.5.3 (unreleased)
+
+- Fixed syntax highlighting for queries with variables
+
 ## 3.5.2 (2026-09-24)
 
 - Fixed error message when status text not available

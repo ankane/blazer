@@ -350,3 +350,7 @@ h2 {
 .table.stickytable > tbody > tr:first-child > td {
   border-top: none;
 }
+
+.hljs-variable {
+  font-weight: normal;
+}

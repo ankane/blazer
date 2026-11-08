@@ -67,7 +67,7 @@
           })()
         <% end %>
       <% else %>
-        <%= text_field_tag var, var_params[var], style: "width: 120px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !var_params[var], class: "form-control" %>
+        <%= text_field_tag var, var_params[var], style: "width: 120px; margin-left: 5px; margin-right: 20px;", autofocus: i == 0 && !var.end_with?("_at") && !var_params[var], class: "form-control" %>
       <% end %>
     <% end %>
 

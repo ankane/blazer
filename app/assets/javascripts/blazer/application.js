@@ -14,6 +14,8 @@
 //= require ./queries
 //= require ./fuzzysearch
 
+hljs.getLanguage("sql").contains.push({scope: "variable", match: /\{\w+\}/})
+
 document.addEventListener("mouseover", function (e) {
   const target = e.target.closest(".dropdown-toggle")
   if (target) {
